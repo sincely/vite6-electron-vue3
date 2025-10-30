@@ -7,3 +7,5 @@ Electron 最近正式兼容了 ESM 规范，在项目中启用需要满足以下
 项目package.json中包含顶置的"type": "module"字段
 Electron 版本大于等于28.0.0
 vite-plugin-electron 版本大于等于0.28.0-beta.1
+
+https://juejin.cn/post/7416311252580352034?searchId=20251031014326A1CFB4695FD2BAFF454A

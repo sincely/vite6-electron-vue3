@@ -89,7 +89,7 @@
     "stylelint-config-standard-scss": "13.1.0",
     "stylelint-scss": "6.11.0",
     "stylelint-order": "6.0.4",
-    "vite": "6.2.2",
+    "vite": "6.3.6",
     "electron": "28.3.3",
     "electron-builder": "24.13.3",
     "vite-plugin-restart": "0.4.2",
