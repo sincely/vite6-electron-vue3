@@ -87,8 +87,8 @@ async function createWindow() {
   })
 
   ipcMain.on('expandWindow', (event, args) => {
-    const defaultSize = mainWindow.getSize()
-    const maxSize = mainWindow.getMaximumSize()
+    const defaultSize = win.getSize()
+    const maxSize = win.getMaximumSize()
     if (defaultSize[0] === (args.screenWidth / 5) * 3 + 150 && defaultSize[1] === 600) {
       win.setResizable(true)
       win.setSize((args.screenWidth / 5) * 3 + 200, 700)
