@@ -1,5 +1,11 @@
 <template>
   <div class="sidebar" :class="{ 'sidebar-collapsed': appStore.sidebarCollapsed }">
+    <!-- Logo 区域 -->
+    <div class="sidebar-logo">
+      <img src="@/assets/bar/logo.svg" class="logo-img" alt="logo" />
+      <span class="logo-text">AI Desktop</span>
+    </div>
+
     <!-- 主导航 -->
     <nav class="sidebar-nav">
       <template v-for="item in mainItems" :key="item.id">
@@ -42,61 +48,45 @@
       </template>
     </nav>
 
-    <!-- 底部固定区（设置等） -->
+    <!-- 底部用户信息区 -->
     <div class="sidebar-footer">
-      <template v-for="item in footerItems" :key="item.id">
-        <!-- 子菜单：在按钮上方展开 -->
-        <div
-          v-if="item.children?.length"
-          class="sidebar-submenu"
-          :class="{ 'sidebar-submenu-open': !appStore.sidebarCollapsed && isExpanded(item.id) }"
-        >
-          <a
-            v-for="child in item.children"
-            :key="child.id"
-            class="sidebar-item sidebar-item-child"
-            :class="{ 'sidebar-item-active': isChildActive(child) }"
-            @click="router.push(child.route).catch(() => {})"
-          >
-            <span class="sidebar-child-dot" />
-            <span class="sidebar-label">{{ child.label }}</span>
-          </a>
+      <div
+        class="user-profile"
+        :class="{ 'user-profile-active': route.path.startsWith('/settings') }"
+        @click="router.push('/settings')"
+      >
+        <div class="user-avatar">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
         </div>
-        <!-- 底部固定按钮 -->
-        <a
-          class="sidebar-item sidebar-item-footer"
-          :class="{ 'sidebar-item-active': isParentActive(item) }"
-          :title="appStore.sidebarCollapsed ? item.label : ''"
-          @click="handleNav(item)"
-        >
-          <SvgIcon :icon-class="item.icon" class="sidebar-icon" width="16px" height="16px" />
-          <span class="sidebar-label">{{ item.label }}</span>
-          <SvgIcon
-            v-if="item.children?.length && !appStore.sidebarCollapsed"
-            icon-class="lucide-chevron-right"
-            class="sidebar-chevron"
-            :class="{ 'sidebar-chevron-open': isExpanded(item.id) }"
-            width="13px"
-            height="13px"
-          />
-        </a>
-      </template>
+        <div class="user-info">
+          <div class="user-name">{{ userStore.name }}</div>
+          <div class="user-detail">系统管理员</div>
+        </div>
+        <SvgIcon
+          v-if="!appStore.sidebarCollapsed"
+          icon-class="lucide-settings"
+          class="user-settings-icon"
+          width="14px"
+          height="14px"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useAppStore } from '@/store/modules/app'
+import { useUserStore } from '@/store/modules/user'
 import { useRouter, useRoute } from 'vue-router'
 import { menuItems } from '@/config/menu'
 
 const appStore = useAppStore()
+const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
-// 按 footer 字段拆分为主导航 / 底部固定
+// 按 footer 字段拆分为主导航（排除底部固定的设置项）
 const mainItems = menuItems.filter((item) => !item.footer)
-const footerItems = menuItems.filter((item) => item.footer)
 
 // ───── 子菜单展开状态（存 ID 数组）─────
 const expandedIds = ref([])
@@ -108,7 +98,6 @@ const toggleExpand = (id) => {
 }
 
 // ───── 当前路由激活状态（computed 保证响应式）─────
-// 仅精确匹配父项自身路由才高亮，子路由激活时父项不高亮
 const activeParentIds = computed(() => {
   const ids = new Set()
   for (const item of menuItems) {
@@ -140,17 +129,15 @@ watch(
 // ───── 导航点击逻辑 ─────
 const handleNav = (item) => {
   if (item.children?.length && !appStore.sidebarCollapsed) {
-    // 有子菜单且非折叠状态：切换展开
     toggleExpand(item.id)
   } else {
-    // 无子菜单 或 折叠状态：直接跳转
     router.push(item.route).catch(() => {})
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$transition: 0.25s ease;
+$transition: 0.2s ease;
 
 .sidebar {
   display: flex;
@@ -166,6 +153,44 @@ $transition: 0.25s ease;
 
   &-collapsed {
     width: var(--sidebar-collapsed-width);
+  }
+
+  // ── Logo 区域 ──────────────────────────
+  &-logo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    height: 50px;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: padding $transition;
+
+    .logo-img {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+    }
+
+    .logo-text {
+      overflow: hidden;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity $transition;
+    }
+  }
+
+  &-collapsed &-logo {
+    justify-content: center;
+    padding: 0;
+
+    .logo-text {
+      width: 0;
+      opacity: 0;
+    }
   }
 
   // 导航区域
@@ -188,9 +213,6 @@ $transition: 0.25s ease;
     white-space: nowrap;
     cursor: pointer;
     border-radius: 7px;
-    transition:
-      background-color $transition,
-      color $transition;
 
     &:hover {
       color: var(--color-text-primary);
@@ -206,11 +228,6 @@ $transition: 0.25s ease;
       }
     }
 
-    &-footer {
-      margin-bottom: 0;
-    }
-
-    // 二级菜单项：缩进 + 更小字号
     &-child {
       gap: 0;
       height: 32px;
@@ -220,26 +237,19 @@ $transition: 0.25s ease;
     }
   }
 
-  // 图标
   &-icon {
     flex-shrink: 0;
     color: currentcolor;
-    transition: color $transition;
   }
 
-  // 标签文字
   &-label {
     overflow: hidden;
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
     opacity: 1;
-    transition:
-      opacity $transition,
-      width $transition;
   }
 
-  // 子条目圆点指示器
   &-child-dot {
     flex-shrink: 0;
     width: 4px;
@@ -247,61 +257,125 @@ $transition: 0.25s ease;
     margin-right: 10px;
     background-color: var(--color-text-muted);
     border-radius: 50%;
-    transition: background-color $transition;
   }
 
   &-item-active &-child-dot {
     background-color: var(--color-text-active);
   }
 
-  // 展开箭头
   &-chevron {
     flex-shrink: 0;
     margin-left: auto;
     color: var(--color-text-muted);
-    transition:
-      transform $transition,
-      color $transition;
 
     &-open {
       transform: rotate(90deg);
     }
   }
 
-  // ── 子菜单容器 ──────────────────────────
   &-submenu {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
 
     &-open {
-      max-height: 240px; // 最多约 7 个子项
+      max-height: 240px;
     }
   }
 
-  // 折叠时强制隐藏所有子菜单
   &-collapsed &-submenu {
     max-height: 0 !important;
   }
 
-  // 折叠时隐藏文字
   &-collapsed &-label {
     width: 0;
     pointer-events: none;
     opacity: 0;
   }
 
-  // 折叠时图标居中
   &-collapsed &-item {
     gap: 0;
     justify-content: center;
     padding: 0;
   }
 
-  // ── 底部区域 ────────────────────────────
+  // ── 底部用户信息区 ──────────────────────
   &-footer {
-    padding: 6px 6px 10px;
+    padding: 12px 8px;
     border-top: 1px solid var(--color-border);
+  }
+
+  .user-profile {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color $transition;
+
+    &:hover {
+      background-color: var(--color-bg-hover);
+    }
+
+    &-active {
+      background-color: var(--color-bg-active);
+
+      .user-name {
+        color: var(--color-text-active);
+      }
+    }
+
+    .user-avatar {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      overflow: hidden;
+      background-color: var(--color-bg-input);
+      border-radius: 50%;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity $transition;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-detail {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-settings-icon {
+      color: var(--color-text-muted);
+    }
+  }
+
+  &-collapsed .user-profile {
+    justify-content: center;
+    padding: 6px 0;
+
+    .user-info,
+    .user-settings-icon {
+      display: none;
+    }
   }
 }
 </style>
