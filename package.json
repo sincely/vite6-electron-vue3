@@ -1,12 +1,11 @@
 {
-  "name": "deep-ai",
+  "name": "vite6-electron-vue3",
   "version": "0.0.1",
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
     "node": ">=16.14"
   },
-  "description": "ai-chat",
   "author": "chengzhou",
   "scripts": {
     "dev": "vite",
