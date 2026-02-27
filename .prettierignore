@@ -25,3 +25,5 @@ prettier.config.js
 
 dist-electron
 release/*
+
+.nvmrc
