@@ -155,11 +155,7 @@ const showServiceUpgradeMessage = (type) => {
   }
 }
 
-const emit = defineEmits(['updateBar'])
-
-onMounted(() => {
-  emit('updateBar')
-})
+onMounted(() => {})
 </script>
 
 <style>

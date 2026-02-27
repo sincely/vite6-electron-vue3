@@ -1,0 +1,94 @@
+// =============================================
+// 主题 CSS 变量系统（通过 data-theme 切换）
+// =============================================
+
+// ---------- Light Theme ----------
+:root,
+html[data-theme='light'] {
+  // 背景色
+  --color-bg-window: #f0f2f5;
+  --color-bg-titlebar: #fff;
+  --color-bg-sidebar: #f5f7fa;
+  --color-bg-sidebar-titlebar: #edf0f3;
+  --color-bg-content: #fff;
+  --color-bg-hover: rgb(0 0 0 / 6%);
+  --color-bg-active: #2563eb;
+  --color-bg-card: #f9fafb;
+  --color-bg-input: #f1f3f5;
+  --color-bg-status: #e8ecf0;
+
+  // 文字色
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-text-active: #fff;
+  --color-text-link: #2563eb;
+
+  // 边框
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+
+  // 阴影
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 8%);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 10%);
+
+  // 滚动条
+  --scrollbar-thumb: rgb(0 0 0 / 15%);
+  --scrollbar-track: transparent;
+
+  // 状态颜色
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  // 侧边栏
+  --sidebar-width: 200px;
+  --sidebar-collapsed-width: 56px;
+  --titlebar-height: 42px;
+}
+
+// ---------- Dark Theme ----------
+html[data-theme='dark'] {
+  // 背景色
+  --color-bg-window: #1a1b1e;
+  --color-bg-titlebar: #141517;
+  --color-bg-sidebar: #141517;
+  --color-bg-sidebar-titlebar: #141517;
+  --color-bg-content: #1a1b1e;
+  --color-bg-hover: rgb(255 255 255 / 6%);
+  --color-bg-active: #2563eb;
+  --color-bg-card: #25262b;
+  --color-bg-input: #2c2e33;
+  --color-bg-status: #1e1f24;
+
+  // 文字色
+  --color-text-primary: #c1c2c5;
+  --color-text-secondary: #909296;
+  --color-text-muted: #5c5f66;
+  --color-text-active: #fff;
+  --color-text-link: #74b9ff;
+
+  // 边框
+  --color-border: #2c2e33;
+  --color-border-light: #25262b;
+
+  // 阴影
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 30%);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 40%);
+
+  // 滚动条
+  --scrollbar-thumb: rgb(255 255 255 / 12%);
+  --scrollbar-track: transparent;
+
+  // 状态颜色
+  --color-success: #12b886;
+  --color-danger: #fa5252;
+  --color-warning: #fd7e14;
+  --color-info: #339af0;
+
+  // 侧边栏
+  --sidebar-width: 200px;
+  --sidebar-collapsed-width: 56px;
+  --titlebar-height: 42px;
+}

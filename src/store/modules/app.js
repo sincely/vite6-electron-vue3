@@ -1,11 +1,32 @@
-import { defineStore } from 'pinia'
-export const useAppStore = defineStore({
-  id: 'app',
-  state: () => {
-    return {
-      count: 10
-    }
+﻿import { defineStore } from 'pinia'
+
+export const useAppStore = defineStore('app', {
+  state: () => ({
+    theme: localStorage.getItem('theme') || 'dark',
+    sidebarCollapsed: false
+  }),
+  getters: {
+    isDark: (state) => state.theme === 'dark'
   },
-  getters: {},
-  actions: {}
+  actions: {
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark'
+      localStorage.setItem('theme', this.theme)
+      document.documentElement.setAttribute('data-theme', this.theme)
+    },
+    setTheme(theme) {
+      this.theme = theme
+      localStorage.setItem('theme', theme)
+      document.documentElement.setAttribute('data-theme', theme)
+    },
+    initTheme() {
+      document.documentElement.setAttribute('data-theme', this.theme)
+    },
+    toggleSidebar() {
+      this.sidebarCollapsed = !this.sidebarCollapsed
+    },
+    setSidebarCollapsed(val) {
+      this.sidebarCollapsed = val
+    }
+  }
 })

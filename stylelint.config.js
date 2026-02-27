@@ -41,7 +41,7 @@ export default {
     // 不允许未知单位
     'unit-no-unknown': [true, { ignoreUnits: ['rpx'] }],
     // 标记 CSS 规范中未知属性值
-    'declaration-property-value-no-unknown': true,
+    'declaration-property-value-no-unknown': null,
     // 不允许选择器使用供应商前缀
     'selector-no-vendor-prefix': null,
     // 指定关键帧名称的模式

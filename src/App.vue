@@ -1,26 +1,29 @@
-<template>
-  <div id="app" ref="app">
-    <bar :key="barIndex" />
-    <router-view />
+﻿<template>
+  <div id="app">
+    <bar />
+    <div class="app__view">
+      <router-view />
+    </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import bar from './components/Bar/index.vue'
-export default {
-  components: {
-    bar
-  },
-  data() {
-    return {
-      barIndex: 'bar-default'
-    }
-  },
-  methods: {
-    updateBar() {
-      this.barIndex = new Date().getTime()
-      console.log(this.barIndex)
-    }
-  }
-}
 </script>
+
+<style lang="scss">
+#app {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--color-bg-window);
+}
+
+.app__view {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+</style>
