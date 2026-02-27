@@ -1,7 +1,7 @@
-﻿<template>
+<template>
   <div id="app">
     <bar v-if="!isLoginPage" />
-    <div class="app__view" :class="{ 'is-login': isLoginPage }">
+    <div class="app-view" :class="{ 'is-login': isLoginPage }">
       <router-view />
     </div>
   </div>
@@ -26,13 +26,13 @@ const isLoginPage = computed(() => route.path === '/login')
   background-color: var(--color-bg-window);
 }
 
-.app__view {
+.app-view {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-}
 
-.app__view.is-login {
-  height: 100vh;
+  &.is-login {
+    height: 100vh;
+  }
 }
 </style>

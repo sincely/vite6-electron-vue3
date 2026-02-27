@@ -1,9 +1,9 @@
 ﻿<template>
   <div class="layout">
-    <sidebar class="layout__sidebar" />
-    <div class="layout__content">
+    <sidebar class="layout-sidebar" />
+    <div class="layout-content">
       <nav-bar />
-      <div class="layout__view">
+      <div class="layout-view">
         <router-view v-slot="{ Component, route }">
           <transition :name="transitionName" mode="out-in">
             <keep-alive :max="10">
@@ -41,7 +41,7 @@ const transitionName = computed(() => route.meta?.transition ?? 'page')
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 
-  &__content {
+  &-content {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -51,7 +51,7 @@ const transitionName = computed(() => route.meta?.transition ?? 'page')
     background-color: var(--color-bg-content);
   }
 
-  &__view {
+  &-view {
     flex: 1;
     min-height: 0;
     overflow-y: auto;

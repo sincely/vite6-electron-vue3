@@ -1,24 +1,24 @@
 ﻿<template>
   <div class="dashboard">
-    <h2 class="dashboard__title">仪表板</h2>
+    <h2 class="dashboard-title">仪表板</h2>
     <div class="stats-grid">
       <div v-for="stat in stats" :key="stat.label" class="stat-card">
-        <div class="stat-card__header">
-          <i :class="['stat-card__icon', stat.icon]" :style="{ color: stat.color }" />
-          <span class="stat-card__label">{{ stat.label }}</span>
+        <div class="stat-card-header">
+          <i :class="['stat-card-icon', stat.icon]" :style="{ color: stat.color }" />
+          <span class="stat-card-label">{{ stat.label }}</span>
         </div>
-        <div class="stat-card__value" :style="{ color: stat.color }">{{ stat.value }}</div>
-        <div class="stat-card__sub">{{ stat.sub }}</div>
+        <div class="stat-card-value" :style="{ color: stat.color }">{{ stat.value }}</div>
+        <div class="stat-card-sub">{{ stat.sub }}</div>
       </div>
     </div>
     <div class="panel">
-      <div class="panel__header">
-        <i class="i-lucide-link panel__icon" />
+      <div class="panel-header">
+        <i class="i-lucide-link panel-icon" />
         <span>API 端点</span>
       </div>
       <div class="endpoint">
-        <code class="endpoint__url">http://127.0.0.1:18317/v1</code>
-        <button class="endpoint__copy" title="复制" @click="copyEndpoint">
+        <code class="endpoint-url">http://127.0.0.1:18317/v1</code>
+        <button class="endpoint-copy" title="复制" @click="copyEndpoint">
           <i class="i-lucide-copy" />
         </button>
       </div>
@@ -44,7 +44,7 @@ const copyEndpoint = async () => {
   padding: 24px;
   overflow-y: auto;
 
-  &__title {
+  &-title {
     margin-bottom: 20px;
     font-size: 18px;
     font-weight: 600;
@@ -70,31 +70,31 @@ const copyEndpoint = async () => {
     border-color: var(--color-text-muted);
   }
 
-  &__header {
+  &-header {
     display: flex;
     gap: 8px;
     align-items: center;
     margin-bottom: 10px;
   }
 
-  &__icon {
+  &-icon {
     font-size: 16px;
   }
 
-  &__label {
+  &-label {
     font-size: 12px;
     font-weight: 500;
     color: var(--color-text-secondary);
   }
 
-  &__value {
+  &-value {
     margin-bottom: 6px;
     font-size: 28px;
     font-weight: 700;
     line-height: 1;
   }
 
-  &__sub {
+  &-sub {
     font-size: 11px;
     color: var(--color-text-muted);
   }
@@ -107,7 +107,7 @@ const copyEndpoint = async () => {
   border: 1px solid var(--color-border);
   border-radius: 10px;
 
-  &__header {
+  &-header {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -117,7 +117,7 @@ const copyEndpoint = async () => {
     color: var(--color-text-primary);
   }
 
-  &__icon {
+  &-icon {
     font-size: 14px;
     color: var(--color-text-secondary);
   }
@@ -131,14 +131,14 @@ const copyEndpoint = async () => {
   background-color: var(--color-bg-input);
   border-radius: 7px;
 
-  &__url {
+  &-url {
     flex: 1;
     font-family: monospace;
     font-size: 13px;
     color: var(--color-text-primary);
   }
 
-  &__copy {
+  &-copy {
     display: flex;
     flex-shrink: 0;
     align-items: center;

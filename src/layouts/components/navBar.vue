@@ -1,16 +1,16 @@
 <template>
   <div class="nav-bar">
     <!-- 面包屑导航 -->
-    <div class="nav-bar__breadcrumb">
+    <div class="nav-bar-breadcrumb">
       <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
         <!-- 分隔符（第一项之后出现） -->
-        <SvgIcon v-if="idx > 0" icon-class="lucide-chevron-right" class="nav-bar__sep" width="12px" height="12px" />
+        <SvgIcon v-if="idx > 0" icon-class="lucide-chevron-right" class="nav-bar-sep" width="12px" height="12px" />
         <!-- 面包屑节点 -->
         <span
-          class="nav-bar__crumb"
+          class="nav-bar-crumb"
           :class="{
-            'nav-bar__crumb--active': idx === breadcrumb.length - 1,
-            'nav-bar__crumb--link': idx < breadcrumb.length - 1
+            'nav-bar-crumb-active': idx === breadcrumb.length - 1,
+            'nav-bar-crumb-link': idx < breadcrumb.length - 1
           }"
           @click="idx < breadcrumb.length - 1 ? router.push(crumb.route) : undefined"
         >
@@ -18,7 +18,7 @@
           <SvgIcon
             v-if="idx === 0 && crumb.icon"
             :icon-class="crumb.icon"
-            class="nav-bar__icon"
+            class="nav-bar-icon"
             width="14px"
             height="14px"
           />
@@ -27,13 +27,13 @@
       </template>
 
       <!-- 无匹配时的降级展示 -->
-      <span v-if="!breadcrumb.length" class="nav-bar__crumb nav-bar__crumb--active">
+      <span v-if="!breadcrumb.length" class="nav-bar-crumb nav-bar-crumb-active">
         {{ route.name ?? route.path }}
       </span>
     </div>
 
     <!-- 右侧插槽，供各页面扩展 -->
-    <div class="nav-bar__extra">
+    <div class="nav-bar-extra">
       <slot />
     </div>
   </div>
@@ -61,20 +61,20 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   background-color: var(--color-bg-content);
   border-bottom: 1px solid var(--color-border);
 
-  &__breadcrumb {
+  &-breadcrumb {
     display: flex;
     gap: 4px;
     align-items: center;
     min-width: 0;
   }
 
-  &__sep {
+  &-sep {
     flex-shrink: 0;
     color: var(--color-text-muted);
     opacity: 0.5;
   }
 
-  &__crumb {
+  &-crumb {
     display: flex;
     gap: 6px;
     align-items: center;
@@ -85,12 +85,12 @@ const breadcrumb = computed(() => findMenuPath(route.path))
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    &--active {
+    &-active {
       font-weight: 600;
       color: var(--color-text-primary);
     }
 
-    &--link {
+    &-link {
       cursor: pointer;
       transition: color 0.15s ease;
 
@@ -100,12 +100,12 @@ const breadcrumb = computed(() => findMenuPath(route.path))
     }
   }
 
-  &__icon {
+  &-icon {
     flex-shrink: 0;
     color: var(--color-text-secondary);
   }
 
-  &__extra {
+  &-extra {
     display: flex;
     flex-shrink: 0;
     gap: 6px;

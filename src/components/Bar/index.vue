@@ -2,11 +2,11 @@
   <div class="title-bar" :class="{ 'is-login': isLoginPage }">
     <!-- 登录页：完整标题栏 -->
     <template v-if="isLoginPage">
-      <div class="title-bar__login">
+      <div class="title-bar-login">
         <!-- 原生交通灯占位区 -->
         <div class="native-traffic-lights" />
-        <span class="title-bar__app-name">
-          <img src="@/assets/bar/logo.svg" class="title-bar__logo" alt="logo" />
+        <span class="title-bar-app-name">
+          <img src="@/assets/bar/logo.svg" class="title-bar-logo" alt="logo" />
           ai
         </span>
       </div>
@@ -15,13 +15,13 @@
     <!-- 主页：左侧 sidebar + 右侧内容区 -->
     <template v-else>
       <!-- 左侧：sidebar 区域标题栏 -->
-      <div class="title-bar__sidebar" :style="{ width: sidebarWidth }">
+      <div class="title-bar-sidebar" :style="{ width: sidebarWidth }">
         <!-- 原生交通灯占位区 -->
         <div class="native-traffic-lights" />
       </div>
 
       <!-- 右侧：内容区标题栏 -->
-      <div class="title-bar__content">
+      <div class="title-bar-content">
         <!-- 折叠按钮，始终可见 -->
         <button
           class="icon-btn sidebar-toggle"
@@ -35,7 +35,7 @@
           />
         </button>
         <!-- 右侧操作区 -->
-        <div class="title-bar__actions">
+        <div class="title-bar-actions">
           <button class="icon-btn" title="刷新" @click="reload">
             <SvgIcon icon-class="lucide-refresh-cw" width="14px" height="14px" />
           </button>
@@ -84,7 +84,7 @@ const reload = () => location.reload()
   }
 
   // 登录页标题栏
-  &__login {
+  &-login {
     display: flex;
     flex: 1;
     gap: 12px;
@@ -94,7 +94,7 @@ const reload = () => location.reload()
   }
 
   // 左侧侧边栏标题部分
-  &__sidebar {
+  &-sidebar {
     display: flex;
     flex-shrink: 0;
     align-items: center;
@@ -106,7 +106,7 @@ const reload = () => location.reload()
   }
 
   // 右侧内容标题部分
-  &__content {
+  &-content {
     display: flex;
     flex: 1;
     align-items: center;
@@ -115,7 +115,7 @@ const reload = () => location.reload()
     background-color: var(--color-bg-titlebar);
   }
 
-  &__app-name {
+  &-app-name {
     display: flex;
     flex: 1;
     gap: 8px;
@@ -125,12 +125,12 @@ const reload = () => location.reload()
     color: var(--color-text-primary);
   }
 
-  &__logo {
+  &-logo {
     width: 18px;
     height: 18px;
   }
 
-  &__actions {
+  &-actions {
     display: flex;
     gap: 2px;
     align-items: center;

@@ -5,7 +5,7 @@
       <div class="flex-column">
         <label>账户</label>
       </div>
-      <div class="inputForm">
+      <div class="input-form">
         <img src="@/assets/login/email.svg" alt="email" />
         <input v-model="loginObj.username" type="text" class="input" placeholder="您的账户" />
       </div>
@@ -14,7 +14,7 @@
       <div class="flex-column">
         <label>密码</label>
       </div>
-      <div class="inputForm">
+      <div class="input-form">
         <img src="@/assets/login/pass.svg" alt="password" />
         <input
           v-model="loginObj.password"
@@ -34,7 +34,7 @@
       <div v-if="regState" class="flex-column">
         <label>确认密码</label>
       </div>
-      <div v-if="regState" class="inputForm">
+      <div v-if="regState" class="input-form">
         <img src="@/assets/login/pass.svg" alt="password" />
         <input
           v-model="loginObj.affirmPassword"
@@ -179,7 +179,7 @@ onMounted(() => {})
   color: var(--color-text-primary);
 }
 
-.login-main .inputForm {
+.login-main .input-form {
   display: flex;
   align-items: center;
   height: 50px;
@@ -204,7 +204,7 @@ onMounted(() => {})
   outline: none;
 }
 
-.login-main .inputForm:focus-within {
+.login-main .input-form:focus-within {
   border: 1.5px solid #2d79f3;
 }
 

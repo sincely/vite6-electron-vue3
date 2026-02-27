@@ -1,8 +1,8 @@
 <template>
   <div class="page-placeholder">
-    <SvgIcon icon-class="lucide-key" width="32px" height="32px" class="page-placeholder__icon" />
-    <p class="page-placeholder__title">API 密钥</p>
-    <p class="page-placeholder__desc">管理你的 API 访问密钥</p>
+    <SvgIcon icon-class="lucide-key" width="32px" height="32px" class="page-placeholder-icon" />
+    <p class="page-placeholder-title">API 密钥</p>
+    <p class="page-placeholder-desc">管理你的 API 访问密钥</p>
   </div>
 </template>
 
@@ -16,18 +16,18 @@
   height: 100%;
   color: var(--color-text-muted);
 
-  &__icon {
+  &-icon {
     opacity: 0.4;
   }
 
-  &__title {
+  &-title {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
     color: var(--color-text-secondary);
   }
 
-  &__desc {
+  &-desc {
     margin: 0;
     font-size: 13px;
   }
