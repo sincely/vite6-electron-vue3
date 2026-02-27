@@ -12,6 +12,7 @@
     "serve": "vite --mode development",
     "electron:build": "vite build && electron-builder",
     "electron:postinstall": "electron-builder install-app-deps",
+    "build": "npm run build:win && npm run build:mac",
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac",
     "build:test": "vite build --mode test",

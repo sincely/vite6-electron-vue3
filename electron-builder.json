@@ -6,10 +6,21 @@
   "directories": {
     "output": "release/${version}"
   },
-  "files": ["dist", "dist-electron", "build/**/*", "public/**/*", "main.js", "node_modules/**/*", "package.json"],
+  "files": [
+    "dist",
+    "dist-electron",
+    "/**/*",
+    "public/**/*",
+    "main.js",
+    "node_modules/**/*",
+    "package.json"
+  ],
   "mac": {
     "icon": "resources/app.icns",
-    "target": ["dmg", "zip"],
+    "target": [
+      "dmg",
+      "zip"
+    ],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "publish": [
@@ -22,10 +33,14 @@
     "target": [
       {
         "target": "nsis",
-        "arch": ["x64"]
+        "arch": [
+          "x64"
+        ]
       }
     ],
-    "files": ["dist/**/*"],
+    "files": [
+      "dist/**/*"
+    ],
     "artifactName": "${productName}-${version}-Setup.${ext}"
   },
   "compression": "maximum",
@@ -36,7 +51,9 @@
     "deleteAppDataOnUninstall": false
   },
   "linux": {
-    "target": ["AppImage"],
+    "target": [
+      "AppImage"
+    ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "releaseInfo": {

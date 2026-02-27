@@ -104,8 +104,7 @@
       "npm run lint"
     ],
     "after:bump": [
-      "npm run build:win",
-      "npm run build:mac"
+      "npm run build"
     ],
     "after:git:release": "echo 'Git release completed successfully!'",
     "before:github:release": "echo 'Creating GitHub release...'",
