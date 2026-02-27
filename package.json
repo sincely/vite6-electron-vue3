@@ -56,7 +56,6 @@
     "pinia-plugin-persistedstate": "3.2.3",
     "terser": "5.24.0",
     "unplugin-auto-import": "19.3.0",
-    "unplugin-icons": "0.16.1",
     "unplugin-vue-components": "28.8.0",
     "vite-plugin-html": "3.2.2",
     "vite-plugin-style-import": "2.0.0",

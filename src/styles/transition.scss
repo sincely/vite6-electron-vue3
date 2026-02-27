@@ -1,55 +1,197 @@
-// 页面过渡动画效果
+// =============================================================
+// 页面切换过渡动画集中管理
+// 在 asyncRoutes 的 meta.transition 中指定名称，默认 'page'
+// 可用值：
+//   page        轻微上滑 + 淡入（默认）
+//   fade        纯淡入淡出
+//   slide-right 左→右滚入
+//   slide-left  右→左滚入
+//   slide-up    下→上滚入
+//   slide-down  上→下滚入
+//   slide-top   下→上滚入
+//   slide-bottom 上→下滚入
+//   scale       居中缩放
+//   zoom        居中放大淡入
+//   blur        模糊淡入
+// =============================================================
 
-// fade 动画
+$dur: 0.2s;
+$ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── page  轻微上滑 + 淡入（默认页面切换） ──────────────────
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+// ── fade  纯淡入淡出 ────────────────────────────────────────
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity $dur $ease;
   will-change: opacity;
 }
 
-.fade-enter-from {
-  opacity: 0;
-}
-
-.fade-enter-to {
-  opacity: 1;
-}
-
+.fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
 
-// slide-right 动画
+// ── slide-right  左→右滚入 ─────────────────────────────────
 .slide-right-enter-active,
 .slide-right-leave-active {
   transition:
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity $dur $ease,
+    transform $dur $ease;
   will-change: opacity, transform;
 }
 
 .slide-right-enter-from {
   opacity: 0;
-  transform: translate3d(-30px, 0, 0);
-}
-
-.slide-right-enter-to {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: translateX(-24px);
 }
 
 .slide-right-leave-to {
   opacity: 0;
-  transform: translate3d(30px, 0, 0);
+  transform: translateX(24px);
+}
+
+// ── slide-left  右→左滚入 ──────────────────────────────────
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+// ── slide-up  下→上滚入 ────────────────────────────────────
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+// ── slide-down  上→下滚入 ──────────────────────────────────
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-24px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+// ── scale  居中缩放（小→大进入，大→小离开） ───────────────
+.scale-enter-active,
+.scale-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.scale-enter-from {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(1.03);
+}
+
+// ── zoom  居中放大淡入（大→正常进入，正常→小离开） ────────
+.zoom-enter-active,
+.zoom-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.zoom-enter-from {
+  opacity: 0;
+  transform: scale(1.06);
+}
+
+.zoom-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+// ── blur  模糊淡入 ─────────────────────────────────────────
+.blur-enter-active,
+.blur-leave-active {
+  transition:
+    filter $dur $ease,
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: filter, opacity, transform;
+}
+
+.blur-enter-from {
+  filter: blur(6px);
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+.blur-leave-to {
+  filter: blur(4px);
+  opacity: 0;
+  transform: scale(1.01);
 }
 
 // slide-top 动画
 .slide-top-enter-active,
 .slide-top-leave-active {
   transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
-  will-change: transform, opacity;
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  will-change: opacity, transform;
 }
 
 .slide-top-enter-from {
@@ -71,9 +213,9 @@
 .slide-bottom-enter-active,
 .slide-bottom-leave-active {
   transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
-  will-change: transform, opacity;
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  will-change: opacity, transform;
 }
 
 .slide-bottom-enter-from {

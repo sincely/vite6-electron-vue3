@@ -19,7 +19,6 @@ async function setupApp() {
     // 初始化主题
     const appStore = useAppStore()
     appStore.initTheme()
-    postMessage({ payload: 'removeLoading' }, '*')
   })
   app.config.performance = true
 }

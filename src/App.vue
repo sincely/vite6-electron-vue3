@@ -1,14 +1,19 @@
 ﻿<template>
   <div id="app">
-    <bar />
-    <div class="app__view">
+    <bar v-if="!isLoginPage" />
+    <div class="app__view" :class="{ 'is-login': isLoginPage }">
       <router-view />
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import bar from './components/Bar/index.vue'
+
+const route = useRoute()
+const isLoginPage = computed(() => route.path === '/login')
 </script>
 
 <style lang="scss">
@@ -25,5 +30,9 @@ import bar from './components/Bar/index.vue'
   flex: 1;
   min-height: 0;
   overflow: hidden;
+}
+
+.app__view.is-login {
+  height: 100vh;
 }
 </style>

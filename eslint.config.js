@@ -57,8 +57,6 @@ export default defineFlatConfig([
       'no-useless-escape': 0,
       // 禁用 continue 语句
       'no-continue': 0,
-      // 强制使用一致的缩进
-      indent: ['error', 2, { SwitchCase: 1 }],
       // 强制使用骆驼拼写法命名约定
       camelcase: 0,
       // 强制类方法使用 this

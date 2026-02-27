@@ -1,11 +1,8 @@
 import AutoImport from 'unplugin-auto-import/vite' // 自动导入插件
 import Components from 'unplugin-vue-components/vite' // 自动导入组件,不需要手动导入
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
 
 export default function createVitePlugins() {
   return [
-    Icons({ autoInstall: true, compiler: 'vue3' }),
     AutoImport({
       imports: ['vue', 'vue-router', '@vueuse/core', 'pinia'],
       include: [/\.[tj]sx?$/, /\.vue$/], // 匹配的文件，也就是哪些后缀的文件需要自动引入
@@ -23,7 +20,7 @@ export default function createVitePlugins() {
     }),
     Components({
       dirs: ['src/components'], // 指定组件位置，默认是src/components
-      resolvers: [IconsResolver()],
+      resolvers: [],
       extensions: ['vue'], // 指定扩展名，默认是.vue
       dts: false // 配置文件生成位置,会在根目录生成./components.d.ts，里面可以看到自动导入的api
     })

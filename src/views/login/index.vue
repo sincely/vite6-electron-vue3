@@ -67,20 +67,6 @@
         点击返回
         <span class="span" @click="toggleRegisterState">登 录</span>
       </p>
-
-      <p class="p line">或者以下方式登录</p>
-
-      <!-- 第三方登录 -->
-      <div class="flex-row">
-        <button type="button" class="btn google" @click="showServiceUpgradeMessage('face')">
-          <img src="@/assets/login/face.svg" width="25" height="25" alt="google" />
-          人脸登录
-        </button>
-        <button type="button" class="btn apple" @click="showServiceUpgradeMessage('sso')">
-          <img src="@/assets/login/sso.svg" width="25" height="25" alt="apple" />
-          网页SSO登录
-        </button>
-      </div>
     </form>
   </div>
 </template>
@@ -92,7 +78,6 @@ const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const submitLoading = ref(false)
 const changeRegLoading = ref(false)
-const router = useRouter()
 
 const loginObj = reactive({
   username: '',
@@ -149,18 +134,19 @@ const submit = () => {
   }, 1000)
 }
 
-const showServiceUpgradeMessage = (type) => {
-  if ('face' === type) {
-    router.push('/face')
-  }
-}
-
 onMounted(() => {})
 </script>
 
 <style>
 .login-main {
-  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-window);
+  -webkit-app-region: drag;
 }
 
 .login-main .form {
@@ -172,13 +158,10 @@ onMounted(() => {})
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
     'Helvetica Neue', sans-serif;
   user-select: none;
-  background-color: #fff;
-  border-right: 1px solid #d9d9d9;
-  border-bottom: 1px solid #d9d9d9;
-  border-left: 1px solid #d9d9d9;
-  border-bottom-right-radius: 20px;
-  border-bottom-left-radius: 20px;
-  box-shadow: 0 4px 6px rgb(0 0 0 / 10%); /* 添加阴影 */
+  background-color: var(--color-bg-content);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
   -webkit-app-region: no-drag;
 }
 
@@ -193,7 +176,7 @@ onMounted(() => {})
 
 .login-main .flex-column > label {
   font-weight: 600;
-  color: #151717;
+  color: var(--color-text-primary);
 }
 
 .login-main .inputForm {
@@ -201,7 +184,8 @@ onMounted(() => {})
   align-items: center;
   height: 50px;
   padding-left: 10px;
-  border: 1.5px solid #ecedec;
+  background-color: var(--color-bg-input);
+  border: 1.5px solid var(--color-border);
   border-radius: 10px;
   transition: 0.2s ease-in-out;
 }
@@ -210,6 +194,8 @@ onMounted(() => {})
   width: 85%;
   height: 100%;
   margin-left: 10px;
+  color: var(--color-text-primary);
+  background-color: transparent;
   border: none;
   border-radius: 10px;
 }
@@ -264,7 +250,7 @@ onMounted(() => {})
 .login-main .p {
   margin: 5px 0;
   font-size: 14px;
-  color: black;
+  color: var(--color-text-secondary);
   text-align: center;
 }
 
