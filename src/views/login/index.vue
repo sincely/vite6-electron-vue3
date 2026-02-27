@@ -136,7 +136,6 @@ const submit = () => {
   submitLoading.value = true
 
   setTimeout(() => {
-    router.push('/main')
     const screenWidth = window.screen.width
     const screenHeight = window.screen.height
     window.ipcRenderer.send('toMain', {
