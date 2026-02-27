@@ -93,7 +93,7 @@ export const asyncRoutes = [
     path: '/apikeys',
     name: 'apikeys',
     component: () => import('@/views/apikeys/index.vue'),
-    meta: { title: 'API 密钥', icon: 'lucide-key', order: 6, sidebar: true, keepAlive: true }
+    meta: { title: 'API 密钥', icon: 'lucide-key', order: 6, sidebar: true, keepAlive: true, transition: 'loading' }
   },
   {
     path: '/log',

@@ -41,7 +41,6 @@ const copyEndpoint = async () => {
 <style lang="scss" scoped>
 .dashboard {
   height: 100%;
-  padding: 24px;
   overflow-y: auto;
 
   &-title {

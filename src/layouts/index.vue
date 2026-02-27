@@ -1,10 +1,13 @@
-﻿<template>
+<template>
   <div class="layout">
     <sidebar class="layout-sidebar" />
     <div class="layout-content">
       <nav-bar />
       <div class="layout-view">
         <router-view v-slot="{ Component, route }">
+          <transition name="fade" mode="out-in">
+            <Loading v-if="isPageLoading" />
+          </transition>
           <transition :name="transitionName" mode="out-in">
             <keep-alive :max="10">
               <component :is="Component" v-if="route.meta?.keepAlive" :key="route.name ?? route.path" />
@@ -22,10 +25,24 @@
 <script setup>
 import sidebar from './components/sideBar.vue'
 import NavBar from './components/navBar.vue'
+import Loading from '@/components/Loading/index.vue'
 
 // 读取当前路由的过渡动画名，未配置时默认 'page'
 const route = useRoute()
 const transitionName = computed(() => route.meta?.transition ?? 'page')
+
+const isPageLoading = ref(false)
+
+// 模拟路由加载状态（实际项目中可结合 router.beforeEach）
+watch(
+  () => route.path,
+  () => {
+    isPageLoading.value = true
+    setTimeout(() => {
+      isPageLoading.value = false
+    }, 300)
+  }
+)
 </script>
 
 <style lang="scss" scoped>
@@ -52,8 +69,10 @@ const transitionName = computed(() => route.meta?.transition ?? 'page')
   }
 
   &-view {
+    position: relative;
     flex: 1;
     min-height: 0;
+    padding: 24px;
     overflow-y: auto;
   }
 }

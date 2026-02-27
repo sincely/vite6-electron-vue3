@@ -185,6 +185,32 @@ $ease: cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1.01);
 }
 
+// ── loading  加载过渡 ─────────────────────────────────────
+.loading-enter-active,
+.loading-leave-active {
+  transition: opacity 0.3s ease;
+  will-change: opacity;
+}
+
+.loading-enter-from,
+.loading-leave-to {
+  opacity: 0;
+}
+
+.loading-enter-active::after {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 999;
+  width: 40px;
+  height: 40px;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%232d79f3' d='M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50'%3E%3Canimation attributeName='transform' attributeType='XML' type='rotate' from='0 50 50' to='360 50 50' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+}
+
 // slide-top 动画
 .slide-top-enter-active,
 .slide-top-leave-active {
