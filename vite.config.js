@@ -32,28 +32,25 @@ export default defineConfig(({ mode, command }) => {
       emptyOutDir: true, // 默认true默认情况下，若outDir在root目录下，则Vite会在构建时清空该目录。
       assetsInlineLimit: 4096, // 小于此阈值的导入或引用资源将内联为base64编码，以避免额外的http请求。设置为0可以完全禁用此项
       outDir: 'dist', // 指定输出路径,默认dist
-      reportCompressedSize: false, // 取消计算文件大小，加快打包速度
-      sourcemap: true, // 构建后是否生成 source map 文件
+      reportCompressedSize: true, // 开启计算文件大小，监控打包体积
+      sourcemap: false, // 生产环境禁用 source map 以减小体积
       assetsDir: 'assets', // 静态资源的存放目录
       cssCodeSplit: true, // 启用/禁用CSS代码拆分默认true, 用则所有样式保存在一个css里面
-      brotliSize: true, // 启用/禁用brotliSize压缩大小报告
-      chunkSizeWarningLimit: 1500, // chunk大小警告的限制
+      chunkSizeWarningLimit: 1000, // chunk大小警告的限制
       minify: 'terser', // 混淆器terser构建后文件体积更小
       manifest: false, // 当设置为true，构建后将会生成 manifest.json 文件
       commonjsOptions: {}, // @rollup/plugin-commonjs 插件的选项
       // 自定义底层的Rollup 打包配置
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              return id.toString().split('node_modules/')[1].split('/')[0].toString()
-            }
+          manualChunks: {
+            'vue-vendor': ['vue', 'vue-router', 'pinia'],
+            'element-plus-vendor': ['element-plus'],
+            'utils-vendor': ['axios', 'dayjs', 'lodash-es']
           },
-          chunkFileNames: (chunkInfo) => {
-            const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/') : []
-            const fileName = facadeModuleId[facadeModuleId.length - 2] || '[name]'
-            return `js/${fileName}/[name].[hash].js`
-          }
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames: '[ext]/[name]-[hash].[ext]'
         }
       }
     },

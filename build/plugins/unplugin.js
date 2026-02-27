@@ -1,11 +1,13 @@
 import AutoImport from 'unplugin-auto-import/vite' // 自动导入插件
 import Components from 'unplugin-vue-components/vite' // 自动导入组件,不需要手动导入
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 export default function createVitePlugins() {
   return [
     AutoImport({
       imports: ['vue', 'vue-router', '@vueuse/core', 'pinia'],
       include: [/\.[tj]sx?$/, /\.vue$/], // 匹配的文件，也就是哪些后缀的文件需要自动引入
+      resolvers: [ElementPlusResolver()],
       // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
       dts: false, // 会在根目录生成auto-imports.d.ts，里面可以看到自动导入的api
       // 根据项目情况配置eslintrc，默认是不开启的
@@ -20,7 +22,7 @@ export default function createVitePlugins() {
     }),
     Components({
       dirs: ['src/components'], // 指定组件位置，默认是src/components
-      resolvers: [],
+      resolvers: [ElementPlusResolver()],
       extensions: ['vue'], // 指定扩展名，默认是.vue
       dts: false // 配置文件生成位置,会在根目录生成./components.d.ts，里面可以看到自动导入的api
     })

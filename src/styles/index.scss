@@ -2,6 +2,7 @@
 @use './text-ellipsis'; // 文字溢出样式
 @use './scroll'; // 通用样式
 @use './transition'; // 动画样式
+@use 'element-plus/dist/index.css';
 
 * {
   box-sizing: border-box;
