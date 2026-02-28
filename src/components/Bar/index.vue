@@ -42,16 +42,16 @@
         </button>
         <!-- 右侧操作区 -->
         <div class="title-bar-actions">
+          <button v-if="updateAvailable" class="icon-btn update-btn" title="有新版本" @click="showUpdateDialog">
+            <SvgIcon icon-class="lucide-download" class="update-icon" width="16px" height="16px" />
+            <span class="version-info">v{{ latestVersion }}</span>
+          </button>
           <button class="icon-btn" title="刷新" @click="reload">
             <SvgIcon icon-class="lucide-refresh-cw" width="16px" height="16px" />
           </button>
           <button class="icon-btn" title="切换主题" @click="appStore.toggleTheme()">
             <SvgIcon :icon-class="appStore.isDark ? 'lucide-sun' : 'lucide-moon'" width="16px" height="16px" />
           </button>
-
-          <!-- <button class="icon-btn" title="设置">
-            <SvgIcon icon-class="lucide-settings" class="user-settings-icon" width="16px" height="16px" />
-          </button> -->
 
           <!-- Windows 窗口控制 (在同一行显示) -->
           <template v-if="!isMac">
@@ -75,12 +75,37 @@
 
 <script setup>
 import { useAppStore } from '@/store/modules/app'
+import { useUpdateStore } from '@/store/modules/update'
+import { ElMessageBox } from 'element-plus'
 
 const appStore = useAppStore()
+const updateStore = useUpdateStore()
 const route = useRoute()
 
 const isLoginPage = computed(() => route.path === '/' || route.path === '/login')
 const isMac = computed(() => window.process?.platform === 'darwin')
+
+const currentVersion = computed(() => updateStore.currentVersion)
+const latestVersion = computed(() => updateStore.latestVersion)
+const updateAvailable = computed(() => updateStore.updateAvailable)
+
+const showUpdateDialog = () => {
+  ElMessageBox.confirm(
+    `检测到新版本 ${latestVersion.value}，当前版本 ${currentVersion.value}。是否立即更新？`,
+    '应用更新',
+    {
+      confirmButtonText: '立即更新',
+      cancelButtonText: '稍后',
+      type: 'info'
+    }
+  )
+    .then(() => {
+      window.ipcRenderer.send('start-download')
+    })
+    .catch(() => {
+      // 用户取消更新
+    })
+}
 
 // const sidebarWidth = computed(() => {
 //   return appStore.sidebarCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)'
@@ -214,6 +239,18 @@ const close = () => window.ipcRenderer.send('window-close')
     &.close-btn:hover {
       color: #fff !important;
       background-color: #e81123 !important;
+    }
+  }
+
+  &.update-btn {
+    gap: 4px;
+    width: auto;
+    padding: 0 8px;
+    color: var(--color-info);
+
+    .version-info {
+      font-size: 11px;
+      font-weight: 600;
     }
   }
 }

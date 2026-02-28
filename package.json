@@ -1,6 +1,6 @@
 {
   "name": "vite6-electron-vue3",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
@@ -15,7 +15,7 @@
     "electron:postinstall": "electron-builder install-app-deps",
     "build": "npm run electron:build",
     "build:win": "electron-builder --win",
-    "build:mac": "vite build && electron-builder --mac",
+    "build:mac": "electron-builder --mac",
     "build:test": "vite build --mode test",
     "build:production": "vite build --mode production",
     "preview": "vite preview --port 4173",

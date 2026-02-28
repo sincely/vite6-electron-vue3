@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isUpdating || updateAvailable || updateDownloaded" class="update-progress-overlay">
+  <div v-if="isUpdating || updateDownloaded" class="update-progress-overlay">
     <el-card class="update-progress-card">
       <template #header>
         <div class="card-header">
@@ -10,9 +10,6 @@
         <p>正在下载更新...</p>
         <el-progress :percentage="downloadProgress" :stroke-width="10" :text-inside="true" />
         <p class="progress-text">{{ downloadProgress.toFixed(1) }}%</p>
-      </div>
-      <div v-else-if="updateAvailable">
-        <p>检测到新版本，正在下载。</p>
       </div>
       <div v-else-if="updateDownloaded">
         <p>更新下载完成，请重启应用以安装。</p>

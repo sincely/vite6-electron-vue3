@@ -19,7 +19,7 @@ export const initUpdater = (win) => {
 
   autoUpdater.logger = logger
 
-  autoUpdater.autoDownload = true
+  autoUpdater.autoDownload = false
 
   // 开启本地dev调试
   autoUpdater.forceDevUpdateConfig = true
@@ -29,11 +29,17 @@ export const initUpdater = (win) => {
 
   autoUpdater.on('update-not-available', () => {
     logger.info('无新版本')
+    mainWindow?.webContents.send('update-not-available')
   })
 
-  autoUpdater.on('update-available', () => {
-    logger.info('检测到新版本')
-    mainWindow?.webContents.send('update-available')
+  autoUpdater.on('update-available', (info) => {
+    logger.info('检测到新版本', info.version)
+    mainWindow?.webContents.send('update-available', info)
+  })
+
+  ipcMain.on('start-download', () => {
+    logger.info('开始下载更新')
+    autoUpdater.downloadUpdate()
   })
 
   autoUpdater.on('error', (error) => {

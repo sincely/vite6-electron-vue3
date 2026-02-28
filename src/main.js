@@ -18,7 +18,14 @@ async function setupApp() {
     const appStore = useAppStore()
     appStore.initTheme()
 
+    console.log(111111)
+
     const updateStore = useUpdateStore()
+
+    // 获取当前版本号
+    window.ipcRenderer.invoke('get-app-version').then((version) => {
+      updateStore.setCurrentVersion(version)
+    })
 
     // 监听主进程发送的通知
     window.ipcRenderer.on('show-notification', (event, options) => {
@@ -36,14 +43,20 @@ async function setupApp() {
     })
 
     // 监听更新可用
-    window.ipcRenderer.on('update-available', () => {
+    window.ipcRenderer.on('update-available', (event, info) => {
       updateStore.setUpdateAvailable(true)
+      updateStore.setLatestVersion(info.version)
     })
 
     // 监听更新下载完成
     window.ipcRenderer.on('update-downloaded', () => {
       updateStore.setUpdateDownloaded(true)
       updateStore.setUpdating(false)
+    })
+
+    // 监听无新版本
+    window.ipcRenderer.on('update-not-available', () => {
+      updateStore.resetUpdateState()
     })
   })
   app.config.performance = true

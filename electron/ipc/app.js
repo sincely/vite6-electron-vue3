@@ -1,4 +1,5 @@
-﻿import { createMainWindow, closeLoginWindow, createWindow } from '../main/windowManager.js'
+import { createMainWindow, closeLoginWindow, createWindow } from '../main/windowManager.js'
+import { app } from 'electron'
 
 export default [
   {
@@ -19,6 +20,13 @@ export default [
     handler: (event, data) => {
       closeLoginWindow()
       createMainWindow()
+    }
+  },
+  {
+    channel: 'get-app-version',
+    type: 'handle',
+    handler: () => {
+      return app.getVersion()
     }
   }
 ]

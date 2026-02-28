@@ -5,7 +5,9 @@ export const useUpdateStore = defineStore('update', {
     isUpdating: false,
     downloadProgress: 0,
     updateAvailable: false,
-    updateDownloaded: false
+    updateDownloaded: false,
+    latestVersion: '',
+    currentVersion: ''
   }),
   actions: {
     setUpdating(status) {
@@ -20,11 +22,19 @@ export const useUpdateStore = defineStore('update', {
     setUpdateDownloaded(status) {
       this.updateDownloaded = status
     },
+    setLatestVersion(version) {
+      this.latestVersion = version
+    },
+    setCurrentVersion(version) {
+      this.currentVersion = version
+    },
     resetUpdateState() {
       this.isUpdating = false
       this.downloadProgress = 0
       this.updateAvailable = false
       this.updateDownloaded = false
+      this.latestVersion = ''
+      this.currentVersion = ''
     }
   }
 })
