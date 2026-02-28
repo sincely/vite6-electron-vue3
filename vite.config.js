@@ -6,7 +6,7 @@ import { proxyServer } from './build/config/proxy'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
 export default defineConfig(({ mode, command }) => {
-  fs.rmSync('dist-electron', { recursive: true, force: true })
+  // fs.rmSync('dist-electron', { recursive: true, force: true })
   const viteEnv = loadEnv(mode, process.cwd())
   const isServe = command === 'serve'
   const isBuild = command === 'build'

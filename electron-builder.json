@@ -6,7 +6,7 @@
   "directories": {
     "output": "release/${version}"
   },
-  "files": ["dist", "node_modules/**/*", "dist-electron", "package.json"],
+  "files": ["dist/**/*", "node_modules/**/*", "dist-electron/**/*", "package.json"],
   "mac": {
     "icon": "resources/app.icns",
     "target": ["dmg", "zip"],

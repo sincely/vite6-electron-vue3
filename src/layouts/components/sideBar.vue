@@ -156,7 +156,6 @@ $transition: 0.2s ease;
   overflow: hidden;
   background-color: var(--color-bg-sidebar);
   border-right: 1px solid var(--color-border);
-  border-bottom-left-radius: 10px;
   transition: width $transition;
 
   &-collapsed {

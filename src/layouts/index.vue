@@ -75,7 +75,7 @@ watch(
     position: relative;
     flex: 1;
     min-height: 0;
-    padding: 22px;
+    padding: 18px;
     overflow-y: auto;
   }
 }

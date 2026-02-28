@@ -79,6 +79,18 @@ npm run build
 
 如果在 Windows 上打包时遇到 `Cannot create symbolic link` 错误，请尝试**以管理员身份运行您的终端**，然后执行构建命令。
 
+### 打包注意事项 (ASAR 缺失 dist 目录)
+
+在进行 `npm run build-win` 或 `npm run build-mac` 时，务必确保打包脚本包含 `vite build`。
+
+**原因**：`electron-builder` 会根据配置将 `dist` 目录打包进 `app.asar`。如果未先执行 `vite build`，`dist` 目录可能为空或不存在，导致安装后的程序无法加载渲染进程页面。
+
+**解决方案**：已在 `package.json` 中优化脚本，确保每次打包前都会先执行前端构建：
+```json
+"build-win": "vite build && electron-builder --win",
+"build-mac": "vite build && electron-builder --mac"
+```
+
 ### 自定义通知
 
 本项目已实现使用 Element Plus 组件自定义通知。主进程通过 IPC 向渲染进程发送通知数据，渲染进程监听并使用 `ElNotification` 显示。

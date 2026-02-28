@@ -127,11 +127,6 @@ const close = () => window.ipcRenderer.send('window-close')
   height: var(--titlebar-height);
   overflow: hidden;
   user-select: none;
-  border-top: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  border-left: 1px solid var(--color-border);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
   -webkit-app-region: drag;
 
   &.is-login {

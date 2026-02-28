@@ -74,8 +74,8 @@ export function createLoginWindow() {
   }
 
   const win = new BrowserWindow({
-    width: 510,
-    height: 680,
+    width: 500,
+    height: 560,
     icon: path.join(VITE_PUBLIC, 'favicon.ico'),
     show: false,
     autoHideMenuBar: true,
