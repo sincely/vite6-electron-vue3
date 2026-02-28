@@ -21,9 +21,10 @@ if (process.contextIsolated) {
         const [channel, ...omit] = args
         return ipcRenderer.invoke(channel, ...omit)
       }
-
-      // You can expose other APTs you need here.
-      // ...
+    })
+    // You can expose other APTs you need here.
+    contextBridge.exposeInMainWorld('process', {
+      platform: process.platform
     })
 
     contextBridge.exposeInMainWorld('api', api)
@@ -35,7 +36,7 @@ if (process.contextIsolated) {
   window.api = api
 }
 
-// --------- Preload scripts loading ---------
+// 预加载loadin脚本
 function domReady(condition = ['complete', 'interactive']) {
   return new Promise((resolve) => {
     if (condition.includes(document.readyState)) {

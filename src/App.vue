@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <bar v-if="!isLoginPage" />
     <div class="app-view" :class="{ 'is-login': isLoginPage }">
       <router-view />
     </div>
@@ -10,13 +9,12 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import bar from './components/Bar/index.vue'
 
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   display: flex;
   flex-direction: column;

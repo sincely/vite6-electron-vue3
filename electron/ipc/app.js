@@ -1,11 +1,10 @@
-﻿import { createMainWindow, closeLoginWindow } from '../main/windowManager.js'
+﻿import { createMainWindow, closeLoginWindow, createWindow } from '../main/windowManager.js'
 
 export default [
   {
     channel: 'open-win',
     type: 'handle',
-    handler: async (event, arg) => {
-      const { createWindow } = await import('../main/windowManager.js')
+    handler: (event, arg) => {
       createWindow({
         hash: arg,
         width: 600,

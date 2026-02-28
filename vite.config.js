@@ -18,7 +18,7 @@ export default defineConfig(({ mode, command }) => {
       // strictPort: false, // 设为false时，若端口已被占用则会尝试下一个可用端口,而不是直接退出
       open: true, // 在服务器启动时自动在浏览器中打开应用程序
       port: 3200, // 指定服务器端口
-      proxy: proxyServer // 设置代理
+      proxy: isServe ? proxyServer : undefined
     },
     build: {
       // 传递给Terser的更多 minify 选项。

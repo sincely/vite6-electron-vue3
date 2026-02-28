@@ -123,6 +123,7 @@ const submit = () => {
   setTimeout(() => {
     const screenWidth = window.screen.width
     const screenHeight = window.screen.height
+    // 发送登录信息到主进程
     window.ipcRenderer.send('toMain', {
       username: loginObj.username,
       token: '',

@@ -78,7 +78,9 @@ export default defineFlatConfig([
       // 强制箭头函数的箭头前后使用一致的空格
       'arrow-spacing': 'error',
       // 只强制对象解构，不强制数组解构
-      'prefer-destructuring': ['error', { object: true, array: false }]
+      'prefer-destructuring': ['error', { object: true, array: false }],
+      // 开启 space-before-function-paren 规则，要求函数括号前不允许有空格
+      'space-before-function-paren': ['error', 'never']
     }
   },
   {

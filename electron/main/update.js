@@ -13,7 +13,7 @@ export const initUpdater = (win) => {
   // 自定义服务器地址
   autoUpdater.setFeedURL({
     provider: 'generic',
-    url: 'http://192.168.25.194:8000/updates/'
+    url: 'http://10.10.24.52:8089/electron-update/'
   })
 
   autoUpdater.logger = logger

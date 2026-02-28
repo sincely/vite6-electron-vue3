@@ -9,10 +9,6 @@
   "files": [
     "dist",
     "dist-electron",
-    "/**/*",
-    "public/**/*",
-    "main.js",
-    "node_modules/**/*",
     "package.json"
   ],
   "mac": {
@@ -26,10 +22,11 @@
   "publish": [
     {
       "provider": "generic",
-      "url": "http://localhost:9000"
+      "url": "http://10.10.24.52:8089/electron-update/"
     }
   ],
   "win": {
+    "icon": "resources/icon.png",
     "target": [
       {
         "target": "nsis",
@@ -37,9 +34,6 @@
           "x64"
         ]
       }
-    ],
-    "files": [
-      "dist/**/*"
     ],
     "artifactName": "${productName}-${version}-Setup.${ext}"
   },

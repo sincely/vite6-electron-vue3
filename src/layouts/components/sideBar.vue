@@ -3,7 +3,7 @@
     <!-- Logo 区域 -->
     <div class="sidebar-logo">
       <img src="@/assets/bar/logo.svg" class="logo-img" alt="logo" />
-      <span class="logo-text">AI Desktop</span>
+      <div class="logo-text">{{ appStore.sidebarCollapsed ? '' : 'AI Desktop' }}</div>
     </div>
 
     <!-- 主导航 -->
@@ -158,20 +158,22 @@ $transition: 0.2s ease;
   // ── Logo 区域 ──────────────────────────
   &-logo {
     display: flex;
-    gap: 10px;
     align-items: center;
-    height: 50px;
-    padding: 0 16px;
+    height: 65px;
+    padding: 10px 16px;
     cursor: pointer;
-    transition: padding $transition;
+
+    // 底部添加 1px 边框
+    border-bottom: 2px solid var(--color-border);
 
     .logo-img {
       flex-shrink: 0;
-      width: 24px;
-      height: 24px;
+      width: 30px;
+      height: 30px;
     }
 
     .logo-text {
+      margin-left: 10px;
       overflow: hidden;
       font-size: 16px;
       font-weight: 700;

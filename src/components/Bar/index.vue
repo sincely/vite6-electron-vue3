@@ -3,23 +3,29 @@
     <!-- 登录页：完整标题栏 -->
     <template v-if="isLoginPage">
       <div class="title-bar-login">
-        <!-- 原生交通灯占位区 -->
-        <div class="native-traffic-lights" />
         <span class="title-bar-app-name">
           <img src="@/assets/bar/logo.svg" class="title-bar-logo" alt="logo" />
           ai
         </span>
+        <!-- 登录页右侧：仅窗口控制 -->
+        <div v-if="!isMac" class="title-bar-actions">
+          <div class="window-controls">
+            <button class="icon-btn control-btn" title="最小化" @click="minimize">
+              <SvgIcon icon-class="lucide-minus" width="16px" height="16px" />
+            </button>
+            <button class="icon-btn control-btn" title="最大化" @click="maximize">
+              <SvgIcon icon-class="lucide-plus" width="16px" height="16px" />
+            </button>
+            <button class="icon-btn control-btn close-btn" title="关闭" @click="close">
+              <SvgIcon icon-class="lucide-x" width="16px" height="16px" />
+            </button>
+          </div>
+        </div>
       </div>
     </template>
 
     <!-- 主页：左侧 sidebar + 右侧内容区 -->
     <template v-else>
-      <!-- 左侧：sidebar 区域标题栏 -->
-      <div class="title-bar-sidebar" :style="{ width: sidebarWidth }">
-        <!-- 原生交通灯占位区 -->
-        <div class="native-traffic-lights" />
-      </div>
-
       <!-- 右侧：内容区标题栏 -->
       <div class="title-bar-content">
         <!-- 折叠按钮，始终可见 -->
@@ -30,18 +36,37 @@
         >
           <SvgIcon
             :icon-class="appStore.sidebarCollapsed ? 'lucide-panel-left-open' : 'lucide-panel-left-close'"
-            width="15px"
-            height="15px"
+            width="20px"
+            height="20px"
           />
         </button>
         <!-- 右侧操作区 -->
         <div class="title-bar-actions">
           <button class="icon-btn" title="刷新" @click="reload">
-            <SvgIcon icon-class="lucide-refresh-cw" width="14px" height="14px" />
+            <SvgIcon icon-class="lucide-refresh-cw" width="16px" height="16px" />
           </button>
           <button class="icon-btn" title="切换主题" @click="appStore.toggleTheme()">
-            <SvgIcon :icon-class="appStore.isDark ? 'lucide-sun' : 'lucide-moon'" width="14px" height="14px" />
+            <SvgIcon :icon-class="appStore.isDark ? 'lucide-sun' : 'lucide-moon'" width="16px" height="16px" />
           </button>
+
+          <!-- <button class="icon-btn" title="设置">
+            <SvgIcon icon-class="lucide-settings" class="user-settings-icon" width="16px" height="16px" />
+          </button> -->
+
+          <!-- Windows 窗口控制 (在同一行显示) -->
+          <template v-if="!isMac">
+            <div class="window-controls">
+              <button class="icon-btn control-btn" title="最小化" @click="minimize">
+                <SvgIcon icon-class="lucide-minus" width="16px" height="16px" />
+              </button>
+              <button class="icon-btn control-btn" title="最大化" @click="maximize">
+                <SvgIcon icon-class="lucide-plus" width="16px" height="16px" />
+              </button>
+              <button class="icon-btn control-btn close-btn" title="关闭" @click="close">
+                <SvgIcon icon-class="lucide-x" width="16px" height="16px" />
+              </button>
+            </div>
+          </template>
         </div>
       </div>
     </template>
@@ -55,12 +80,17 @@ const appStore = useAppStore()
 const route = useRoute()
 
 const isLoginPage = computed(() => route.path === '/' || route.path === '/login')
+const isMac = computed(() => window.process?.platform === 'darwin')
 
-const sidebarWidth = computed(() => {
-  return appStore.sidebarCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)'
-})
+// const sidebarWidth = computed(() => {
+//   return appStore.sidebarCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)'
+// })
 
 const reload = () => location.reload()
+
+const minimize = () => window.ipcRenderer.send('window-minimize')
+const maximize = () => window.ipcRenderer.send('window-maximize')
+const close = () => window.ipcRenderer.send('window-close')
 </script>
 
 <style lang="scss" scoped>
@@ -89,8 +119,12 @@ const reload = () => location.reload()
     flex: 1;
     gap: 12px;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 0 0 12px;
     background-color: var(--color-bg-titlebar);
+
+    .title-bar-actions {
+      margin-left: auto;
+    }
   }
 
   // 左侧侧边栏标题部分
@@ -111,7 +145,7 @@ const reload = () => location.reload()
     flex: 1;
     align-items: center;
     min-width: 0;
-    padding: 0 8px 0 4px;
+    padding: 0 0 0 4px;
     background-color: var(--color-bg-titlebar);
   }
 
@@ -134,16 +168,15 @@ const reload = () => location.reload()
     display: flex;
     gap: 2px;
     align-items: center;
+    height: 100%;
     margin-left: auto;
   }
 }
 
-// 原生交通灯占位（hiddenInset 模式下按钮宽约 78px）
-.native-traffic-lights {
-  flex-shrink: 0;
-  width: 78px;
+.window-controls {
+  display: flex;
+  align-items: center;
   height: 100%;
-  -webkit-app-region: no-drag;
 }
 
 // 图标按钮
@@ -171,6 +204,17 @@ const reload = () => location.reload()
 
   &:active {
     opacity: 0.7;
+  }
+
+  &.control-btn {
+    width: 32px;
+    height: var(--titlebar-height);
+    border-radius: 0;
+
+    &.close-btn:hover {
+      color: #fff !important;
+      background-color: #e81123 !important;
+    }
   }
 }
 

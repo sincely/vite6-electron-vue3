@@ -4,7 +4,7 @@
     <div class="nav-bar-breadcrumb">
       <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
         <!-- 分隔符（第一项之后出现） -->
-        <SvgIcon v-if="idx > 0" icon-class="lucide-chevron-right" class="nav-bar-sep" width="12px" height="12px" />
+        <SvgIcon v-if="idx > 0" icon-class="lucide-chevron-right" class="nav-bar-sep" width="16px" height="16px" />
         <!-- 面包屑节点 -->
         <span
           class="nav-bar-crumb"
@@ -19,8 +19,8 @@
             v-if="idx === 0 && crumb.icon"
             :icon-class="crumb.icon"
             class="nav-bar-icon"
-            width="14px"
-            height="14px"
+            width="16px"
+            height="16px"
           />
           {{ crumb.label }}
         </span>
@@ -34,7 +34,7 @@
 
     <!-- 右侧插槽，供各页面扩展 -->
     <div class="nav-bar-extra">
-      <slot />
+      <slot name="extra" />
     </div>
   </div>
 </template>

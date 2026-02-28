@@ -26,7 +26,7 @@ export const constantRoutes = [
  *   keepAlive - 是否缓存组件
  */
 export const asyncRoutes = [
-  // -- 仪表板
+  //  仪表板
   {
     path: '/desktop',
     name: 'desktop',
@@ -40,7 +40,7 @@ export const asyncRoutes = [
       transition: 'page'
     }
   },
-  // -- 配额
+  //  配额
   {
     path: '/quota',
     redirect: '/quota/usage',
@@ -58,7 +58,7 @@ export const asyncRoutes = [
     component: () => import('@/views/quota/limit/index.vue'),
     meta: { title: '限额管理', group: '/quota', keepAlive: true, transition: 'slide-up' }
   },
-  // -- 提供商
+  //  提供商
   {
     path: '/provider',
     redirect: '/provider/list',
@@ -76,7 +76,7 @@ export const asyncRoutes = [
     component: () => import('@/views/provider/add/index.vue'),
     meta: { title: '添加提供商', group: '/provider', transition: 'zoom' }
   },
-  // -- 独立页面
+  //  独立页面
   {
     path: '/fallback',
     name: 'fallback',
@@ -107,7 +107,7 @@ export const asyncRoutes = [
     component: () => import('@/views/about/index.vue'),
     meta: { title: '关于', icon: 'lucide-info', order: 8, sidebar: true, transition: 'scale' }
   },
-  // -- 设置（底部固定）
+  //  设置（底部固定）
   {
     path: '/settings',
     redirect: '/settings/general',

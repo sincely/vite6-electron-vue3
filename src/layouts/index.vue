@@ -2,6 +2,7 @@
   <div class="layout">
     <sidebar class="layout-sidebar" />
     <div class="layout-content">
+      <bar v-if="!isLoginPage" />
       <nav-bar />
       <div class="layout-view">
         <router-view v-slot="{ Component, route }">
@@ -25,14 +26,13 @@
 <script setup>
 import sidebar from './components/sideBar.vue'
 import NavBar from './components/navBar.vue'
-import Loading from '@/components/Loading/index.vue'
 
 // 读取当前路由的过渡动画名，未配置时默认 'page'
 const route = useRoute()
 const transitionName = computed(() => route.meta?.transition ?? 'page')
 
 const isPageLoading = ref(false)
-
+const isLoginPage = computed(() => route.path === '/login')
 // 模拟路由加载状态（实际项目中可结合 router.beforeEach）
 watch(
   () => route.path,
