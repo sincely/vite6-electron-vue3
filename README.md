@@ -1,11 +1,87 @@
-node 18以上
+# Vite6 Electron Vue3 项目
 
-https://juejin.cn/post/7329034119846297638?searchId=2024071910151491A186B1EF55D9140D9D#heading-9
+这是一个基于 Vite6、Electron 和 Vue3 构建的桌面应用程序。
 
-Electron 最近正式兼容了 ESM 规范，在项目中启用需要满足以下条件：
+## 项目设置
 
-项目package.json中包含顶置的"type": "module"字段
-Electron 版本大于等于28.0.0
-vite-plugin-electron 版本大于等于0.28.0-beta.1
+### 依赖安装
 
-https://juejin.cn/post/7416311252580352034?searchId=20251031014326A1CFB4695FD2BAFF454A
+```bash
+npm install
+```
+
+### 开发模式
+
+```bash
+npm run dev
+```
+
+### 构建项目
+
+```bash
+# 构建 Windows 版本
+npm run build:win
+
+# 构建 macOS 版本
+npm run build:mac
+
+# 构建所有平台版本
+npm run build
+```
+
+## 项目结构
+
+-   `electron/main`: Electron 主进程代码
+-   `electron/preload`: Electron 预加载脚本
+-   `electron/ipc`: 进程间通信 (IPC) 模块
+-   `src`: Vue3 渲染进程代码
+    -   `src/main.js`: 渲染进程入口文件
+    -   `src/router`: Vue Router 配置
+    -   `src/store`: Pinia 状态管理
+    -   `src/components`: Vue 组件
+    -   `src/styles`: 全局样式
+
+## 更新机制
+
+本项目使用 `electron-updater` 实现自动更新。
+
+### 配置
+
+更新服务器地址在 `electron-builder.json` 的 `publish` 字段中配置：
+
+```json
+"publish": [
+  {
+    "provider": "generic",
+    "url": "http://localhost:9000" // 请替换为您的实际更新服务器地址
+  }
+],
+```
+
+### 更新流程
+
+1.  **构建新版本**：
+    -   更新 `package.json` 中的 `version` 字段。
+    -   运行 `npm run electron:build`。这会生成新的安装包和 `latest.yml` (Windows) 或 `latest-mac.yml` (macOS) 文件。
+2.  **上传到更新服务器**：
+    -   将 `release/${version}` 目录下的所有文件（包括安装包和 `latest.yml`）上传到您在 `electron-builder.json` 中配置的 `url` 对应的服务器路径下。
+3.  **客户端检查更新**：
+    -   当用户运行旧版本的应用时，`electron-updater` 会自动检查更新。如果发现新版本，就会下载并提示用户安装。
+
+## 常见问题
+
+### 终端中文乱码
+
+如果在终端中遇到中文乱码问题，可以尝试在 `package.json` 的 `scripts` 中添加 `chcp 65001 &&` 来强制终端使用 UTF-8 编码。
+
+### Windows 打包失败 (符号链接权限问题)
+
+如果在 Windows 上打包时遇到 `Cannot create symbolic link` 错误，请尝试**以管理员身份运行您的终端**，然后执行构建命令。
+
+### 自定义通知
+
+本项目已实现使用 Element Plus 组件自定义通知。主进程通过 IPC 向渲染进程发送通知数据，渲染进程监听并使用 `ElNotification` 显示。
+
+## 贡献
+
+欢迎提交 Pull Request 或报告 Bug。

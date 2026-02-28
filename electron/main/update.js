@@ -1,3 +1,4 @@
+import { ipcMain } from 'electron'
 import pkg from 'electron-updater'
 import logger from './log'
 
@@ -37,15 +38,21 @@ export const initUpdater = (win) => {
 
   autoUpdater.on('error', (error) => {
     logger.error('更新错误：', JSON.stringify(error))
+    mainWindow?.webContents.send('update-error', error)
   })
 
   // 下载进度
   autoUpdater.on('download-progress', (progress) => {
     logger.info(`下载安装包进度: ${progress.percent}%`)
+    mainWindow?.webContents.send('download-progress', progress)
   })
 
   autoUpdater.on('update-downloaded', () => {
     logger.info('下载完成，是否立即安装更新？')
     mainWindow?.webContents.send('update-downloaded')
+  })
+
+  ipcMain.on('install-update', () => {
+    autoUpdater.quitAndInstall()
   })
 }

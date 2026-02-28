@@ -3,12 +3,14 @@
     <div class="app-view" :class="{ 'is-login': isLoginPage }">
       <router-view />
     </div>
+    <UpdateProgress />
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import UpdateProgress from '@/components/UpdateProgress.vue'
 
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
