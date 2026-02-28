@@ -21,6 +21,17 @@ const setupWindow = (win) => {
       action: 'deny' // 拒绝打开外部链接
     }
   })
+
+  // 监听加载失败
+  win.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+    console.error(`Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`)
+  })
+
+  // 监听崩溃
+  win.webContents.on('render-process-gone', (event, details) => {
+    console.error(`Render process gone: ${details.reason} (${details.exitCode})`)
+  })
+
   win.once('ready-to-show', () => win.show())
 }
 

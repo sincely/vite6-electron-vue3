@@ -12,7 +12,7 @@ export default defineConfig(({ mode, command }) => {
   const isBuild = command === 'build'
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG
   return defineConfig({
-    base: viteEnv.VITE_BASE_URL,
+    base: isBuild ? './' : '/',
     server: {
       // https: false, // 是否开启https
       // strictPort: false, // 设为false时，若端口已被占用则会尝试下一个可用端口,而不是直接退出
