@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <div class="app-view" :class="{ 'is-login': isLoginPage }">
+  <div class="app-box">
+    <div class="app-container" :class="{ 'is-login': isLoginPage }">
       <router-view />
     </div>
     <UpdateProgress />
@@ -17,7 +17,7 @@ const isLoginPage = computed(() => route.path === '/login')
 </script>
 
 <style lang="scss" scoped>
-#app {
+.app-box {
   display: flex;
   flex-direction: column;
   width: 100vw;
@@ -26,7 +26,7 @@ const isLoginPage = computed(() => route.path === '/login')
   background-color: var(--color-bg-window);
 }
 
-.app-view {
+.app-container {
   flex: 1;
   min-height: 0;
   overflow: hidden;

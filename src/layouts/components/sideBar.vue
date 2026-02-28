@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :class="{ 'sidebar-collapsed': appStore.sidebarCollapsed }">
+  <div class="sidebar" :class="{ 'sidebar-collapsed': appStore.sidebarCollapsed, 'is-mac': isMac }">
     <!-- Logo 区域 -->
     <div class="sidebar-logo">
       <img src="@/assets/bar/logo.svg" class="logo-img" alt="logo" />
@@ -16,7 +16,7 @@
           :title="appStore.sidebarCollapsed ? item.label : ''"
           @click="handleNav(item)"
         >
-          <SvgIcon :icon-class="item.icon" class="sidebar-icon" width="16px" height="16px" />
+          <SvgIcon :icon-class="item.icon" class="sidebar-icon" width="20px" height="20px" />
           <span class="sidebar-label">{{ item.label }}</span>
           <!-- 有子菜单时显示箭头指示器 -->
           <SvgIcon
@@ -84,6 +84,14 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
+
+// 检测平台
+const isMac = ref(false)
+if (typeof process !== 'undefined' && process.platform) {
+  isMac.value = process.platform === 'darwin'
+} else {
+  isMac.value = navigator.platform.toLowerCase().indexOf('mac') >= 0
+}
 
 // 按 footer 字段拆分为主导航（排除底部固定的设置项）
 const mainItems = menuItems.filter((item) => !item.footer)
@@ -164,7 +172,13 @@ $transition: 0.2s ease;
     cursor: pointer;
 
     // 底部添加 1px 边框
-    border-bottom: 2px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+
+    // Mac 平台顶部留白
+    .is-mac & {
+      height: 85px; // 65px + 20px
+      padding-top: 30px;
+    }
 
     .logo-img {
       flex-shrink: 0;
@@ -186,8 +200,10 @@ $transition: 0.2s ease;
   }
 
   &-collapsed &-logo {
-    justify-content: center;
-    padding: 0;
+    // Mac 平台顶部留白
+    .is-mac & {
+      padding-top: 30px;
+    }
 
     .logo-text {
       width: 0;
@@ -209,7 +225,6 @@ $transition: 0.2s ease;
     align-items: center;
     height: 36px;
     padding: 0 10px;
-    margin-bottom: 2px;
     color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
@@ -303,7 +318,7 @@ $transition: 0.2s ease;
 
   // ── 底部用户信息区 ──────────────────────
   &-footer {
-    padding: 12px 8px;
+    padding: 8px 6px;
     border-top: 1px solid var(--color-border);
   }
 
@@ -311,7 +326,7 @@ $transition: 0.2s ease;
     display: flex;
     gap: 10px;
     align-items: center;
-    padding: 8px;
+    padding: 4px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color $transition;

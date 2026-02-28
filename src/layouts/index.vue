@@ -1,6 +1,8 @@
 <template>
-  <div class="layout">
-    <sidebar class="layout-sidebar" />
+  <div class="layout-container">
+    <div class="layout-sidebar">
+      <sidebar />
+    </div>
     <div class="layout-content">
       <bar v-if="!isLoginPage" />
       <nav-bar />
@@ -25,7 +27,7 @@
 
 <script setup>
 import sidebar from './components/sideBar.vue'
-import NavBar from './components/navBar.vue'
+import navBar from './components/navBar.vue'
 
 // 读取当前路由的过渡动画名，未配置时默认 'page'
 const route = useRoute()
@@ -46,19 +48,20 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.layout {
+.layout-container {
   display: flex;
   width: 100%;
   height: 100%;
   overflow: hidden;
   background-color: var(--color-bg-content);
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-  border-left: 1px solid var(--color-border);
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
 
-  &-content {
+  // border-right: 1px solid var(--color-border);
+  // border-bottom: 1px solid var(--color-border);
+  // border-left: 1px solid var(--color-border);
+  // border-bottom-right-radius: 10px;
+  // border-bottom-left-radius: 10px;
+
+  .layout-content {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -68,11 +71,11 @@ watch(
     background-color: var(--color-bg-content);
   }
 
-  &-view {
+  .layout-view {
     position: relative;
     flex: 1;
     min-height: 0;
-    padding: 24px;
+    padding: 22px;
     overflow-y: auto;
   }
 }

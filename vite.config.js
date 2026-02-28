@@ -17,7 +17,7 @@ export default defineConfig(({ mode, command }) => {
       // https: false, // 是否开启https
       // strictPort: false, // 设为false时，若端口已被占用则会尝试下一个可用端口,而不是直接退出
       open: true, // 在服务器启动时自动在浏览器中打开应用程序
-      port: 3200, // 指定服务器端口
+      port: 3220, // 指定服务器端口
       proxy: isServe ? proxyServer : undefined
     },
     build: {
@@ -33,7 +33,7 @@ export default defineConfig(({ mode, command }) => {
       assetsInlineLimit: 4096, // 小于此阈值的导入或引用资源将内联为base64编码，以避免额外的http请求。设置为0可以完全禁用此项
       outDir: 'dist', // 指定输出路径,默认dist
       reportCompressedSize: true, // 开启计算文件大小，监控打包体积
-      sourcemap: false, // 生产环境禁用 source map 以减小体积
+      sourcemap: sourcemap, // 生产环境禁用 source map 以减小体积
       assetsDir: 'assets', // 静态资源的存放目录
       cssCodeSplit: true, // 启用/禁用CSS代码拆分默认true, 用则所有样式保存在一个css里面
       chunkSizeWarningLimit: 1000, // chunk大小警告的限制

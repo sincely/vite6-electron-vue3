@@ -56,7 +56,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  height: 44px;
+  height: 43px;
   padding: 0 16px;
   background-color: var(--color-bg-content);
   border-bottom: 1px solid var(--color-border);

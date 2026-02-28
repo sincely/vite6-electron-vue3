@@ -37,13 +37,12 @@ const setupWindow = (win) => {
 
 // 加载哈希路由
 const loadHash = (win, hash) => {
-  const url = VITE_DEV_SERVER_URL ? (hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL) : indexHtml
   if (VITE_DEV_SERVER_URL) {
-    // 开发环境加载 URL
-    win.loadURL(url)
+    win.loadURL(hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL)
   } else {
-    // 生产环境加载文件
-    win.loadFile(url, hash ? { hash } : {})
+    // 生产环境使用 loadFile 加载本地文件
+    // hash 直接通过 options 传递，Electron 会自动处理
+    win.loadFile(indexHtml, hash ? { hash } : {})
   }
 }
 
@@ -80,11 +79,7 @@ export function createLoginWindow() {
     icon: path.join(VITE_PUBLIC, 'favicon.ico'),
     show: false,
     autoHideMenuBar: true,
-    // 1. 隐藏原生标题栏
-    // titleBarStyle: 'hidden',
-    // 用系统控件叠加层
-    // ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}),
-
+    titleBarStyle: 'hiddenInset',
     resizable: false,
     frame: true,
     center: true,
@@ -99,7 +94,7 @@ export function createLoginWindow() {
   loginWindowId = windowId
   windows.set(windowId, win)
 
-  loadHash(win, '/login')
+  loadHash(win, 'login')
   setupWindow(win)
 
   win.on('closed', () => {
@@ -153,7 +148,7 @@ export function createMainWindow() {
     createNotification({ title: '欢迎', body: '应用已成功启动！' })
   })
 
-  loadHash(win, '/desktop')
+  loadHash(win, 'desktop')
   setupWindow(win)
 
   if (VITE_DEV_SERVER_URL) win.webContents.openDevTools()
