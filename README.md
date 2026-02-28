@@ -64,7 +64,8 @@ npm run build
     -   更新 `package.json` 中的 `version` 字段。
     -   运行 `npm run electron:build`。这会生成新的安装包和 `latest.yml` (Windows) 或 `latest-mac.yml` (macOS) 文件。
 2.  **上传到更新服务器**：
-    -   将 `release/${version}` 目录下的所有文件（包括安装包和 `latest.yml`）上传到您在 `electron-builder.json` 中配置的 `url` 对应的服务器路径下。
+    -   将 `release/${version}` 目录下的所有文件上传到您的更新服务器。
+    -   **注意**：只需上传 `.exe`、`latest.yml` 和 `.blockmap` 文件。**不需要**上传 `win-unpacked` 文件夹。
 3.  **客户端检查更新**：
     -   当用户运行旧版本的应用时，`electron-updater` 会自动检查更新。如果发现新版本，就会下载并提示用户安装。
 
