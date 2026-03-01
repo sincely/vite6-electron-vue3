@@ -120,7 +120,7 @@ export function createMainWindow() {
     width: 1200,
     height: 800,
     minWidth: 800,
-    minHeight: 550,
+    minHeight: 600,
     icon: path.join(VITE_PUBLIC, 'favicon.ico'),
     show: false,
     autoHideMenuBar: true,
