@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.3](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.2...v0.0.3) (2026-03-01)
+
+### 🏭 Build System
+
+* 优化项目打包体积，将依赖项移至 devDependencies 并条件启用 legacy 插件 ([ff53b38](https://github.com/sincely/vite6-electron-vue3/commit/ff53b380bf7a92143d477ee5fb4f4a33d9c80606))
+
 ## 0.0.2 (2026-03-01)
 
 ### ✨ Features
