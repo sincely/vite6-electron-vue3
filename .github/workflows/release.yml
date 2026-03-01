@@ -24,7 +24,8 @@ env:
 jobs:
   release:
     name: Create Release
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: macos-latest # 修改这里，从 ubuntu-latest 改为 macos-latest
     permissions:
       contents: write
     if: "!contains(github.event.head_commit.message, 'chore:')"

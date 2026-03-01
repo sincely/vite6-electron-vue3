@@ -15,7 +15,7 @@
     "release": true,
     "releaseName": "v${version}",
     "tokenRef": "GITHUB_TOKEN",
-    "assets": ["dist/*.zip", "dist/*.tar.gz", "CHANGELOG.md", "README.md"],
+    "assets": ["release/${version}/*.dmg", "release/${version}/*.zip", "CHANGELOG.md"],
     "draft": false,
     "preRelease": false,
     "proxy": null

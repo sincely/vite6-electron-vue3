@@ -12,6 +12,11 @@
     "target": ["dmg", "zip"],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
+  "linux": {
+    "icon": "resources/icon.png",
+    "target": ["AppImage"],
+    "artifactName": "${productName}-Linux-${version}.${ext}"
+  },
   "publish": [
     {
       "provider": "generic",
@@ -34,10 +39,6 @@
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": false
-  },
-  "linux": {
-    "target": ["AppImage"],
-    "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "releaseInfo": {
     "releaseNotes": "版本更新的具体内容"
