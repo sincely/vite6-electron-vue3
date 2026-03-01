@@ -29,7 +29,7 @@
       </el-form-item>
 
       <!-- 确认密码输入 -->
-      <div ref="regFields" class="reg-container" style=" height: 0;overflow: hidden; opacity: 0">
+      <div ref="regFields" class="reg-container" style="height: 0; overflow: hidden; opacity: 0">
         <div class="flex-column">
           <label>确认密码</label>
         </div>
@@ -57,7 +57,7 @@
       <el-button ref="submitBtn" type="primary" class="button-submit" @click="submit">{{ submitText }}</el-button>
 
       <!-- 注册切换 -->
-      <div class="switch-container" style=" margin-bottom: 20px;text-align: center; -webkit-app-region: no-drag">
+      <div class="switch-container" style="margin-bottom: 20px; text-align: center; -webkit-app-region: no-drag">
         <p v-show="!regState" class="p switch-text">
           没有账户?
           <span class="span" @click="toggleRegisterState">注 册</span>

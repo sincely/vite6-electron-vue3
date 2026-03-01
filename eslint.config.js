@@ -6,7 +6,6 @@ import pluginPrettier from 'eslint-plugin-prettier'
 import { defineFlatConfig } from 'eslint-define-config'
 export default defineFlatConfig([
   {
-    ...js.configs.recommended,
     ignores: [
       'node_modules/**',
       'dist/**',
@@ -23,8 +22,15 @@ export default defineFlatConfig([
       '.github/**',
       'package-lock.json',
       'stats.html',
-      'yarn.lock'
-    ],
+      'yarn.lock',
+      '*.md',
+      '*.woff',
+      '*.ttf',
+      '*.sh'
+    ]
+  },
+  {
+    ...js.configs.recommended,
     languageOptions: {
       globals: {}
     },
@@ -94,10 +100,10 @@ export default defineFlatConfig([
       'prefer-const': 'error',
       // 强制箭头函数的箭头前后使用一致的空格
       'arrow-spacing': 'error',
-      // 只强制对象解构，不强制数组解构
-      'prefer-destructuring': ['error', { object: true, array: false }],
-      // 开启 space-before-function-paren 规则，要求函数括号前不允许有空格
-      'space-before-function-paren': ['error', 'never']
+      // 强制在 function的左括号之前使用一致的空格
+      'space-before-function-paren': 0,
+      // 强制在块之前使用一致的空格
+      'space-before-blocks': 'error'
     }
   },
   {
