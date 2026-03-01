@@ -7,7 +7,24 @@ import { defineFlatConfig } from 'eslint-define-config'
 export default defineFlatConfig([
   {
     ...js.configs.recommended,
-    ignores: ['src/assets/**'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'dist-electron/**',
+      'release/**',
+      'public/**',
+      'src/assets/**',
+      'src/icons/svg/**',
+      'CHANGELOG.md',
+      'README.md',
+      '*.local',
+      '.vscode/**',
+      '.husky/**',
+      '.github/**',
+      'package-lock.json',
+      'stats.html',
+      'yarn.lock'
+    ],
     languageOptions: {
       globals: {}
     },
