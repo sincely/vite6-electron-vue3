@@ -32,8 +32,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   transition: padding $transition;
 
   &.is-mac {
-    height: 94px;
-    padding-top: 20px;
+    height: 80px;
   }
 
   &__img {
