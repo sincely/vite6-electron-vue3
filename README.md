@@ -79,6 +79,24 @@ npm run build
 
 如果在 Windows 上打包时遇到 `Cannot create symbolic link` 错误，请尝试**以管理员身份运行您的终端**，然后执行构建命令。
 
+### winCodeSign 或 nsis 下载失败
+
+在打包过程中，`electron-builder` 需要下载 `winCodeSign` 和 `nsis` 等二进制工具。如果网络连接不稳定导致下载失败，可以尝试以下方法：
+
+1.  **使用国内镜像（推荐）**：
+    在项目根目录的 `.npmrc` 文件中添加以下配置（本项目已默认配置）：
+    ```ini
+    electron_builder_binaries_mirror="https://npmmirror.com/mirrors/electron-builder-binaries/"
+    ```
+
+2.  **手动下载并解压**：
+    如果镜像依然无法下载，可以手动从 [electron-builder-binaries](https://github.com/electron-userland/electron-builder-binaries/releases) 下载对应的压缩包，并解压到缓存目录：
+    -   `winCodeSign`: 解压到 `%LOCALAPPDATA%\electron-builder\Cache\winCodeSign`
+    -   `nsis`: 解压到 `%LOCALAPPDATA%\electron-builder\Cache\nsis`
+
+3.  **rcedit 报错 (exit status 1)**：
+    如果遇到 `rcedit` 相关的错误，通常是因为版权信息中包含特殊字符或文件被占用。请确保 `electron-builder.json` 中的 `copyright` 字段不包含特殊字符（如 `©`），并尝试关闭杀毒软件后以**管理员身份**重新打包。
+
 ### 打包注意事项 (ASAR 缺失 dist 目录)
 
 在进行 `npm run build-win` 或 `npm run build-mac` 时，务必确保打包脚本包含 `vite build`。
