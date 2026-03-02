@@ -1,15 +1,13 @@
 <template>
   <div class="global-content">
     <router-view v-slot="{ Component, route }">
-      <!-- 需要缓存的页面 -->
       <transition :name="transitionName" mode="out-in">
-        <keep-alive :max="10">
-          <component :is="Component" v-if="route.meta?.keepAlive" :key="route.name ?? route.path" />
+        <!-- keepAlive 页面 -->
+        <keep-alive v-if="route.meta?.keepAlive" :max="10">
+          <component :is="Component" :key="route.name ?? route.path" />
         </keep-alive>
-      </transition>
-      <!-- 不需要缓存的页面 -->
-      <transition :name="transitionName" mode="out-in">
-        <component :is="Component" v-if="!route.meta?.keepAlive" :key="route.path" />
+        <!-- 非 keepAlive 页面 -->
+        <component :is="Component" v-else :key="route.path" />
       </transition>
     </router-view>
   </div>
