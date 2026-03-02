@@ -1,4 +1,4 @@
-﻿import { BrowserWindow, shell } from 'electron'
+﻿import { app, BrowserWindow, shell } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { VITE_DEV_SERVER_URL, RENDERER_DIST, VITE_PUBLIC } from '../config/index.js'
@@ -152,6 +152,14 @@ export function createMainWindow() {
   setupWindow(win)
 
   if (VITE_DEV_SERVER_URL) win.webContents.openDevTools()
+
+  // 点击关闭按钮时默认最小化到托盘，避免直接退出
+  win.on('close', (event) => {
+    if (!app.isQuiting) {
+      event.preventDefault()
+      win.hide()
+    }
+  })
 
   win.on('closed', () => {
     windows.delete(windowId)

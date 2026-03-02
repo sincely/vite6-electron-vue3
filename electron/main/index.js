@@ -8,6 +8,8 @@ import '../config/index.js'
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
+app.isQuiting = false
+
 // 禁用硬件加速，解决在Windows 7上的问题
 if (os.release().startsWith('6.1')) app.disableHardwareAcceleration()
 
@@ -27,6 +29,10 @@ app.whenReady().then(() => {
   createLoginWindow()
   // 创建托盘图标
   createTray()
+})
+
+app.on('before-quit', () => {
+  app.isQuiting = true
 })
 // 当所有窗口都被关闭时
 app.on('window-all-closed', () => {
