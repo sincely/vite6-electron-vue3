@@ -9,13 +9,13 @@
           <!-- 头部 -->
           <div class="update-dialog__header">
             <div class="update-icon-wrap">
-              <SvgIcon icon-class="lucide-rocket" width="22px" height="22px" class="update-rocket" />
+              <SvgIcon icon-class="lucide-rocket" width="24px" height="24px" class="update-rocket" />
             </div>
             <div class="update-dialog__title-group">
               <h3 class="update-dialog__title">发现新版本</h3>
               <p class="update-dialog__subtitle">新版本已就绪，立即更新体验最新功能</p>
             </div>
-            <button class="update-close-btn" title="稍后提醒" @click="handleLater">
+            <button v-if="!isUpdating" class="update-close-btn" title="稍后提醒" @click="handleLater">
               <SvgIcon icon-class="lucide-x" width="16px" height="16px" />
             </button>
           </div>
@@ -123,7 +123,7 @@ const handleInstall = () => {
 
 const handleLater = () => {
   // 下载中不允许关闭
-  // if (isUpdating.value) return
+  if (isUpdating.value) return
   updateStore.setDialogVisible(false)
 }
 </script>
@@ -326,7 +326,7 @@ const handleLater = () => {
 // 下载进度
 .update-dialog__progress {
   padding: 18px 20px;
-  margin: 20px 24px 0;
+  margin: 20px 24px;
   background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-lg);
