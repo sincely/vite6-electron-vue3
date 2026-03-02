@@ -114,19 +114,6 @@ export const asyncRouteTree = [
       }
     ]
   },
-  {
-    path: '/about',
-    component: Layout,
-    meta: { title: '关于', icon: 'lucide-info', order: 8, sidebar: true },
-    children: [
-      {
-        path: '',
-        name: 'about',
-        component: () => import('@/views/about/index.vue'),
-        meta: { title: '关于', transition: 'slide-up' }
-      }
-    ]
-  },
   //  设置（底部固定）
   {
     path: '/settings',
