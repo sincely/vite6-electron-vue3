@@ -9,7 +9,7 @@
           <!-- 头部 -->
           <div class="update-dialog__header">
             <div class="update-icon-wrap">
-              <SvgIcon icon-class="lucide-rocket" width="24px" height="24px" class="update-rocket" />
+              <SvgIcon icon-class="lucide-rocket" width="28px" height="28px" class="update-rocket" />
             </div>
             <div class="update-dialog__title-group">
               <h3 class="update-dialog__title">发现新版本</h3>

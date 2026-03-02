@@ -19,7 +19,7 @@
         <!-- 更新提示 -->
         <button v-if="updateAvailable" class="icon-btn update-btn" title="有新版本" @click="showUpdateDialog">
           <SvgIcon icon-class="lucide-download" class="update-icon" width="16px" height="16px" />
-          <span>v{{ currentVersion }}</span>
+          <span>{{ latestVersion }}</span>
         </button>
         <!-- 通知铃铛 -->
         <div class="notif-btn-wrap">
@@ -68,6 +68,7 @@ const appStore = useAppStore()
 const updateStore = useUpdateStore()
 const notifStore = useNotificationStore()
 
+const latestVersion = computed(() => updateStore.latestVersion)
 const isMac = computed(() => window.process?.platform === 'darwin')
 const updateAvailable = computed(() => updateStore.updateAvailable)
 const bellBtnRef = ref(null)
