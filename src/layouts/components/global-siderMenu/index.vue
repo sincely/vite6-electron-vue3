@@ -91,10 +91,10 @@ if (typeof process !== 'undefined' && process.platform) {
   isMac.value = navigator.platform.toLowerCase().indexOf('mac') >= 0
 }
 
-// 按 footer 字段拆分为主导航（排除底部固定的设置项）
+// 按footer字段拆分为主导航（排除底部固定的设置项）
 const mainItems = menuItems.filter((item) => !item.footer)
 
-// ───── 子菜单展开状态（存 ID 数组）─────
+// 子菜单展开状态（存 ID 数组）
 const expandedIds = ref([])
 const isExpanded = (id) => expandedIds.value.includes(id)
 const toggleExpand = (id) => {
@@ -103,18 +103,14 @@ const toggleExpand = (id) => {
   else expandedIds.value.push(id)
 }
 
-// ───── 当前路由激活状态（computed 保证响应式）─────
-const activeParentIds = computed(() => {
-  const ids = new Set()
-  for (const item of menuItems) {
-    if (item.route === route.path) {
-      ids.add(item.id)
-    }
-  }
-  return ids
-})
-
-const isParentActive = (item) => activeParentIds.value.has(item.id)
+// 当前路由激活状态（computed 保证响应式）
+// 展开状态：父级只在自身路由匹配时高亮，子菜单有自己的高亮；
+// 折叠状态：父级在自身路由或任意子路由匹配时高亮
+const isParentActive = (item) => {
+  const selfMatch = item.route === route.path
+  const childMatch = item.children?.some((c) => c.route === route.path) ?? false
+  return appStore.sidebarCollapsed ? selfMatch || childMatch : selfMatch
+}
 const isChildActive = (child) => child.route === route.path
 
 // 导航到子路由时自动展开父菜单
@@ -132,7 +128,7 @@ watch(
   { immediate: true }
 )
 
-// ───── 导航点击逻辑 ─────
+// 导航点击逻辑
 const handleNav = (item) => {
   if (item.children?.length && !appStore.sidebarCollapsed) {
     toggleExpand(item.id)
