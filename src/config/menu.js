@@ -5,7 +5,7 @@ import { asyncRoutes } from '@/router/index'
  *
  * 规则：
  *   meta.sidebar = true             -> 顶级菜单项，按 meta.order 升序排列
- *   meta.group   = '/parent-path'  -> 属于该父路径的二级菜单项
+ *   meta.group   = '/parent-path'   -> 属于该父路径的二级菜单项
  *   meta.footer  = true             -> 渲染到侧边栏底部固定区
  */
 function buildMenuItems(routes) {

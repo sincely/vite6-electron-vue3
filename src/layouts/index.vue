@@ -1,82 +1,75 @@
 <template>
   <div class="layout-container">
-    <div class="layout-sidebar">
-      <sidebar />
-    </div>
-    <div class="layout-content">
-      <bar v-if="!isLoginPage" />
-      <nav-bar />
-      <div class="layout-view">
-        <router-view v-slot="{ Component, route }">
-          <transition name="fade" mode="out-in">
-            <Loading v-if="isPageLoading" />
-          </transition>
-          <transition :name="transitionName" mode="out-in">
-            <keep-alive :max="10">
-              <component :is="Component" v-if="route.meta?.keepAlive" :key="route.name ?? route.path" />
-            </keep-alive>
-          </transition>
-          <transition :name="transitionName" mode="out-in">
-            <component :is="Component" v-if="!route.meta?.keepAlive" :key="route.path" />
-          </transition>
-        </router-view>
-      </div>
+    <!-- 侧边栏 -->
+    <aside class="layout-sidebar">
+      <GlobalSider />
+    </aside>
+
+    <!-- 右侧主区域 -->
+    <div class="layout-main">
+      <!-- 标题栏 / 窗口控制 -->
+      <GlobalHeader />
+
+      <!-- 面包屑导航（含搜索插槽） -->
+      <GlobalBreadcrumb>
+        <template #extra>
+          <GlobalSearch />
+        </template>
+      </GlobalBreadcrumb>
+
+      <!-- 页面内容（路由视图 + 过渡 + 加载） -->
+      <GlobalContent />
+
+      <!-- 底部状态栏 -->
+      <GlobalFooter />
     </div>
   </div>
 </template>
 
 <script setup>
-import sidebar from './components/sideBar.vue'
-import navBar from './components/navBar.vue'
-
-// 读取当前路由的过渡动画名，未配置时默认 'page'
-const route = useRoute()
-const transitionName = computed(() => route.meta?.transition ?? 'page')
-
-const isPageLoading = ref(false)
-const isLoginPage = computed(() => route.path === '/login')
-// 模拟路由加载状态（实际项目中可结合 router.beforeEach）
-watch(
-  () => route.path,
-  () => {
-    isPageLoading.value = true
-    setTimeout(() => {
-      isPageLoading.value = false
-    }, 300)
-  }
-)
+import GlobalSider from './components/global-siderMenu/index.vue'
+import GlobalHeader from './components/global-header/index.vue'
+import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
+import GlobalSearch from './components/global-search/index.vue'
+import GlobalContent from './components/global-content/index.vue'
+import GlobalFooter from './components/global-footer/index.vue'
 </script>
 
 <style lang="scss" scoped>
 .layout-container {
+  position: relative;
   display: flex;
+  gap: 10px;
   width: 100%;
   height: 100%;
+  padding: 10px;
   overflow: hidden;
-  background-color: var(--color-bg-content);
+  background: transparent;
 
-  // border-right: 1px solid var(--color-border);
-  // border-bottom: 1px solid var(--color-border);
-  // border-left: 1px solid var(--color-border);
-  // border-bottom-right-radius: 10px;
-  // border-bottom-left-radius: 10px;
+  .layout-sidebar {
+    position: relative;
+    z-index: 3;
+  }
 
-  .layout-content {
+  .layout-main {
     display: flex;
     flex: 1;
     flex-direction: column;
     min-width: 0;
     height: 100%;
     overflow: hidden;
-    background-color: var(--color-bg-content);
+    background: var(--glass-surface);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-surface-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow-soft);
   }
+}
 
-  .layout-view {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    padding: 18px;
-    overflow-y: auto;
+@media (width <= 960px) {
+  .layout-container {
+    gap: 8px;
+    padding: 8px;
   }
 }
 </style>

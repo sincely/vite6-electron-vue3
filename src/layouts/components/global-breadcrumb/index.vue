@@ -56,15 +56,19 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  height: 43px;
-  padding: 0 16px;
-  background-color: var(--color-bg-content);
-
-  // border-bottom: 1px solid var(--color-border);
+  height: 50px;
+  padding: 0 14px;
+  margin: 0 14px;
+  margin-top: 12px;
+  background: color-mix(in srgb, var(--color-bg-card), transparent 24%);
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 18%);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
 
   &-breadcrumb {
     display: flex;
-    gap: 4px;
+    gap: 5px;
     align-items: center;
     min-width: 0;
   }
@@ -79,7 +83,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
     display: flex;
     gap: 6px;
     align-items: center;
-    max-width: 200px;
+    max-width: 220px;
     overflow: hidden;
     font-size: 13px;
     color: var(--color-text-muted);
@@ -92,11 +96,14 @@ const breadcrumb = computed(() => findMenuPath(route.path))
     }
 
     &-link {
+      padding: 2px 4px;
       cursor: pointer;
-      transition: color 0.15s ease;
+      border-radius: 6px;
+      transition: all 0.15s ease;
 
       &:hover {
         color: var(--color-text-primary);
+        background: color-mix(in srgb, var(--color-bg-hover), transparent 15%);
       }
     }
   }
@@ -109,8 +116,18 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   &-extra {
     display: flex;
     flex-shrink: 0;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
+  }
+}
+
+@media (width <= 960px) {
+  .nav-bar {
+    margin-inline: 10px;
+
+    &-crumb {
+      max-width: 150px;
+    }
   }
 }
 </style>

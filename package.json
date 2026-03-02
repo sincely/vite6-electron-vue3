@@ -9,7 +9,7 @@
   "description": "A Vite6 Electron Vue3 project",
   "author": "chengzhou",
   "scripts": {
-    "dev": "chcp 65001 && vite",
+    "dev:win": "chcp 65001 && vite",
     "dev:mac": "vite --mode development",
     "electron:postinstall": "electron-builder install-app-deps",
     "build-win": "vite build && electron-builder --win",

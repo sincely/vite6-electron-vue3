@@ -6,89 +6,141 @@
 :root,
 html[data-theme='light'] {
   // 背景色
-  --color-bg-window: #f0f2f5;
+  --color-bg-window: #eef3f8;
   --color-bg-titlebar: #fff;
-  --color-bg-sidebar: #f5f7fa;
-  --color-bg-sidebar-titlebar: #edf0f3;
-  --color-bg-content: #fff;
-  --color-bg-hover: rgb(0 0 0 / 6%);
-  --color-bg-active: #2563eb;
-  --color-bg-card: #f9fafb;
-  --color-bg-input: #f1f3f5;
-  --color-bg-status: #e8ecf0;
+  --color-bg-sidebar: #fff;
+  --color-bg-sidebar-titlebar: #f2f6fa;
+  --color-bg-content: #edf3f8;
+  --color-bg-hover: #f6f9fc;
+  --color-bg-active: #e8eef6;
+  --color-bg-card: #fff;
+  --color-bg-input: #f6f9fc;
+  --color-bg-status: #e8eef6;
 
   // 文字色
-  --color-text-primary: #1a1a2e;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-  --color-text-active: #fff;
-  --color-text-link: #2563eb;
+  --color-text-primary: #0f172a; // Slate-900
+  --color-text-secondary: #4f6077;
+  --color-text-muted: #94a3b8; // Slate-400
+  --color-text-active: #0f172a;
+  --color-text-link: #f97316;
 
   // 边框
-  --color-border: #e5e7eb;
-  --color-border-light: #f3f4f6;
+  --color-border: #dce5ef;
+  --color-border-light: #edf3f8;
 
   // 阴影
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 8%);
-  --shadow-md: 0 4px 12px rgb(0 0 0 / 10%);
+  --shadow-sm: 0 8px 18px -12px rgb(15 23 42 / 30%);
+  --shadow-md: 0 12px 28px -14px rgb(15 23 42 / 36%);
+  --shadow-lg: 0 22px 36px -20px rgb(15 23 42 / 38%);
+
+  // 圆角
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
 
   // 滚动条
-  --scrollbar-thumb: rgb(0 0 0 / 15%);
+  --scrollbar-thumb: #cbd5e1; // Slate-300
   --scrollbar-track: transparent;
 
   // 状态颜色
-  --color-success: #10b981;
-  --color-danger: #ef4444;
+  --color-primary: #f97316;
+  --color-success: #10b981; // Emerald-500
+  --color-danger: #ef4444; // Red-500
   --color-warning: #f59e0b;
-  --color-info: #3b82f6;
+  --color-info: #0ea5e9; // Sky-500
 
   // 侧边栏
-  --sidebar-width: 200px;
-  --sidebar-collapsed-width: 64px;
-  --titlebar-height: 42px;
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 68px;
+  --titlebar-height: 50px;
+
+  // UI 扩展变量（视觉层）
+  --brand-accent: #f97316;
+  --brand-accent-alt: #0ea5e9;
+  --brand-accent-soft: color-mix(in srgb, var(--brand-accent), white 82%);
+  --app-bg-gradient: radial-gradient(circle at 8% 10%, rgb(249 115 22 / 10%) 0%, transparent 42%),
+    radial-gradient(circle at 88% 14%, rgb(14 165 233 / 12%) 0%, transparent 38%),
+    radial-gradient(circle at 52% 96%, rgb(34 197 94 / 8%) 0%, transparent 42%);
+  --glass-surface: rgb(255 255 255 / 76%);
+  --glass-surface-border: rgb(148 163 184 / 28%);
+  --sidebar-surface-bg: linear-gradient(
+    185deg,
+    rgb(255 255 255 / 82%) 0%,
+    rgb(248 250 252 / 64%) 50%,
+    rgb(255 255 255 / 84%) 100%
+  );
+  --glass-shadow-soft: 0 20px 30px -22px rgb(15 23 42 / 40%);
+  --glass-shadow-hover: 0 20px 42px -24px rgb(15 23 42 / 45%);
 }
 
 // ---------- Dark Theme ----------
 html[data-theme='dark'] {
   // 背景色
-  --color-bg-window: #1a1b1e;
-  --color-bg-titlebar: #141517;
-  --color-bg-sidebar: #141517;
-  --color-bg-sidebar-titlebar: #141517;
-  --color-bg-content: #1a1b1e;
-  --color-bg-hover: rgb(255 255 255 / 6%);
-  --color-bg-active: #2563eb;
-  --color-bg-card: #25262b;
-  --color-bg-input: #2c2e33;
-  --color-bg-status: #1e1f24;
+  --color-bg-window: #0a1223;
+  --color-bg-titlebar: #101b33;
+  --color-bg-sidebar: #111d36;
+  --color-bg-sidebar-titlebar: #0b1427;
+  --color-bg-content: #0a1327;
+  --color-bg-hover: #1c2a45;
+  --color-bg-active: #223252;
+  --color-bg-card: #13203a;
+  --color-bg-input: #1b2d4a;
+  --color-bg-status: #223252;
 
   // 文字色
-  --color-text-primary: #c1c2c5;
-  --color-text-secondary: #909296;
-  --color-text-muted: #5c5f66;
+  --color-text-primary: #f8fafc; // Slate-50
+  --color-text-secondary: #a2b4cc;
+  --color-text-muted: #6f84a2;
   --color-text-active: #fff;
-  --color-text-link: #74b9ff;
+  --color-text-link: #fb923c;
 
   // 边框
-  --color-border: #2c2e33;
-  --color-border-light: #25262b;
+  --color-border: #2a3a58;
+  --color-border-light: #17243f;
 
   // 阴影
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 30%);
-  --shadow-md: 0 4px 12px rgb(0 0 0 / 40%);
+  --shadow-sm: 0 12px 20px -16px rgb(2 8 23 / 80%);
+  --shadow-md: 0 18px 32px -20px rgb(2 8 23 / 90%);
+  --shadow-lg: 0 24px 42px -20px rgb(2 8 23 / 94%);
+
+  // 圆角
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
 
   // 滚动条
-  --scrollbar-thumb: rgb(255 255 255 / 12%);
+  --scrollbar-thumb: #3f5374;
   --scrollbar-track: transparent;
 
   // 状态颜色
-  --color-success: #12b886;
-  --color-danger: #fa5252;
-  --color-warning: #fd7e14;
-  --color-info: #339af0;
+  --color-primary: #fb923c;
+  --color-success: #10b981; // Emerald-500
+  --color-danger: #ef4444; // Red-500
+  --color-warning: #f59e0b;
+  --color-info: #0ea5e9; // Sky-500
 
   // 侧边栏
-  --sidebar-width: 200px;
-  --sidebar-collapsed-width: 64px;
-  --titlebar-height: 42px;
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 68px;
+  --titlebar-height: 50px;
+
+  // UI 扩展变量（视觉层）
+  --brand-accent: #fb923c;
+  --brand-accent-alt: #22d3ee;
+  --brand-accent-soft: color-mix(in srgb, var(--brand-accent), black 70%);
+  --app-bg-gradient: radial-gradient(circle at 6% 8%, rgb(251 146 60 / 18%) 0%, transparent 45%),
+    radial-gradient(circle at 90% 12%, rgb(34 211 238 / 20%) 0%, transparent 42%),
+    radial-gradient(circle at 52% 96%, rgb(56 189 248 / 12%) 0%, transparent 48%);
+  --glass-surface: rgb(15 23 42 / 72%);
+  --glass-surface-border: rgb(148 163 184 / 22%);
+  --sidebar-surface-bg: linear-gradient(
+    188deg,
+    rgb(15 23 42 / 94%) 0%,
+    rgb(30 41 59 / 88%) 48%,
+    rgb(15 23 42 / 92%) 100%
+  );
+  --glass-shadow-soft: 0 22px 42px -26px rgb(2 8 23 / 95%);
+  --glass-shadow-hover: 0 24px 48px -26px rgb(2 8 23 / 100%);
 }

@@ -76,19 +76,6 @@ export const asyncRoutes = [
     component: () => import('@/views/provider/add/index.vue'),
     meta: { title: '添加提供商', group: '/provider', transition: 'zoom' }
   },
-  //  独立页面
-  {
-    path: '/fallback',
-    name: 'fallback',
-    component: () => import('@/views/fallback/index.vue'),
-    meta: { title: '回退', icon: 'lucide-undo-2', order: 4, sidebar: true, keepAlive: true }
-  },
-  {
-    path: '/proxy',
-    name: 'proxy',
-    component: () => import('@/views/proxy/index.vue'),
-    meta: { title: '代理', icon: 'lucide-shield-check', order: 5, sidebar: true, keepAlive: true }
-  },
   {
     path: '/apikeys',
     name: 'apikeys',

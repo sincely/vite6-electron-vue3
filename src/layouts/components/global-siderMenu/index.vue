@@ -1,10 +1,7 @@
 <template>
   <div class="sidebar" :class="{ 'sidebar-collapsed': appStore.sidebarCollapsed, 'is-mac': isMac }">
     <!-- Logo 区域 -->
-    <div class="sidebar-logo">
-      <img src="@/assets/bar/logo.svg" class="logo-img" alt="logo" />
-      <div class="logo-text">{{ appStore.sidebarCollapsed ? '' : 'AI Desktop' }}</div>
-    </div>
+    <GlobalLogo />
 
     <!-- 主导航 -->
     <nav class="sidebar-nav">
@@ -79,6 +76,7 @@ import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 import { useRouter, useRoute } from 'vue-router'
 import { menuItems } from '@/config/menu'
+import GlobalLogo from '../global-logo/index.vue'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -145,144 +143,152 @@ const handleNav = (item) => {
 </script>
 
 <style lang="scss" scoped>
-$transition: 0.2s ease;
+$transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
 .sidebar {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   width: var(--sidebar-width);
   height: 100%;
   overflow: hidden;
-  background-color: var(--color-bg-sidebar);
-  border-right: 1px solid var(--color-border);
+  background: var(--sidebar-surface-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-surface-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow-soft);
   transition: width $transition;
+
+  &::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 120px;
+    pointer-events: none;
+    content: '';
+    background: radial-gradient(circle at 14% 0%, rgb(249 115 22 / 20%) 0%, transparent 62%),
+      radial-gradient(circle at 84% 16%, rgb(14 165 233 / 16%) 0%, transparent 58%);
+    opacity: 0.9;
+  }
 
   &-collapsed {
     width: var(--sidebar-collapsed-width);
   }
 
-  // ── Logo 区域 ──────────────────────────
-  &-logo {
-    display: flex;
-    align-items: center;
-    height: 65px;
-    padding: 10px 16px;
-    cursor: pointer;
-
-    // 底部添加 1px 边框
-    border-bottom: 1px solid var(--color-border);
-
-    // Mac 平台顶部留白
-    .is-mac & {
-      height: 85px; // 65px + 20px
-      padding-top: 30px;
-    }
-
-    .logo-img {
-      flex-shrink: 0;
-      width: 30px;
-      height: 30px;
-    }
-
-    .logo-text {
-      margin-left: 10px;
-      overflow: hidden;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--color-text-primary);
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      opacity: 1;
-      transition: opacity $transition;
-    }
-  }
-
-  &-collapsed &-logo {
-    // Mac 平台顶部留白
-    .is-mac & {
-      padding-top: 30px;
-    }
-
-    .logo-text {
-      width: 0;
-      opacity: 0;
-    }
-  }
-
-  // 导航区域
   &-nav {
+    position: relative;
+    z-index: 2;
     flex: 1;
     padding: 8px 6px;
     overflow: hidden auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+      border-radius: 4px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+    }
   }
 
-  // ── 通用导航项 ──────────────────────────
   &-item {
+    position: relative;
     display: flex;
-    gap: 10px;
+    gap: 11px;
     align-items: center;
-    height: 36px;
-    padding: 0 10px;
+    height: 44px;
+    padding: 0 14px;
+    margin-bottom: 6px;
+    font-family: DMSans, sans-serif;
     color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    border-radius: 7px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    transition: all 0.2s ease;
 
     &:hover {
       color: var(--color-text-primary);
-      background-color: var(--color-bg-hover);
+      background: color-mix(in srgb, var(--color-bg-hover), transparent 25%);
+      border-color: color-mix(in srgb, var(--color-border), transparent 35%);
+      transform: translateX(2px);
     }
 
     &-active {
-      color: var(--color-text-active) !important;
-      background-color: var(--color-bg-active);
+      font-weight: 600;
+      color: var(--color-primary) !important;
+      background: linear-gradient(
+        100deg,
+        color-mix(in srgb, var(--color-primary), transparent 86%) 0%,
+        color-mix(in srgb, var(--brand-accent-alt), transparent 90%) 100%
+      );
+      border-color: color-mix(in srgb, var(--color-primary), transparent 70%);
+      box-shadow: 0 10px 16px -14px color-mix(in srgb, var(--color-primary), transparent 16%);
 
       .sidebar-icon {
-        color: var(--color-text-active);
+        color: var(--color-primary);
+      }
+
+      &::before {
+        position: absolute;
+        inset: 9px auto 9px 4px;
+        width: 4px;
+        content: '';
+        background: linear-gradient(180deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
+        border-radius: 4px;
       }
     }
 
     &-child {
-      gap: 0;
-      height: 32px;
-      padding: 0 10px 0 26px;
-      margin-bottom: 1px;
-      font-size: 12px;
+      height: 38px;
+      padding-left: 46px;
+      margin-bottom: 2px;
+      font-size: 13px;
+      border-radius: 12px;
+      opacity: 0.95;
+
+      &:hover {
+        transform: translateX(0);
+      }
+
+      &::before {
+        display: none;
+      }
     }
   }
 
   &-icon {
     flex-shrink: 0;
-    color: currentcolor;
+    color: var(--color-text-muted);
+    transition: color 0.2s;
   }
 
   &-label {
+    flex: 1;
     overflow: hidden;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
+    text-overflow: ellipsis;
     white-space: nowrap;
     opacity: 1;
+    transition: opacity 0.2s;
   }
 
   &-child-dot {
-    flex-shrink: 0;
-    width: 4px;
-    height: 4px;
-    margin-right: 10px;
-    background-color: var(--color-text-muted);
-    border-radius: 50%;
-  }
-
-  &-item-active &-child-dot {
-    background-color: var(--color-text-active);
+    display: none;
   }
 
   &-chevron {
     flex-shrink: 0;
     margin-left: auto;
     color: var(--color-text-muted);
+    transition: transform 0.2s;
 
     &-open {
       transform: rotate(90deg);
@@ -292,11 +298,11 @@ $transition: 0.2s ease;
   &-submenu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-    &-open {
-      max-height: 240px;
-    }
+  &-submenu-open {
+    max-height: 240px;
   }
 
   &-collapsed &-submenu {
@@ -304,55 +310,71 @@ $transition: 0.2s ease;
   }
 
   &-collapsed &-label {
-    width: 0;
-    pointer-events: none;
-    opacity: 0;
+    display: none;
   }
 
   &-collapsed &-item {
     gap: 0;
     justify-content: center;
     padding: 0;
+    margin-inline: 4px;
+
+    &:hover {
+      transform: none;
+    }
+
+    &::before {
+      display: none;
+    }
   }
 
-  // ── 底部用户信息区 ──────────────────────
   &-footer {
-    padding: 8px 6px;
-    border-top: 1px solid var(--color-border);
+    position: relative;
+    z-index: 2;
+    padding: 12px;
+    border-top: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 15%);
   }
 
   .user-profile {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
-    padding: 4px;
+    padding: 10px;
     cursor: pointer;
-    border-radius: 8px;
-    transition: background-color $transition;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    transition: all $transition;
 
     &:hover {
-      background-color: var(--color-bg-hover);
+      background: color-mix(in srgb, var(--color-bg-hover), transparent 16%);
+      border-color: color-mix(in srgb, var(--color-border), transparent 42%);
     }
 
     &-active {
-      background-color: var(--color-bg-active);
-
-      .user-name {
-        color: var(--color-text-active);
-      }
+      background: linear-gradient(
+        105deg,
+        color-mix(in srgb, var(--color-primary), transparent 88%) 0%,
+        color-mix(in srgb, var(--brand-accent-alt), transparent 92%) 100%
+      );
+      border-color: color-mix(in srgb, var(--color-primary), transparent 70%);
     }
 
     .user-avatar {
       flex-shrink: 0;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       overflow: hidden;
       background-color: var(--color-bg-input);
+      border: 2px solid color-mix(in srgb, var(--color-bg-sidebar), transparent 16%);
       border-radius: 50%;
+      box-shadow:
+        var(--shadow-sm),
+        inset 0 0 0 1px rgb(255 255 255 / 32%);
 
       img {
         width: 100%;
         height: 100%;
+        object-fit: cover;
       }
     }
 
@@ -360,12 +382,11 @@ $transition: 0.2s ease;
       flex: 1;
       min-width: 0;
       overflow: hidden;
-      opacity: 1;
-      transition: opacity $transition;
     }
 
     .user-name {
-      font-size: 13px;
+      font-family: Montserrat, sans-serif;
+      font-size: 14px;
       font-weight: 600;
       color: var(--color-text-primary);
       text-overflow: ellipsis;
@@ -381,12 +402,18 @@ $transition: 0.2s ease;
 
     .user-settings-icon {
       color: var(--color-text-muted);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    &:hover .user-settings-icon {
+      opacity: 1;
     }
   }
 
   &-collapsed .user-profile {
     justify-content: center;
-    padding: 6px 0;
+    padding: 0;
 
     .user-info,
     .user-settings-icon {

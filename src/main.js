@@ -17,9 +17,6 @@ async function setupApp() {
     // 初始化主题
     const appStore = useAppStore()
     appStore.initTheme()
-
-    console.log(111111)
-
     const updateStore = useUpdateStore()
 
     // 获取当前版本号
@@ -59,7 +56,7 @@ async function setupApp() {
       updateStore.resetUpdateState()
     })
   })
-  app.config.performance = true
+  app.config.performance = false
 }
 
 setupApp()
