@@ -19,7 +19,7 @@
         <!-- 更新提示 -->
         <button v-if="updateAvailable" class="icon-btn update-btn" title="有新版本" @click="showUpdateDialog">
           <SvgIcon icon-class="lucide-download" class="update-icon" width="16px" height="16px" />
-          <span>v{{ latestVersion }}</span>
+          <span>v{{ currentVersion }}</span>
         </button>
         <!-- 刷新 -->
         <button class="icon-btn" title="刷新" @click="reload">
@@ -58,10 +58,13 @@ const updateStore = useUpdateStore()
 
 const isMac = computed(() => window.process?.platform === 'darwin')
 const latestVersion = computed(() => updateStore.latestVersion)
+console.log('latestVersion:', latestVersion.value)
 const currentVersion = computed(() => updateStore.currentVersion)
-const updateAvailable = computed(() => updateStore.updateAvailable)
+console.log('currentVersion:', currentVersion.value)
+const updateAvailable = true
 
 const showUpdateDialog = () => {
+  console.log(111)
   ElMessageBox.confirm(
     `检测到新版本 ${latestVersion.value}，当前版本 ${currentVersion.value}。是否立即更新？`,
     '应用更新',
