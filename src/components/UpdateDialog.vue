@@ -67,7 +67,7 @@
           <template v-else-if="updateDownloaded">
             <div class="update-dialog__downloaded">
               <div class="downloaded-icon-wrap">
-                <SvgIcon icon-class="lucide-circle-check" width="24px" height="24px" class="downloaded-icon" />
+                <SvgIcon icon-class="lucide-success" width="24px" height="24px" class="downloaded-icon" />
               </div>
               <p class="downloaded-title">更新下载完成</p>
               <p class="downloaded-desc">重启应用后将自动完成安装，建议立即重启</p>
@@ -98,7 +98,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onUnmounted } from 'vue'
 import { useUpdateStore } from '@/store/modules/update'
 
 const updateStore = useUpdateStore()
@@ -109,9 +109,41 @@ const currentVersion = computed(() => updateStore.currentVersion)
 const isUpdating = computed(() => updateStore.isUpdating)
 const updateDownloaded = computed(() => updateStore.updateDownloaded)
 const downloadProgress = computed(() => updateStore.downloadProgress)
+let mockTimer = null
+
+const startMockDownload = () => {
+  if (mockTimer) {
+    clearInterval(mockTimer)
+    mockTimer = null
+  }
+  updateStore.setUpdating(true)
+  updateStore.setUpdateDownloaded(false)
+  updateStore.setDownloadProgress(0)
+
+  let progress = 0
+  mockTimer = setInterval(() => {
+    progress += Math.random() * 8 + 4
+    if (progress >= 100) {
+      progress = 100
+      updateStore.setDownloadProgress(100)
+      clearInterval(mockTimer)
+      mockTimer = null
+      setTimeout(() => {
+        updateStore.setUpdating(false)
+        updateStore.setUpdateDownloaded(true)
+      }, 350)
+      return
+    }
+    updateStore.setDownloadProgress(progress)
+  }, 260)
+}
 
 const handleConfirm = () => {
   // 不关闭弹框，切换为进度视图
+  if (import.meta.env.DEV) {
+    startMockDownload()
+    return
+  }
   updateStore.setUpdating(true)
   window.ipcRenderer.send('start-download')
 }
@@ -126,6 +158,10 @@ const handleLater = () => {
   if (isUpdating.value) return
   updateStore.setDialogVisible(false)
 }
+
+onUnmounted(() => {
+  if (mockTimer) clearInterval(mockTimer)
+})
 </script>
 
 <style lang="scss" scoped>

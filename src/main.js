@@ -55,27 +55,6 @@ async function setupApp() {
         notifStore.push({ title: '系统提示', body: '检测到新版本 v0.1.0 可用，建议尽快更新。', type: 'info' })
         notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'warning' })
       }, 1500)
-
-      // 监听 start-download 后模拟下载进度
-      window.ipcRenderer.on('start-download', () => {
-        updateStore.setUpdating(true)
-        updateStore.setDownloadProgress(0)
-        let progress = 0
-        const timer = setInterval(() => {
-          progress += Math.random() * 8 + 3
-          if (progress >= 100) {
-            progress = 100
-            updateStore.setDownloadProgress(100)
-            clearInterval(timer)
-            setTimeout(() => {
-              updateStore.setUpdating(false)
-              updateStore.setUpdateDownloaded(true)
-            }, 400)
-          } else {
-            updateStore.setDownloadProgress(progress)
-          }
-        }, 300)
-      })
     }
 
     // 监听更新下载完成
