@@ -21,10 +21,20 @@
           <SvgIcon icon-class="lucide-download" class="update-icon" width="16px" height="16px" />
           <span>v{{ currentVersion }}</span>
         </button>
+        <!-- 通知铃铛 -->
+        <div class="notif-btn-wrap">
+          <button ref="bellBtnRef" class="icon-btn" title="消息通知" @click.stop="notifStore.togglePanel()">
+            <SvgIcon icon-class="lucide-notice" width="16px" height="16px" />
+            <span v-if="notifStore.hasUnread" class="notif-badge">
+              {{ notifStore.unreadCount > 99 ? '99+' : notifStore.unreadCount }}
+            </span>
+          </button>
+          <NotificationPanel :anchor-ref="bellBtnRef" />
+        </div>
         <!-- 刷新 -->
-        <button class="icon-btn" title="刷新" @click="reload">
+        <!-- <button class="icon-btn" title="刷新" @click="reload">
           <SvgIcon icon-class="lucide-refresh-cw" width="16px" height="16px" />
-        </button>
+        </button> -->
         <!-- 主题切换 -->
         <button class="icon-btn" title="切换主题" @click="appStore.toggleTheme()">
           <SvgIcon :icon-class="appStore.isDark ? 'lucide-sun' : 'lucide-moon'" width="16px" height="16px" />
@@ -51,18 +61,22 @@
 <script setup>
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
+import { useNotificationStore } from '@/store/modules/notification'
+import NotificationPanel from '@/components/NotificationPanel.vue'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
+const notifStore = useNotificationStore()
 
 const isMac = computed(() => window.process?.platform === 'darwin')
 const updateAvailable = computed(() => updateStore.updateAvailable)
+const bellBtnRef = ref(null)
 
 const showUpdateDialog = () => {
   updateStore.setDialogVisible(true)
 }
 
-const reload = () => location.reload()
+// const reload = () => location.reload()
 const minimize = () => window.ipcRenderer.send('window-minimize')
 const maximize = () => window.ipcRenderer.send('window-maximize')
 const close = () => window.ipcRenderer.send('window-close')
@@ -178,5 +192,30 @@ const close = () => window.ipcRenderer.send('window-close')
   width: 34px;
   height: 34px;
   margin-right: 8px;
+}
+
+// 通知按鈕包裃
+.notif-btn-wrap {
+  position: relative;
+  -webkit-app-region: no-drag;
+}
+
+// 未读徽章
+.notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #fff;
+  text-align: center;
+  pointer-events: none;
+  background: var(--color-danger);
+  border-radius: 999px;
+  transform: translate(40%, -40%);
 }
 </style>

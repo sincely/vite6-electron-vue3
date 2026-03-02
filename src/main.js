@@ -6,7 +6,7 @@ import '@/styles/index.scss' // 全局样式
 import { setupIcon } from './plugins' // 全局注册antd图标
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
-import { ElNotification } from 'element-plus'
+import { useNotificationStore } from '@/store/modules/notification'
 
 async function setupApp() {
   const app = createApp(App)
@@ -18,19 +18,16 @@ async function setupApp() {
     const appStore = useAppStore()
     appStore.initTheme()
     const updateStore = useUpdateStore()
+    const notifStore = useNotificationStore()
 
     // 获取当前版本号
     window.ipcRenderer.invoke('get-app-version').then((version) => {
       updateStore.setCurrentVersion(version)
     })
 
-    // 监听主进程发送的通知
+    // 监听主进程发送的通知 → 推入通知中心
     window.ipcRenderer.on('show-notification', (event, options) => {
-      ElNotification({
-        title: options.title,
-        message: options.body,
-        duration: 3000
-      })
+      notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
     })
 
     // 监听下载进度
@@ -53,6 +50,10 @@ async function setupApp() {
         updateStore.setLatestVersion('0.1.0')
         updateStore.setUpdateAvailable(true)
         updateStore.setDialogVisible(true)
+        // 模拟几条通知
+        notifStore.push({ title: '欢迎使用', body: '应用已成功启动，祝您使用愉快！', type: 'success' })
+        notifStore.push({ title: '系统提示', body: '检测到新版本 v0.1.0 可用，建议尽快更新。', type: 'info' })
+        notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'warning' })
       }, 1500)
 
       // 监听 start-download 后模拟下载进度

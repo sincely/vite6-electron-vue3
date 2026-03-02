@@ -27,6 +27,8 @@
   </div>
   <!-- 更新弹框 -->
   <UpdateDialog />
+  <!-- Toast 通知 -->
+  <NotificationToast />
 </template>
 
 <script setup>
@@ -38,6 +40,7 @@ import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
 import UpdateProgress from '@/components/UpdateProgress.vue'
 import UpdateDialog from '@/components/UpdateDialog.vue'
+import NotificationToast from '@/components/NotificationToast.vue'
 </script>
 
 <style lang="scss" scoped>
