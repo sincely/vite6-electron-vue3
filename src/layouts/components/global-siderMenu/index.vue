@@ -63,8 +63,8 @@
           v-if="!appStore.sidebarCollapsed"
           icon-class="lucide-settings"
           class="user-settings-icon"
-          width="14px"
-          height="14px"
+          width="18px"
+          height="18px"
         />
       </div>
     </div>
@@ -398,12 +398,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
     .user-settings-icon {
       color: var(--color-text-muted);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    &:hover .user-settings-icon {
-      opacity: 1;
     }
   }
 
