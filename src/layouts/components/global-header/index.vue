@@ -51,35 +51,15 @@
 <script setup>
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
-import { ElMessageBox } from 'element-plus'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
 
 const isMac = computed(() => window.process?.platform === 'darwin')
-const latestVersion = computed(() => updateStore.latestVersion)
-console.log('latestVersion:', latestVersion.value)
-const currentVersion = computed(() => updateStore.currentVersion)
-console.log('currentVersion:', currentVersion.value)
-const updateAvailable = true
+const updateAvailable = computed(() => updateStore.updateAvailable)
 
 const showUpdateDialog = () => {
-  console.log(111)
-  ElMessageBox.confirm(
-    `检测到新版本 ${latestVersion.value}，当前版本 ${currentVersion.value}。是否立即更新？`,
-    '应用更新',
-    {
-      confirmButtonText: '立即更新',
-      cancelButtonText: '稍后',
-      type: 'info'
-    }
-  )
-    .then(() => {
-      window.ipcRenderer.send('start-download')
-    })
-    .catch(() => {
-      // 用户取消更新
-    })
+  updateStore.setDialogVisible(true)
 }
 
 const reload = () => location.reload()

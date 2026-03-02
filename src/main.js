@@ -43,7 +43,39 @@ async function setupApp() {
     window.ipcRenderer.on('update-available', (event, info) => {
       updateStore.setUpdateAvailable(true)
       updateStore.setLatestVersion(info.version)
+      updateStore.setDialogVisible(true)
     })
+
+    // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
+    if (import.meta.env.DEV) {
+      setTimeout(() => {
+        updateStore.setCurrentVersion(updateStore.currentVersion || '0.0.3')
+        updateStore.setLatestVersion('0.1.0')
+        updateStore.setUpdateAvailable(true)
+        updateStore.setDialogVisible(true)
+      }, 1500)
+
+      // 监听 start-download 后模拟下载进度
+      window.ipcRenderer.on('start-download', () => {
+        updateStore.setUpdating(true)
+        updateStore.setDownloadProgress(0)
+        let progress = 0
+        const timer = setInterval(() => {
+          progress += Math.random() * 8 + 3
+          if (progress >= 100) {
+            progress = 100
+            updateStore.setDownloadProgress(100)
+            clearInterval(timer)
+            setTimeout(() => {
+              updateStore.setUpdating(false)
+              updateStore.setUpdateDownloaded(true)
+            }, 400)
+          } else {
+            updateStore.setDownloadProgress(progress)
+          }
+        }, 300)
+      })
+    }
 
     // 监听更新下载完成
     window.ipcRenderer.on('update-downloaded', () => {

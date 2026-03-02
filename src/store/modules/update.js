@@ -7,7 +7,8 @@ export const useUpdateStore = defineStore('update', {
     updateAvailable: false,
     updateDownloaded: false,
     latestVersion: '',
-    currentVersion: ''
+    currentVersion: '',
+    dialogVisible: false
   }),
   actions: {
     setUpdating(status) {
@@ -28,6 +29,9 @@ export const useUpdateStore = defineStore('update', {
     setCurrentVersion(version) {
       this.currentVersion = version
     },
+    setDialogVisible(visible) {
+      this.dialogVisible = visible
+    },
     resetUpdateState() {
       this.isUpdating = false
       this.downloadProgress = 0
@@ -35,6 +39,7 @@ export const useUpdateStore = defineStore('update', {
       this.updateDownloaded = false
       this.latestVersion = ''
       this.currentVersion = ''
+      this.dialogVisible = false
     }
   }
 })

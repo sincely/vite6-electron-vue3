@@ -22,8 +22,11 @@
 
       <!-- 底部状态栏 -->
       <GlobalFooter />
+      <UpdateProgress />
     </div>
   </div>
+  <!-- 更新弹框 -->
+  <UpdateDialog />
 </template>
 
 <script setup>
@@ -33,6 +36,8 @@ import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
+import UpdateProgress from '@/components/UpdateProgress.vue'
+import UpdateDialog from '@/components/UpdateDialog.vue'
 </script>
 
 <style lang="scss" scoped>

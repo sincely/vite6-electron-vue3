@@ -1,10 +1,6 @@
 <template>
   <div class="global-content">
     <router-view v-slot="{ Component, route }">
-      <!-- 页面切换 loading -->
-      <transition name="fade" mode="out-in">
-        <Loading v-if="isLoading" key="loading" />
-      </transition>
       <!-- 需要缓存的页面 -->
       <transition :name="transitionName" mode="out-in">
         <keep-alive :max="10">
@@ -20,8 +16,6 @@
 </template>
 
 <script setup>
-import Loading from '@/components/Loading/index.vue'
-
 const route = useRoute()
 const transitionName = computed(() => route.meta?.transition ?? 'page')
 const isLoading = ref(false)
