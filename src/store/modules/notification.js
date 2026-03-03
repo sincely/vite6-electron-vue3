@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-let _idCounter = 1
+let idCounter = 1
 
 export const useNotificationStore = defineStore('notification', {
   state: () => ({
@@ -15,7 +15,7 @@ export const useNotificationStore = defineStore('notification', {
   actions: {
     push({ title = '通知', body = '', type = 'info' } = {}) {
       this.list.unshift({
-        id: _idCounter++,
+        id: idCounter++,
         title,
         body,
         type,

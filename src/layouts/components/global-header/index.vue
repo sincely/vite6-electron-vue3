@@ -23,18 +23,18 @@
         </button>
         <!-- 通知铃铛 -->
         <div class="notif-btn-wrap">
-          <button ref="bellBtnRef" class="icon-btn" title="消息通知" @click.stop="notifStore.togglePanel()">
-            <SvgIcon icon-class="notice" width="16px" height="16px" />
-            <span v-if="notifStore.hasUnread" class="notif-badge">
-              {{ notifStore.unreadCount > 99 ? '99+' : notifStore.unreadCount }}
+          <button ref="bellBtnRef" class="icon-btn" title="消息通知" @click="handleNotice">
+            <SvgIcon icon-class="notice" width="18px" height="18px" />
+            <span v-if="noticeStore.hasUnread" class="notif-badge">
+              {{ noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount }}
             </span>
           </button>
           <NotificationPanel :anchor-ref="bellBtnRef" />
         </div>
         <!-- 刷新 -->
-        <!-- <button class="icon-btn" title="刷新" @click="reload">
+        <button class="icon-btn" title="刷新" @click="reload">
           <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
-        </button> -->
+        </button>
         <!-- 主题切换 -->
         <button class="icon-btn" title="切换主题" @click="appStore.toggleTheme()">
           <SvgIcon :icon-class="appStore.isDark ? 'sun' : 'moon'" width="16px" height="16px" />
@@ -66,7 +66,7 @@ import NotificationPanel from '@/components/NotificationPanel.vue'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
-const notifStore = useNotificationStore()
+const noticeStore = useNotificationStore()
 
 const latestVersion = computed(() => updateStore.latestVersion)
 const isMac = computed(() => window.process?.platform === 'darwin')
@@ -77,7 +77,11 @@ const showUpdateDialog = () => {
   updateStore.setDialogVisible(true)
 }
 
-// const reload = () => location.reload()
+const handleNotice = () => {
+  noticeStore.togglePanel()
+}
+
+const reload = () => location.reload()
 const minimize = () => window.ipcRenderer.send('window-minimize')
 const maximize = () => window.ipcRenderer.send('window-maximize')
 const close = () => window.ipcRenderer.send('window-close')
@@ -91,7 +95,7 @@ const close = () => window.ipcRenderer.send('window-close')
   align-items: stretch;
   width: 100%;
   height: var(--titlebar-height);
-  overflow: hidden;
+  overflow: visible;
   user-select: none;
   background: color-mix(in srgb, var(--color-bg-titlebar), transparent 12%);
   border-bottom: 1px solid color-mix(in srgb, var(--color-border), transparent 24%);
