@@ -1,7 +1,7 @@
 import AutoImport from 'unplugin-auto-import/vite' // 自动导入插件
 import Components from 'unplugin-vue-components/vite' // 自动导入组件,不需要手动导入
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-
+import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 export default function createVitePlugins() {
   return [
     AutoImport({
@@ -30,18 +30,18 @@ export default function createVitePlugins() {
       ],
       extensions: ['vue'], // 指定扩展名，默认是.vue
       dts: false // 配置文件生成位置,会在根目录生成./components.d.ts，里面可以看到自动导入的api
-    })
+    }),
     //当你使用unplugin-vue-components引入ui库的时候 message, notification 等引入样式不生效 安装vite-plugin-style-import即可
-    // createStyleImportPlugin({
-    //   resolves: [ElementPlusResolve()],
-    //   // 自定义规则
-    //   libs: [
-    //     {
-    //       libraryName: 'element-plus',
-    //       esModule: true,
-    //       resolveStyle: (name) => `element-plus/theme-chalk/${name}.css`
-    //     }
-    //   ]
-    // })
+    createStyleImportPlugin({
+      resolves: [ElementPlusResolve()],
+      // 自定义规则
+      libs: [
+        {
+          libraryName: 'element-plus',
+          esModule: true,
+          resolveStyle: (name) => `element-plus/theme-chalk/${name}.css`
+        }
+      ]
+    })
   ]
 }

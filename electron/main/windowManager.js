@@ -152,7 +152,7 @@ export function createMainWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString())
     // 在主窗口加载完成后发送一个测试通知
-    createNotification({ title: '欢迎', body: '应用已成功启动！' })
+    createNotification({ title: '欢迎', body: '应用已成功启动！', type: 'celebrate' })
   })
 
   loadHash(win, 'desktop')

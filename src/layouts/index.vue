@@ -26,8 +26,6 @@
   </div>
   <!-- 更新弹框 -->
   <UpdateDialog />
-  <!-- Toast 通知 -->
-  <NotificationToast />
 </template>
 
 <script setup>

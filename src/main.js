@@ -1,14 +1,13 @@
-import { createApp } from 'vue'
+import { createApp, h } from 'vue'
 import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由
 import '@/styles/index.scss' // 全局样式
-import '@/config/nprogress' // 全局样式
 import { setupIcon } from './plugins'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
 import { useNotificationStore } from '@/store/modules/notification'
-
+import SvgIcon from '@/components/SvgIcon/index.vue'
 async function setupApp() {
   const app = createApp(App)
   setupIcon(app)
@@ -25,21 +24,30 @@ async function setupApp() {
 
     // 获取当前版本号
     window.ipcRenderer.invoke('get-app-version').then((version) => {
+      console.log('当前应用版本号:', version)
       updateStore.setCurrentVersion(version)
     })
 
     // 监听主进程发送的通知 → 推入通知中心
     window.ipcRenderer.on('show-notification', (event, options) => {
-      notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
+      // notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
+      // 直接提示登录成功，模拟通知
+      ElNotification({
+        title: '通知',
+        message: '欢迎回来',
+        icon: h(SvgIcon, { iconClass: 'celebrate', width: '16px', height: '16px' }),
+        showClose: false,
+        duration: 2000
+      })
     })
 
     // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
     if (import.meta.env.DEV) {
       setTimeout(() => {
-        updateStore.setCurrentVersion(updateStore.currentVersion || '0.0.3')
-        updateStore.setLatestVersion('0.1.0')
-        updateStore.setUpdateAvailable(true)
-        updateStore.setDialogVisible(true)
+        updateStore.setCurrentVersion(updateStore.currentVersion || '0.0.3') // 设置当前版本
+        updateStore.setLatestVersion('0.1.0') // 设置最新版本（比当前高）
+        updateStore.setUpdateAvailable(true) // 标记有可用更新
+        updateStore.setDialogVisible(true) // 显示更新提示框
         // 模拟几条通知
         notifStore.push({ title: '欢迎使用', body: '应用已成功启动，祝您使用愉快！', type: 'success' })
         notifStore.push({ title: '系统提示', body: '检测到新版本 v0.1.0 可用，建议尽快更新。', type: 'info' })

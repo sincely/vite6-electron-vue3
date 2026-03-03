@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useUpdateStore } from '@/store/modules/update'
 
 const updateStore = useUpdateStore()
@@ -166,8 +166,33 @@ const handleLater = () => {
   updateStore.setDialogVisible(false)
 }
 
+// ── 生产环境：监听主进程推送的下载进度事件 ──
+let onProgress = null
+let onDownloaded = null
+let onError = null
+
+onMounted(() => {
+  onProgress = (_, progress) => {
+    updateStore.setDownloadProgress(progress.percent ?? 0)
+  }
+  onDownloaded = () => {
+    updateStore.setUpdating(false)
+    updateStore.setUpdateDownloaded(true)
+  }
+  onError = (_, message) => {
+    updateStore.setUpdating(false)
+    console.error('[updater] 下载出错：', message)
+  }
+  window.ipcRenderer.on('download-progress', onProgress)
+  window.ipcRenderer.on('update-downloaded', onDownloaded)
+  window.ipcRenderer.on('update-error', onError)
+})
+
 onUnmounted(() => {
   if (mockTimer) clearInterval(mockTimer)
+  window.ipcRenderer.off('download-progress', onProgress)
+  window.ipcRenderer.off('update-downloaded', onDownloaded)
+  window.ipcRenderer.off('update-error', onError)
 })
 </script>
 
