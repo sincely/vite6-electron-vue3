@@ -27,5 +27,5 @@ export const useAppStore = defineStore('app', {
       this.sidebarCollapsed = val
     }
   },
-  persist: true // 看这里，一键开启持久化
+  persist: true
 })

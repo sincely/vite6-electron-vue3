@@ -13,7 +13,9 @@
           :title="appStore.sidebarCollapsed ? item.label : ''"
           @click="handleNav(item)"
         >
-          <SvgIcon :icon-class="item.icon" class="sidebar-icon" width="20px" height="20px" />
+          <div class="sidebar-icon-wrap">
+            <SvgIcon :icon-class="item.icon" class="sidebar-icon" width="18px" height="18px" />
+          </div>
           <span class="sidebar-label">{{ item.label }}</span>
           <!-- 有子菜单时显示箭头指示器 -->
           <SvgIcon
@@ -150,9 +152,12 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   height: 100%;
   overflow: hidden;
   background: var(--sidebar-surface-bg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px) saturate(1.06);
   border-right: 1px solid var(--glass-surface-border);
   border-radius: 0;
+  box-shadow:
+    inset -1px 0 0 rgb(255 255 255 / 6%),
+    0 22px 44px -30px rgb(2 6 23 / 85%);
   transition: width $transition;
 
   &::before {
@@ -161,9 +166,26 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     height: 120px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(circle at 14% 0%, rgb(249 115 22 / 20%) 0%, transparent 62%),
-      radial-gradient(circle at 84% 16%, rgb(14 165 233 / 16%) 0%, transparent 58%);
+    background: radial-gradient(
+        circle at 14% 0%,
+        color-mix(in srgb, var(--brand-accent), transparent 82%) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        circle at 84% 16%,
+        color-mix(in srgb, var(--brand-accent-alt), transparent 84%) 0%,
+        transparent 58%
+      );
     opacity: 0.9;
+  }
+
+  &::after {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 1px;
+    pointer-events: none;
+    content: '';
+    background: linear-gradient(180deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 2%) 100%);
   }
 
   &-collapsed {
@@ -174,8 +196,16 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     position: relative;
     z-index: 2;
     flex: 1;
-    padding: 8px 6px;
+    padding: 10px 8px;
     overflow: hidden auto;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 16px,
+      black calc(100% - 16px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
 
     &::-webkit-scrollbar {
       width: 4px;
@@ -196,22 +226,42 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     display: flex;
     gap: 11px;
     align-items: center;
-    height: 44px;
+    height: 46px;
     padding: 0 14px;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
     color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    border: 1px solid transparent;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-card), transparent 38%) 0%,
+      color-mix(in srgb, var(--color-bg-sidebar), transparent 52%) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 52%);
     border-radius: 14px;
-    transition: all 0.2s ease;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 6%),
+      0 8px 16px -14px rgb(2 6 23 / 78%);
+    transition: all 0.24s ease;
 
     &:hover {
       color: var(--color-text-primary);
       background: color-mix(in srgb, var(--color-bg-hover), transparent 25%);
-      border-color: color-mix(in srgb, var(--color-border), transparent 35%);
-      transform: translateX(2px);
+      border-color: color-mix(in srgb, var(--brand-accent), transparent 72%);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 8%),
+        0 10px 18px -14px color-mix(in srgb, var(--brand-accent), transparent 54%);
+      transform: translate3d(2px, -1px, 0);
+
+      .sidebar-icon-wrap {
+        background: color-mix(in srgb, var(--brand-accent), transparent 88%);
+        border-color: color-mix(in srgb, var(--brand-accent), transparent 76%);
+      }
+
+      .sidebar-icon {
+        color: var(--brand-accent);
+      }
     }
 
     &-active {
@@ -222,20 +272,37 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
         color-mix(in srgb, var(--color-primary), transparent 86%) 0%,
         color-mix(in srgb, var(--brand-accent-alt), transparent 90%) 100%
       );
-      border-color: color-mix(in srgb, var(--color-primary), transparent 70%);
-      box-shadow: 0 10px 16px -14px color-mix(in srgb, var(--color-primary), transparent 16%);
+      border-color: color-mix(in srgb, var(--color-primary), transparent 66%);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 12%),
+        0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 82%),
+        0 8px 20px -12px color-mix(in srgb, var(--color-primary), transparent 38%);
+
+      .sidebar-icon-wrap {
+        background: color-mix(in srgb, var(--color-primary), transparent 76%);
+        border-color: color-mix(in srgb, var(--color-primary), transparent 66%);
+        box-shadow: 0 0 12px -2px color-mix(in srgb, var(--color-primary), transparent 46%);
+      }
 
       .sidebar-icon {
         color: var(--color-primary);
       }
 
+      .sidebar-child-dot {
+        background: var(--color-primary);
+        box-shadow:
+          0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 82%),
+          0 0 8px color-mix(in srgb, var(--color-primary), transparent 52%);
+      }
+
       &::before {
         position: absolute;
         inset: 9px auto 9px 4px;
-        width: 4px;
+        width: 3px;
         content: '';
         background: linear-gradient(180deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
         border-radius: 4px;
+        box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary), transparent 30%);
       }
     }
 
@@ -244,11 +311,15 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       padding-left: 46px;
       margin-bottom: 2px;
       font-size: 13px;
+      background: transparent;
+      border-color: transparent;
       border-radius: 12px;
-      opacity: 0.95;
+      box-shadow: none;
+      opacity: 0.96;
 
       &:hover {
-        transform: translateX(0);
+        background: color-mix(in srgb, var(--color-bg-hover), transparent 22%);
+        transform: translate3d(0, 0, 0);
       }
 
       &::before {
@@ -258,9 +329,21 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   }
 
   &-icon {
-    flex-shrink: 0;
     color: var(--color-text-muted);
-    transition: color 0.2s;
+    transition: color 0.22s;
+  }
+
+  &-icon-wrap {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: color-mix(in srgb, var(--color-bg-input), transparent 25%);
+    border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 30%);
+    border-radius: 10px;
+    transition: all 0.22s ease;
   }
 
   &-label {
@@ -275,7 +358,13 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   }
 
   &-child-dot {
-    display: none;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 2px;
+    background: color-mix(in srgb, var(--brand-accent), transparent 15%);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-accent), transparent 90%);
   }
 
   &-chevron {
@@ -291,12 +380,34 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
   &-submenu {
     max-height: 0;
+    margin: -2px 6px 6px;
     overflow: hidden;
+    border: 1px solid transparent;
+    border-radius: 12px;
     transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   &-submenu-open {
+    position: relative;
     max-height: 240px;
+    padding: 4px;
+    background: color-mix(in srgb, var(--glass-surface), transparent 18%);
+    border-color: color-mix(in srgb, var(--glass-surface-border), transparent 36%);
+
+    &::before {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      left: 14px;
+      width: 1px;
+      content: '';
+      background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--brand-accent), transparent 40%) 0%,
+        transparent 100%
+      );
+      border-radius: 1px;
+    }
   }
 
   &-collapsed &-submenu {
@@ -312,6 +423,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     justify-content: center;
     padding: 0;
     margin-inline: 4px;
+    border-radius: 12px;
 
     &:hover {
       transform: none;
@@ -325,7 +437,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   &-footer {
     position: relative;
     z-index: 2;
-    padding: 12px;
+    padding: 10px 8px;
     border-top: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 15%);
   }
 
@@ -335,13 +447,15 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     align-items: center;
     padding: 10px;
     cursor: pointer;
-    border: 1px solid transparent;
+    background: color-mix(in srgb, var(--glass-surface), transparent 22%);
+    border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 24%);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition: all $transition;
 
     &:hover {
       background: color-mix(in srgb, var(--color-bg-hover), transparent 16%);
-      border-color: color-mix(in srgb, var(--color-border), transparent 42%);
+      border-color: color-mix(in srgb, var(--brand-accent), transparent 74%);
     }
 
     &-active {

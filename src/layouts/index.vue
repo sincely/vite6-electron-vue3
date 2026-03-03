@@ -67,11 +67,4 @@ import NotificationToast from '@/components/NotificationToast.vue'
     background: var(--color-bg-content, var(--glass-surface));
   }
 }
-
-@media (width <= 960px) {
-  .layout-container {
-    gap: 0;
-    padding: 0;
-  }
-}
 </style>

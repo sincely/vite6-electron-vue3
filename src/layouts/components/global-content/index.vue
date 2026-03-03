@@ -34,7 +34,7 @@ watch(
   position: relative;
   flex: 1;
   min-height: 0;
-  padding: 18px 20px 20px;
+  padding: 14px;
   overflow-y: auto;
   animation: fade-up 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
