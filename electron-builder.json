@@ -1,7 +1,7 @@
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,
-  "productName": "deep-ai",
+  "productName": "crab",
   "copyright": "Copyright 2024 dyy.dongyuanwai",
   "directories": {
     "output": "release/${version}"
