@@ -35,18 +35,17 @@
             </div>
           </div>
 
-          <!-- 更新说明占位 -->
-          <!-- <div class="update-dialog__notes">
+          <!-- 更新说明（来自 latest.yml releaseNotes 字段，有内容才显示）-->
+          <div v-if="releaseNotes" class="update-dialog__notes">
             <p class="notes-title">
               <SvgIcon icon-class="lucide-list" width="13px" height="13px" />
               更新内容
             </p>
+            <!-- releaseNotes 可能是纯文本或 HTML，统一按纯文本每行拆分展示 -->
             <ul class="notes-list">
-              <li>修复已知问题，提升运行稳定性</li>
-              <li>优化性能与用户体验</li>
-              <li>新增功能与界面改进</li>
+              <li v-for="(line, i) in releaseNoteLines" :key="i">{{ line }}</li>
             </ul>
-          </div> -->
+          </div>
 
           <!-- 下载进度视图 -->
           <template v-if="isUpdating">
@@ -109,6 +108,14 @@ const currentVersion = computed(() => updateStore.currentVersion)
 const isUpdating = computed(() => updateStore.isUpdating)
 const updateDownloaded = computed(() => updateStore.updateDownloaded)
 const downloadProgress = computed(() => updateStore.downloadProgress)
+const releaseNotes = computed(() => updateStore.releaseNotes)
+/** 将 releaseNotes 按换行拆成列表行，过滤空行 */
+const releaseNoteLines = computed(() =>
+  (releaseNotes.value || '')
+    .split(/\r?\n/)
+    .map((s) => s.replace(/^[-*]\s*/, '').trim())
+    .filter(Boolean)
+)
 let mockTimer = null
 
 const startMockDownload = () => {

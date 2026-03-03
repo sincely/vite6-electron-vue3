@@ -216,8 +216,9 @@ onUnmounted(() => {
     font-size: 12px;
     line-height: 1.5;
     color: var(--color-text-secondary);
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    line-clamp: 2;
+
+    // box-orient: vertical;
   }
 
   &__close {

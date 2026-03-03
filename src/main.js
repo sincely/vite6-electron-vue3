@@ -3,6 +3,7 @@ import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由
 import '@/styles/index.scss' // 全局样式
+import '@/config/nprogress' // 全局样式
 import { setupIcon } from './plugins'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
@@ -32,19 +33,6 @@ async function setupApp() {
       notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
     })
 
-    // 监听下载进度
-    window.ipcRenderer.on('download-progress', (event, progress) => {
-      updateStore.setUpdating(true)
-      updateStore.setDownloadProgress(progress.percent)
-    })
-
-    // 监听更新可用
-    window.ipcRenderer.on('update-available', (event, info) => {
-      updateStore.setUpdateAvailable(true)
-      updateStore.setLatestVersion(info.version)
-      updateStore.setDialogVisible(true)
-    })
-
     // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
     if (import.meta.env.DEV) {
       setTimeout(() => {
@@ -58,17 +46,6 @@ async function setupApp() {
         notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'warning' })
       }, 1500)
     }
-
-    // 监听更新下载完成
-    window.ipcRenderer.on('update-downloaded', () => {
-      updateStore.setUpdateDownloaded(true)
-      updateStore.setUpdating(false)
-    })
-
-    // 监听无新版本
-    window.ipcRenderer.on('update-not-available', () => {
-      updateStore.resetUpdateState()
-    })
   })
   app.config.performance = false
 }

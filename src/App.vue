@@ -9,9 +9,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUpdater } from '@/hooks/useUpdater'
 
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
+
+// 挂载更新 IPC 监听（全局唯一，随 App 组件生命周期自动清理）
+useUpdater()
 </script>
 
 <style lang="scss" scoped>

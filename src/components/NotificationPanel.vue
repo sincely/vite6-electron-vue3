@@ -68,6 +68,11 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useNotificationStore } from '@/store/modules/notification'
 
+const props = defineProps({
+  /** 触发按钮的 ref，点击该元素时不触发外部关闭逻辑，交由按钮自身的 togglePanel 处理 */
+  anchorRef: { type: Object, default: null }
+})
+
 const store = useNotificationStore()
 const panelRef = ref(null)
 
@@ -94,8 +99,10 @@ const formatTime = (ts) => {
   })
 }
 
-// 点击外部关闭
+// 点击外部关闭（捕获阶段，能穿透 @click.stop）
 const onClickOutside = (e) => {
+  // 点击触发按钮时，交由按钮自身的 togglePanel 逻辑处理，此处忽略
+  if (props.anchorRef?.value && props.anchorRef.value.contains(e.target)) return
   if (panelRef.value && !panelRef.value.contains(e.target)) {
     store.setPanelVisible(false)
   }
@@ -282,8 +289,9 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
     font-size: 12px;
     line-height: 1.5;
     color: var(--color-text-secondary);
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    line-clamp: 2;
+
+    // box-orient: vertical;
   }
 
   &__time {

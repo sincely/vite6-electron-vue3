@@ -160,7 +160,6 @@ function flattenRoutes(routes, parentPath = '') {
 
 // 供菜单配置使用的扁平路由数据（保持兼容）
 export const asyncRoutes = flattenRoutes(asyncRouteTree)
-console.log(asyncRoutes)
 
 const router = createRouter({
   history: createWebHashHistory(),
