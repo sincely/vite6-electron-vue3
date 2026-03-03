@@ -151,9 +151,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   overflow: hidden;
   background: var(--sidebar-surface-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-surface-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--glass-shadow-soft);
+  border-right: 1px solid var(--glass-surface-border);
+  border-radius: 0;
   transition: width $transition;
 
   &::before {

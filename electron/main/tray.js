@@ -1,22 +1,64 @@
 import { app, Menu, Tray, nativeImage } from 'electron'
 import path from 'node:path'
+import fs from 'node:fs'
 import { getMainWindow, getLoginWindow, restoreMainWindow } from './windowManager.js'
 
 let tray = null
 
-const getTrayIconSize = () => {
-  if (process.platform === 'darwin') return { width: 18, height: 18 }
-  if (process.platform === 'win32') return { width: 16, height: 16 }
-  return { width: 16, height: 16 }
-}
+/**
+ * 获取资源根路径（兼容开发环境与打包后环境）
+ * 打包后 process.resourcesPath 指向 app.asar 同级的 resources 目录
+ */
+const getResourcesRoot = () => (app.isPackaged ? process.resourcesPath : process.env.APP_ROOT || process.cwd())
 
+/**
+ * 按平台加载托盘图标
+ *
+ * macOS  → resources/tray/tray-mac@2x.png（灰度模板图像，系统自动适配深色/浅色）
+ * Windows→ resources/tray/tray-win.png（16×16）
+ * Linux  → resources/tray/tray-linux.png（22×22）
+ * 降级   → resources/icon.png 动态缩放
+ */
 const createTrayIcon = () => {
-  const iconPath = path.join(process.env.APP_ROOT || process.cwd(), 'resources/icon.png')
-  const baseImage = nativeImage.createFromPath(iconPath)
-  if (baseImage.isEmpty()) return iconPath
+  const root = getResourcesRoot()
+  const trayDir = path.join(root, 'resources', 'tray')
 
-  const { width, height } = getTrayIconSize()
-  return baseImage.resize({ width, height, quality: 'best' })
+  const tryLoad = (...candidates) => {
+    for (const p of candidates) {
+      if (fs.existsSync(p)) return p
+    }
+    return null
+  }
+
+  if (process.platform === 'darwin') {
+    const iconPath = tryLoad(path.join(trayDir, 'tray-mac@2x.png'), path.join(trayDir, 'tray-mac.png'))
+    if (iconPath) {
+      const image = nativeImage.createFromPath(iconPath)
+      // 模板图像：系统自动将黑色渲染为适合当前菜单栏的颜色
+      image.setTemplateImage(true)
+      return image
+    }
+  }
+
+  if (process.platform === 'win32') {
+    const iconPath = tryLoad(path.join(trayDir, 'tray-win.ico'), path.join(trayDir, 'tray-win.png'))
+    if (iconPath) return nativeImage.createFromPath(iconPath)
+  }
+
+  if (process.platform === 'linux') {
+    const iconPath = tryLoad(path.join(trayDir, 'tray-linux.png'))
+    if (iconPath) return nativeImage.createFromPath(iconPath)
+  }
+
+  // ── 降级：从 icon.png 动态缩放 ──
+  const fallback = path.join(root, 'resources', 'icon.png')
+  const base = nativeImage.createFromPath(fallback)
+  if (!base.isEmpty()) {
+    const size = process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
+    return base.resize({ width: size, height: size, quality: 'best' })
+  }
+
+  return fallback
 }
 
 const getActiveWindow = () => {

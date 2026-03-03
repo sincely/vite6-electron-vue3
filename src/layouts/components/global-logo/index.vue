@@ -1,6 +1,6 @@
 <template>
   <div class="logo-block" :class="{ 'is-mac': isMac }">
-    <img src="@/assets/bar/logo.svg" class="logo-block__img" alt="logo" />
+    <img src="@/assets/bar/icon.png" class="logo-block__img" alt="logo" />
     <span class="logo-block__name" :class="{ 'is-hidden': appStore.sidebarCollapsed }">AI Desktop</span>
   </div>
 </template>

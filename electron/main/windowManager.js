@@ -5,9 +5,13 @@ import { VITE_DEV_SERVER_URL, RENDERER_DIST, VITE_PUBLIC } from '../config/index
 import { initUpdater } from './update.js'
 import createNotification from './notification.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const preload = path.join(__dirname, '../preload/index.mjs')
-const indexHtml = path.join(RENDERER_DIST, 'index.html')
+const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
+const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
+const indexHtml = path.join(RENDERER_DIST, 'index.html') // index.html 的绝对路径
+
+console.log('__dirname:', __dirname)
+console.log('preload:', preload)
+console.log('indexHtml:', indexHtml)
 
 const windows = new Map() // 窗口映射表
 let mainWindowId = null // 主窗口 ID
@@ -35,8 +39,13 @@ const setupWindow = (win) => {
   win.once('ready-to-show', () => win.show())
 }
 
-// 加载哈希路由
+/**
+ * @description 加载哈希路由
+ * @param {*} win
+ * @param {*} hash
+ */
 const loadHash = (win, hash) => {
+  // 开发环境使用 loadURL 加载 Vite 开发服务器
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL)
   } else {
@@ -81,7 +90,6 @@ export function createLoginWindow() {
     autoHideMenuBar: true,
     titleBarStyle: 'hiddenInset',
     resizable: false,
-    frame: true,
     center: true,
     webPreferences: {
       preload,
@@ -117,8 +125,8 @@ export function createMainWindow() {
   }
 
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1280,
+    height: 880,
     minWidth: 800,
     minHeight: 600,
     icon: path.join(VITE_PUBLIC, 'favicon.ico'),
@@ -127,7 +135,6 @@ export function createMainWindow() {
     // 1. 隐藏原生标题栏
     titleBarStyle: 'hidden',
     resizable: true,
-    frame: true,
     center: true,
     webPreferences: {
       preload,
@@ -151,6 +158,7 @@ export function createMainWindow() {
   loadHash(win, 'desktop')
   setupWindow(win)
 
+  // 开发环境自动打开开发者工具
   if (VITE_DEV_SERVER_URL) win.webContents.openDevTools()
 
   // 点击关闭按钮时默认最小化到托盘，避免直接退出

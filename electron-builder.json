@@ -14,6 +14,7 @@
   ],
   "mac": {
     "icon": "resources/app.icns",
+    "darkModeSupport": true,
     "target": [
       "dmg",
       "zip"
@@ -27,14 +28,8 @@
     ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
-  "publish": [
-    {
-      "provider": "generic",
-      "url": "http://10.10.24.52:8089/electron-update/"
-    }
-  ],
   "win": {
-    "icon": "resources/icon.png",
+    "icon": "resources/icon.ico",
     "target": [
       {
         "target": "nsis",
@@ -45,6 +40,12 @@
     ],
     "artifactName": "${productName}-${version}-Setup.${ext}"
   },
+  "publish": [
+    {
+      "provider": "generic",
+      "url": "http://10.10.24.52:8089/electron-update/"
+    }
+  ],
   "compression": "maximum",
   "nsis": {
     "oneClick": false,

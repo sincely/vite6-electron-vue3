@@ -45,10 +45,10 @@ import NotificationToast from '@/components/NotificationToast.vue'
 .layout-container {
   position: relative;
   display: flex;
-  gap: 10px;
+  gap: 0;
   width: 100%;
   height: 100%;
-  padding: 25px 16px;
+  padding: 0;
   overflow: hidden;
   background: transparent;
 
@@ -64,18 +64,14 @@ import NotificationToast from '@/components/NotificationToast.vue'
     min-width: 0;
     height: 100%;
     overflow: hidden;
-    background: var(--glass-surface);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-surface-border);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--glass-shadow-soft);
+    background: var(--color-bg-content, var(--glass-surface));
   }
 }
 
 @media (width <= 960px) {
   .layout-container {
-    gap: 8px;
-    padding: 8px;
+    gap: 0;
+    padding: 0;
   }
 }
 </style>
