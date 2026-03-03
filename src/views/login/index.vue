@@ -224,7 +224,6 @@ const submit = () => {
   }
 
   .brand-title {
-    font-family: Montserrat, sans-serif;
     font-size: 34px;
     font-weight: 700;
     letter-spacing: 0.4px;
@@ -276,7 +275,6 @@ const submit = () => {
 
 .form-title {
   margin-top: 4px;
-  font-family: Montserrat, sans-serif;
   font-size: 26px;
   font-weight: 700;
   color: var(--color-text-primary);

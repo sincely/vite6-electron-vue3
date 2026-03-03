@@ -24,29 +24,61 @@ export default defineConfig(({ mode, command }) => {
       // 传递给Terser的更多 minify 选项。
       terserOptions: {
         compress: {
-          drop_console: true, // 生产环境时移除console
-          drop_debugger: true // 生产环境时移除debugger
-        }
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+          passes: 2 // 多次压缩，体积更小
+        },
+        mangle: true,
+        format: { comments: false } // 删除所有注释
       },
-      modulePreload: true, // 是否动态引入polyfill，需要引入兼容性相关的文件
-      emptyOutDir: true, // 默认true默认情况下，若outDir在root目录下，则Vite会在构建时清空该目录。
-      assetsInlineLimit: 4096, // 小于此阈值的导入或引用资源将内联为base64编码，以避免额外的http请求。设置为0可以完全禁用此项
-      outDir: 'dist', // 指定输出路径,默认dist
-      reportCompressedSize: true, // 开启计算文件大小，监控打包体积
-      sourcemap: sourcemap, // 生产环境禁用 source map 以减小体积
-      assetsDir: 'assets', // 静态资源的存放目录
-      cssCodeSplit: true, // 启用/禁用CSS代码拆分默认true, 用则所有样式保存在一个css里面
-      chunkSizeWarningLimit: 1000, // chunk大小警告的限制
-      minify: 'terser', // 混淆器terser构建后文件体积更小
-      manifest: false, // 当设置为true，构建后将会生成 manifest.json 文件
-      commonjsOptions: {}, // @rollup/plugin-commonjs 插件的选项
-      // 自定义底层的Rollup 打包配置
+      emptyOutDir: true,
+      outDir: 'dist',
+      reportCompressedSize: false, // 关闭压缩计算，加快构建速度
+      sourcemap: sourcemap,
+      assetsDir: 'assets',
+      chunkSizeWarningLimit: 4000,
+      minify: 'terser',
       rollupOptions: {
+        treeshake: {
+          moduleSideEffects: false, // 更激进的 tree-shaking
+          propertyReadSideEffects: false
+        },
         output: {
-          manualChunks: {
-            'vue-vendor': ['vue', 'vue-router', 'pinia'],
-            'element-plus-vendor': ['element-plus'],
-            'utils-vendor': ['axios', 'dayjs', 'lodash-es']
+          manualChunks(id) {
+            // Vue 核心
+            if (
+              id.includes('node_modules/vue/') ||
+              id.includes('node_modules/@vue/') ||
+              id.includes('node_modules/vue-router/') ||
+              id.includes('node_modules/pinia/')
+            ) {
+              return 'vue-vendor'
+            }
+            // Element Plus 组件（按需拆分减小首屏）
+            if (id.includes('node_modules/element-plus/')) {
+              return 'element-plus'
+            }
+            // Element Plus 图标
+            if (id.includes('node_modules/@element-plus/icons-vue/')) {
+              return 'element-icons'
+            }
+            // 工具库
+            if (
+              id.includes('node_modules/axios/') ||
+              id.includes('node_modules/dayjs/') ||
+              id.includes('node_modules/lodash-es/')
+            ) {
+              return 'utils-vendor'
+            }
+            // gsap 动画单独分包
+            if (id.includes('node_modules/gsap/')) {
+              return 'gsap'
+            }
+            // nprogress
+            if (id.includes('node_modules/nprogress/')) {
+              return 'nprogress'
+            }
           },
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
@@ -130,13 +162,6 @@ export default defineConfig(({ mode, command }) => {
         resolve: {}
       }),
       ...createVitePlugins(viteEnv, command === 'build')
-    ],
-    // 强制预构建插件包
-    optimizeDeps: {
-      force: false, // 是否强制依赖预构建
-      entries: [], // 检测需要预构建的依赖项
-      include: [], // 默认情况下，不在node_modules中的，链接的包不会预构建
-      exclude: [] // 排除在优化之外
-    }
+    ]
   })
 })

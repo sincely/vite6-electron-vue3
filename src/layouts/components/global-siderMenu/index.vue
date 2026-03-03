@@ -199,7 +199,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     height: 44px;
     padding: 0 14px;
     margin-bottom: 6px;
-    font-family: DMSans, sans-serif;
     color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
@@ -380,7 +379,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     }
 
     .user-name {
-      font-family: Montserrat, sans-serif;
       font-size: 14px;
       font-weight: 600;
       color: var(--color-text-primary);

@@ -45,7 +45,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   &__name {
     margin-left: 12px;
     overflow: hidden;
-    font-family: Montserrat, sans-serif;
     font-size: 18px;
     font-weight: 700;
     color: var(--color-text-primary);

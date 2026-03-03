@@ -3,7 +3,7 @@ import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由
 import '@/styles/index.scss' // 全局样式
-import { setupIcon } from './plugins' // 全局注册antd图标
+import { setupIcon } from './plugins'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
 import { useNotificationStore } from '@/store/modules/notification'
@@ -13,10 +13,12 @@ async function setupApp() {
   setupIcon(app)
   app.use(store)
   app.use(router)
+
+  // persist 插件在 useAppStore() 首次调用时同步从 localStorage 恢复状态
+  // 在 mount 前调用 initTheme 确保首次渲染时 data-theme 已正确设置
+  useAppStore().initTheme()
+
   app.mount('#app').$nextTick(() => {
-    // 初始化主题
-    const appStore = useAppStore()
-    appStore.initTheme()
     const updateStore = useUpdateStore()
     const notifStore = useNotificationStore()
 

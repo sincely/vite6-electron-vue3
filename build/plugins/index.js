@@ -1,6 +1,5 @@
 import vue from '@vitejs/plugin-vue'
 import unplugin from './unplugin' // unplugin自动导入
-import inspect from './inspect' // vue插件检查页面
 import legacy from './legacy' // 浏览器兼容
 import htmlPlugin from './html' // html插件
 import svgIconPlugin from './svgIcon' // svg图标集成
@@ -18,8 +17,6 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
       vitePlugins.push(legacy())
     }
     vitePlugins.push(htmlPlugin())
-  } else {
-    vitePlugins.push(inspect())
   }
   return vitePlugins
 }

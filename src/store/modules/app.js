@@ -2,7 +2,7 @@
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    theme: localStorage.getItem('theme') || 'dark',
+    theme: 'light',
     sidebarCollapsed: false
   }),
   getters: {
@@ -11,12 +11,10 @@ export const useAppStore = defineStore('app', {
   actions: {
     toggleTheme() {
       this.theme = this.theme === 'dark' ? 'light' : 'dark'
-      localStorage.setItem('theme', this.theme)
       document.documentElement.setAttribute('data-theme', this.theme)
     },
     setTheme(theme) {
       this.theme = theme
-      localStorage.setItem('theme', theme)
       document.documentElement.setAttribute('data-theme', theme)
     },
     initTheme() {
@@ -28,5 +26,6 @@ export const useAppStore = defineStore('app', {
     setSidebarCollapsed(val) {
       this.sidebarCollapsed = val
     }
-  }
+  },
+  persist: true // 看这里，一键开启持久化
 })

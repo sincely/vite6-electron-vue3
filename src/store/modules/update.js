@@ -41,5 +41,6 @@ export const useUpdateStore = defineStore('update', {
       this.currentVersion = ''
       this.dialogVisible = false
     }
-  }
+  },
+  persist: true // 看这里，一键开启持久化
 })

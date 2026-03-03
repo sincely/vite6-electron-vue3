@@ -114,7 +114,6 @@ const copyEndpoint = async () => {
 
 .hero-title {
   margin-top: 8px;
-  font-family: Montserrat, sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: var(--color-text-primary);
@@ -192,7 +191,6 @@ const copyEndpoint = async () => {
 
   &-value {
     margin-top: 12px;
-    font-family: Montserrat, sans-serif;
     font-size: 28px;
     font-weight: 700;
     color: var(--color-text-primary);

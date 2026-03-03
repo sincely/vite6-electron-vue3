@@ -1,18 +1,11 @@
 import { defineStore } from 'pinia'
-export const useUserStore = defineStore({
-  // id必须唯一，不可重复
-  id: 'user',
+export const useUserStore = defineStore('user', {
   // 需要通过函数的方式定义state，
   state: () => {
     return {
-      count: 1,
-      name: '成舟'
+      name: '',
+      token: null
     }
   },
-  // getters
-  getters: {
-    nickName(state) {
-      return state.name + '测试'
-    }
-  }
+  persist: true // 看这里，一键开启持久化
 })

@@ -43,7 +43,6 @@ defineProps({
 }
 
 .placeholder-title {
-  font-family: Montserrat, sans-serif;
   font-size: 24px;
   color: var(--color-text-primary);
 }

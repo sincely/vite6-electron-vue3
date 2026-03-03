@@ -1,6 +1,10 @@
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,
+  "asarUnpack": [
+    "**/node_modules/sharp/**",
+    "**/node_modules/@img/**"
+  ],
   "productName": "crab",
   "copyright": "Copyright 2024 dyy.dongyuanwai",
   "directories": {
@@ -8,9 +12,31 @@
   },
   "files": [
     "dist/**/*",
-    "node_modules/**/*",
     "dist-electron/**/*",
-    "package.json"
+    "package.json",
+    "node_modules/**/*",
+    "!**/node_modules/*/{CHANGELOG.md,CHANGELOG,changelog.md,CHANGELOG.txt}",
+    "!**/node_modules/*/{README.md,README,readme.md,readme,Readme.md}",
+    "!**/node_modules/*/{LICENSE,LICENSE.md,license.md,LICENCE,licence}",
+    "!**/node_modules/*/{.eslintrc,.eslintrc.js,.eslintrc.json,.prettierrc}",
+    "!**/node_modules/**/{test,tests,__tests__,spec,specs,__mocks__}/**",
+    "!**/node_modules/**/{example,examples,demo,demos,sample,samples}/**",
+    "!**/node_modules/**/{docs,doc,documentation,website,gh-pages}/**",
+    "!**/node_modules/**/*.{ts,d.ts,map,coffee}",
+    "!**/node_modules/**/.{travis.yml,nycrc,npmignore,gitignore,gitattributes}",
+    "!**/node_modules/**/Makefile",
+    "!**/node_modules/**/{.bin}/**",
+    "!**/node_modules/electron-builder/**",
+    "!**/node_modules/vite/**",
+    "!**/node_modules/rollup/**",
+    "!**/node_modules/esbuild/**",
+    "!**/node_modules/typescript/**",
+    "!**/node_modules/eslint*/**",
+    "!**/node_modules/prettier/**",
+    "!**/node_modules/stylelint*/**",
+    "!**/node_modules/sass/**",
+    "!**/node_modules/sharp/**",
+    "!**/node_modules/png-to-ico/**"
   ],
   "extraResources": [
     {

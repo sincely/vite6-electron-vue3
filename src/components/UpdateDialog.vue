@@ -213,7 +213,6 @@ onUnmounted(() => {
 
   &__title {
     margin: 0;
-    font-family: Montserrat, sans-serif;
     font-size: 17px;
     font-weight: 700;
     color: var(--color-text-primary);
@@ -312,7 +311,6 @@ onUnmounted(() => {
   }
 
   .version-num {
-    font-family: Montserrat, sans-serif;
     font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -389,7 +387,6 @@ onUnmounted(() => {
 
   .progress-percent {
     min-width: 44px;
-    font-family: Montserrat, sans-serif;
     font-size: 13px;
     font-weight: 700;
     color: var(--color-primary);
