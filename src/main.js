@@ -43,6 +43,10 @@ async function setupApp() {
         // 模拟几条通知
         notifStore.push({ title: '欢迎使用', body: '应用已成功启动，祝您使用愉快！', type: 'success' })
         notifStore.push({ title: '系统提示', body: '检测到新版本 v0.1.0 可用，建议尽快更新。', type: 'info' })
+        notifStore.push({ title: '服务器发生错误', body: '代理服务器响应超时，请检查网络配置。', type: 'error' })
+        notifStore.push({ title: '网络发生波动', body: '代理服务器响应超时，请检查网络配置。', type: 'exception' })
+        notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'success' })
+        notifStore.push({ title: '公告申明', body: '代理服务器响应超时，请检查网络配置。', type: 'celebrate' })
         notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'warning' })
       }, 1500)
     }

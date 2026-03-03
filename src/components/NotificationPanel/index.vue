@@ -40,7 +40,7 @@
           >
             <!-- 类型图标 -->
             <div class="notif-item__icon" :class="`notif-item__icon--${item.type}`">
-              <SvgIcon :icon-class="typeIcon(item.type)" width="14px" height="14px" />
+              <SvgIcon :icon-class="typeIcon(item.type)" width="16px" height="16px" />
             </div>
 
             <!-- 内容 -->
@@ -79,9 +79,12 @@ const panelRef = ref(null)
 const typeIcon = (type) => {
   const map = {
     info: 'info',
-    success: 'circle-check',
-    warning: 'triangle-alert',
-    error: 'circle-x'
+    success: 'success',
+    warning: 'warning',
+    error: 'error',
+    celebrate: 'celebrate',
+    announce: 'announce',
+    exception: 'exception'
   }
   return map[type] ?? 'info'
 }
@@ -250,21 +253,43 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
     &--info {
       color: var(--color-info);
       background: color-mix(in srgb, var(--color-info), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-info), transparent 90%);
     }
 
     &--success {
       color: var(--color-success);
       background: color-mix(in srgb, var(--color-success), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-success), transparent 90%);
     }
 
     &--warning {
       color: var(--color-warning);
       background: color-mix(in srgb, var(--color-warning), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-warning), transparent 90%);
     }
 
     &--error {
       color: var(--color-danger);
       background: color-mix(in srgb, var(--color-danger), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-danger), transparent 90%);
+    }
+
+    &--celebrate {
+      color: var(--color-celebrate, #fd9816);
+      background: color-mix(in srgb, var(--color-celebrate, #fd9816), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-celebrate, #fd9816), transparent 90%);
+    }
+
+    &--announce {
+      color: var(--color-announce, #ff506d);
+      background: color-mix(in srgb, var(--color-announce, #ff506d), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-announce, #ff506d), transparent 90%);
+    }
+
+    &--exception {
+      color: var(--color-exception, #ff725a);
+      background: color-mix(in srgb, var(--color-exception, #ff725a), transparent 86%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-exception, #ff725a), transparent 90%);
     }
   }
 

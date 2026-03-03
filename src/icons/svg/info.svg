@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></g></svg>
+<svg t="1772542725954" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+  p-id="18819" width="200" height="200">
+  <path
+    d="M512 62c248.14285752 0 450 201.85714248 450 450s-201.85714248 450-450 450-450-201.85714248-450-450 201.85714248-450 450-450z m0 346.56428584a42.17142832 42.17142832 0 0 0-42.17142832 42.17142832v272.18571416a42.17142832 42.17142832 0 0 0 84.34285664 0V450.73571416A42.17142832 42.17142832 0 0 0 512 408.56428584z m0-154.67142832a56.25 56.25 0 1 0 0 112.5 56.25 56.25 0 0 0 0-112.5z"
+    fill="#3386F1" p-id="18820"></path>
+</svg>

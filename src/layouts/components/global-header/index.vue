@@ -62,8 +62,6 @@
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/update'
 import { useNotificationStore } from '@/store/modules/notification'
-import NotificationPanel from '@/components/NotificationPanel.vue'
-
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
 const noticeStore = useNotificationStore()
