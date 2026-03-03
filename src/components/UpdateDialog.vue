@@ -9,14 +9,14 @@
           <!-- 头部 -->
           <div class="update-dialog__header">
             <div class="update-icon-wrap">
-              <SvgIcon icon-class="lucide-rocket" width="28px" height="28px" class="update-rocket" />
+              <SvgIcon icon-class="rocket" width="28px" height="28px" class="update-rocket" />
             </div>
             <div class="update-dialog__title-group">
               <h3 class="update-dialog__title">发现新版本</h3>
               <p class="update-dialog__subtitle">新版本已就绪，立即更新体验最新功能</p>
             </div>
             <button v-if="!isUpdating" class="update-close-btn" title="稍后提醒" @click="handleLater">
-              <SvgIcon icon-class="lucide-x" width="16px" height="16px" />
+              <SvgIcon icon-class="x" width="16px" height="16px" />
             </button>
           </div>
 
@@ -27,7 +27,7 @@
               <span class="version-num">v{{ currentVersion || '—' }}</span>
             </div>
             <div class="version-arrow">
-              <SvgIcon icon-class="lucide-arrow-right" width="16px" height="16px" />
+              <SvgIcon icon-class="arrow-right" width="16px" height="16px" />
             </div>
             <div class="version-item version-item--latest">
               <span class="version-label">最新版本</span>
@@ -38,7 +38,7 @@
           <!-- 更新说明（来自 latest.yml releaseNotes 字段，有内容才显示）-->
           <div v-if="releaseNotes" class="update-dialog__notes">
             <p class="notes-title">
-              <SvgIcon icon-class="lucide-list" width="13px" height="13px" />
+              <SvgIcon icon-class="list" width="13px" height="13px" />
               更新内容
             </p>
             <!-- releaseNotes 可能是纯文本或 HTML，统一按纯文本每行拆分展示 -->
@@ -51,7 +51,7 @@
           <template v-if="isUpdating">
             <div class="update-dialog__progress">
               <div class="progress-header">
-                <SvgIcon icon-class="lucide-download" width="15px" height="15px" class="progress-icon" />
+                <SvgIcon icon-class="download" width="15px" height="15px" class="progress-icon" />
                 <span class="progress-label">正在下载更新...</span>
                 <span class="progress-percent">{{ downloadProgress.toFixed(1) }}%</span>
               </div>
@@ -66,7 +66,7 @@
           <template v-else-if="updateDownloaded">
             <div class="update-dialog__downloaded">
               <div class="downloaded-icon-wrap">
-                <SvgIcon icon-class="lucide-success" width="24px" height="24px" class="downloaded-icon" />
+                <SvgIcon icon-class="success" width="24px" height="24px" class="downloaded-icon" />
               </div>
               <p class="downloaded-title">更新下载完成</p>
               <p class="downloaded-desc">重启应用后将自动完成安装，建议立即重启</p>
@@ -74,7 +74,7 @@
             <div class="update-dialog__actions">
               <button class="update-btn update-btn--later" @click="handleLater">稍后重启</button>
               <button class="update-btn update-btn--confirm" @click="handleInstall">
-                <SvgIcon icon-class="lucide-rotate-ccw" width="15px" height="15px" />
+                <SvgIcon icon-class="rotate-ccw" width="15px" height="15px" />
                 立即重启安装
               </button>
             </div>
@@ -85,7 +85,7 @@
             <div class="update-dialog__actions">
               <button class="update-btn update-btn--later" @click="handleLater">稍后提醒</button>
               <button class="update-btn update-btn--confirm" @click="handleConfirm">
-                <SvgIcon icon-class="lucide-download" width="15px" height="15px" />
+                <SvgIcon icon-class="download" width="15px" height="15px" />
                 立即更新
               </button>
             </div>

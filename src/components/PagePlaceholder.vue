@@ -11,7 +11,7 @@
 
 <script setup>
 defineProps({
-  icon: { type: String, default: 'lucide-layout-dashboard' },
+  icon: { type: String, default: 'layout-dashboard' },
   title: { type: String, default: '页面建设中' },
   description: { type: String, default: '正在完善该模块的交互与内容。' },
   tag: { type: String, default: 'UI UX Pro Max' },

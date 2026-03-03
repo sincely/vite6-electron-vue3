@@ -6,7 +6,7 @@
         <span class="notif-panel__title">消息通知</span>
         <div class="notif-panel__header-actions">
           <button v-if="store.hasUnread" class="notif-text-btn" title="全部标为已读" @click="store.markAllRead()">
-            <SvgIcon icon-class="lucide-check-check" width="13px" height="13px" />
+            <SvgIcon icon-class="check-check" width="13px" height="13px" />
             全部已读
           </button>
           <button
@@ -15,7 +15,7 @@
             title="清空通知"
             @click="store.clear()"
           >
-            <SvgIcon icon-class="lucide-trash-2" width="13px" height="13px" />
+            <SvgIcon icon-class="trash-2" width="13px" height="13px" />
             清空
           </button>
         </div>
@@ -25,7 +25,7 @@
       <div class="notif-panel__body">
         <!-- 空状态 -->
         <div v-if="!store.list.length" class="notif-empty">
-          <SvgIcon icon-class="lucide-bell-off" width="28px" height="28px" class="notif-empty__icon" />
+          <SvgIcon icon-class="bell-off" width="28px" height="28px" class="notif-empty__icon" />
           <p>暂无通知</p>
         </div>
 
@@ -55,7 +55,7 @@
 
             <!-- 删除 -->
             <button class="notif-item__remove" title="删除" @click.stop="store.remove(item.id)">
-              <SvgIcon icon-class="lucide-x" width="12px" height="12px" />
+              <SvgIcon icon-class="x" width="12px" height="12px" />
             </button>
           </div>
         </TransitionGroup>
@@ -78,12 +78,12 @@ const panelRef = ref(null)
 
 const typeIcon = (type) => {
   const map = {
-    info: 'lucide-info',
-    success: 'lucide-circle-check',
-    warning: 'lucide-triangle-alert',
-    error: 'lucide-circle-x'
+    info: 'info',
+    success: 'circle-check',
+    warning: 'triangle-alert',
+    error: 'circle-x'
   }
-  return map[type] ?? 'lucide-info'
+  return map[type] ?? 'info'
 }
 
 const formatTime = (ts) => {

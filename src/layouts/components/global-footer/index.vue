@@ -2,7 +2,7 @@
   <footer class="global-footer">
     <div class="global-footer__left">
       <span class="global-footer__item">
-        <SvgIcon icon-class="lucide-cpu" width="11px" height="11px" />
+        <SvgIcon icon-class="cpu" width="11px" height="11px" />
         {{ currentVersion || '--' }}
       </span>
     </div>

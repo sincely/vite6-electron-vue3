@@ -20,7 +20,7 @@
           <!-- 有子菜单时显示箭头指示器 -->
           <SvgIcon
             v-if="item.children?.length && !appStore.sidebarCollapsed"
-            icon-class="lucide-chevron-right"
+            icon-class="chevron-right"
             class="sidebar-chevron"
             :class="{ 'sidebar-chevron-open': isExpanded(item.id) }"
             width="13px"
@@ -63,7 +63,7 @@
         </div>
         <SvgIcon
           v-if="!appStore.sidebarCollapsed"
-          icon-class="lucide-settings"
+          icon-class="settings"
           class="user-settings-icon"
           width="18px"
           height="18px"
@@ -198,13 +198,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     flex: 1;
     padding: 10px 8px;
     overflow: hidden auto;
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0,
-      black 16px,
-      black calc(100% - 16px),
-      transparent 100%
-    );
     mask-image: linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
 
     &::-webkit-scrollbar {

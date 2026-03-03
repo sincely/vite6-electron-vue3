@@ -1,6 +1,6 @@
 <template>
   <div class="global-search" :class="{ 'is-active': isFocused }">
-    <SvgIcon icon-class="lucide-search" class="global-search__icon" width="14px" height="14px" />
+    <SvgIcon icon-class="search" class="global-search__icon" width="14px" height="14px" />
     <input
       v-model="keyword"
       class="global-search__input"
@@ -11,7 +11,7 @@
     />
     <transition name="fade">
       <button v-if="keyword" class="global-search__clear" @click="keyword = ''">
-        <SvgIcon icon-class="lucide-x" width="12px" height="12px" />
+        <SvgIcon icon-class="x" width="12px" height="12px" />
       </button>
     </transition>
   </div>

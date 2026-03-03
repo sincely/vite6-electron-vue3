@@ -22,7 +22,7 @@
 
           <!-- 关闭按钮 -->
           <button class="notif-toast__close" @click.stop="dismiss(toast.id)">
-            <SvgIcon icon-class="lucide-x" width="12px" height="12px" />
+            <SvgIcon icon-class="x" width="12px" height="12px" />
           </button>
 
           <!-- 进度条（倒计时） -->
@@ -48,12 +48,12 @@ const timers = new Map()
 
 const typeIcon = (type) => {
   const map = {
-    info: 'lucide-info',
-    success: 'lucide-circle-check',
-    warning: 'lucide-triangle-alert',
-    error: 'lucide-circle-x'
+    info: 'info',
+    success: 'circle-check',
+    warning: 'triangle-alert',
+    error: 'circle-x'
   }
-  return map[type] ?? 'lucide-info'
+  return map[type] ?? 'info'
 }
 
 const dismiss = (id) => {

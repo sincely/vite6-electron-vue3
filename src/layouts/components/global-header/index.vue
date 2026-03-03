@@ -8,7 +8,7 @@
         @click="appStore.toggleSidebar()"
       >
         <SvgIcon
-          :icon-class="appStore.sidebarCollapsed ? 'lucide-panel-left-open' : 'lucide-panel-left-close'"
+          :icon-class="appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'"
           width="20px"
           height="20px"
         />
@@ -18,13 +18,13 @@
       <div class="title-bar__actions">
         <!-- 更新提示 -->
         <button v-if="updateAvailable" class="icon-btn update-btn" title="有新版本" @click="showUpdateDialog">
-          <SvgIcon icon-class="lucide-download" class="update-icon" width="16px" height="16px" />
+          <SvgIcon icon-class="download" class="update-icon" width="16px" height="16px" />
           <span>{{ latestVersion }}</span>
         </button>
         <!-- 通知铃铛 -->
         <div class="notif-btn-wrap">
           <button ref="bellBtnRef" class="icon-btn" title="消息通知" @click.stop="notifStore.togglePanel()">
-            <SvgIcon icon-class="lucide-notice" width="16px" height="16px" />
+            <SvgIcon icon-class="notice" width="16px" height="16px" />
             <span v-if="notifStore.hasUnread" class="notif-badge">
               {{ notifStore.unreadCount > 99 ? '99+' : notifStore.unreadCount }}
             </span>
@@ -33,23 +33,23 @@
         </div>
         <!-- 刷新 -->
         <!-- <button class="icon-btn" title="刷新" @click="reload">
-          <SvgIcon icon-class="lucide-refresh-cw" width="16px" height="16px" />
+          <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
         </button> -->
         <!-- 主题切换 -->
         <button class="icon-btn" title="切换主题" @click="appStore.toggleTheme()">
-          <SvgIcon :icon-class="appStore.isDark ? 'lucide-sun' : 'lucide-moon'" width="16px" height="16px" />
+          <SvgIcon :icon-class="appStore.isDark ? 'sun' : 'moon'" width="16px" height="16px" />
         </button>
         <!-- Windows 窗口控制 -->
         <template v-if="!isMac">
           <div class="window-controls">
             <button class="icon-btn control-btn" title="最小化" @click="minimize">
-              <SvgIcon icon-class="lucide-minus" width="16px" height="16px" />
+              <SvgIcon icon-class="minus" width="16px" height="16px" />
             </button>
             <button class="icon-btn control-btn" title="最大化" @click="maximize">
-              <SvgIcon icon-class="lucide-plus" width="16px" height="16px" />
+              <SvgIcon icon-class="plus" width="16px" height="16px" />
             </button>
             <button class="icon-btn control-btn close-btn" title="关闭" @click="close">
-              <SvgIcon icon-class="lucide-x" width="16px" height="16px" />
+              <SvgIcon icon-class="x" width="16px" height="16px" />
             </button>
           </div>
         </template>

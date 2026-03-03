@@ -32,7 +32,7 @@ export const asyncRouteTree = [
   {
     path: '/desktop',
     component: Layout,
-    meta: { title: '仪表板', icon: 'lucide-layout-dashboard', order: 1, sidebar: true },
+    meta: { title: '仪表板', icon: 'layout-dashboard', order: 1, sidebar: true },
     children: [
       {
         path: '',
@@ -51,7 +51,7 @@ export const asyncRouteTree = [
     path: '/quota',
     component: Layout,
     redirect: '/quota/usage',
-    meta: { title: '配额', icon: 'lucide-gauge', order: 2, sidebar: true },
+    meta: { title: '配额', icon: 'gauge', order: 2, sidebar: true },
     children: [
       {
         path: 'usage',
@@ -72,7 +72,7 @@ export const asyncRouteTree = [
     path: '/provider',
     component: Layout,
     redirect: '/provider/list',
-    meta: { title: '提供商', icon: 'lucide-building-2', order: 3, sidebar: true },
+    meta: { title: '提供商', icon: 'building-2', order: 3, sidebar: true },
     children: [
       {
         path: 'list',
@@ -91,7 +91,7 @@ export const asyncRouteTree = [
   {
     path: '/apikeys',
     component: Layout,
-    meta: { title: 'API 密钥', icon: 'lucide-key', order: 6, sidebar: true },
+    meta: { title: 'API 密钥', icon: 'key', order: 6, sidebar: true },
     children: [
       {
         path: '',
@@ -104,7 +104,7 @@ export const asyncRouteTree = [
   {
     path: '/log',
     component: Layout,
-    meta: { title: '日志', icon: 'lucide-file-text', order: 7, sidebar: true },
+    meta: { title: '日志', icon: 'file-text', order: 7, sidebar: true },
     children: [
       {
         path: '',
@@ -119,7 +119,7 @@ export const asyncRouteTree = [
     path: '/settings',
     component: Layout,
     redirect: '/settings/general',
-    meta: { title: '设置', icon: 'lucide-settings', order: 9, sidebar: true, footer: true },
+    meta: { title: '设置', icon: 'settings', order: 9, sidebar: true, footer: true },
     children: [
       {
         path: 'general',

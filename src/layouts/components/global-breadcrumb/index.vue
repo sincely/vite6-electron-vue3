@@ -4,7 +4,7 @@
     <div class="nav-bar-breadcrumb">
       <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
         <!-- 分隔符（第一项之后出现） -->
-        <SvgIcon v-if="idx > 0" icon-class="lucide-chevron-right" class="nav-bar-sep" width="16px" height="16px" />
+        <SvgIcon v-if="idx > 0" icon-class="chevron-right" class="nav-bar-sep" width="16px" height="16px" />
         <!-- 面包屑节点 -->
         <span
           class="nav-bar-crumb"
