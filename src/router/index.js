@@ -72,7 +72,7 @@ export const asyncRouteTree = [
     path: '/provider',
     component: Layout,
     redirect: '/provider/list',
-    meta: { title: '提供商', icon: 'building-2', order: 3, sidebar: true },
+    meta: { title: '提供商', icon: 'building', order: 3, sidebar: true },
     children: [
       {
         path: 'list',
