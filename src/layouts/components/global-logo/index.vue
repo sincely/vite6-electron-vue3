@@ -52,7 +52,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     white-space: nowrap;
     background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--brand-accent) 100%);
     background-clip: text;
-    background-clip: text;
     opacity: 1;
     transition:
       opacity $transition,
