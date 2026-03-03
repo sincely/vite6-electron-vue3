@@ -12,6 +12,23 @@
     "dist-electron/**/*",
     "package.json"
   ],
+  "extraResources": [
+    {
+      "from": "resources/tray",
+      "to": "tray"
+    },
+    {
+      "from": "resources/icon.png",
+      "to": "icon.png"
+    },
+    {
+      "from": "resources/icon.ico",
+      "to": "icon.ico",
+      "filter": [
+        "**"
+      ]
+    }
+  ],
   "mac": {
     "icon": "resources/app.icns",
     "darkModeSupport": true,

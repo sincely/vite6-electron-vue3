@@ -7,21 +7,24 @@ let tray = null
 
 /**
  * 获取资源根路径（兼容开发环境与打包后环境）
- * 打包后 process.resourcesPath 指向 app.asar 同级的 resources 目录
+ * - 开发环境：<cwd>/resources
+ * - 打包后：process.resourcesPath（即 app.asar 同级的 resources 目录）
+ *   extraResources 会将图标复制到此目录，无需再拼 'resources' 子路径
  */
-const getResourcesRoot = () => (app.isPackaged ? process.resourcesPath : process.env.APP_ROOT || process.cwd())
+const getResourcesRoot = () =>
+  app.isPackaged ? process.resourcesPath : path.join(process.env.APP_ROOT || process.cwd(), 'resources')
 
 /**
  * 按平台加载托盘图标
  *
- * macOS  → resources/tray/tray-mac@2x.png（灰度模板图像，系统自动适配深色/浅色）
- * Windows→ resources/tray/tray-win.png（16×16）
- * Linux  → resources/tray/tray-linux.png（22×22）
- * 降级   → resources/icon.png 动态缩放
+ * macOS  → <root>/tray/tray-mac@2x.png（灰度模板图像，系统自动适配深色/浅色）
+ * Windows→ <root>/tray/tray-win.ico 或 tray-win.png（16×16）
+ * Linux  → <root>/tray/tray-linux.png（22×22）
+ * 降级   → <root>/icon.png 动态缩放
  */
 const createTrayIcon = () => {
   const root = getResourcesRoot()
-  const trayDir = path.join(root, 'resources', 'tray')
+  const trayDir = path.join(root, 'tray')
 
   const tryLoad = (...candidates) => {
     for (const p of candidates) {
@@ -51,7 +54,7 @@ const createTrayIcon = () => {
   }
 
   // ── 降级：从 icon.png 动态缩放 ──
-  const fallback = path.join(root, 'resources', 'icon.png')
+  const fallback = path.join(root, 'icon.png')
   const base = nativeImage.createFromPath(fallback)
   if (!base.isEmpty()) {
     const size = process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
