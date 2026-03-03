@@ -47,10 +47,4 @@ watch(
     border-radius: 4px;
   }
 }
-
-@media (width <= 960px) {
-  .global-content {
-    padding: 14px;
-  }
-}
 </style>
