@@ -64,6 +64,12 @@
     }
   ],
   "compression": "maximum",
+  "electronLanguages": [
+    "zh-CN",
+    "zh-TW",
+    "en-US",
+    "en"
+  ],
   "nsis": {
     "oneClick": false,
     "perMachine": false,
