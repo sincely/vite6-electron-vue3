@@ -438,7 +438,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     display: flex;
     gap: 12px;
     align-items: center;
-    padding: 10px;
+    padding: 8px;
     cursor: pointer;
     background: color-mix(in srgb, var(--glass-surface), transparent 22%);
     border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 24%);
@@ -507,7 +507,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
   &-collapsed .user-profile {
     justify-content: center;
-    padding: 0;
+    padding: 8px;
 
     .user-info,
     .user-settings-icon {

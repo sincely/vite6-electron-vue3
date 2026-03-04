@@ -49,7 +49,7 @@
               <SvgIcon icon-class="plus" width="16px" height="16px" />
             </button>
             <button class="icon-btn control-btn close-btn" title="关闭" @click="close">
-              <SvgIcon icon-class="x" width="16px" height="16px" />
+              <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
         </template>

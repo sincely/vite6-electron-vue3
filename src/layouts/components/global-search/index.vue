@@ -38,7 +38,7 @@ const isFocused = ref(false)
   -webkit-app-region: no-drag;
 
   &.is-active {
-    min-width: 190px;
+    min-width: 220px;
     border-color: color-mix(in srgb, var(--color-primary), transparent 30%);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 80%);
   }
