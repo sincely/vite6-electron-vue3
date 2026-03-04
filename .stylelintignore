@@ -32,3 +32,4 @@ src/icons/*
 .husky
 .env
 release/*
+dist-electron/*
