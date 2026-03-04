@@ -91,7 +91,7 @@
     }
   },
   "hooks": {
-    "before:init": ["npm run lint"],
+    "before:init": ["npm run lint:check"],
     "after:bump": ["npm run build-mac:prod", "npm run build-win:prod", "npm run build-linux:prod"],
     "after:git:release": "echo 'Git release completed successfully!'",
     "before:github:release": "echo 'Creating GitHub release...'",
