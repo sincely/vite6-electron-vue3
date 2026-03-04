@@ -16,7 +16,7 @@
               <p class="update-dialog__subtitle">新版本已就绪，立即更新体验最新功能</p>
             </div>
             <button v-if="!isUpdating" class="update-close-btn" title="稍后提醒" @click="handleLater">
-              <SvgIcon icon-class="x" width="16px" height="16px" />
+              <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
 
