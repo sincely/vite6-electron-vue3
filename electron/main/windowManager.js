@@ -1,5 +1,6 @@
 ﻿import { app, BrowserWindow, shell } from 'electron'
 import path from 'node:path'
+import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { VITE_DEV_SERVER_URL, RENDERER_DIST, VITE_PUBLIC } from '../config/index.js'
 import { initUpdater } from './update.js'
@@ -12,6 +13,34 @@ const indexHtml = path.join(RENDERER_DIST, 'index.html') // index.html 的绝对
 console.log('__dirname:', __dirname)
 console.log('preload:', preload)
 console.log('indexHtml:', indexHtml)
+
+/**
+ * 按平台返回 BrowserWindow 图标路径
+ * - macOS  : 应用图标由 .icns bundle 决定，传 undefined 即可
+ * - Linux  : 必须使用 PNG，否则部分桌面环境不显示图标
+ * - Windows: 使用 .ico
+ *
+ * 路径规则（与 electron-builder extraResources 保持一致）：
+ *   开发：<APP_ROOT>/resources/icons/<platform>/...
+ *   打包：process.resourcesPath/icons/<platform>/...
+ */
+const getWindowIcon = () => {
+  if (process.platform === 'darwin') return undefined // macOS 由 .icns bundle 控制
+
+  const iconsRoot = app.isPackaged
+    ? path.join(process.resourcesPath, 'icons')
+    : path.join(process.env.APP_ROOT, 'resources', 'icons')
+
+  if (process.platform === 'linux') {
+    // 优先使用 512px，退而用 256px
+    const p512 = path.join(iconsRoot, 'linux', 'app', '512.png')
+    const p256 = path.join(iconsRoot, 'linux', 'app', '256.png')
+    return fs.existsSync(p512) ? p512 : p256
+  }
+
+  // Windows
+  return path.join(iconsRoot, 'win', 'app.ico')
+}
 
 const windows = new Map() // 窗口映射表
 let mainWindowId = null // 主窗口 ID
@@ -85,7 +114,7 @@ export function createLoginWindow() {
   const win = new BrowserWindow({
     width: 500,
     height: 560,
-    icon: path.join(VITE_PUBLIC, 'favicon.ico'),
+    icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,
     titleBarStyle: 'hiddenInset',
@@ -129,7 +158,7 @@ export function createMainWindow() {
     height: 880,
     minWidth: 800,
     minHeight: 600,
-    icon: path.join(VITE_PUBLIC, 'favicon.ico'),
+    icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,
     // 1. 隐藏原生标题栏
@@ -186,7 +215,7 @@ export function createWindow(options = {}) {
   const defaultOptions = {
     width: 800,
     height: 550,
-    icon: path.join(VITE_PUBLIC, 'favicon.ico'),
+    icon: getWindowIcon(),
     show: false,
     transparent: true,
     autoHideMenuBar: true,
