@@ -26,7 +26,8 @@ export default defineFlatConfig([
       '*.md',
       '*.woff',
       '*.ttf',
-      '*.sh'
+      '*.sh',
+      '*.nsh'
     ]
   },
   {

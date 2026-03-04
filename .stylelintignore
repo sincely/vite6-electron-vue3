@@ -20,7 +20,7 @@
 *.eot
 *.ttf
 *.woff
-
+*.nsh
 # 测试和打包目录
 /test/
 dist/*
