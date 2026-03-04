@@ -40,10 +40,6 @@ export default defineConfig(({ mode, command }) => {
       chunkSizeWarningLimit: 4000,
       minify: 'terser',
       rollupOptions: {
-        treeshake: {
-          moduleSideEffects: false, // 更激进的 tree-shaking
-          propertyReadSideEffects: false
-        },
         output: {
           manualChunks(id) {
             // Vue 核心
