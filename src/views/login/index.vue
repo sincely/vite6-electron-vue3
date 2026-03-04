@@ -199,8 +199,7 @@ const submit = () => {
   padding: 30px 24px;
   overflow: hidden;
   color: #f8fafc;
-  background:
-    radial-gradient(circle at 14% 12%, rgb(255 255 255 / 24%) 0%, transparent 32%),
+  background: radial-gradient(circle at 14% 12%, rgb(255 255 255 / 24%) 0%, transparent 32%),
     radial-gradient(circle at 84% 86%, rgb(12 74 110 / 50%) 0%, transparent 44%),
     linear-gradient(160deg, #f97316 0%, #f59e0b 42%, #0ea5e9 100%);
   border-radius: 24px;
