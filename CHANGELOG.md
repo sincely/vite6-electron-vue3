@@ -47,7 +47,7 @@ All notable changes to this project will be documented in this file.
 
 * 优化 .release-it.json 和 electron-builder.json 文件格式，简化数组结构 ([68dc391](https://github.com/sincely/vite6-electron-vue3/commit/68dc3910ae3c43635322aadf55d1eca64bb200a8))
 * 删除不再使用的字体文件 DMSans 和 Montserrat ([d17657a](https://github.com/sincely/vite6-electron-vue3/commit/d17657a39df72e6c2ca1ba6709f08df5e89fe2a0))
-* 将项目名称从deep-ai重命名为crab ([3f19fd9](https://github.com/sincely/vite6-electron-vue3/commit/3f19fd9ca106d916289fe180bacc1bae05762ffc))
+* 将项目名称从deep-ai重命名为Crab ([3f19fd9](https://github.com/sincely/vite6-electron-vue3/commit/3f19fd9ca106d916289fe180bacc1bae05762ffc))
 * 更新 .gitignore 和 .release-it.json 文件格式，优化推送参数和资产列表 ([2aa046d](https://github.com/sincely/vite6-electron-vue3/commit/2aa046d6b23aa083e348c19cf609587a0119ac41))
 
 ### ♻️ Code Refactoring

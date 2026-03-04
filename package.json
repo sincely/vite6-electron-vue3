@@ -1,5 +1,5 @@
 {
-  "name": "crab",
+  "name": "Crab",
   "version": "0.0.5",
   "type": "module",
   "main": "dist-electron/main/index.js",

@@ -16,8 +16,8 @@
 │                                                                   │
 │  /electron-update/                                                │
 │    ├── latest.yml             ← electron-updater 检查此文件        │
-│    ├── crab-x.x.x-Setup.exe  ← Windows 安装包                    │
-│    └── crab-x.x.x-Setup.exe.blockmap                            │
+│    ├── Crab-x.x.x-Setup.exe  ← Windows 安装包                    │
+│    └── Crab-x.x.x-Setup.exe.blockmap                            │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │ autoUpdater.checkForUpdates()
                                 ▼
@@ -96,8 +96,8 @@
 
 | 文件 | 说明 |
 |------|------|
-| `crab-x.x.x-Setup.exe` | Windows NSIS 安装包 |
-| `crab-x.x.x-Setup.exe.blockmap` | 差量更新块映射，减少下载量 |
+| `Crab-x.x.x-Setup.exe` | Windows NSIS 安装包 |
+| `Crab-x.x.x-Setup.exe.blockmap` | 差量更新块映射，减少下载量 |
 | `latest.yml` | **更新元数据**，electron-updater 检查此文件 |
 | `builder-debug.yml` | 构建调试信息（无需上传） |
 
@@ -106,10 +106,10 @@
 ```yaml
 version: 1.0.0
 files:
-  - url: crab-1.0.0-Setup.exe
+  - url: Crab-1.0.0-Setup.exe
     sha512: <hash>
     size: 72000000
-path: crab-1.0.0-Setup.exe
+path: Crab-1.0.0-Setup.exe
 sha512: <hash>
 releaseNotes: |
   - 修复登录页面偶发崩溃问题
@@ -144,8 +144,8 @@ server {
 ```
 /var/www/electron-update/
   ├── latest.yml
-  ├── crab-x.x.x-Setup.exe
-  └── crab-x.x.x-Setup.exe.blockmap
+  ├── Crab-x.x.x-Setup.exe
+  └── Crab-x.x.x-Setup.exe.blockmap
 ```
 
 ### 方式 B：修改更新服务器地址
@@ -194,8 +194,8 @@ npm run build-mac
 
 ```
 latest.yml                       ← 必须上传，最后上传（原子切换）
-crab-x.x.x-Setup.exe            ← 安装包
-crab-x.x.x-Setup.exe.blockmap   ← 块映射（差量下载使用）
+Crab-x.x.x-Setup.exe            ← 安装包
+Crab-x.x.x-Setup.exe.blockmap   ← 块映射（差量下载使用）
 ```
 
 > ⚠️ **先上传安装包和 blockmap，最后上传 latest.yml**。这样可以避免客户端检测到新版本但安装包尚未上传完毕的竞争条件。
@@ -304,7 +304,7 @@ window.ipcRenderer.send('check-for-updates')
 - 检查 `package.json` 中的 `version` 是否已更新
 - 确认 `latest.yml` 中的 `version` 与安装包文件名一致
 - 清除 electron-updater 缓存目录：
-  - Windows: `%APPDATA%\crab-updater\`
+  - Windows: `%APPDATA%\Crab-updater\`
 
 ### Q2：下载速度很慢？
 
