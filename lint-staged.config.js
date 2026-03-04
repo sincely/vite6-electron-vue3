@@ -3,7 +3,5 @@ export default {
   // 我们可以使用lint-staged，它可以让我们执行检查命令只对git缓存区的文件有效。
   '*.js': ['prettier --write', 'eslint --fix'],
   '*.vue': ['prettier --write', 'eslint --fix', 'stylelint --fix --allow-empty-input'],
-  'package.json': ['prettier --write'],
-  '*.{html,css,scss}': ['prettier --write', 'stylelint --fix --allow-empty-input'],
-  '{!(package)*.json,.!(browserslist)*rc}': ['prettier --write--parser json']
+  '*.{html,css,scss}': ['prettier --write', 'stylelint --fix --allow-empty-input']
 }
