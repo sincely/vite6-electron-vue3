@@ -1,7 +1,10 @@
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,
-  "asarUnpack": ["**/node_modules/sharp/**", "**/node_modules/@img/**"],
+  "asarUnpack": [
+    "**/node_modules/sharp/**",
+    "**/node_modules/@img/**"
+  ],
   "productName": "Crab",
   "copyright": "Copyright 2024 dyy.dongyuanwai",
   "directories": {
@@ -47,18 +50,25 @@
     {
       "from": "resources/icon.ico",
       "to": "icon.ico",
-      "filter": ["**"]
+      "filter": [
+        "**"
+      ]
     }
   ],
   "mac": {
     "icon": "resources/app.icns",
     "darkModeSupport": true,
-    "target": ["dmg", "zip"],
+    "target": [
+      "dmg",
+      "zip"
+    ],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "linux": {
     "icon": "resources/icon.png",
-    "target": ["AppImage"],
+    "target": [
+      "AppImage"
+    ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
@@ -66,7 +76,9 @@
     "target": [
       {
         "target": "nsis",
-        "arch": ["x64"]
+        "arch": [
+          "x64"
+        ]
       }
     ],
     "artifactName": "${productName}-${version}-Setup.${ext}"
@@ -78,7 +90,11 @@
     }
   ],
   "compression": "maximum",
-  "electronLanguages": ["zh-CN", "en-US", "en"],
+  "electronLanguages": [
+    "zh-CN",
+    "en-US",
+    "en"
+  ],
   "nsis": {
     "oneClick": false,
     "perMachine": false,
@@ -86,6 +102,6 @@
     "deleteAppDataOnUninstall": false
   },
   "releaseInfo": {
-    "releaseNotes": "版本更新的具体内容"
+    "releaseNotes": "✨ 优化托盘图标功能，添加窗口最小化到托盘的支持; ✨ 新增通知功能，包含通知面板和通知吐司组件; ✨ 新增通知面板和图标，移除未使用的组件导入; ✨ 更新弹框修改; ✨ 更新样式覆盖文件，添加element-plus主题色变量配置; ✨ 添加多平台图标生成脚本并更新应用图标; ✨ 添加对多语言支持的配置，包括简体中文、繁体中文和英语; ✨ 添加更新对话框和进度条组件以支持应用更新功能; ✨ 添加模拟下载功能并更新图标，优化更新对话框; ✨ 添加额外资源配置以支持托盘图标和应用图标的加载; ✨ 调整更新对话框图标大小并修复版本显示; ✨ 调整用户设置图标大小并优化样式; ✨ 重构应用布局并替换占位页面为美观的占位组件; ✨ 重构应用更新流程，新增更新弹框组件; ✨ 重构自动更新功能并添加发布指南; 🐞 优化全局内容组件的缓存逻辑，修复 keep-alive 页面渲染问题; 🐞 修复展开状态：父级只在自身路由匹配时高亮，子菜单有自己的高亮，折叠状态：父级在自身路由或任意子路由匹配时高亮; 🐞 修复更新提示中的版本号显示，确保显示当前版本而非最新版本; 🐞 删除关于页面及其路由，简化应用结构; 🐞 删除无用的调试代码，清理代码库; 🐞 更新提供商路由图标，修正为正确的图标名称; 🐞 调整 mac 平台下 logo 区域的高度和内边距; 📝 更新构建文档并修复版权信息中的特殊字符; 🎨 **ui:** 更新主题色系与视觉样式为科技蓝风格; 🎨 移除图标前缀以统一图标命名规范; 🎨 移除小屏幕下的全局内容内边距媒体查询; 🔧 优化 .release-it.json 和 electron-builder.json 文件格式，简化数组结构; 🔧 删除不再使用的字体文件 DMSans 和 Montserrat; 🔧 将项目名称从deep-ai重命名为Crab; 🔧 更新 .gitignore 和 .release-it.json 文件格式，优化推送参数和资产列表; ♻️ 启用更新模块持久化并修复通知模块变量名; ♻️ 重构项目配置、样式和状态管理"
   }
 }

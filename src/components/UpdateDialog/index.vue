@@ -106,13 +106,14 @@ const visible = computed(() => updateStore.dialogVisible)
 const latestVersion = computed(() => updateStore.latestVersion)
 const currentVersion = computed(() => updateStore.currentVersion)
 const isUpdating = computed(() => updateStore.isUpdating)
-const updateDownloaded = computed(() => updateStore.updateDownloaded)
+const updateDownloaded = com
+puted(() => updateStore.updateDownloaded)
 const downloadProgress = computed(() => updateStore.downloadProgress)
 const releaseNotes = computed(() => updateStore.releaseNotes)
-/** 将 releaseNotes 按换行拆成列表行，过滤空行 */
+/** 将 releaseNotes 按分号或换行拆成列表行，过滤空行 */
 const releaseNoteLines = computed(() =>
   (releaseNotes.value || '')
-    .split(/\r?\n/)
+    .split(/;|；|\r?\n/)
     .map((s) => s.replace(/^[-*]\s*/, '').trim())
     .filter(Boolean)
 )
@@ -378,13 +379,17 @@ onUnmounted(() => {
 .notes-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding-left: 16px;
+  gap: 6px;
+  padding-left: 0;
   margin: 0;
+  list-style: none; // emoji 前缀作为视觉标识，不需要默认圆点
 
   li {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--color-text-secondary);
   }
 }

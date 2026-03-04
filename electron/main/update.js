@@ -65,5 +65,9 @@ export const initUpdater = (win) => {
     mainWindow = null
   })
 
-  autoUpdater.checkForUpdates()
+  // 必须等待渲染进程加载完毕（Vue onMounted 已执行、IPC 监听已注册）后
+  // 再发起检查，否则 update-available 消息在监听器注册前就发出会直接丢失
+  win.webContents.once('did-finish-load', () => {
+    autoUpdater.checkForUpdates()
+  })
 }
