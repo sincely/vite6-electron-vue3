@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 
 
+## v0.0.6-0
+
+[compare changes](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.5...v0.0.6-0)
+
+### 🚀 Enhancements
+
+- 添加样式导入插件，优化通知功能，更新组件导入逻辑 ([eca1268](https://github.com/sincely/vite6-electron-vue3/commit/eca1268))
+- 在svgIcon插件中添加自定义插入位置，更新symbolId配置；修复windowManager.js中的导入格式；移除vite.config.js中的tree-shaking配置 ([d164b06](https://github.com/sincely/vite6-electron-vue3/commit/d164b06))
+- 添加多个SVG图标文件，更新全局组件样式和布局 ([731dc3c](https://github.com/sincely/vite6-electron-vue3/commit/731dc3c))
+
+### 🏡 Chore
+
+- 标准化项目名称为Crab ([9ea6973](https://github.com/sincely/vite6-electron-vue3/commit/9ea6973))
+
+### ❤️ Contributors
+
+- Chengzhou <1738248438@qq.com>
+
 ## [0.0.5](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.3...v0.0.5) (2026-03-03)
 
 ### ✨ Features
