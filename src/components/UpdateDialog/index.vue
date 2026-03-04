@@ -106,8 +106,7 @@ const visible = computed(() => updateStore.dialogVisible)
 const latestVersion = computed(() => updateStore.latestVersion)
 const currentVersion = computed(() => updateStore.currentVersion)
 const isUpdating = computed(() => updateStore.isUpdating)
-const updateDownloaded = com
-puted(() => updateStore.updateDownloaded)
+const updateDownloaded = computed(() => updateStore.updateDownloaded)
 const downloadProgress = computed(() => updateStore.downloadProgress)
 const releaseNotes = computed(() => updateStore.releaseNotes)
 /** 将 releaseNotes 按分号或换行拆成列表行，过滤空行 */
