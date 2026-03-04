@@ -56,9 +56,6 @@ export const useUpdateStore = defineStore('update', {
       this.releaseNotes = ''
       this.dialogVisible = false
     }
-  },
-  persist: true
-  // 注意：intentionally 不持久化（persist 已移除）
-  // 原因：isUpdating / downloadProgress 等过渡状态不应跨重启保留，
-  // 避免应用崩溃后下次启动仍显示下载中的脏 UI
+  }
+  // 过渡状态不应跨重启保留，启动时由 useUpdater() 统一调用 resetUpdateState() 重置
 })

@@ -70,6 +70,9 @@ export function useUpdater() {
   // ── 生命周期 ─────────────────────────────────────────────
 
   onMounted(() => {
+    // 启动时重置所有更新过渡态，防止上次崩溃/强退留下脏状态（如 isUpdating、dialogVisible）
+    store.resetUpdateState()
+
     window.ipcRenderer.on('checking-for-update', onCheckingForUpdate)
     window.ipcRenderer.on('update-not-available', onUpdateNotAvailable)
     window.ipcRenderer.on('update-available', onUpdateAvailable)
