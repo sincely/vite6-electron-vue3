@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useUpdateStore = defineStore('update', {
+export const useUpdateStore = defineStore('version', {
   state: () => ({
     // 过渡状态（不持久化，启动时总是重置）──
     checkingForUpdate: false, // 正在检查中
@@ -56,6 +56,10 @@ export const useUpdateStore = defineStore('update', {
       this.releaseNotes = ''
       this.dialogVisible = false
     }
+  },
+  // 只持久化 currentVersion：安装前乐观写入新版本号，重启后立即可用，避免版本闪烁
+  // 其余过渡状态（isUpdating / downloadProgress 等）不跨重启保留
+  persist: {
+    paths: ['currentVersion']
   }
-  // 过渡状态不应跨重启保留，启动时由 useUpdater() 统一调用 resetUpdateState() 重置
 })

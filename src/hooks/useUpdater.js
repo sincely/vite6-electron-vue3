@@ -12,26 +12,30 @@
  */
 
 import { onMounted, onUnmounted } from 'vue'
-import { useUpdateStore } from '@/store/modules/update'
+import { useUpdateStore } from '@/store/modules/version'
 
 export function useUpdater() {
   const store = useUpdateStore()
 
-  // ── 事件处理函数 ──────────────────────────────────────────
+  // 检查更新
 
   const onCheckingForUpdate = () => {
     store.setCheckingForUpdate(true)
   }
 
+  // 没有更新时重置状态
   const onUpdateNotAvailable = () => {
     store.setCheckingForUpdate(false)
     store.setUpdateAvailable(false)
   }
 
   /**
+   * @description 检测到新版本，更新状态并显示更新弹框
+   * @param info 可能包含 releaseNotes 字段（来自 latest.yml），如果有则写入 store 以供弹框展示
    * @param {Electron.Event} _event
    * @param {{ version: string, releaseNotes?: string | null }} info
    */
+
   const onUpdateAvailable = (_event, info) => {
     store.setCheckingForUpdate(false)
     store.setLatestVersion(info.version)
@@ -41,6 +45,8 @@ export function useUpdater() {
   }
 
   /**
+   * @description 下载更新进度事件，更新下载进度百分比
+   * @param progress 包含 percent、transferred、total、bytesPerSecond 字段
    * @param {Electron.Event} _event
    * @param {{ percent: number, transferred: number, total: number, bytesPerSecond: number }} progress
    */
@@ -49,6 +55,7 @@ export function useUpdater() {
   }
 
   /**
+   * @description 更新下载完成事件，重置下载状态并标记已下载完成（等待用户点击安装）
    * @param {Electron.Event} _event
    * @param {{ version: string }} _info
    */
@@ -58,6 +65,7 @@ export function useUpdater() {
   }
 
   /**
+   * @description 更新出错事件，重置所有过渡状态（包括 checkingForUpdate 和 isUpdating），并在控制台输出错误信息
    * @param {Electron.Event} _event
    * @param {string} message
    */

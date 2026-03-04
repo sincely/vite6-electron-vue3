@@ -38,7 +38,7 @@
           <!-- 更新说明（来自 latest.yml releaseNotes 字段，有内容才显示）-->
           <div v-if="releaseNotes" class="update-dialog__notes">
             <p class="notes-title">
-              <SvgIcon icon-class="list" width="13px" height="13px" />
+              <SvgIcon icon-class="list" width="14px" height="14px" />
               更新内容
             </p>
             <!-- releaseNotes 可能是纯文本或 HTML，统一按纯文本每行拆分展示 -->
@@ -83,7 +83,7 @@
           <!-- 默认操作按钮 -->
           <template v-else>
             <div class="update-dialog__actions">
-              <button class="update-btn update-btn--later" @click="handleLater">稍后提醒</button>
+              <button class="update-btn update-btn--later" @click="handleLater">稍后更新</button>
               <button class="update-btn update-btn--confirm" @click="handleConfirm">
                 <SvgIcon icon-class="download" width="15px" height="15px" />
                 立即更新
@@ -98,7 +98,7 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue'
-import { useUpdateStore } from '@/store/modules/update'
+import { useUpdateStore } from '@/store/modules/version'
 
 const updateStore = useUpdateStore()
 
@@ -156,6 +156,11 @@ const handleConfirm = () => {
 }
 
 const handleInstall = () => {
+  // 乐观更新：将 latestVersion 写入 currentVersion 并持久化
+  // 使 app 重启后立即能读到正确版本号，无需等待异步 IPC 回调
+  if (latestVersion.value) {
+    updateStore.setCurrentVersion(latestVersion.value)
+  }
   updateStore.setDialogVisible(false)
   window.ipcRenderer.send('install-update')
 }
@@ -210,7 +215,7 @@ onUnmounted(() => {
 
 .update-dialog {
   position: relative;
-  width: 420px;
+  width: 440px;
   overflow: hidden;
   background: var(--glass-surface);
   backdrop-filter: blur(20px);

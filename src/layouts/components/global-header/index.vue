@@ -60,7 +60,7 @@
 
 <script setup>
 import { useAppStore } from '@/store/modules/app'
-import { useUpdateStore } from '@/store/modules/update'
+import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
 const appStore = useAppStore()
 const updateStore = useUpdateStore()

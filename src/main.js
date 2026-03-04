@@ -5,7 +5,7 @@ import router from '@/router' // 路由
 import '@/styles/index.scss' // 全局样式
 import { setupIcon } from './plugins'
 import { useAppStore } from '@/store/modules/app'
-import { useUpdateStore } from '@/store/modules/update'
+import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
 import SvgIcon from '@/components/SvgIcon/index.vue'
 async function setupApp() {

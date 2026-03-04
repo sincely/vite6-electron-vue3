@@ -14,7 +14,7 @@ const UPDATE_URL = process.env.VITE_UPDATE_URL || 'http://10.10.24.52:8089/elect
 export const initUpdater = (win) => {
   mainWindow = win
 
-  logger.info('[updater] 初始化，服务地址：', UPDATE_URL)
+  logger.info('初始化，服务地址：', UPDATE_URL)
 
   autoUpdater.setFeedURL({
     provider: 'generic',
@@ -27,36 +27,36 @@ export const initUpdater = (win) => {
   // 仅在开发环境允许使用本地 dev-app-update.yml 调试
   autoUpdater.forceDevUpdateConfig = process.env.NODE_ENV === 'development'
 
-  // ── 事件监听（只负责把事件转发给渲染层，IPC 操作统一在 ipc/update.js 中注册）──
+  // 事件监听（只负责把事件转发给渲染层，IPC 操作统一在 ipc/update.js 中注册）──
 
   autoUpdater.on('checking-for-update', () => {
-    logger.info('[updater] 正在检查更新...')
+    logger.info('正在检查更新...')
     mainWindow?.webContents.send('checking-for-update')
   })
 
   autoUpdater.on('update-not-available', (info) => {
-    logger.info('[updater] 当前已是最新版本', info.version)
+    logger.info('当前已是最新版本', info.version)
     console.log(info)
     mainWindow?.webContents.send('update-not-available', info)
   })
 
   autoUpdater.on('update-available', (info) => {
-    logger.info('[updater] 检测到新版本', info.version)
+    logger.info('检测到新版本', info.version)
     mainWindow?.webContents.send('update-available', info)
   })
 
   autoUpdater.on('download-progress', (progress) => {
-    logger.info(`[updater] 下载进度: ${progress.percent.toFixed(1)}%`)
+    logger.info(`下载进度: ${progress.percent.toFixed(2)}%`)
     mainWindow?.webContents.send('download-progress', progress)
   })
 
   autoUpdater.on('update-downloaded', (info) => {
-    logger.info('[updater] 下载完成，准备安装', info.version)
+    logger.info('下载完成，准备安装', info.version)
     mainWindow?.webContents.send('update-downloaded', info)
   })
 
   autoUpdater.on('error', (error) => {
-    logger.error('[updater] 更新出错：', error.message)
+    logger.error('更新出错：', error.message)
     mainWindow?.webContents.send('update-error', error.message)
   })
 

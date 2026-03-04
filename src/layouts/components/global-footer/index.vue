@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { useUpdateStore } from '@/store/modules/update'
+import { useUpdateStore } from '@/store/modules/version'
 
 const updateStore = useUpdateStore()
 const currentVersion = computed(() => updateStore.currentVersion)
