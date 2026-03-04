@@ -13,7 +13,7 @@ logger.transports.file.resolvePath = () => path.join(installPath + '/logs', 'app
 logger.transports.console.level = 'debug' // 控制台输出的日志等级
 logger.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}] {level}: {text}' // 自定义控制台输出的日志格式
 logger.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}.{ms} [{level}]: {text}' // 自定义文件日志格式
-log.transports.file.level = process.env.NODE_ENV === 'development' ? false : 'info' // 设置日志写入文件的级别
+logger.transports.file.level = process.env.NODE_ENV === 'development' ? false : 'info' // 设置日志写入文件的级别
 
 // 设置日志文件最大大小为 5MB，超过该大小会自动滚动
 logger.transports.file.maxSize = 5 * 1024 * 1024 // 5MB

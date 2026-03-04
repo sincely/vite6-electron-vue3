@@ -116,6 +116,10 @@ export default defineConfig(({ mode, command }) => {
             }
           },
           vite: {
+            define: {
+              // 将 .env 文件中的 VITE_* 变量注入主进程（Node.js 不读取 VITE_ 前缀变量）
+              'process.env.VITE_UPDATE_URL': JSON.stringify(viteEnv.VITE_UPDATE_URL)
+            },
             build: {
               sourcemap,
               minify: isBuild,

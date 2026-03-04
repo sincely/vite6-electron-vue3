@@ -7,7 +7,7 @@
  *  3. 在组件卸载时自动 off，防止内存泄漏
  *
  * 使用：在 App.vue 的 <script setup> 中调用一次即可全局生效
- *   import { useUpdater } from '@/hooks/useUpdater'
+ *   import { useUpdater } from '@/core/update'
  *   useUpdater()
  */
 

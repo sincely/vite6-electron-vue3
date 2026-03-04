@@ -9,7 +9,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUpdater } from '@/hooks/useUpdater'
+import { useUpdater } from '@/core/update'
 
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')

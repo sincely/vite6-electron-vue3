@@ -7,10 +7,11 @@ let mainWindow = null
 
 /**
  * 获取更新服务器地址
- * 优先读取环境变量 VITE_UPDATE_URL，回退到 package.json 中的配置
+ * 优先读取环境变量 VITE_UPDATE_URL，回退到默认地址
+ * （VITE_UPDATE_URL 由 vite.config.js define 在构建期注入主进程）
  */
-const UPDATE_URL = process.env.VITE_UPDATE_URL || 'http://10.10.24.52:8089/electron-update/'
-
+const UPDATE_URL = process.env.VITE_UPDATE_URL
+console.log('UPDATE_URL:', process.env.VITE_UPDATE_URL)
 export const initUpdater = (win) => {
   mainWindow = win
 
