@@ -9,10 +9,10 @@ export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron') // 主
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist') // 渲染进程目录
 export const { VITE_DEV_SERVER_URL } = process.env // Vite开发服务器
 
-console.log('项目根目录:', process.env.APP_ROOT)
-console.log('主进程目录', MAIN_DIST)
-console.log('渲染进程目录', RENDERER_DIST)
-console.log('Vite开发服务器URL', VITE_DEV_SERVER_URL)
+console.log('📂 项目根目录:', process.env.APP_ROOT)
+console.log('📂 主进程目录', MAIN_DIST)
+console.log('📂 渲染进程目录', RENDERER_DIST)
+console.log('⚡ Vite开发服务器URL', VITE_DEV_SERVER_URL)
 
 // 设置公共资源路径，开发环境指向 public 目录，生产环境指向 dist 目录
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST

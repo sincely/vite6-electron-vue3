@@ -10,7 +10,7 @@ import svgIconPlugin from './svgIcon' // svg图标集成
  */
 export default function createVitePlugins(viteEnv, isBuild = false) {
   // Electron uses modern Chromium, so legacy bundles are opt-in only.
-  const enableLegacyBuild = viteEnv.VITE_LEGACY_BUILD === 'true'
+  const enableLegacyBuild = viteEnv.VITE_USE_LEGACY === 'true'
   const vitePlugins = [vue(), ...unplugin(), svgIconPlugin()]
   if (isBuild) {
     if (enableLegacyBuild) {

@@ -3,9 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 
-## v0.0.6-0
+## v0.0.6
 
-[compare changes](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.5...v0.0.6-0)
+[compare changes](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.5...v0.0.6)
 
 ### 🚀 Enhancements
 

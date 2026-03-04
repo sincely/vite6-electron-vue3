@@ -166,11 +166,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     height: 120px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
-        circle at 14% 0%,
-        color-mix(in srgb, var(--brand-accent), transparent 82%) 0%,
-        transparent 62%
-      ),
+    background:
+      radial-gradient(circle at 14% 0%, color-mix(in srgb, var(--brand-accent), transparent 82%) 0%, transparent 62%),
       radial-gradient(
         circle at 84% 16%,
         color-mix(in srgb, var(--brand-accent-alt), transparent 84%) 0%,

@@ -1,4 +1,3 @@
-import fs from 'node:fs'
 import { defineConfig, loadEnv } from 'vite'
 import { resolve } from 'path'
 import createVitePlugins from './build/plugins'
@@ -6,19 +5,16 @@ import { proxyServer } from './build/config/proxy'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
 export default defineConfig(({ mode, command }) => {
-  // fs.rmSync('dist-electron', { recursive: true, force: true })
   const viteEnv = loadEnv(mode, process.cwd())
+  console.log('viteEnv:', viteEnv)
   const isServe = command === 'serve'
   const isBuild = command === 'build'
-  const sourcemap = isServe || !!process.env.VSCODE_DEBUG
+  const sourcemap = isServe
   return defineConfig({
-    base: isBuild ? './' : '/',
+    base: viteEnv.VITE_BASE_URL,
     server: {
-      // https: false, // 是否开启https
-      // strictPort: false, // 设为false时，若端口已被占用则会尝试下一个可用端口,而不是直接退出
-      open: true, // 在服务器启动时自动在浏览器中打开应用程序
-      port: 3220, // 指定服务器端口
-      proxy: isServe ? proxyServer : undefined
+      port: 3200, // 指定服务器端口
+      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined
     },
     build: {
       // 传递给Terser的更多 minify 选项。
@@ -32,11 +28,8 @@ export default defineConfig(({ mode, command }) => {
         mangle: true,
         format: { comments: false } // 删除所有注释
       },
-      emptyOutDir: true,
-      outDir: 'dist',
       reportCompressedSize: false, // 关闭压缩计算，加快构建速度
-      sourcemap: sourcemap,
-      assetsDir: 'assets',
+      sourcemap,
       chunkSizeWarningLimit: 4000,
       minify: 'terser',
       rollupOptions: {
@@ -96,7 +89,7 @@ export default defineConfig(({ mode, command }) => {
       // 导入时想要省略的扩展名列表
       // 不建议使用.vue 影响IDE和类型支持
       // 在Vite中,不建议(实测还是可以配置的)忽略自定义扩展名，因为会影响IDE和类型支持。因此需要完整书写
-      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', 'vue'] // 默认支持
+      extensions: ['.mjs', '.js', '.json', 'vue'] // 默认支持
     },
     css: {
       preprocessorOptions: {
@@ -117,7 +110,7 @@ export default defineConfig(({ mode, command }) => {
           entry: 'electron/main/index.js',
           onstart({ startup }) {
             if (process.env.VSCODE_DEBUG) {
-              console.log(/* For `.vscode/.debug.script.mjs` */ '[startup] Electron App')
+              console.log('[startup] Electron App')
             } else {
               startup()
             }

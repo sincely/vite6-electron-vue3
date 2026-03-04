@@ -35,7 +35,7 @@ async function setupApp() {
       ElNotification({
         title: '通知',
         message: '欢迎回来',
-        icon: h(SvgIcon, { iconClass: 'celebrate', width: '16px', height: '16px' }),
+        icon: h(SvgIcon, { iconClass: 'celebrate', width: '25px', height: '25px' }),
         showClose: false,
         duration: 2000
       })

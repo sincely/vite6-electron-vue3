@@ -1,10 +1,7 @@
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,
-  "asarUnpack": [
-    "**/node_modules/sharp/**",
-    "**/node_modules/@img/**"
-  ],
+  "asarUnpack": ["**/node_modules/sharp/**", "**/node_modules/@img/**"],
   "productName": "Crab",
   "copyright": "Copyright 2024 dyy.dongyuanwai",
   "directories": {
@@ -50,25 +47,18 @@
     {
       "from": "resources/icon.ico",
       "to": "icon.ico",
-      "filter": [
-        "**"
-      ]
+      "filter": ["**"]
     }
   ],
   "mac": {
     "icon": "resources/app.icns",
     "darkModeSupport": true,
-    "target": [
-      "dmg",
-      "zip"
-    ],
+    "target": ["dmg", "zip"],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "linux": {
     "icon": "resources/icon.png",
-    "target": [
-      "AppImage"
-    ],
+    "target": ["AppImage"],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
@@ -76,9 +66,7 @@
     "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       }
     ],
     "artifactName": "${productName}-${version}-Setup.${ext}"
@@ -90,11 +78,7 @@
     }
   ],
   "compression": "maximum",
-  "electronLanguages": [
-    "zh-CN",
-    "en-US",
-    "en"
-  ],
+  "electronLanguages": ["zh-CN", "en-US", "en"],
   "nsis": {
     "oneClick": false,
     "perMachine": false,

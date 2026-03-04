@@ -15,7 +15,7 @@
             title="清空通知"
             @click="store.clear()"
           >
-            <SvgIcon icon-class="trash-2" width="13px" height="13px" />
+            <SvgIcon icon-class="trash" width="13px" height="13px" />
             清空
           </button>
         </div>
@@ -55,7 +55,7 @@
 
             <!-- 删除 -->
             <button class="notif-item__remove" title="删除" @click.stop="store.remove(item.id)">
-              <SvgIcon icon-class="x" width="12px" height="12px" />
+              <SvgIcon icon-class="close" width="12px" height="12px" />
             </button>
           </div>
         </TransitionGroup>
