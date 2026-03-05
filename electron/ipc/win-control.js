@@ -1,9 +1,8 @@
 import { BrowserWindow } from 'electron'
 
 export default [
-  //
   {
-    channel: 'window-minimize',
+    channel: 'minimize-window',
     type: 'on',
     handler: (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
@@ -11,7 +10,7 @@ export default [
     }
   },
   {
-    channel: 'window-maximize',
+    channel: 'maximize-window',
     type: 'on',
     handler: (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)
@@ -25,7 +24,7 @@ export default [
     }
   },
   {
-    channel: 'window-close',
+    channel: 'close-window',
     type: 'on',
     handler: (event) => {
       const win = BrowserWindow.fromWebContents(event.sender)

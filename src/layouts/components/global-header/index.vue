@@ -16,6 +16,11 @@
         />
       </button>
 
+      <!-- 中间操作区 -->
+      <div class="title-bar__center">
+        <slot name="center" />
+      </div>
+
       <!-- 右侧操作区 -->
       <div class="title-bar__actions">
         <!-- 更新提示 -->
@@ -69,25 +74,13 @@
         <!-- Windows 窗口控制 -->
         <template v-if="!isMac">
           <div class="window-controls">
-            <button
-              class="icon-btn control-btn"
-              title="最小化"
-              @click="minimize"
-            >
+            <button class="icon-btn" title="最小化" @click="minimize">
               <SvgIcon icon-class="minus" width="16px" height="16px" />
             </button>
-            <button
-              class="icon-btn control-btn"
-              title="最大化"
-              @click="maximize"
-            >
+            <button class="icon-btn" title="最大化" @click="maximize">
               <SvgIcon icon-class="plus" width="16px" height="16px" />
             </button>
-            <button
-              class="icon-btn control-btn close-btn"
-              title="关闭"
-              @click="close"
-            >
+            <button class="icon-btn" title="关闭" @click="close">
               <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
@@ -119,9 +112,9 @@ const handleNotice = () => {
 }
 
 const reload = () => location.reload()
-const minimize = () => ipcRenderer.send('window-minimize')
-const maximize = () => ipcRenderer.send('window-maximize')
-const close = () => ipcRenderer.send('window-close')
+const minimize = () => ipcRenderer.send('minimize-window')
+const maximize = () => ipcRenderer.send('maximize-window')
+const close = () => ipcRenderer.send('close-window')
 </script>
 
 <style lang="scss" scoped>
@@ -188,22 +181,6 @@ const close = () => ipcRenderer.send('window-close')
 
   &:active {
     background-color: var(--color-bg-active);
-  }
-
-  &.control-btn {
-    width: 42px;
-    height: 100%;
-    background: transparent;
-    border-radius: 0;
-
-    &:hover {
-      background-color: var(--color-bg-hover);
-    }
-
-    &.close-btn:hover {
-      color: #fff !important;
-      background-color: #e81123 !important;
-    }
   }
 
   &.update-btn {

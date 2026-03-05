@@ -9,7 +9,7 @@ export const constantRoutes = [
     path: '/login',
     name: 'login',
     component: () => import('@/views/login/index.vue'),
-    meta: { title: '登录' }
+    meta: { title: '登录', noLayout: true }
   }
 ]
 

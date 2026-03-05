@@ -1,4 +1,4 @@
-﻿import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -119,12 +119,13 @@ export function createLoginWindow() {
   }
 
   const win = new BrowserWindow({
-    width: 600,
-    height: 660,
+    width: 480,
+    height: 640,
     icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,
-    titleBarStyle: 'hiddenInset',
+    titleBarStyle: 'hidden',
+    frame: false,
     resizable: false,
     center: true,
     webPreferences: {

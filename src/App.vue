@@ -1,6 +1,7 @@
 <template>
   <div class="app-box" :class="{ 'is-login': isLoginPage }">
-    <div class="app-container" :class="{ 'is-login': isLoginPage }">
+    <router-view v-if="isLoginPage" />
+    <div v-else class="app-container">
       <router-view />
     </div>
   </div>
