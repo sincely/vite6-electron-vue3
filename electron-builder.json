@@ -66,7 +66,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
+    "artifactName": "${productName}-Mac-${version}-${arch}.${ext}"
   },
   "linux": {
     "icon": "resources/icons/linux/app",
