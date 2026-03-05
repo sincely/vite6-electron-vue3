@@ -30,6 +30,7 @@ export default {
       2,
       'always',
       [
+        'init', // 初始化项目
         'feat', // 新增功能
         'update', // 更新功能
         'ui', // 样式改动
@@ -43,6 +44,7 @@ export default {
         'build', // 修改项目构建工具(例如 glup，webpack，rollup 的配置等)的提交
         'docs', // 文档新增、改动
         'test', // 增加测试、修改测试
+        'release', // 发布版本
         'chore' // 不修改src或者test的其余修改，例如构建过程或辅助工具的变动
       ]
     ]
