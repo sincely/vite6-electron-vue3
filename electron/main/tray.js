@@ -27,6 +27,12 @@ const getIconsRoot = () =>
  * Linux  → icons/linux/tray.png（22×22）
  * 降级   → icons/<platform>/app/<size>.png 动态缩放
  */
+/**
+ * 开发模式下 icon.png 所在的绝对路径（resources/icon.png）
+ */
+const getDevIconPath = () =>
+  path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'icon.png')
+
 const createTrayIcon = () => {
   const iconsRoot = getIconsRoot()
 
@@ -37,15 +43,24 @@ const createTrayIcon = () => {
     return null
   }
 
+  // ── 开发模式：直接使用 resources/icon.png ──────────────────────────
+  if (!app.isPackaged && process.platform === 'darwin') {
+    const devIcon = getDevIconPath()
+    console.log(`[Tray] Using dev icon: ${devIcon}`)
+    if (fs.existsSync(devIcon)) {
+      return nativeImage.createFromPath(devIcon).resize({
+        width: 22,
+        height: 22,
+        quality: 'best'
+      })
+    }
+  }
+
   if (process.platform === 'darwin') {
-    const iconPath = tryLoad(
-      path.join(iconsRoot, 'mac', 'tray@2x.png'),
-      path.join(iconsRoot, 'mac', 'tray.png')
-    )
+    const iconPath = tryLoad(path.join(iconsRoot, 'mac', 'tray.png'))
     if (iconPath) {
       const image = nativeImage.createFromPath(iconPath)
-      // 模板图像：系统自动将黑色渲染为适合当前菜单栏的颜色
-      image.setTemplateImage(true)
+      // 模板图像：系统自动将黑色渲染为适合当前菜单栏的颜
       return image
     }
   }

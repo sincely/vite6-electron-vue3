@@ -38,21 +38,21 @@
     "!**/node_modules/sharp/**",
     "!**/node_modules/png-to-ico/**"
   ],
-  "extraResources": [
-    {
-      "from": "resources/icons/mac",
-      "to": "icons/mac",
-      "filter": [
-        "**/*"
-      ]
-    }
-  ],
   "mac": {
     "icon": "resources/icons/mac/app.icns",
     "darkModeSupport": true,
     "target": [
       "dmg",
       "zip"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icons/mac",
+        "to": "icons/mac",
+        "filter": [
+          "**/*"
+        ]
+      }
     ],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
@@ -112,6 +112,6 @@
     "deleteAppDataOnUninstall": true
   },
   "releaseInfo": {
-    "releaseNotes": "🚀 添加样式导入插件，优化通知功能，更新组件导入逻辑; 🚀 在svgIcon插件中添加自定义插入位置，更新symbolId配置；修复windowManager.js中的导入格式；移除vite.config.js中的tree-shaking配置; 🚀 添加多个SVG图标文件，更新全局组件样式和布局; 🏡 标准化项目名称为Crab"
+    "releaseNotes": "✨ **electron-update:** 重构自动更新模块并完善文档; ✨ 启动时重置更新过渡态，防止崩溃后遗留脏状态; ✨ 在svgIcon插件中添加自定义插入位置，更新symbolId配置；修复windowManager.js中的导入格式；移除vite.config.js中的tree-shaking配置; ✨ 更新README.md，完善项目描述和技术栈信息，优化安装和构建说明; ✨ 更新图标生成逻辑，支持多平台图标输出，优化图标路径和格式; ✨ 添加 Linux 平台构建脚本，支持开发、测试和生产模式; ✨ 添加多个SVG图标文件，更新全局组件样式和布局; ✨ 添加样式导入插件，优化通知功能，更新组件导入逻辑; ✨ 添加自动注入更新说明功能，优化更新对话框的显示和样式; ✨ 重构更新模块，优化版本管理和状态控制，更新相关组件和日志记录; ✨ 重构登录页面并添加扫码登录功能; ✨ 重构请求模块，优化axios封装，添加请求队列管理和进度条功能; 🐞 修复关闭按钮图标类名，确保正确显示; 🐞 修复计算属性 updateDownloaded 的格式错误; 🐞 更新 .gitignore 和 .stylelintignore，添加 .nsh 文件类型忽略; 🐞 更新 lint 配置，移除不必要的文件检查，优化 prettier 和 stylelint 命令; 🐞 更新 lint 钩子，使用 lint:check 进行检查; 🐞 更新 Windows 安装程序的 artifactName 并启用卸载时删除应用数据; 📝 新增 init 和 release 提交类型; 🎨 统一代码格式与优化配置; 🔧 **release:** v0.0.6-0; 🔧 优化 .release-it.json 文件格式，简化数组结构；调整主题样式中的渐变背景格式; 🔧 将项目名称从Crab重命名为lightning; 🔧 更新.stylelintignore，添加dist-electron目录到忽略列表; 🔧 标准化项目名称为Crab; 🔧 格式化 .release-it.json 文件，优化代码可读性; 🔧 重构环境配置与构建脚本，优化项目配置; ♻️ 移除不必要的样式导入插件，优化插件配置; 🤖 将构建命令更改为生产版本; 🤖 简化发布流程并改为单作业构建"
   }
 }

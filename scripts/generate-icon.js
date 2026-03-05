@@ -22,24 +22,25 @@ const svg = `
   </defs>
 
   <!-- 1. 纯白圆角背景 (带投影) -->
-  <rect x="64" y="64" width="896" height="896" rx="224" ry="224" fill="#ffffff" filter="url(#bg-shadow)" />
+  <!-- 居中：(1024-800)/2 = 112，使背景圆角矩形精确居于画布中心 -->
+  <rect x="112" y="112" width="800" height="800" rx="210" ry="210" fill="#ffffff" filter="url(#bg-shadow)" />
 
-  <!-- 2. 闪电组：精确居中与呼吸感调整 -->
+  <!-- 2. 闪电组：精确居中 -->
   <!--
-       原路径 Y 范围: 80~944 (高864), 中点 (80+944)/2 = 512
-       操作：
-       1. translate(-540, -512): 将闪电几何中心移到 (0,0)
-       2. scale(0.76): 缩放 76%
-       3. translate(512, 512): 移回画布中心
-       4. Y轴微调 -7: 视觉上移 (应用户要求，比几何中心略微偏上)
+       闪电路径几何中心：
+         X: (260+820)/2 = 540，Y: (80+944)/2 = 512
+       变换步骤：
+         1. translate(-540, -512): 将几何中心移到原点
+         2. scale(0.72): 缩放至背景内留有视觉呼吸感
+         3. translate(512, 512): 移回画布中心，精确居中
   -->
-  <g transform="translate(512, 505) scale(0.76) translate(-540, -512)">
+  <g transform="translate(512, 512) scale(0.72) translate(-540, -512)">
     <!-- 2.0 闪电深色描边层 (硬朗锋利) -->
     <!-- stroke-linejoin="miter" 确保尖角锋利 -->
     <path
       d="M580 80 L260 540 L500 540 L420 944 L820 360 L600 360 Z"
       fill="none"
-      stroke="#B45309"
+      stroke="#ca6f2a"
       stroke-width="32"
       stroke-linejoin="miter"
       stroke-miterlimit="10"
@@ -48,7 +49,7 @@ const svg = `
     <!-- 2.1 闪电主体填充层 -->
     <path
       d="M580 80 L260 540 L500 540 L420 944 L820 360 L600 360 Z"
-      fill="#FACC15"
+      fill="#f8c808"
       stroke="none"
     />
   </g>

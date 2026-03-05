@@ -588,13 +588,13 @@ onUnmounted(() => {
       var(--color-primary) 0%,
       var(--brand-accent-alt) 100%
     );
-    box-shadow: 0 4px 12px -4px
-      color-mix(in srgb, var(--color-primary), transparent 40%);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary), transparent
+          40%);
 
     &:hover {
       filter: brightness(1.08);
-      box-shadow: 0 6px 16px -4px
-        color-mix(in srgb, var(--color-primary), transparent 30%);
+      box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary), transparent
+            30%);
       transform: translateY(-1px);
     }
 
