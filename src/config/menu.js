@@ -1,4 +1,4 @@
-import { asyncRoutes } from '@/router/index'
+import { asyncRoutes } from '@/router'
 
 /**
  * 从 asyncRoutes 构建侧边栏菜单树

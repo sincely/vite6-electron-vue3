@@ -118,7 +118,9 @@ export default defineConfig(({ mode, command }) => {
           vite: {
             define: {
               // 将 .env 文件中的 VITE_* 变量注入主进程（Node.js 不读取 VITE_ 前缀变量）
-              'process.env.VITE_UPDATE_URL': JSON.stringify(viteEnv.VITE_UPDATE_URL)
+              'process.env.VITE_UPDATE_URL': JSON.stringify(
+                viteEnv.VITE_UPDATE_URL
+              )
             },
             build: {
               sourcemap,
@@ -129,7 +131,9 @@ export default defineConfig(({ mode, command }) => {
                 // we can use `external` to exclude them to ensure they work correctly.
                 // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
                 // Of course, this is not absolute, just this way is relatively simple. :)
-                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {})
+                external: Object.keys(
+                  'dependencies' in pkg ? pkg.dependencies : {}
+                )
               }
             }
           }
@@ -144,7 +148,9 @@ export default defineConfig(({ mode, command }) => {
               minify: isBuild,
               outDir: 'dist-electron/preload',
               rollupOptions: {
-                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {})
+                external: Object.keys(
+                  'dependencies' in pkg ? pkg.dependencies : {}
+                )
               }
             }
           }

@@ -4,7 +4,13 @@
     <div class="nav-bar-breadcrumb">
       <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
         <!-- 分隔符（第一项之后出现） -->
-        <SvgIcon v-if="idx > 0" icon-class="chevron-right" class="nav-bar-sep" width="16px" height="16px" />
+        <SvgIcon
+          v-if="idx > 0"
+          icon-class="chevron-right"
+          class="nav-bar-sep"
+          width="16px"
+          height="16px"
+        />
         <!-- 面包屑节点 -->
         <span
           class="nav-bar-crumb"
@@ -12,7 +18,9 @@
             'nav-bar-crumb-active': idx === breadcrumb.length - 1,
             'nav-bar-crumb-link': idx < breadcrumb.length - 1
           }"
-          @click="idx < breadcrumb.length - 1 ? router.push(crumb.route) : undefined"
+          @click="
+            idx < breadcrumb.length - 1 ? router.push(crumb.route) : undefined
+          "
         >
           <!-- 仅第一个节点显示图标 -->
           <SvgIcon
@@ -27,7 +35,10 @@
       </template>
 
       <!-- 无匹配时的降级展示 -->
-      <span v-if="!breadcrumb.length" class="nav-bar-crumb nav-bar-crumb-active">
+      <span
+        v-if="!breadcrumb.length"
+        class="nav-bar-crumb nav-bar-crumb-active"
+      >
         {{ route.name ?? route.path }}
       </span>
     </div>
@@ -62,7 +73,8 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   margin-top: 12px;
   background: color-mix(in srgb, var(--color-bg-card), transparent 24%);
   backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 18%);
+  border: 1px solid
+    color-mix(in srgb, var(--glass-surface-border), transparent 18%);
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
 

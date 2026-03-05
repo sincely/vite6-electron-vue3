@@ -1,11 +1,11 @@
 import pkg from 'electron-updater'
-import logger from '../main/log.js'
+import logger from '../main/log'
 
 const { autoUpdater } = pkg
 
 /**
  * 更新相关 IPC 频道（集中注册，避免与 main/update.js 重复）
- * 对应渲染层发送：window.ipcRenderer.send(channel)
+ * 对应渲染层发送：ipcRenderer.send(channel)
  */
 export default [
   // 手动触发检查更新（应用内"检查更新"按钮使用）

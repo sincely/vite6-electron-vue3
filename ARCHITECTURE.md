@@ -47,7 +47,7 @@
 
 项目采用安全的 `contextIsolation` 模式。
 - **主进程**: 监听 `ipcMain` 事件，执行底层操作（如窗口控制、文件操作、自动更新）。
-- **渲染进程**: 通过 `window.ipcRenderer` 调用预加载脚本中暴露的 API。
+- **渲染进程**: 通过 `ipcRenderer` 调用预加载脚本中暴露的 API。
 - **安全增强**: 在 `electron/preload/index.mjs` 中仅暴露必要的通信接口，防止渲染进程直接访问 Node.js API。
 
 ---

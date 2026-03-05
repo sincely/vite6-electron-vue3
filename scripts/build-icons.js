@@ -72,7 +72,9 @@ const makePng = (size, greyscale = false, trimSrc = false) => {
 const run = async () => {
   if (!fs.existsSync(SOURCE)) {
     console.error(`\n❌  源文件未找到: ${SOURCE}`)
-    console.error('    请将 1024×1024 PNG 放到 resources/icon.png 后重新运行。\n')
+    console.error(
+      '    请将 1024×1024 PNG 放到 resources/icon.png 后重新运行。\n'
+    )
     process.exit(1)
   }
 
@@ -86,7 +88,9 @@ const run = async () => {
     [36, 'tray@2x.png']
   ]) {
     await makePng(size, true).toFile(path.join(MAC_DIR, name))
-    console.log(`    ✅  ${String(size).padStart(4)}×${size}  → icons/mac/${name}`)
+    console.log(
+      `    ✅  ${String(size).padStart(4)}×${size}  → icons/mac/${name}`
+    )
   }
 
   // ── Windows 托盘（PNG + ICO）────────────────────────────────────────
@@ -106,8 +110,12 @@ const run = async () => {
   // ── Linux 应用图标（多分辨率目录）──────────────────────────────────
   console.log('\n  [Linux - 应用图标（多分辨率）]')
   for (const size of [16, 32, 48, 64, 128, 256, 512, 1024]) {
-    await makePng(size, false, true).toFile(path.join(LINUX_APP_DIR, `${size}.png`))
-    console.log(`    ✅  ${String(size).padStart(4)}×${size}  → icons/linux/app/${size}.png`)
+    await makePng(size, false, true).toFile(
+      path.join(LINUX_APP_DIR, `${size}.png`)
+    )
+    console.log(
+      `    ✅  ${String(size).padStart(4)}×${size}  → icons/linux/app/${size}.png`
+    )
   }
 
   // ── Windows 应用图标 ICO（多尺寸合并）──────────────────────────────
@@ -165,7 +173,9 @@ const run = async () => {
   console.log('  输出目录:')
   console.log('    resources/icons/mac/     → macOS 图标（app.icns + 托盘）')
   console.log('    resources/icons/win/     → Windows 图标（app.ico + 托盘）')
-  console.log('    resources/icons/linux/   → Linux 图标（多分辨率 app/ + 托盘）\n')
+  console.log(
+    '    resources/icons/linux/   → Linux 图标（多分辨率 app/ + 托盘）\n'
+  )
 }
 
 run()

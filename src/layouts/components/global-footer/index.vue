@@ -31,7 +31,8 @@ const currentVersion = computed(() => updateStore.currentVersion)
   height: 26px;
   padding: 0 14px;
   background: color-mix(in srgb, var(--color-bg-card), transparent 60%);
-  border-top: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 20%);
+  border-top: 1px solid
+    color-mix(in srgb, var(--glass-surface-border), transparent 20%);
 
   &__left,
   &__right {

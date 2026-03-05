@@ -8,7 +8,9 @@
         @click="appStore.toggleSidebar()"
       >
         <SvgIcon
-          :icon-class="appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'"
+          :icon-class="
+            appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'
+          "
           width="20px"
           height="20px"
         />
@@ -17,16 +19,33 @@
       <!-- 右侧操作区 -->
       <div class="title-bar__actions">
         <!-- 更新提示 -->
-        <button v-if="updateAvailable" class="icon-btn update-btn" title="有新版本" @click="showUpdateDialog">
-          <SvgIcon icon-class="download" class="update-icon" width="16px" height="16px" />
+        <button
+          v-if="updateAvailable"
+          class="icon-btn update-btn"
+          title="有新版本"
+          @click="showUpdateDialog"
+        >
+          <SvgIcon
+            icon-class="download"
+            class="update-icon"
+            width="16px"
+            height="16px"
+          />
           <span>{{ latestVersion }}</span>
         </button>
         <!-- 通知铃铛 -->
         <div class="notif-btn-wrap">
-          <button ref="bellBtnRef" class="icon-btn" title="消息通知" @click="handleNotice">
+          <button
+            ref="bellBtnRef"
+            class="icon-btn"
+            title="消息通知"
+            @click="handleNotice"
+          >
             <SvgIcon icon-class="notice" width="18px" height="18px" />
             <span v-if="noticeStore.hasUnread" class="notif-badge">
-              {{ noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount }}
+              {{
+                noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount
+              }}
             </span>
           </button>
           <NotificationPanel :anchor-ref="bellBtnRef" />
@@ -36,19 +55,39 @@
           <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
         </button>
         <!-- 主题切换 -->
-        <button class="icon-btn" title="切换主题" @click="appStore.toggleTheme()">
-          <SvgIcon :icon-class="appStore.isDark ? 'sun' : 'moon'" width="16px" height="16px" />
+        <button
+          class="icon-btn"
+          title="切换主题"
+          @click="appStore.toggleTheme()"
+        >
+          <SvgIcon
+            :icon-class="appStore.isDark ? 'sun' : 'moon'"
+            width="16px"
+            height="16px"
+          />
         </button>
         <!-- Windows 窗口控制 -->
         <template v-if="!isMac">
           <div class="window-controls">
-            <button class="icon-btn control-btn" title="最小化" @click="minimize">
+            <button
+              class="icon-btn control-btn"
+              title="最小化"
+              @click="minimize"
+            >
               <SvgIcon icon-class="minus" width="16px" height="16px" />
             </button>
-            <button class="icon-btn control-btn" title="最大化" @click="maximize">
+            <button
+              class="icon-btn control-btn"
+              title="最大化"
+              @click="maximize"
+            >
               <SvgIcon icon-class="plus" width="16px" height="16px" />
             </button>
-            <button class="icon-btn control-btn close-btn" title="关闭" @click="close">
+            <button
+              class="icon-btn control-btn close-btn"
+              title="关闭"
+              @click="close"
+            >
               <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
@@ -80,9 +119,9 @@ const handleNotice = () => {
 }
 
 const reload = () => location.reload()
-const minimize = () => window.ipcRenderer.send('window-minimize')
-const maximize = () => window.ipcRenderer.send('window-maximize')
-const close = () => window.ipcRenderer.send('window-close')
+const minimize = () => ipcRenderer.send('window-minimize')
+const maximize = () => ipcRenderer.send('window-maximize')
+const close = () => ipcRenderer.send('window-close')
 </script>
 
 <style lang="scss" scoped>
@@ -96,7 +135,8 @@ const close = () => window.ipcRenderer.send('window-close')
   overflow: visible;
   user-select: none;
   background: color-mix(in srgb, var(--color-bg-titlebar), transparent 12%);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border), transparent 24%);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-border), transparent 24%);
   -webkit-app-region: drag;
 
   &__inner {
@@ -138,7 +178,11 @@ const close = () => window.ipcRenderer.send('window-close')
 
   &:hover {
     color: var(--color-text-primary);
-    background-color: color-mix(in srgb, var(--color-bg-hover), transparent 10%);
+    background-color: color-mix(
+      in srgb,
+      var(--color-bg-hover),
+      transparent 10%
+    );
     border-color: color-mix(in srgb, var(--color-border), transparent 38%);
   }
 

@@ -1,4 +1,4 @@
-import { sendNotificationToRenderer } from '../ipc/notification.js'
+import { sendNotificationToRenderer } from '../ipc/notification'
 
 // 创建通知的函数
 const createNotification = (options) => {

@@ -1,9 +1,9 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 当前模块文件的目录名
 
-process.env.APP_ROOT = path.join(__dirname, '../..')
+process.env.APP_ROOT = path.join(__dirname, '../..') // 项目根目录
 
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron') // 主进程目录
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist') // 渲染进程目录
@@ -15,5 +15,7 @@ console.log('📂 渲染进程目录', RENDERER_DIST)
 console.log('⚡ Vite开发服务器URL', VITE_DEV_SERVER_URL)
 
 // 设置公共资源路径，开发环境指向 public 目录，生产环境指向 dist 目录
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
+  ? path.join(process.env.APP_ROOT, 'public')
+  : RENDERER_DIST
 export const { VITE_PUBLIC } = process.env

@@ -6,7 +6,9 @@
         <img src="@/assets/bar/logo.svg" alt="logo" class="brand-logo" />
         <p class="brand-chip">UI UX Pro Max</p>
         <h1 class="brand-title">AI Desktop</h1>
-        <p class="brand-desc">一体化桌面控制台，统一管理模型、配额、日志与代理配置。</p>
+        <p class="brand-desc">
+          一体化桌面控制台，统一管理模型、配额、日志与代理配置。
+        </p>
         <div class="brand-badges">
           <span class="badge">本地部署</span>
           <span class="badge">安全同步</span>
@@ -14,17 +16,33 @@
         </div>
       </section>
 
-      <el-form ref="loginForm" :model="loginObj" :rules="rules" class="form glass-card" @submit.prevent="submit">
+      <el-form
+        ref="loginForm"
+        :model="loginObj"
+        :rules="rules"
+        class="form glass-card"
+        @submit.prevent="submit"
+      >
         <div class="form-head">
-          <p class="form-subtitle">{{ regState ? '创建新账户' : '欢迎回来' }}</p>
+          <p class="form-subtitle">
+            {{ regState ? '创建新账户' : '欢迎回来' }}
+          </p>
           <h2 class="form-title">{{ regState ? '注册账号' : '登录账号' }}</h2>
         </div>
 
         <div class="field-label">账户</div>
         <el-form-item prop="username" class="input-form-item">
-          <el-input v-model="loginObj.username" placeholder="请输入账户" class="custom-input">
+          <el-input
+            v-model="loginObj.username"
+            placeholder="请输入账户"
+            class="custom-input"
+          >
             <template #prefix>
-              <img src="@/assets/login/email.svg" alt="email" class="prefix-icon" />
+              <img
+                src="@/assets/login/email.svg"
+                alt="email"
+                class="prefix-icon"
+              />
             </template>
           </el-input>
         </el-form-item>
@@ -39,7 +57,11 @@
             class="custom-input"
           >
             <template #prefix>
-              <img src="@/assets/login/pass.svg" alt="password" class="prefix-icon" />
+              <img
+                src="@/assets/login/pass.svg"
+                alt="password"
+                class="prefix-icon"
+              />
             </template>
           </el-input>
         </el-form-item>
@@ -56,7 +78,11 @@
                 class="custom-input"
               >
                 <template #prefix>
-                  <img src="@/assets/login/pass.svg" alt="confirm-password" class="prefix-icon" />
+                  <img
+                    src="@/assets/login/pass.svg"
+                    alt="confirm-password"
+                    class="prefix-icon"
+                  />
                 </template>
               </el-input>
             </el-form-item>
@@ -64,16 +90,24 @@
         </transition>
 
         <div class="form-row">
-          <button v-if="!regState" type="button" class="link-btn">忘记密码?</button>
+          <button v-if="!regState" type="button" class="link-btn">
+            忘记密码?
+          </button>
           <span class="hint">{{ actionTip }}</span>
         </div>
 
-        <el-button type="primary" class="button-submit" @click="submit">{{ submitText }}</el-button>
+        <el-button type="primary" class="button-submit" @click="submit">
+          {{ submitText }}
+        </el-button>
 
         <div class="switch-container">
           <p class="switch-text">
             {{ regState ? '已有账户?' : '没有账户?' }}
-            <button type="button" class="switch-btn" @click="toggleRegisterState">
+            <button
+              type="button"
+              class="switch-btn"
+              @click="toggleRegisterState"
+            >
               {{ regState ? '返回登录' : '立即注册' }}
             </button>
           </p>
@@ -96,7 +130,9 @@ const loginObj = reactive({
 })
 
 const submitText = computed(() => (regState.value ? '注 册' : '登 录'))
-const actionTip = computed(() => (regState.value ? '设置一个安全的登录密码' : '使用账户密码进入控制台'))
+const actionTip = computed(() =>
+  regState.value ? '设置一个安全的登录密码' : '使用账户密码进入控制台'
+)
 
 const rules = reactive({
   username: [{ required: true, message: '账户不能为空', trigger: 'blur' }],
@@ -147,7 +183,7 @@ const submit = () => {
     setTimeout(() => {
       const screenWidth = window.screen.width
       const screenHeight = window.screen.height
-      window.ipcRenderer.send('toMain', {
+      ipcRenderer.send('toMain', {
         username: loginObj.username,
         token: '',
         screenWidth,
@@ -183,9 +219,10 @@ const submit = () => {
   grid-template-columns: minmax(220px, 1fr) minmax(330px, 420px);
   gap: 18px;
   align-items: stretch;
-  width: min(920px, 100%);
-  min-height: 560px;
-  max-height: calc(100vh - 90px);
+
+  // width: min(920px, 100%);
+  // min-height: 560px;
+  // max-height: calc(100vh - 90px);
   -webkit-app-region: no-drag;
 }
 
@@ -199,8 +236,17 @@ const submit = () => {
   padding: 30px 24px;
   overflow: hidden;
   color: #f8fafc;
-  background: radial-gradient(circle at 14% 12%, rgb(255 255 255 / 24%) 0%, transparent 32%),
-    radial-gradient(circle at 84% 86%, rgb(12 74 110 / 50%) 0%, transparent 44%),
+  background:
+    radial-gradient(
+      circle at 14% 12%,
+      rgb(255 255 255 / 24%) 0%,
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 84% 86%,
+      rgb(12 74 110 / 50%) 0%,
+      transparent 44%
+    ),
     linear-gradient(160deg, #f97316 0%, #f59e0b 42%, #0ea5e9 100%);
   border-radius: 24px;
   box-shadow: 0 22px 34px -20px rgb(15 23 42 / 52%);
@@ -332,7 +378,8 @@ const submit = () => {
   );
   border: none;
   border-radius: 12px;
-  box-shadow: 0 14px 24px -18px color-mix(in srgb, var(--brand-accent), black 8%);
+  box-shadow: 0 14px 24px -18px
+    color-mix(in srgb, var(--brand-accent), black 8%);
 }
 
 .switch-container {
@@ -381,7 +428,7 @@ const submit = () => {
   border-radius: 24px;
 }
 
-@media (width <= 900px) {
+@media (width <=900px) {
   .login-main {
     padding: 16px;
   }

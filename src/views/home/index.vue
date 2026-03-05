@@ -4,7 +4,9 @@
       <div class="hero-content">
         <span class="status-pill">控制台总览</span>
         <h2 class="hero-title">仪表板</h2>
-        <p class="hero-subtitle">欢迎回来，这里展示当前模型服务状态与请求概况。</p>
+        <p class="hero-subtitle">
+          欢迎回来，这里展示当前模型服务状态与请求概况。
+        </p>
       </div>
       <div class="hero-tags">
         <span class="hero-tag">在线 8 节点</span>
@@ -14,7 +16,11 @@
     </section>
 
     <section class="stats-grid">
-      <article v-for="stat in stats" :key="stat.label" class="stat-card glass-card">
+      <article
+        v-for="stat in stats"
+        :key="stat.label"
+        class="stat-card glass-card"
+      >
         <div class="stat-card-header">
           <div class="stat-card-icon-bg" :style="{ color: stat.color }">
             <i :class="['stat-card-icon', stat.icon]" />
@@ -23,11 +29,18 @@
         </div>
         <div class="stat-card-value">{{ stat.value }}</div>
         <div class="stat-card-sub">
-          <span :style="{ color: stat.color }">{{ stat.sub.split(' ')[0] }}</span>
+          <span :style="{ color: stat.color }">
+            {{ stat.sub.split(' ')[0] }}
+          </span>
           {{ stat.sub.split(' ').slice(1).join(' ') }}
         </div>
         <div class="stat-card-line">
-          <span :style="{ width: stat.line, background: `linear-gradient(90deg, ${stat.color}, transparent)` }" />
+          <span
+            :style="{
+              width: stat.line,
+              background: `linear-gradient(90deg, ${stat.color}, transparent)`
+            }"
+          />
         </div>
       </article>
     </section>
@@ -56,8 +69,15 @@
           <span class="panel-title">最近活动</span>
         </div>
         <ul class="activity-list">
-          <li v-for="item in activities" :key="item.title" class="activity-item">
-            <span class="activity-dot" :style="{ backgroundColor: item.color }" />
+          <li
+            v-for="item in activities"
+            :key="item.title"
+            class="activity-item"
+          >
+            <span
+              class="activity-dot"
+              :style="{ backgroundColor: item.color }"
+            />
             <div class="activity-text">
               <p class="activity-title">{{ item.title }}</p>
               <p class="activity-time">{{ item.time }}</p>
@@ -75,10 +95,38 @@ import { ElMessage } from 'element-plus'
 const endpoint = 'http://127.0.0.1:18317/v1'
 
 const stats = [
-  { label: '账户', icon: 'i-lucide-users', value: '2', sub: '+0 就绪', color: '#f97316', line: '84%' },
-  { label: '请求', icon: 'i-lucide-arrow-up-down', value: '1,024', sub: '+12% 较昨日', color: '#10b981', line: '72%' },
-  { label: '令牌', icon: 'i-lucide-coins', value: '8.5k', sub: '已消耗', color: '#0ea5e9', line: '66%' },
-  { label: '成功率', icon: 'i-lucide-check-circle', value: '99.9%', sub: '0 失败', color: '#eab308', line: '92%' }
+  {
+    label: '账户',
+    icon: 'i-lucide-users',
+    value: '2',
+    sub: '+0 就绪',
+    color: '#f97316',
+    line: '84%'
+  },
+  {
+    label: '请求',
+    icon: 'i-lucide-arrow-up-down',
+    value: '1,024',
+    sub: '+12% 较昨日',
+    color: '#10b981',
+    line: '72%'
+  },
+  {
+    label: '令牌',
+    icon: 'i-lucide-coins',
+    value: '8.5k',
+    sub: '已消耗',
+    color: '#0ea5e9',
+    line: '66%'
+  },
+  {
+    label: '成功率',
+    icon: 'i-lucide-check-circle',
+    value: '99.9%',
+    sub: '0 失败',
+    color: '#eab308',
+    line: '92%'
+  }
 ]
 
 const activities = [
@@ -288,7 +336,11 @@ const copyEndpoint = async () => {
 
     &:hover {
       color: var(--color-primary);
-      background-color: color-mix(in srgb, var(--color-bg-hover), transparent 15%);
+      background-color: color-mix(
+        in srgb,
+        var(--color-bg-hover),
+        transparent 15%
+      );
     }
   }
 }

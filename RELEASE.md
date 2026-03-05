@@ -326,7 +326,7 @@ const handleConfirm = () => {
     return
   }
   updateStore.setUpdating(true)
-  window.ipcRenderer.send('start-download')  // 生产：触发真实下载
+  ipcRenderer.send('start-download')  // 生产：触发真实下载
 }
 ```
 
@@ -335,7 +335,7 @@ const handleConfirm = () => {
 在渲染层任意位置调用：
 
 ```javascript
-window.ipcRenderer.send('check-for-updates')
+ipcRenderer.send('check-for-updates')
 ```
 
 ---

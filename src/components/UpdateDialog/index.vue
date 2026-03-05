@@ -9,13 +9,25 @@
           <!-- 头部 -->
           <div class="update-dialog__header">
             <div class="update-icon-wrap">
-              <SvgIcon icon-class="rocket" width="28px" height="28px" class="update-rocket" />
+              <SvgIcon
+                icon-class="rocket"
+                width="28px"
+                height="28px"
+                class="update-rocket"
+              />
             </div>
             <div class="update-dialog__title-group">
               <h3 class="update-dialog__title">发现新版本</h3>
-              <p class="update-dialog__subtitle">新版本已就绪，立即更新体验最新功能</p>
+              <p class="update-dialog__subtitle">
+                新版本已就绪，立即更新体验最新功能
+              </p>
             </div>
-            <button v-if="!isUpdating" class="update-close-btn" title="稍后提醒" @click="handleLater">
+            <button
+              v-if="!isUpdating"
+              class="update-close-btn"
+              title="稍后提醒"
+              @click="handleLater"
+            >
               <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
@@ -51,12 +63,22 @@
           <template v-if="isUpdating">
             <div class="update-dialog__progress">
               <div class="progress-header">
-                <SvgIcon icon-class="download" width="15px" height="15px" class="progress-icon" />
+                <SvgIcon
+                  icon-class="download"
+                  width="15px"
+                  height="15px"
+                  class="progress-icon"
+                />
                 <span class="progress-label">正在下载更新...</span>
-                <span class="progress-percent">{{ downloadProgress.toFixed(1) }}%</span>
+                <span class="progress-percent">
+                  {{ downloadProgress.toFixed(1) }}%
+                </span>
               </div>
               <div class="progress-track">
-                <div class="progress-fill" :style="{ width: downloadProgress + '%' }" />
+                <div
+                  class="progress-fill"
+                  :style="{ width: downloadProgress + '%' }"
+                />
               </div>
               <p class="progress-tip">下载完成后将提示安装，请勿关闭应用</p>
             </div>
@@ -66,14 +88,26 @@
           <template v-else-if="updateDownloaded">
             <div class="update-dialog__downloaded">
               <div class="downloaded-icon-wrap">
-                <SvgIcon icon-class="success" width="24px" height="24px" class="downloaded-icon" />
+                <SvgIcon
+                  icon-class="success"
+                  width="24px"
+                  height="24px"
+                  class="downloaded-icon"
+                />
               </div>
               <p class="downloaded-title">更新下载完成</p>
-              <p class="downloaded-desc">重启应用后将自动完成安装，建议立即重启</p>
+              <p class="downloaded-desc">
+                重启应用后将自动完成安装，建议立即重启
+              </p>
             </div>
             <div class="update-dialog__actions">
-              <button class="update-btn update-btn--later" @click="handleLater">稍后重启</button>
-              <button class="update-btn update-btn--confirm" @click="handleInstall">
+              <button class="update-btn update-btn--later" @click="handleLater">
+                稍后重启
+              </button>
+              <button
+                class="update-btn update-btn--confirm"
+                @click="handleInstall"
+              >
                 <SvgIcon icon-class="rotate-ccw" width="15px" height="15px" />
                 立即重启安装
               </button>
@@ -83,8 +117,13 @@
           <!-- 默认操作按钮 -->
           <template v-else>
             <div class="update-dialog__actions">
-              <button class="update-btn update-btn--later" @click="handleLater">稍后更新</button>
-              <button class="update-btn update-btn--confirm" @click="handleConfirm">
+              <button class="update-btn update-btn--later" @click="handleLater">
+                稍后更新
+              </button>
+              <button
+                class="update-btn update-btn--confirm"
+                @click="handleConfirm"
+              >
                 <SvgIcon icon-class="download" width="15px" height="15px" />
                 立即更新
               </button>
@@ -152,7 +191,7 @@ const handleConfirm = () => {
     return
   }
   updateStore.setUpdating(true)
-  window.ipcRenderer.send('start-download')
+  ipcRenderer.send('start-download')
 }
 
 const handleInstall = () => {
@@ -162,7 +201,7 @@ const handleInstall = () => {
     updateStore.setCurrentVersion(latestVersion.value)
   }
   updateStore.setDialogVisible(false)
-  window.ipcRenderer.send('install-update')
+  ipcRenderer.send('install-update')
 }
 
 const handleLater = () => {
@@ -188,16 +227,16 @@ onMounted(() => {
     updateStore.setUpdating(false)
     console.error('[updater] 下载出错：', message)
   }
-  window.ipcRenderer.on('download-progress', onProgress)
-  window.ipcRenderer.on('update-downloaded', onDownloaded)
-  window.ipcRenderer.on('update-error', onError)
+  ipcRenderer.on('download-progress', onProgress)
+  ipcRenderer.on('update-downloaded', onDownloaded)
+  ipcRenderer.on('update-error', onError)
 })
 
 onUnmounted(() => {
   if (mockTimer) clearInterval(mockTimer)
-  window.ipcRenderer.off('download-progress', onProgress)
-  window.ipcRenderer.off('update-downloaded', onDownloaded)
-  window.ipcRenderer.off('update-error', onError)
+  ipcRenderer.off('download-progress', onProgress)
+  ipcRenderer.off('update-downloaded', onDownloaded)
+  ipcRenderer.off('update-error', onError)
 })
 </script>
 
@@ -232,7 +271,11 @@ onUnmounted(() => {
     width: 200px;
     height: 200px;
     pointer-events: none;
-    background: radial-gradient(circle, color-mix(in srgb, var(--color-primary), transparent 68%) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-primary), transparent 68%) 0%,
+      transparent 70%
+    );
     border-radius: 999px;
   }
 
@@ -444,7 +487,11 @@ onUnmounted(() => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--brand-accent-alt) 100%
+  );
   border-radius: 999px;
   box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary), transparent 40%);
   transition: width 0.4s ease;
@@ -536,12 +583,18 @@ onUnmounted(() => {
 
   &--confirm {
     color: #fff;
-    background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
-    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary), transparent 40%);
+    background: linear-gradient(
+      100deg,
+      var(--color-primary) 0%,
+      var(--brand-accent-alt) 100%
+    );
+    box-shadow: 0 4px 12px -4px
+      color-mix(in srgb, var(--color-primary), transparent 40%);
 
     &:hover {
       filter: brightness(1.08);
-      box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary), transparent 30%);
+      box-shadow: 0 6px 16px -4px
+        color-mix(in srgb, var(--color-primary), transparent 30%);
       transform: translateY(-1px);
     }
 

@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar" :class="{ 'sidebar-collapsed': appStore.sidebarCollapsed, 'is-mac': isMac }">
+  <div
+    class="sidebar"
+    :class="{ 'sidebar-collapsed': appStore.sidebarCollapsed, 'is-mac': isMac }"
+  >
     <!-- Logo 区域 -->
     <GlobalLogo />
 
@@ -14,7 +17,12 @@
           @click="handleNav(item)"
         >
           <div class="sidebar-icon-wrap">
-            <SvgIcon :icon-class="item.icon" class="sidebar-icon" width="18px" height="18px" />
+            <SvgIcon
+              :icon-class="item.icon"
+              class="sidebar-icon"
+              width="18px"
+              height="18px"
+            />
           </div>
           <span class="sidebar-label">{{ item.label }}</span>
           <!-- 有子菜单时显示箭头指示器 -->
@@ -31,7 +39,10 @@
         <div
           v-if="item.children?.length"
           class="sidebar-submenu"
-          :class="{ 'sidebar-submenu-open': !appStore.sidebarCollapsed && isExpanded(item.id) }"
+          :class="{
+            'sidebar-submenu-open':
+              !appStore.sidebarCollapsed && isExpanded(item.id)
+          }"
         >
           <a
             v-for="child in item.children"
@@ -55,7 +66,10 @@
         @click="router.push('/settings')"
       >
         <div class="user-avatar">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
+          <img
+            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+            alt="avatar"
+          />
         </div>
         <div class="user-info">
           <div class="user-name">{{ userStore.name }}</div>
@@ -166,7 +180,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     height: 120px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
+    background:
+      radial-gradient(
         circle at 14% 0%,
         color-mix(in srgb, var(--brand-accent), transparent 82%) 0%,
         transparent 62%
@@ -185,7 +200,11 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     width: 1px;
     pointer-events: none;
     content: '';
-    background: linear-gradient(180deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 2%) 100%);
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 10%) 0%,
+      rgb(255 255 255 / 2%) 100%
+    );
   }
 
   &-collapsed {
@@ -198,7 +217,13 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     flex: 1;
     padding: 10px 8px;
     overflow: hidden auto;
-    mask-image: linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 16px,
+      black calc(100% - 16px),
+      transparent 100%
+    );
 
     &::-webkit-scrollbar {
       width: 4px;
@@ -231,7 +256,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       color-mix(in srgb, var(--color-bg-card), transparent 38%) 0%,
       color-mix(in srgb, var(--color-bg-sidebar), transparent 52%) 100%
     );
-    border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 52%);
+    border: 1px solid
+      color-mix(in srgb, var(--glass-surface-border), transparent 52%);
     border-radius: 14px;
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 6%),
@@ -244,7 +270,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       border-color: color-mix(in srgb, var(--brand-accent), transparent 72%);
       box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 8%),
-        0 10px 18px -14px color-mix(in srgb, var(--brand-accent), transparent 54%);
+        0 10px 18px -14px
+          color-mix(in srgb, var(--brand-accent), transparent 54%);
       transform: translate3d(2px, -1px, 0);
 
       .sidebar-icon-wrap {
@@ -269,12 +296,14 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 12%),
         0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 82%),
-        0 8px 20px -12px color-mix(in srgb, var(--color-primary), transparent 38%);
+        0 8px 20px -12px
+          color-mix(in srgb, var(--color-primary), transparent 38%);
 
       .sidebar-icon-wrap {
         background: color-mix(in srgb, var(--color-primary), transparent 76%);
         border-color: color-mix(in srgb, var(--color-primary), transparent 66%);
-        box-shadow: 0 0 12px -2px color-mix(in srgb, var(--color-primary), transparent 46%);
+        box-shadow: 0 0 12px -2px
+          color-mix(in srgb, var(--color-primary), transparent 46%);
       }
 
       .sidebar-icon {
@@ -293,9 +322,14 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
         inset: 9px auto 9px 4px;
         width: 3px;
         content: '';
-        background: linear-gradient(180deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
+        background: linear-gradient(
+          180deg,
+          var(--color-primary) 0%,
+          var(--brand-accent-alt) 100%
+        );
         border-radius: 4px;
-        box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary), transparent 30%);
+        box-shadow: 0 0 8px
+          color-mix(in srgb, var(--color-primary), transparent 30%);
       }
     }
 
@@ -334,7 +368,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     width: 32px;
     height: 32px;
     background: color-mix(in srgb, var(--color-bg-input), transparent 25%);
-    border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 30%);
+    border: 1px solid
+      color-mix(in srgb, var(--glass-surface-border), transparent 30%);
     border-radius: 10px;
     transition: all 0.22s ease;
   }
@@ -357,7 +392,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     margin-right: 2px;
     background: color-mix(in srgb, var(--brand-accent), transparent 15%);
     border-radius: 50%;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-accent), transparent 90%);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--brand-accent), transparent 90%);
   }
 
   &-chevron {
@@ -385,7 +421,11 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     max-height: 240px;
     padding: 4px;
     background: color-mix(in srgb, var(--glass-surface), transparent 18%);
-    border-color: color-mix(in srgb, var(--glass-surface-border), transparent 36%);
+    border-color: color-mix(
+      in srgb,
+      var(--glass-surface-border),
+      transparent 36%
+    );
 
     &::before {
       position: absolute;
@@ -431,7 +471,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     position: relative;
     z-index: 2;
     padding: 10px 8px;
-    border-top: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 15%);
+    border-top: 1px solid
+      color-mix(in srgb, var(--glass-surface-border), transparent 15%);
   }
 
   .user-profile {
@@ -441,7 +482,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     padding: 8px;
     cursor: pointer;
     background: color-mix(in srgb, var(--glass-surface), transparent 22%);
-    border: 1px solid color-mix(in srgb, var(--glass-surface-border), transparent 24%);
+    border: 1px solid
+      color-mix(in srgb, var(--glass-surface-border), transparent 24%);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     transition: all $transition;
@@ -466,7 +508,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       height: 36px;
       overflow: hidden;
       background-color: var(--color-bg-input);
-      border: 2px solid color-mix(in srgb, var(--color-bg-sidebar), transparent 16%);
+      border: 2px solid
+        color-mix(in srgb, var(--color-bg-sidebar), transparent 16%);
       border-radius: 50%;
       box-shadow:
         var(--shadow-sm),

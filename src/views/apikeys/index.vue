@@ -1,6 +1,11 @@
 <template>
   <div class="page-placeholder">
-    <SvgIcon icon-class="key" width="32px" height="32px" class="page-placeholder-icon" />
+    <SvgIcon
+      icon-class="key"
+      width="32px"
+      height="32px"
+      class="page-placeholder-icon"
+    />
     <p class="page-placeholder-title">API 密钥</p>
     <p class="page-placeholder-desc">管理你的 API 访问密钥</p>
   </div>

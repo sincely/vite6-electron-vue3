@@ -21,6 +21,7 @@
 *.ttf
 *.woff
 *.nsh
+
 # 测试和打包目录
 /test/
 dist/*
@@ -33,3 +34,6 @@ src/icons/*
 .env
 release/*
 dist-electron/*
+
+# Editor directories and files
+.vscode

@@ -45,7 +45,7 @@ export const useUpdateStore = defineStore('version', {
     setDialogVisible(visible) {
       this.dialogVisible = visible
     },
-    /** 重置所有过渡态（不清空版本号），供关闭弹框或错误恢复时使用 */
+    // 重置所有过渡态（不清空版本号），供关闭弹框或错误恢复时使用
     resetUpdateState() {
       this.checkingForUpdate = false
       this.isUpdating = false

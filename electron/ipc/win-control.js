@@ -1,6 +1,7 @@
 import { BrowserWindow } from 'electron'
 
 export default [
+  //
   {
     channel: 'window-minimize',
     type: 'on',

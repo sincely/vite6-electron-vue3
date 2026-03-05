@@ -7,7 +7,7 @@ const createMenu = () => {
       submenu: [
         { label: '打开', click: () => console.log('打开文件') },
         { label: '保存', click: () => console.log('保存文件') },
-        { type: 'separator' },
+        { type: 'separator' }, // 分隔符
         { role: 'quit' } // 退出应用
       ]
     },
@@ -16,7 +16,7 @@ const createMenu = () => {
       submenu: [
         { role: 'undo' }, // 撤销
         { role: 'redo' }, // 重做
-        { type: 'separator' },
+        { type: 'separator' }, // 分隔符
         { role: 'cut' }, // 剪切
         { role: 'copy' }, // 复制
         { role: 'paste' } // 粘贴

@@ -1,0 +1,48 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "args": [
+        "."
+      ], // 启动主进程
+      "outputCapture": "std",
+      "sourceMaps": true, // 启用源码映射
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ] // 指向编译后的JS文件
+    },
+    {
+      "name": "Debug Renderer Process",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222, // 渲染进程调试端口
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true,
+      "timeout": 60000,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceRoot}/node_modules/**",
+        "${workspaceRoot}/dist-electron/**",
+        // Skip files in host(VITE_DEV_SERVER_URL)
+        "http://127.0.0.1:3344/**"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Electron All",
+      "configurations": [
+        "Debug Main Process",
+        "Debug Renderer Process"
+      ]
+    }
+  ]
+}

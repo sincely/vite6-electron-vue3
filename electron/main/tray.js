@@ -1,7 +1,11 @@
 import { app, Menu, Tray, nativeImage } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
-import { getMainWindow, getLoginWindow, restoreMainWindow } from './windowManager.js'
+import {
+  getMainWindow,
+  getLoginWindow,
+  restoreMainWindow
+} from './windowManager'
 
 let tray = null
 
@@ -34,7 +38,10 @@ const createTrayIcon = () => {
   }
 
   if (process.platform === 'darwin') {
-    const iconPath = tryLoad(path.join(iconsRoot, 'mac', 'tray@2x.png'), path.join(iconsRoot, 'mac', 'tray.png'))
+    const iconPath = tryLoad(
+      path.join(iconsRoot, 'mac', 'tray@2x.png'),
+      path.join(iconsRoot, 'mac', 'tray.png')
+    )
     if (iconPath) {
       const image = nativeImage.createFromPath(iconPath)
       // 模板图像：系统自动将黑色渲染为适合当前菜单栏的颜色
@@ -44,7 +51,10 @@ const createTrayIcon = () => {
   }
 
   if (process.platform === 'win32') {
-    const iconPath = tryLoad(path.join(iconsRoot, 'win', 'tray.ico'), path.join(iconsRoot, 'win', 'tray.png'))
+    const iconPath = tryLoad(
+      path.join(iconsRoot, 'win', 'tray.ico'),
+      path.join(iconsRoot, 'win', 'tray.png')
+    )
     if (iconPath) return nativeImage.createFromPath(iconPath)
   }
 
@@ -54,8 +64,14 @@ const createTrayIcon = () => {
   }
 
   // ── 降级：从各平台 app 目录中选取合适尺寸 ──
-  const fallbackSize = process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
-  const platformDir = process.platform === 'darwin' ? 'mac' : process.platform === 'linux' ? 'linux' : 'win'
+  const fallbackSize =
+    process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
+  const platformDir =
+    process.platform === 'darwin'
+      ? 'mac'
+      : process.platform === 'linux'
+        ? 'linux'
+        : 'win'
   const fallback = tryLoad(
     path.join(iconsRoot, platformDir, 'app', '256.png'),
     path.join(iconsRoot, platformDir, 'app', '128.png'),
@@ -63,7 +79,11 @@ const createTrayIcon = () => {
   )
   if (fallback) {
     const base = nativeImage.createFromPath(fallback)
-    return base.resize({ width: fallbackSize, height: fallbackSize, quality: 'best' })
+    return base.resize({
+      width: fallbackSize,
+      height: fallbackSize,
+      quality: 'best'
+    })
   }
 
   return nativeImage.createEmpty()

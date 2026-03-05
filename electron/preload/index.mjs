@@ -1,32 +1,38 @@
 import { ipcRenderer, contextBridge } from 'electron'
-window.ipcRenderer = ipcRenderer
+
+// api 暴露的方法
 const api = {}
-console.log('preload', process.contextIsolated)
+
+// 如果上下文隔离已启用 ，则使用 contextBridge 暴露 API
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('ipcRenderer', {
+      // 添加事件监听器
       on(...args) {
         const [channel, listener] = args
         return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
       },
+      // 移除事件监听器
       off(...args) {
         const [channel, ...omit] = args
         return ipcRenderer.off(channel, ...omit)
       },
+      // 发送事件到主进程
       send(...args) {
         const [channel, ...omit] = args
         return ipcRenderer.send(channel, ...omit)
       },
+      // 调用主进程方法
       invoke(...args) {
         const [channel, ...omit] = args
         return ipcRenderer.invoke(channel, ...omit)
       }
     })
-    // You can expose other APTs you need here.
+    // 可以暴露其他API
     contextBridge.exposeInMainWorld('process', {
       platform: process.platform
     })
-
+    // 暴露 api 方法
     contextBridge.exposeInMainWorld('api', api)
   } catch (error) {
     console.error(error)

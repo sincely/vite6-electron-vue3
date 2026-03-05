@@ -6,7 +6,7 @@ export default {
   // 行尾不需要有分号
   semi: false,
   // 一行最多 120 字符
-  printWidth: 120,
+  printWidth: 80,
   // 使用单引号
   singleQuote: true,
   // 大括号内的首尾需要空格

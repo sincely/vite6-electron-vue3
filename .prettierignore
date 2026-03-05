@@ -14,7 +14,7 @@ pnpm-lock.yaml
 *ignore
 **/*.sh
 
-## Built-files
+# Built-files
 .cache
 dist
 
@@ -27,3 +27,7 @@ dist-electron
 release/*
 
 .nvmrc
+
+
+# Editor directories and files
+.vscode

@@ -2,9 +2,9 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { VITE_DEV_SERVER_URL, RENDERER_DIST, VITE_PUBLIC } from '../config/index.js'
-import { initUpdater } from './update.js'
-import createNotification from './notification.js'
+import { VITE_DEV_SERVER_URL, RENDERER_DIST } from '../config'
+import { initUpdater } from './update' // 更新器
+import createNotification from './notification' // 创建通知
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
@@ -18,7 +18,7 @@ console.log('indexHtml:', indexHtml)
  * 按平台返回 BrowserWindow 图标路径
  * - macOS  : 应用图标由 .icns bundle 决定，传 undefined 即可
  * - Linux  : 必须使用 PNG，否则部分桌面环境不显示图标
- * - Windows: 使用 .ico
+ * - Windows: 使用 .ico 图标文件
  *
  * 路径规则（与 electron-builder extraResources 保持一致）：
  *   开发：<APP_ROOT>/resources/icons/<platform>/...
@@ -56,13 +56,20 @@ const setupWindow = (win) => {
   })
 
   // 监听加载失败
-  win.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
-    console.error(`Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`)
-  })
+  win.webContents.on(
+    'did-fail-load',
+    (event, errorCode, errorDescription, validatedURL) => {
+      console.error(
+        `Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`
+      )
+    }
+  )
 
   // 监听崩溃
   win.webContents.on('render-process-gone', (event, details) => {
-    console.error(`Render process gone: ${details.reason} (${details.exitCode})`)
+    console.error(
+      `Render process gone: ${details.reason} (${details.exitCode})`
+    )
   })
 
   win.once('ready-to-show', () => win.show())
@@ -112,8 +119,8 @@ export function createLoginWindow() {
   }
 
   const win = new BrowserWindow({
-    width: 500,
-    height: 560,
+    width: 600,
+    height: 660,
     icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,
@@ -121,17 +128,19 @@ export function createLoginWindow() {
     resizable: false,
     center: true,
     webPreferences: {
-      preload,
-      nodeIntegration: true,
-      contextIsolation: true
+      preload, // 预加载脚本
+      nodeIntegration: true, // 允许 Node.js 集成
+      contextIsolation: true // 启用上下文隔离
     }
   })
 
   const windowId = win.id
   loginWindowId = windowId
   windows.set(windowId, win)
-
+  // 加载登录页面
   loadHash(win, 'login')
+
+  // 设置窗口事件
   setupWindow(win)
 
   win.on('closed', () => {
@@ -166,9 +175,9 @@ export function createMainWindow() {
     resizable: true,
     center: true,
     webPreferences: {
-      preload,
-      nodeIntegration: true,
-      contextIsolation: true
+      preload, // 预加载脚本
+      nodeIntegration: true, // 允许 Node.js 集成
+      contextIsolation: true // 启用上下文隔离
     }
   })
 
@@ -176,12 +185,18 @@ export function createMainWindow() {
   mainWindowId = windowId
   windows.set(windowId, win)
 
+  // 初始化更新器
   initUpdater(win)
 
+  // 监听Electron窗口完成首次加载（或刷新后加载完成）完成
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString())
     // 在主窗口加载完成后发送一个测试通知
-    createNotification({ title: '欢迎', body: '应用已成功启动！', type: 'celebrate' })
+    createNotification({
+      title: '欢迎',
+      body: '应用已成功启动！',
+      type: 'celebrate'
+    })
   })
 
   loadHash(win, 'desktop')

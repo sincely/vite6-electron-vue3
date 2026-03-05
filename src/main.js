@@ -23,19 +23,23 @@ async function setupApp() {
     const notifStore = useNotificationStore()
 
     // 获取当前版本号
-    window.ipcRenderer.invoke('get-app-version').then((version) => {
+    ipcRenderer.invoke('get-app-version').then((version) => {
       console.log('当前应用版本号:', version)
       updateStore.setCurrentVersion(version)
     })
 
     // 监听主进程发送的通知 → 推入通知中心
-    window.ipcRenderer.on('show-notification', (event, options) => {
+    ipcRenderer.on('show-notification', (event, options) => {
       // notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
       // 直接提示登录成功，模拟通知
       ElNotification({
         title: '通知',
         message: '欢迎回来',
-        icon: h(SvgIcon, { iconClass: 'celebrate', width: '25px', height: '25px' }),
+        icon: h(SvgIcon, {
+          iconClass: 'celebrate',
+          width: '25px',
+          height: '25px'
+        }),
         showClose: false,
         duration: 2000
       })
@@ -49,13 +53,41 @@ async function setupApp() {
         updateStore.setUpdateAvailable(true) // 标记有可用更新
         updateStore.setDialogVisible(true) // 显示更新提示框
         // 模拟几条通知
-        notifStore.push({ title: '欢迎使用', body: '应用已成功启动，祝您使用愉快！', type: 'success' })
-        notifStore.push({ title: '系统提示', body: '检测到新版本 v0.1.0 可用，建议尽快更新。', type: 'info' })
-        notifStore.push({ title: '服务器发生错误', body: '代理服务器响应超时，请检查网络配置。', type: 'error' })
-        notifStore.push({ title: '网络发生波动', body: '代理服务器响应超时，请检查网络配置。', type: 'exception' })
-        notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'success' })
-        notifStore.push({ title: '公告申明', body: '代理服务器响应超时，请检查网络配置。', type: 'celebrate' })
-        notifStore.push({ title: '连接警告', body: '代理服务器响应超时，请检查网络配置。', type: 'warning' })
+        notifStore.push({
+          title: '欢迎使用',
+          body: '应用已成功启动，祝您使用愉快！',
+          type: 'success'
+        })
+        notifStore.push({
+          title: '系统提示',
+          body: '检测到新版本 v0.1.0 可用，建议尽快更新。',
+          type: 'info'
+        })
+        notifStore.push({
+          title: '服务器发生错误',
+          body: '代理服务器响应超时，请检查网络配置。',
+          type: 'error'
+        })
+        notifStore.push({
+          title: '网络发生波动',
+          body: '代理服务器响应超时，请检查网络配置。',
+          type: 'exception'
+        })
+        notifStore.push({
+          title: '连接警告',
+          body: '代理服务器响应超时，请检查网络配置。',
+          type: 'success'
+        })
+        notifStore.push({
+          title: '公告申明',
+          body: '代理服务器响应超时，请检查网络配置。',
+          type: 'celebrate'
+        })
+        notifStore.push({
+          title: '连接警告',
+          body: '代理服务器响应超时，请检查网络配置。',
+          type: 'warning'
+        })
       }, 1500)
     }
   })

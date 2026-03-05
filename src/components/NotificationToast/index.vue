@@ -11,13 +11,19 @@
         >
           <!-- 左侧类型图标 -->
           <div class="notif-toast__icon">
-            <SvgIcon :icon-class="typeIcon(toast.type)" width="16px" height="16px" />
+            <SvgIcon
+              :icon-class="typeIcon(toast.type)"
+              width="16px"
+              height="16px"
+            />
           </div>
 
           <!-- 内容 -->
           <div class="notif-toast__content">
             <div class="notif-toast__title">{{ toast.title }}</div>
-            <div v-if="toast.body" class="notif-toast__body">{{ toast.body }}</div>
+            <div v-if="toast.body" class="notif-toast__body">
+              {{ toast.body }}
+            </div>
           </div>
 
           <!-- 关闭按钮 -->
@@ -27,7 +33,10 @@
 
           <!-- 进度条（倒计时） -->
           <div class="notif-toast__progress">
-            <div class="notif-toast__progress-fill" :style="{ animationDuration: `${DURATION}ms` }" />
+            <div
+              class="notif-toast__progress-fill"
+              :style="{ animationDuration: `${DURATION}ms` }"
+            />
           </div>
         </div>
       </TransitionGroup>

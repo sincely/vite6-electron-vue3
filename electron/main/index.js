@@ -1,13 +1,15 @@
 import { app, BrowserWindow } from 'electron'
 import os from 'node:os'
-import { registerIpc } from '../ipc/index.js'
-import createTray from './tray.js'
+import { registerIpc } from '../ipc'
+import createTray from './tray'
 
 import { createLoginWindow, restoreMainWindow } from './windowManager.js'
-import '../config/index.js'
+import '../config'
 
+// 禁用安全警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
+// 应用是否正在退出
 app.isQuiting = false
 
 // 禁用硬件加速，解决在Windows 7上的问题
@@ -31,9 +33,11 @@ app.whenReady().then(() => {
   createTray()
 })
 
+// 当应用准备退出时
 app.on('before-quit', () => {
   app.isQuiting = true
 })
+
 // 当所有窗口都被关闭时
 app.on('window-all-closed', () => {
   // 在 macOS 以外的平台上退出应用

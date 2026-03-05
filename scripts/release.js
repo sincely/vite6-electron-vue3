@@ -62,7 +62,8 @@ async function main() {
         type: 'input',
         name: 'customVersion',
         message: '输入版本号 (例如: 1.2.3):',
-        validate: (input) => /^\d+\.\d+\.\d+$/.test(input) || '请输入有效的版本号'
+        validate: (input) =>
+          /^\d+\.\d+\.\d+$/.test(input) || '请输入有效的版本号'
       }
     ])
     versionArg = customVersion

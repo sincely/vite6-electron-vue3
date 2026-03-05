@@ -1,6 +1,11 @@
 <template>
   <div class="global-search" :class="{ 'is-active': isFocused }">
-    <SvgIcon icon-class="search" class="global-search__icon" width="14px" height="14px" />
+    <SvgIcon
+      icon-class="search"
+      class="global-search__icon"
+      width="14px"
+      height="14px"
+    />
     <input
       v-model="keyword"
       class="global-search__input"
@@ -40,7 +45,8 @@ const isFocused = ref(false)
   &.is-active {
     min-width: 220px;
     border-color: color-mix(in srgb, var(--color-primary), transparent 30%);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 80%);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--color-primary), transparent 80%);
   }
 
   &__icon {

@@ -52,7 +52,10 @@ export default {
     // 不允许值使用供应商前缀
     'value-no-vendor-prefix': null,
     // 要求或禁止在规则之前的空行
-    'rule-empty-line-before': ['always', { ignore: ['after-comment', 'first-nested'] }],
+    'rule-empty-line-before': [
+      'always',
+      { ignore: ['after-comment', 'first-nested'] }
+    ],
     'selector-pseudo-class-no-unknown': [
       // 不允许未知的选择器
       true,
@@ -68,9 +71,15 @@ export default {
       customSyntax: 'postcss-html',
       rules: {
         // 禁止未知的伪类选择器
-        'selector-pseudo-class-no-unknown': [true, { ignorePseudoClasses: ['deep', 'global'] }],
+        'selector-pseudo-class-no-unknown': [
+          true,
+          { ignorePseudoClasses: ['deep', 'global'] }
+        ],
         // 禁止未知的伪元素选择器
-        'selector-pseudo-element-no-unknown': [true, { ignorePseudoElements: ['v-deep', 'v-global', 'v-slotted'] }]
+        'selector-pseudo-element-no-unknown': [
+          true,
+          { ignorePseudoElements: ['v-deep', 'v-global', 'v-slotted'] }
+        ]
       }
     },
     {

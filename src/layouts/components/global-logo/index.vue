@@ -1,7 +1,12 @@
 <template>
   <div class="logo-block" :class="{ 'is-mac': isMac }">
     <img src="@/assets/bar/icon.png" class="logo-block__img" alt="logo" />
-    <span class="logo-block__name" :class="{ 'is-hidden': appStore.sidebarCollapsed }">AI Desktop</span>
+    <span
+      class="logo-block__name"
+      :class="{ 'is-hidden': appStore.sidebarCollapsed }"
+    >
+      AI Desktop
+    </span>
   </div>
 </template>
 
@@ -50,7 +55,11 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     text-overflow: ellipsis;
     letter-spacing: 0.6px;
     white-space: nowrap;
-    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--brand-accent) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-text-primary) 0%,
+      var(--brand-accent) 100%
+    );
     background-clip: text;
     opacity: 1;
     transition:

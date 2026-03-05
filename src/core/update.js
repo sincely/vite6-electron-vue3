@@ -14,11 +14,11 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
 
+//
 export function useUpdater() {
   const store = useUpdateStore()
 
   // 检查更新
-
   const onCheckingForUpdate = () => {
     store.setCheckingForUpdate(true)
   }
@@ -75,26 +75,25 @@ export function useUpdater() {
     console.error('[updater] 更新出错：', message)
   }
 
-  // ── 生命周期 ─────────────────────────────────────────────
-
+  // 生命周期
   onMounted(() => {
     // 启动时重置所有更新过渡态，防止上次崩溃/强退留下脏状态（如 isUpdating、dialogVisible）
     store.resetUpdateState()
 
-    window.ipcRenderer.on('checking-for-update', onCheckingForUpdate)
-    window.ipcRenderer.on('update-not-available', onUpdateNotAvailable)
-    window.ipcRenderer.on('update-available', onUpdateAvailable)
-    window.ipcRenderer.on('download-progress', onDownloadProgress)
-    window.ipcRenderer.on('update-downloaded', onUpdateDownloaded)
-    window.ipcRenderer.on('update-error', onUpdateError)
+    ipcRenderer.on('checking-for-update', onCheckingForUpdate)
+    ipcRenderer.on('update-not-available', onUpdateNotAvailable)
+    ipcRenderer.on('update-available', onUpdateAvailable)
+    ipcRenderer.on('download-progress', onDownloadProgress)
+    ipcRenderer.on('update-downloaded', onUpdateDownloaded)
+    ipcRenderer.on('update-error', onUpdateError)
   })
 
   onUnmounted(() => {
-    window.ipcRenderer.off('checking-for-update', onCheckingForUpdate)
-    window.ipcRenderer.off('update-not-available', onUpdateNotAvailable)
-    window.ipcRenderer.off('update-available', onUpdateAvailable)
-    window.ipcRenderer.off('download-progress', onDownloadProgress)
-    window.ipcRenderer.off('update-downloaded', onUpdateDownloaded)
-    window.ipcRenderer.off('update-error', onUpdateError)
+    ipcRenderer.off('checking-for-update', onCheckingForUpdate)
+    ipcRenderer.off('update-not-available', onUpdateNotAvailable)
+    ipcRenderer.off('update-available', onUpdateAvailable)
+    ipcRenderer.off('download-progress', onDownloadProgress)
+    ipcRenderer.off('update-downloaded', onUpdateDownloaded)
+    ipcRenderer.off('update-error', onUpdateError)
   })
 }

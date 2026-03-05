@@ -56,7 +56,10 @@ export const clearRequestQueue = () => {
 }
 
 // 根据环境变量设置基础URL
-const baseURL = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_BASE_URL : import.meta.env.VITE_BASE_URL
+const baseURL =
+  process.env.NODE_ENV === 'production'
+    ? import.meta.env.VITE_BASE_URL
+    : import.meta.env.VITE_BASE_URL
 
 // 创建 axios 实例
 const service = axios.create({

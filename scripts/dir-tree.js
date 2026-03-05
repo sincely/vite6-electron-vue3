@@ -10,7 +10,10 @@ const children = filteredTree.children ?? []
 const genObj = (children) => {
   const obj = {}
   for (const child of children) {
-    obj[child.name] = child?.children && child.children.length > 0 ? genObj(child.children) : null
+    obj[child.name] =
+      child?.children && child.children.length > 0
+        ? genObj(child.children)
+        : null
   }
 
   return obj

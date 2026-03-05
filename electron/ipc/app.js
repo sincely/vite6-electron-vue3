@@ -1,4 +1,8 @@
-import { createMainWindow, closeLoginWindow, createWindow } from '../main/windowManager.js'
+import {
+  createMainWindow,
+  closeLoginWindow,
+  createWindow
+} from '../main/windowManager'
 import { app } from 'electron'
 
 export default [

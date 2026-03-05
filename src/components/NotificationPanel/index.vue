@@ -1,11 +1,21 @@
 <template>
   <Transition name="notif-panel">
-    <div v-if="store.panelVisible" ref="panelRef" class="notif-panel" @click.stop>
+    <div
+      v-if="store.panelVisible"
+      ref="panelRef"
+      class="notif-panel"
+      @click.stop
+    >
       <!-- 头部 -->
       <div class="notif-panel__header">
         <span class="notif-panel__title">消息通知</span>
         <div class="notif-panel__header-actions">
-          <button v-if="store.hasUnread" class="notif-text-btn" title="全部标为已读" @click="store.markAllRead()">
+          <button
+            v-if="store.hasUnread"
+            class="notif-text-btn"
+            title="全部标为已读"
+            @click="store.markAllRead()"
+          >
             <SvgIcon icon-class="check-check" width="13px" height="13px" />
             全部已读
           </button>
@@ -25,7 +35,12 @@
       <div class="notif-panel__body">
         <!-- 空状态 -->
         <div v-if="!store.list.length" class="notif-empty">
-          <SvgIcon icon-class="bell-off" width="28px" height="28px" class="notif-empty__icon" />
+          <SvgIcon
+            icon-class="bell-off"
+            width="28px"
+            height="28px"
+            class="notif-empty__icon"
+          />
           <p>暂无通知</p>
         </div>
 
@@ -39,8 +54,15 @@
             @click="store.markRead(item.id)"
           >
             <!-- 类型图标 -->
-            <div class="notif-item__icon" :class="`notif-item__icon--${item.type}`">
-              <SvgIcon :icon-class="typeIcon(item.type)" width="16px" height="16px" />
+            <div
+              class="notif-item__icon"
+              :class="`notif-item__icon--${item.type}`"
+            >
+              <SvgIcon
+                :icon-class="typeIcon(item.type)"
+                width="16px"
+                height="16px"
+              />
             </div>
 
             <!-- 内容 -->
@@ -54,7 +76,11 @@
             <span v-if="!item.read" class="notif-item__dot" />
 
             <!-- 删除 -->
-            <button class="notif-item__remove" title="删除" @click.stop="store.remove(item.id)">
+            <button
+              class="notif-item__remove"
+              title="删除"
+              @click.stop="store.remove(item.id)"
+            >
               <SvgIcon icon-class="close" width="12px" height="12px" />
             </button>
           </div>
@@ -253,43 +279,62 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
     &--info {
       color: var(--color-info);
       background: color-mix(in srgb, var(--color-info), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-info), transparent 90%);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-info), transparent 90%);
     }
 
     &--success {
       color: var(--color-success);
       background: color-mix(in srgb, var(--color-success), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-success), transparent 90%);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-success), transparent 90%);
     }
 
     &--warning {
       color: var(--color-warning);
       background: color-mix(in srgb, var(--color-warning), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-warning), transparent 90%);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-warning), transparent 90%);
     }
 
     &--error {
       color: var(--color-danger);
       background: color-mix(in srgb, var(--color-danger), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-danger), transparent 90%);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-danger), transparent 90%);
     }
 
     &--celebrate {
       color: var(--color-celebrate, #fd9816);
-      background: color-mix(in srgb, var(--color-celebrate, #fd9816), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-celebrate, #fd9816), transparent 90%);
+      background: color-mix(
+        in srgb,
+        var(--color-celebrate, #fd9816),
+        transparent 86%
+      );
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-celebrate, #fd9816), transparent 90%);
     }
 
     &--announce {
       color: var(--color-announce, #ff506d);
-      background: color-mix(in srgb, var(--color-announce, #ff506d), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-announce, #ff506d), transparent 90%);
+      background: color-mix(
+        in srgb,
+        var(--color-announce, #ff506d),
+        transparent 86%
+      );
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-announce, #ff506d), transparent 90%);
     }
 
     &--exception {
       color: var(--color-exception, #ff725a);
-      background: color-mix(in srgb, var(--color-exception, #ff725a), transparent 86%);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-exception, #ff725a), transparent 90%);
+      background: color-mix(
+        in srgb,
+        var(--color-exception, #ff725a),
+        transparent 86%
+      );
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-exception, #ff725a), transparent 90%);
     }
   }
 
