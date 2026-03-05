@@ -34,6 +34,7 @@ export default {
         'update', // 更新功能
         'ui', // 样式改动
         'fix', // 修复功能bug
+        'ci', // 持续集成
         'merge', // 合并分支
         'refactor', // 重构功能
         'perf', // 性能优化

@@ -1,6 +1,9 @@
 name: Release
 
 on:
+  # 当main, master分支有新push时，执行以下操作
+  # push:
+  #   branches: [main, master]
   workflow_dispatch:
     inputs:
       version-type:
@@ -19,10 +22,10 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # ── Job 1: 版本号管理、生成 CHANGELOG、打 Git Tag ──────────────────
   release:
-    name: Version & Changelog
-    runs-on: ubuntu-latest
+    name: Create Release
+    # runs-on: ubuntu-latest
+    runs-on: macos-latest # 修改这里，从 ubuntu-latest 改为 macos-latest
     if: "!contains(github.event.head_commit.message, 'chore:')"
     permissions:
       contents: write
@@ -33,6 +36,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # 重要：需要获取完整的历史记录和权限
           fetch-depth: 0
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
@@ -45,14 +49,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure Git
+      - name: Build project
+        run: npm run build-mac
+
+      - name: Configure Git User
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version & create GitHub Release
+      - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             npx release-it ${{ github.event.inputs.version-type }} --ci
@@ -60,80 +68,11 @@ jobs:
             npx release-it --ci
           fi
 
-      - name: Output new version
-        id: get-version
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
-
-  # ── Job 2: 多平台并行构建 ────────────────────────────────────────────
-  build:
-    name: Build · ${{ matrix.platform }}
-    needs: release
-    permissions:
-      contents: write
-    strategy:
-      fail-fast: false # 某平台失败不中断其他平台
-      matrix:
-        include:
-          - platform: Windows
-            os: windows-latest
-            build-cmd: npm run build-win:prod
-            artifact-name: windows-installer
-            # exe / blockmap / latest.yml
-            artifact-glob: |
-              release/**/*.exe
-              release/**/*.blockmap
-              release/**/latest.yml
-
-          - platform: macOS
-            os: macos-latest
-            build-cmd: npm run build-mac:prod
-            artifact-name: macos-installer
-            # dmg / zip / blockmap / latest-mac.yml
-            artifact-glob: |
-              release/**/*.dmg
-              release/**/*.zip
-              release/**/*.blockmap
-              release/**/latest-mac.yml
-
-          - platform: Linux
-            os: ubuntu-latest
-            build-cmd: npm run build-linux:prod
-            artifact-name: linux-installer
-            # AppImage / blockmap / latest-linux.yml
-            artifact-glob: |
-              release/**/*.AppImage
-              release/**/*.blockmap
-              release/**/latest-linux.yml
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout repository (tagged version)
-        uses: actions/checkout@v4
-        with:
-          ref: v${{ needs.release.outputs.version }}
-          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build ${{ matrix.platform }} installer
-        run: ${{ matrix.build-cmd }}
-        env:
-          # electron-builder 上传到 GitHub Release 时需要此 Token
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload installer artifacts
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ${{ matrix.artifact-name }}-v${{ needs.release.outputs.version }}
+          name: build-artifacts
           path: |
             release/**/*.exe
             release/**/*.dmg
@@ -141,4 +80,6 @@ jobs:
             release/**/*.AppImage
             release/**/*.blockmap
             release/**/latest*.yml
-          retention-days: 30
+            dist/
+            CHANGELOG.md
+          retention-days: 7
