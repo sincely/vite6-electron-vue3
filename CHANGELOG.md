@@ -3,6 +3,59 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.6](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.5...v0.0.6) (2026-03-05)
+
+### ✨ Features
+
+* **electron-update:** 重构自动更新模块并完善文档 ([01dff29](https://github.com/sincely/vite6-electron-vue3/commit/01dff29632132163efb08155f0ed1312563f628c))
+* 启动时重置更新过渡态，防止崩溃后遗留脏状态 ([b5a3a9a](https://github.com/sincely/vite6-electron-vue3/commit/b5a3a9a5657693e5eab841973e20a1ee62ebc012))
+* 在svgIcon插件中添加自定义插入位置，更新symbolId配置；修复windowManager.js中的导入格式；移除vite.config.js中的tree-shaking配置 ([d164b06](https://github.com/sincely/vite6-electron-vue3/commit/d164b06b252333a757b5fc655dc02042917c334b))
+* 更新README.md，完善项目描述和技术栈信息，优化安装和构建说明 ([dbe42a6](https://github.com/sincely/vite6-electron-vue3/commit/dbe42a61a5e43a1586ff1899b19b72ac2aed79e8))
+* 更新图标生成逻辑，支持多平台图标输出，优化图标路径和格式 ([3b549be](https://github.com/sincely/vite6-electron-vue3/commit/3b549bea3e72e0ed85a7b5dad60526eb9cf7e71b))
+* 添加 Linux 平台构建脚本，支持开发、测试和生产模式 ([4df1d9d](https://github.com/sincely/vite6-electron-vue3/commit/4df1d9d53230836a187e60a7c95ff2d135e5402f))
+* 添加多个SVG图标文件，更新全局组件样式和布局 ([731dc3c](https://github.com/sincely/vite6-electron-vue3/commit/731dc3cb01bd5356282fd2518252cd241aca2bd7))
+* 添加样式导入插件，优化通知功能，更新组件导入逻辑 ([eca1268](https://github.com/sincely/vite6-electron-vue3/commit/eca12681c5ccb1f879af24297780a2bb1a199f95))
+* 添加自动注入更新说明功能，优化更新对话框的显示和样式 ([18325b9](https://github.com/sincely/vite6-electron-vue3/commit/18325b90773cfd45246813502413aac1ba292b2d))
+* 重构更新模块，优化版本管理和状态控制，更新相关组件和日志记录 ([d8166f4](https://github.com/sincely/vite6-electron-vue3/commit/d8166f48809f4448a5ece9571bd67491e457d79b))
+* 重构登录页面并添加扫码登录功能 ([8176a10](https://github.com/sincely/vite6-electron-vue3/commit/8176a103ff13e9f2f1e6b8f291d4d071dc6437c9))
+* 重构请求模块，优化axios封装，添加请求队列管理和进度条功能 ([7837638](https://github.com/sincely/vite6-electron-vue3/commit/7837638a1af0f7408beabfbfd831370ce59885ad))
+
+### 🐞 Bug Fixes
+
+* 修复关闭按钮图标类名，确保正确显示 ([186389b](https://github.com/sincely/vite6-electron-vue3/commit/186389b9c07642e4092a6f601ae406151b8dd273))
+* 修复计算属性 updateDownloaded 的格式错误 ([06f2da2](https://github.com/sincely/vite6-electron-vue3/commit/06f2da21aa1b927b3ab27a4d3f8ecd522fa207a1))
+* 更新 .gitignore 和 .stylelintignore，添加 .nsh 文件类型忽略 ([c785bb3](https://github.com/sincely/vite6-electron-vue3/commit/c785bb3d6ba15f4e19d29c60ee2063ad09da6339))
+* 更新 lint 配置，移除不必要的文件检查，优化 prettier 和 stylelint 命令 ([6827ad5](https://github.com/sincely/vite6-electron-vue3/commit/6827ad5fe62cd310b2a8836c38227be7b183064f))
+* 更新 lint 钩子，使用 lint:check 进行检查 ([f3ef469](https://github.com/sincely/vite6-electron-vue3/commit/f3ef4690f0212ef75882391980d4d773d3ccee36))
+* 更新 Windows 安装程序的 artifactName 并启用卸载时删除应用数据 ([59674be](https://github.com/sincely/vite6-electron-vue3/commit/59674be2bef05f29ac023fdca474aefa8c56e508))
+
+### 📝 Documentation
+
+* 新增 init 和 release 提交类型 ([ec9a8d1](https://github.com/sincely/vite6-electron-vue3/commit/ec9a8d1374a51d83cfd1a5094fa41205c8636dde))
+
+### 🎨 Styles
+
+* 统一代码格式与优化配置 ([2c560df](https://github.com/sincely/vite6-electron-vue3/commit/2c560dfdf21d9d610d1c658ccc1beccd25acd460))
+
+### 🔧 Chores
+
+* **release:** v0.0.6-0 ([e35c556](https://github.com/sincely/vite6-electron-vue3/commit/e35c55606021dcb4a970721d2cff589764a2c2f7))
+* 优化 .release-it.json 文件格式，简化数组结构；调整主题样式中的渐变背景格式 ([40213d0](https://github.com/sincely/vite6-electron-vue3/commit/40213d0fe9f1632ac6f61e8e0fd4424b7f087256))
+* 将项目名称从Crab重命名为lightning ([ff5f00a](https://github.com/sincely/vite6-electron-vue3/commit/ff5f00ac2fa74b081702b6aceb425f61e0b5d023))
+* 更新.stylelintignore，添加dist-electron目录到忽略列表 ([3ccd035](https://github.com/sincely/vite6-electron-vue3/commit/3ccd03583cf8e33a1d15af699338563801988b6e))
+* 标准化项目名称为Crab ([9ea6973](https://github.com/sincely/vite6-electron-vue3/commit/9ea6973197168f7a3f756d91702668c65cb7fafc))
+* 格式化 .release-it.json 文件，优化代码可读性 ([bcfdfa1](https://github.com/sincely/vite6-electron-vue3/commit/bcfdfa1c360c83d30aa10849285fe959938bee5f))
+* 重构环境配置与构建脚本，优化项目配置 ([7d2c017](https://github.com/sincely/vite6-electron-vue3/commit/7d2c017ce4aad998a6aa82dbe6eb945b2bb7d90a))
+
+### ♻️ Code Refactoring
+
+* 移除不必要的样式导入插件，优化插件配置 ([8a99b4d](https://github.com/sincely/vite6-electron-vue3/commit/8a99b4d74a04583d6e158e994ffcb9eed16bbb59))
+
+### 🤖 Continuous Integration
+
+* 将构建命令更改为生产版本 ([60e8156](https://github.com/sincely/vite6-electron-vue3/commit/60e8156d56c4ea8c50bc30e6bcc93db428ef1f19))
+* 简化发布流程并改为单作业构建 ([4a2184d](https://github.com/sincely/vite6-electron-vue3/commit/4a2184dad8ec35ba40a85be3619ebba3cb1b5299))
+
 ## v0.0.6
 
 [compare changes](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.5...v0.0.6)
