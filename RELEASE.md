@@ -16,8 +16,8 @@
 │                                                                       │
 │  /electron-update/                                                    │
 │    ├── latest.yml              ← electron-updater 检查此文件           │
-│    ├── Crab-x.x.x-Setup.exe    ← Windows 安装包                       │
-│    └── Crab-x.x.x-Setup.exe.blockmap  ← 用于增量更新文件               │
+│    ├── lightning-x.x.x-Setup.exe    ← Windows 安装包                       │
+│    └── lightning-x.x.x-Setup.exe.blockmap  ← 用于增量更新文件               │
 └─────────────────────────────────┬───────────────────────────────────┘
                                   │ autoUpdater.checkForUpdates()
                                   ▼
@@ -138,8 +138,8 @@
 
 | 文件 | 说明 |
 |------|------|
-| `Crab-x.x.x-Setup.exe` | Windows NSIS 安装包 |
-| `Crab-x.x.x-Setup.exe.blockmap` | 差量更新块映射，减少下载量 |
+| `lightning-x.x.x-Setup.exe` | Windows NSIS 安装包 |
+| `lightning-x.x.x-Setup.exe.blockmap` | 差量更新块映射，减少下载量 |
 | `latest.yml` | **更新元数据**，electron-updater 检查此文件 |
 | `builder-debug.yml` | 构建调试信息（无需上传） |
 
@@ -148,10 +148,10 @@
 ```yaml
 version: 1.0.0
 files:
-  - url: Crab-1.0.0-Setup.exe
+  - url: lightning-1.0.0-Setup.exe
     sha512: <hash>
     size: 72000000
-path: Crab-1.0.0-Setup.exe
+path: lightning-1.0.0-Setup.exe
 sha512: <hash>
 releaseNotes: 🚀 新增深色主题支持; 🐞 修复登录页面偶发崩溃; 🎨 优化侧边栏动画性能
 releaseDate: '2026-03-03T08:00:00.000Z'
@@ -198,8 +198,8 @@ server {
 ```
 /var/www/electron-update/
   ├── latest.yml
-  ├── Crab-x.x.x-Setup.exe
-  └── Crab-x.x.x-Setup.exe.blockmap
+  ├── lightning-x.x.x-Setup.exe
+  └── lightning-x.x.x-Setup.exe.blockmap
 ```
 
 ### 方式 B：修改更新服务器地址
@@ -271,8 +271,8 @@ npm run build-mac:prod
 将以下文件上传到服务器的 `/electron-update/` 目录，**覆盖旧文件**：
 
 ```
-Crab-x.x.x-Setup.exe            ← 先上传安装包
-Crab-x.x.x-Setup.exe.blockmap   ← 先上传块映射
+lightning-x.x.x-Setup.exe            ← 先上传安装包
+lightning-x.x.x-Setup.exe.blockmap   ← 先上传块映射
 latest.yml                       ← 最后上传（原子切换，避免竞争条件）
 ```
 
@@ -369,7 +369,7 @@ ipcRenderer.send('check-for-updates')
 
 - 检查 `package.json` 中的 `version` 是否已更新
 - 确认 `latest.yml` 中的 `version` 与安装包文件名一致
-- 清除 electron-updater 缓存目录：Windows `%APPDATA%\Crab-updater\`
+- 清除 electron-updater 缓存目录：Windows `%APPDATA%\lightning-updater\`
 
 ### Q2：下载速度很慢？
 

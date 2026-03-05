@@ -1,5 +1,5 @@
 {
-  "name": "Crab",
+  "name": "lightning",
   "version": "0.0.5",
   "type": "module",
   "main": "dist-electron/main/index.js",

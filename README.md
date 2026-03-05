@@ -1,4 +1,4 @@
-# Crab — Vite 6 + Electron 28 + Vue 3 桌面应用
+# lightning — Vite 6 + Electron 28 + Vue 3 桌面应用
 
 基于 **Vite 6 / Electron 28 / Vue 3** 构建的跨平台桌面客户端，集成 Element Plus UI、Pinia 状态管理、GSAP 动画及 electron-updater 自动更新。
 
@@ -104,7 +104,7 @@ VITE_BASE_URL = './'
 VITE_USE_PROXY = true
 VITE_USE_LEGACY = true
 VITE_API_BASE_URL = 'http://10.10.24.52:8089'
-VITE_APP_NAME = 'Crab'
+VITE_APP_NAME = 'lightning'
 VITE_UPDATE_URL= 'http://10.10.24.52:8089/electron-update'
 
 ```
@@ -287,7 +287,7 @@ electron-updater 基于 `.blockmap` 实现差量下载，仅传输两个版本�
 
 验证方式：
 ```bash
-curl -I --range 0-100 https://your-server/electron-update/Crab-x.x.x-Setup.exe
+curl -I --range 0-100 https://your-server/electron-update/lightning-x.x.x-Setup.exe
 # 返回 206 Partial Content ← 支持增量
 # 返回 200 OK              ← 降级全量
 ```

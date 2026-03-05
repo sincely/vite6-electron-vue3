@@ -5,7 +5,7 @@
     "**/node_modules/sharp/**",
     "**/node_modules/@img/**"
   ],
-  "productName": "Crab",
+  "productName": "lightning",
   "copyright": "Copyright 2024 dyy.dongyuanwai",
   "directories": {
     "output": "release/${version}"
