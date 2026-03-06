@@ -25,7 +25,7 @@
         >
           <template #suffix>
             <span
-              style=" display: flex; align-items: center;cursor: pointer"
+              style="display: flex; align-items: center; cursor: pointer"
               @click="togglePasswordVisibility"
             >
               <svg-icon
@@ -159,19 +159,32 @@ const isInput = computed(() => {
     }
 
     .info-icon {
-      margin-left: 2px;
+      margin-left: 4px;
+      color: var(--color-primary);
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover {
+        color: var(--color-primary-dark);
+      }
     }
   }
 }
 
 :deep(.el-input__wrapper) {
   height: 50px;
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px #dcdfe6 inset;
-  transition: all 0.2s;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #e4e7ed inset;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.is-focus {
-    box-shadow: 0 0 0 1px var(--color-primary) inset !important;
+    background-color: white;
+    box-shadow: 0 0 0 2px var(--color-primary) inset !important;
+  }
+
+  &:hover:not(.is-focus) {
+    box-shadow: 0 0 0 1px #c0c4cc inset;
   }
 }
 
@@ -195,13 +208,27 @@ const isInput = computed(() => {
 }
 
 :deep(.el-button--primary) {
-  color: #aaa;
-  background-color: #f0f0f0;
-  border-color: #f0f0f0;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow:
+    0 4px 6px rgb(50 50 93 / 11%),
+    0 1px 3px rgb(0 0 0 / 8%);
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: #e0e0e0;
-    border-color: #e0e0e0;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    box-shadow:
+      0 7px 14px rgb(50 50 93 / 10%),
+      0 3px 6px rgb(0 0 0 / 8%);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    box-shadow:
+      0 4px 6px rgb(50 50 93 / 11%),
+      0 1px 3px rgb(0 0 0 / 8%);
+    transform: translateY(1px);
   }
 }
 </style>
