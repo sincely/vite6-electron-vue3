@@ -30,19 +30,20 @@ async function setupApp() {
 
     // 监听主进程发送的通知 → 推入通知中心
     ipcRenderer.on('show-notification', (event, options) => {
+      console.log('直接提示登录成功，模拟通知:', options)
       // notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
       // 直接提示登录成功，模拟通知
-      ElNotification({
-        title: '通知',
-        message: '欢迎回来',
-        icon: h(SvgIcon, {
-          iconClass: 'celebrate',
-          width: '25px',
-          height: '25px'
-        }),
-        showClose: false,
-        duration: 2000
-      })
+      // ElNotification({
+      //   title: '通知',
+      //   message: '欢迎回来',
+      //   icon: h(SvgIcon, {
+      //     iconClass: 'celebrate',
+      //     width: '25px',
+      //     height: '25px'
+      //   }),
+      //   showClose: false,
+      //   duration: 2000
+      // })
     })
 
     // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
