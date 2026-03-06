@@ -45,11 +45,11 @@ const openSettings = () => {
 }
 
 const minimizeWindow = () => {
-  window.ipcRenderer.send('minimize-window')
+  ipcRenderer.send('minimize-window')
 }
 
 const closeWindow = () => {
-  window.ipcRenderer.send('close-window')
+  ipcRenderer.send('close-window')
 }
 </script>
 

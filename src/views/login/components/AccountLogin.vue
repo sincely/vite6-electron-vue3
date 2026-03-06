@@ -75,7 +75,7 @@ const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      window.ipcRenderer.send('toMain')
+      ipcRenderer.send('toMain')
     } else {
       console.log('error submit!', fields)
     }

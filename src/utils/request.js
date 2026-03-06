@@ -192,12 +192,6 @@ service.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    // 处理网络错误
-    // if (!navigator.onLine) {
-    //   showToast('网络已断开，请检查网络连接', 'error')
-    //   return Promise.reject(new Error('网络已断开，请检查网络连接'))
-    // }
-
     // 处理超时
     if (error.message.includes('timeout')) {
       showToast({
