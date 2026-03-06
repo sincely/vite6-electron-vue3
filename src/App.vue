@@ -11,12 +11,15 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUpdater } from '@/core/update'
+import { useNetwork } from '@/hooks/useNetwork'
 
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
 
-// 挂载更新 IPC 监听（全局唯一，随 App 组件生命周期自动清理）
+// 挂载更新IPC监听
 useUpdater()
+// 挂载网络状态监听
+useNetwork()
 </script>
 
 <style lang="scss" scoped>

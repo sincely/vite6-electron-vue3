@@ -15,7 +15,6 @@ import { onMounted, onUnmounted } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
 import { useAppStore } from '@/store/modules/app'
 
-//
 export function useUpdater() {
   const updateStore = useUpdateStore()
   const appStore = useAppStore()
@@ -81,7 +80,7 @@ export function useUpdater() {
   onMounted(() => {
     // 启动时重置所有更新过渡态，防止上次崩溃/强退留下脏状态（如 isUpdating、dialogVisible）
     updateStore.resetUpdateState()
-    // 重置应用状态
+    // 重置应用状态（包括登录状态）
     appStore.resetAppState()
 
     ipcRenderer.on('checking-for-update', onCheckingForUpdate)

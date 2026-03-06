@@ -41,7 +41,8 @@ async function setupApp() {
           height: '25px'
         }),
         showClose: false,
-        duration: 2000
+        position: 'top-right',
+        duration: 3000
       })
     })
 
