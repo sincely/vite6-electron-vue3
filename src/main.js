@@ -42,7 +42,7 @@ async function setupApp() {
         }),
         showClose: false,
         position: 'top-right',
-        duration: 3000
+        duration: 2500
       })
     })
 
