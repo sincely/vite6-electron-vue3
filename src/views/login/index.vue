@@ -29,10 +29,7 @@ const updateActiveTab = (tab) => {
 
 <style lang="scss" scoped>
 .login-page {
-  // display: flex;
-  // flex-direction: column;
   height: 100vh;
-  background-color: var(--color-bg-primary);
 }
 
 .login-body {

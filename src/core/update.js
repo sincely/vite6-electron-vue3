@@ -13,20 +13,22 @@
 
 import { onMounted, onUnmounted } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
+import { useAppStore } from '@/store/modules/app'
 
 //
 export function useUpdater() {
-  const store = useUpdateStore()
+  const updateStore = useUpdateStore()
+  const appStore = useAppStore()
 
   // 检查更新
   const onCheckingForUpdate = () => {
-    store.setCheckingForUpdate(true)
+    updateStore.setCheckingForUpdate(true)
   }
 
   // 没有更新时重置状态
   const onUpdateNotAvailable = () => {
-    store.setCheckingForUpdate(false)
-    store.setUpdateAvailable(false)
+    updateStore.setCheckingForUpdate(false)
+    updateStore.setUpdateAvailable(false)
   }
 
   /**
@@ -37,11 +39,11 @@ export function useUpdater() {
    */
 
   const onUpdateAvailable = (_event, info) => {
-    store.setCheckingForUpdate(false)
-    store.setLatestVersion(info.version)
-    store.setReleaseNotes(info.releaseNotes || '')
-    store.setUpdateAvailable(true)
-    store.setDialogVisible(true)
+    updateStore.setCheckingForUpdate(false)
+    updateStore.setLatestVersion(info.version)
+    updateStore.setReleaseNotes(info.releaseNotes || '')
+    updateStore.setUpdateAvailable(true)
+    updateStore.setDialogVisible(true)
   }
 
   /**
@@ -51,7 +53,7 @@ export function useUpdater() {
    * @param {{ percent: number, transferred: number, total: number, bytesPerSecond: number }} progress
    */
   const onDownloadProgress = (_event, progress) => {
-    store.setDownloadProgress(progress.percent)
+    updateStore.setDownloadProgress(progress.percent)
   }
 
   /**
@@ -60,8 +62,8 @@ export function useUpdater() {
    * @param {{ version: string }} _info
    */
   const onUpdateDownloaded = (_event, _info) => {
-    store.setUpdating(false)
-    store.setUpdateDownloaded(true)
+    updateStore.setUpdating(false)
+    updateStore.setUpdateDownloaded(true)
   }
 
   /**
@@ -70,15 +72,17 @@ export function useUpdater() {
    * @param {string} message
    */
   const onUpdateError = (_event, message) => {
-    store.setUpdating(false)
-    store.setCheckingForUpdate(false)
+    updateStore.setUpdating(false)
+    updateStore.setCheckingForUpdate(false)
     console.error('[updater] 更新出错：', message)
   }
 
-  // 生命周期
+  // 生命周期`
   onMounted(() => {
     // 启动时重置所有更新过渡态，防止上次崩溃/强退留下脏状态（如 isUpdating、dialogVisible）
-    store.resetUpdateState()
+    updateStore.resetUpdateState()
+    // 重置应用状态
+    appStore.resetAppState()
 
     ipcRenderer.on('checking-for-update', onCheckingForUpdate)
     ipcRenderer.on('update-not-available', onUpdateNotAvailable)

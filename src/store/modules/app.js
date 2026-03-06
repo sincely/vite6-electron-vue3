@@ -25,6 +25,11 @@ export const useAppStore = defineStore('app', {
     },
     setSidebarCollapsed(val) {
       this.sidebarCollapsed = val
+    },
+    // 重置应用状态
+    resetAppState() {
+      this.theme = 'light'
+      this.sidebarCollapsed = false
     }
   },
   persist: true
