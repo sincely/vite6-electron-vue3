@@ -1,17 +1,13 @@
-// 封装 axios 需要具备以下几个功能：
-
-// 请求超时时间设置。
-// 根据项目环境设置请求路径。
-// 请求拦截器：自动添加 Token。
-// 响应拦截器：处理响应状态码或数据格式化。
-// 请求队列实现 loading 效果。
-// 取消请求功能：页面切换时取消未完成的请求
-// 解决 相同url和相同方式的请求取消掉，使用md5生成唯一key,存储在Map中
-import axios from 'axios'
-import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import md5 from 'md5'
 
+import axios from 'axios'
+import md5 from 'md5'
+import NProgress from 'nprogress'
+
+import { useAppStore } from '@/store/modules/app'
+import { useUserStore } from '@/store/modules/user'
+import { closeToast, showToast } from '@/utils/toast'
+// https://juejin.cn/post/7481117237729280000#heading-20
 // 设置取消请求的 token
 const { CancelToken } = axios
 const pendingRequests = new Map() // 用于存储请求队列
@@ -19,12 +15,16 @@ const pendingRequests = new Map() // 用于存储请求队列
 // 生成请求 MD5 值的函数
 const generateRequestKey = (config) => {
   const { method, url, params, data } = config
-  const requestKey = `${method}:${url}:${JSON.stringify(params)}:${JSON.stringify(data)}`
+  // 使用时间戳确保每次请求 key 唯一 如果单位时间内防止重复请求的话时间条件和逻辑修改一下
+  const timestamp = Date.now()
+  const requestKey = `${method}:${url}:${JSON.stringify(params)}:${JSON.stringify(data)}:${timestamp}`
   return md5(requestKey)
 }
 
 // 添加请求到队列
 const addRequestToQueue = (config) => {
+  if (config.cancelRequest === false) return
+
   const requestKey = generateRequestKey(config)
   config.cancelToken = new CancelToken((cancel) => {
     // 如果请求队列中没有该请求，则添加
@@ -37,7 +37,9 @@ const addRequestToQueue = (config) => {
 }
 
 // 移除队列中的请求
-const removeRequestFromQueue = (config) => {
+const removePendingRequest = (config) => {
+  if (config.cancelRequest === false) return
+
   const requestKey = generateRequestKey(config)
   // 如果请求队列中有该请求，则取消
   if (pendingRequests.has(requestKey)) {
@@ -70,11 +72,32 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
+    const appStore = useAppStore()
+    const userStore = useUserStore()
+    // 显示全局loading
+    if (config.showLoading !== false) {
+      appStore.setLoading(true)
+    }
+
+    // 显示局部loading
+    if (config.loadingTarget) {
+      appStore.addLoadingTarget(config.loadingTarget)
+    }
+
     // 启动进度条
     NProgress.start()
     // 添加请求到队列，防止重复请求
-    removeRequestFromQueue(config)
+    removePendingRequest(config)
     addRequestToQueue(config)
+    // 添加token
+    const { token } = userStore
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`
+      }
+    }
+
     return config
   },
   (error) => {
@@ -87,21 +110,98 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
-    // 关闭进度条
-    NProgress.done()
-    // 请求成功后移除队列中的该请求
-    removeRequestFromQueue(response.config)
-    // 处理文件流blob类型的响应
-    if (response.data instanceof Blob) return response.data
-    const res = response.data
-    // 这里使用的是自定义 Code 码来做统一的错误处理
-    return res // 返回处理过的数据
+    const appStore = useAppStore()
+    const { config } = response
+
+    // 请求完成后移除请求
+    removePendingRequest(config)
+
+    // 关闭loading
+    if (config.showLoading !== false) {
+      appStore.setLoading(false)
+    }
+
+    // 关闭局部loading
+    if (config.loadingTarget) {
+      appStore.removeLoadingTarget(config.loadingTarget)
+    }
+
+    // 处理二进制数据
+    if (
+      response.request.responseType === 'blob' ||
+      response.request.responseType === 'arraybuffer'
+    ) {
+      return response.data
+    }
+
+    const { code, data, message } = response.data
+
+    // 业务逻辑错误
+    if (code !== 0 && code !== 200) {
+      if (config.showErrorMessage !== false) {
+        showToast(message || '请求失败', 'error')
+      }
+      return Promise.reject(new Error(message || '请求失败'))
+    }
+
+    // 缓存数据
+    // if (config.cache) {
+    //   const cacheKey = config.cacheKey || generateRequestKey(config)
+    //   const cacheTime = config.cacheTime || 60 * 5 // 默认缓存5分钟
+    //   const cacheData = {
+    //     data,
+    //     expire: Date.now() + cacheTime * 1000
+    //   }
+    //   localStorage.setItem(`http_cache_${cacheKey}`, JSON.stringify(cacheData))
+    // }
+    return data
   },
   (error) => {
     // 关闭进度条
     NProgress.done()
-    // 请求失败时清除队列中的该请求
-    removeRequestFromQueue(error.config || {})
+    const appStore = useAppStore()
+    const userStore = useUserStore()
+
+    // 关闭所有loading
+    appStore.setLoading(false)
+    appStore.clearLoadingTargets()
+
+    // 取消请求不报错
+    if (axios.isCancel(error)) {
+      return Promise.reject(error)
+    }
+
+    const config = error.config || {}
+
+    // 请求完成后移除请求
+    if (config) {
+      removePendingRequest(config)
+    }
+
+    // 处理401未授权
+    if (error.response?.status === 401) {
+      userStore.logout()
+      router.push('/login')
+      showToast('登录已过期，请重新登录', 'warning')
+      return Promise.reject(error)
+    }
+
+    // 处理网络错误
+    // if (!navigator.onLine) {
+    //   showToast('网络已断开，请检查网络连接', 'error')
+    //   return Promise.reject(new Error('网络已断开，请检查网络连接'))
+    // }
+
+    // 处理超时
+    if (error.message.includes('timeout')) {
+      showToast('请求超时，请稍后重试', 'error')
+      return Promise.reject(new Error('请求超时，请稍后重试'))
+    }
+
+    // 处理其他错误
+    if (config.showErrorMessage !== false) {
+      showToast(error.message || '请求失败', 'error')
+    }
     return Promise.reject(error)
   }
 )

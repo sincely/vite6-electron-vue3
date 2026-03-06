@@ -6,7 +6,7 @@
 :root,
 html[data-theme='light'] {
   // 背景色
-  --color-bg-window: #eef3f8;
+  --color-bg-window: #fff;
   --color-bg-titlebar: #fff;
   --color-bg-sidebar: #fff;
   --color-bg-sidebar-titlebar: #f2f6fa;
@@ -59,12 +59,13 @@ html[data-theme='light'] {
   --brand-accent: #6366f1; // 科技靛蓝
   --brand-accent-alt: #8b5cf6; // 紫色
   --brand-accent-soft: color-mix(in srgb, var(--brand-accent), white 85%);
-  --app-bg-gradient: radial-gradient(
-      circle at 8% 10%,
-      rgb(99 102 241 / 8%) 0%,
-      transparent 45%
+  --app-bg-gradient:
+    radial-gradient(circle at 8% 10%, rgb(99 102 241 / 8%) 0%, transparent 45%),
+    radial-gradient(
+      circle at 88% 14%,
+      rgb(139 92 246 / 8%) 0%,
+      transparent 42%
     ),
-    radial-gradient(circle at 88% 14%, rgb(139 92 246 / 8%) 0%, transparent 42%),
     radial-gradient(circle at 52% 96%, rgb(6 182 212 / 5%) 0%, transparent 45%);
   --glass-surface: rgb(255 255 255 / 76%);
   --glass-surface-border: rgb(148 163 184 / 28%);
@@ -104,12 +105,12 @@ html[data-theme='dark'] {
   --color-border-light: #1f2331;
 
   // 阴影 (3D质感：内阴影模拟边缘光，强烈的深色外阴影)
-  --shadow-sm: inset 0 1px 1px rgb(255 255 255 / 5%),
-    0 8px 16px -8px rgb(0 0 0 / 80%);
-  --shadow-md: inset 0 1px 1px rgb(255 255 255 / 5%),
-    0 16px 32px -16px rgb(0 0 0 / 90%);
-  --shadow-lg: inset 0 1px 1px rgb(255 255 255 / 5%),
-    0 24px 48px -20px rgb(0 0 0 / 95%);
+  --shadow-sm:
+    inset 0 1px 1px rgb(255 255 255 / 5%), 0 8px 16px -8px rgb(0 0 0 / 80%);
+  --shadow-md:
+    inset 0 1px 1px rgb(255 255 255 / 5%), 0 16px 32px -16px rgb(0 0 0 / 90%);
+  --shadow-lg:
+    inset 0 1px 1px rgb(255 255 255 / 5%), 0 24px 48px -20px rgb(0 0 0 / 95%);
 
   // 圆角 (更柔和友好的AI风格圆角)
   --radius-sm: 8px;
@@ -137,7 +138,8 @@ html[data-theme='dark'] {
   --brand-accent: #6366f1; // 靛蓝
   --brand-accent-alt: #8b5cf6; // 紫色
   --brand-accent-soft: rgb(99 102 241 / 15%); // 轻柔点缀
-  --app-bg-gradient: radial-gradient(
+  --app-bg-gradient:
+    radial-gradient(
       circle at 10% 20%,
       rgb(99 102 241 / 12%) 0%,
       transparent 45%
@@ -156,8 +158,8 @@ html[data-theme='dark'] {
     rgb(21 24 34 / 80%) 50%,
     rgb(15 17 26 / 95%) 100%
   );
-  --glass-shadow-soft: inset 0 1px 1px rgb(255 255 255 / 6%),
-    0 20px 40px -20px rgb(0 0 0 / 85%);
-  --glass-shadow-hover: inset 0 1px 1px rgb(255 255 255 / 10%),
-    0 24px 48px -24px rgb(0 0 0 / 100%);
+  --glass-shadow-soft:
+    inset 0 1px 1px rgb(255 255 255 / 6%), 0 20px 40px -20px rgb(0 0 0 / 85%);
+  --glass-shadow-hover:
+    inset 0 1px 1px rgb(255 255 255 / 10%), 0 24px 48px -24px rgb(0 0 0 / 100%);
 }

@@ -11,6 +11,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+
 import CustomTitleBar from './components/CustomTitleBar.vue'
 import AccountLogin from './components/AccountLogin.vue'
 import QRCodeLogin from './components/QRCodeLogin.vue'
@@ -28,17 +29,14 @@ const updateActiveTab = (tab) => {
 
 <style lang="scss" scoped>
 .login-page {
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
   height: 100vh;
   background-color: var(--color-bg-primary);
 }
 
 .login-body {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
 }
 
 .fade-enter-active,

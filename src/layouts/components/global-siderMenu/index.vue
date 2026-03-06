@@ -180,7 +180,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     height: 120px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
+    background:
+      radial-gradient(
         circle at 14% 0%,
         color-mix(in srgb, var(--brand-accent), transparent 82%) 0%,
         transparent 62%
@@ -269,8 +270,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       border-color: color-mix(in srgb, var(--brand-accent), transparent 72%);
       box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 8%),
-        0 10px 18px -14px color-mix(in srgb, var(--brand-accent), transparent
-              54%);
+        0 10px 18px -14px
+          color-mix(in srgb, var(--brand-accent), transparent 54%);
       transform: translate3d(2px, -1px, 0);
 
       .sidebar-icon-wrap {
@@ -295,14 +296,14 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
       box-shadow:
         inset 0 1px 0 rgb(255 255 255 / 12%),
         0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 82%),
-        0 8px 20px -12px color-mix(in srgb, var(--color-primary), transparent
-              38%);
+        0 8px 20px -12px
+          color-mix(in srgb, var(--color-primary), transparent 38%);
 
       .sidebar-icon-wrap {
         background: color-mix(in srgb, var(--color-primary), transparent 76%);
         border-color: color-mix(in srgb, var(--color-primary), transparent 66%);
-        box-shadow: 0 0 12px -2px color-mix(in srgb, var(--color-primary), transparent
-              46%);
+        box-shadow: 0 0 12px -2px
+          color-mix(in srgb, var(--color-primary), transparent 46%);
       }
 
       .sidebar-icon {

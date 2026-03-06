@@ -15,9 +15,9 @@
       </button>
     </div>
     <div class="window-controls">
-      <button class="control-btn" @click="openSettings">
+      <!-- <button class="control-btn" @click="openSettings">
         <SvgIcon icon-class="settings" width="16px" height="16px" />
-      </button>
+      </button> -->
       <button class="control-btn" @click="minimizeWindow">
         <SvgIcon icon-class="minus" width="16px" height="16px" />
       </button>

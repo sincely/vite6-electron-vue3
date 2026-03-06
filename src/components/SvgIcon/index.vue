@@ -1,10 +1,18 @@
 <template>
-  <svg :class="svgClass" aria-hidden="true" :style="{ width, height }">
-    <use :xlink:href="iconName" :fill="color" />
+  <svg
+    :class="svgClass"
+    aria-hidden="true"
+    :style="{ width, height }"
+    @mouseenter="isHover = true"
+    @mouseleave="isHover = false"
+  >
+    <use :xlink:href="iconName" :fill="currentColor" />
   </svg>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
+
 const props = defineProps({
   // icon-class是svg图标名称
   iconClass: {
@@ -21,6 +29,11 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  // 鼠标悬停时的颜色
+  hoverColor: {
+    type: String,
+    default: ''
+  },
   // svg的图标的宽度
   width: {
     type: String,
@@ -33,6 +46,8 @@ const props = defineProps({
   }
 })
 
+const isHover = ref(false)
+
 const iconName = computed(() => {
   return `#icon-${props.iconClass}`
 })
@@ -43,6 +58,14 @@ const svgClass = computed(() => {
     return `svg-icon ${props.className}`
   }
   return 'svg-icon'
+})
+
+// 计算当前颜色
+const currentColor = computed(() => {
+  if (props.hoverColor && isHover.value) {
+    return props.hoverColor
+  }
+  return props.color
 })
 </script>
 

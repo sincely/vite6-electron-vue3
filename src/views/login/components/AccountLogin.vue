@@ -9,46 +9,45 @@
       :model="ruleForm"
       :rules="rules"
       class="demo-ruleForm"
+      label-position="top"
     >
-      <el-form-item prop="phone">
+      <el-form-item prop="phone" label="手机号码:">
         <el-input
           v-model="ruleForm.phone"
           placeholder="请输入手机号码"
-          size="large"
-        >
-          <template #prepend>+86</template>
-        </el-input>
+        ></el-input>
       </el-form-item>
-      <el-form-item prop="password">
+      <el-form-item prop="password" label="密码:">
         <el-input
           v-model="ruleForm.password"
-          type="password"
           placeholder="请输入密码"
-          show-password
-          size="large"
-        />
+          :type="showPassword ? 'text' : 'password'"
+        >
+          <template #suffix>
+            <span
+              style=" display: flex; align-items: center;cursor: pointer"
+              @click="togglePasswordVisibility"
+            >
+              <svg-icon
+                :iconClass="showPassword ? 'open-eye' : 'close-eye'"
+                width="16px"
+                height="16px"
+                hoverColor="#0066ff"
+              />
+            </span>
+          </template>
+        </el-input>
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
-          class="login-btn"
+          :class="isInput ? 'login-btn' : 'disabled-btn'"
+          :color="isInput ? '#0066ff' : '#f3f4f5'"
           @click="submitForm(ruleFormRef)"
         >
           登录
         </el-button>
       </el-form-item>
-      <div class="options">
-        <el-checkbox v-model="autoLogin">自动登录</el-checkbox>
-        <div>
-          <el-link :underline="false">忘记密码</el-link>
-          <el-link :underline="false">其他验证方式</el-link>
-        </div>
-      </div>
     </el-form>
-    <div class="footer-links">
-      <a>注册账号</a>
-      <a>企业账号</a>
-    </div>
   </div>
 </template>
 
@@ -56,7 +55,11 @@
 import { reactive, ref } from 'vue'
 
 const ruleFormRef = ref()
-const autoLogin = ref(true)
+const showPassword = ref(false)
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value
+}
 
 const ruleForm = reactive({
   phone: '',
@@ -78,23 +81,34 @@ const submitForm = async (formEl) => {
     }
   })
 }
+
+// 是否输入了手机号码和密码
+const isInput = computed(() => {
+  return ruleForm.phone
+})
 </script>
 
 <style lang="scss" scoped>
 .account-login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   display: flex;
   flex-direction: column;
-  gap: 25px;
   align-items: center;
+  justify-content: center;
   width: 320px;
+  transform: translate(-50%, -50%);
 
   .avatar img {
     width: 80px;
     height: 80px;
+    margin-bottom: 10px;
     border-radius: 18px;
   }
 
   h3 {
+    margin-bottom: 30px;
     font-size: 22px;
     font-weight: 600;
     color: var(--color-text-primary);
@@ -107,6 +121,15 @@ const submitForm = async (formEl) => {
       width: 100%;
       height: 40px;
       font-size: 16px;
+      color: #fff;
+      border-radius: 18px;
+    }
+
+    .disabled-btn {
+      width: 100%;
+      height: 40px;
+      font-size: 16px;
+      color: #bfc1c1;
       border-radius: 18px;
     }
 
@@ -141,15 +164,34 @@ const submitForm = async (formEl) => {
   }
 }
 
+:deep(.el-input__wrapper) {
+  height: 50px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px #dcdfe6 inset;
+  transition: all 0.2s;
+
+  &.is-focus {
+    box-shadow: 0 0 0 1px var(--color-primary) inset !important;
+  }
+}
+
 :deep(.el-input-group__prepend) {
   padding: 0 15px;
   background-color: white;
   border-radius: 8px 0 0 8px;
+  box-shadow:
+    1px 0 0 0 #dcdfe6 inset,
+    0 1px 0 0 #dcdfe6 inset,
+    0 -1px 0 0 #dcdfe6 inset;
 }
 
-:deep(.el-input__wrapper) {
-  height: 40px;
-  border-radius: 0 8px 8px 0;
+:deep(.el-input-group--prepend .el-input__wrapper) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  box-shadow:
+    0 1px 0 0 #dcdfe6 inset,
+    0 -1px 0 0 #dcdfe6 inset,
+    -1px 0 0 0 #dcdfe6 inset;
 }
 
 :deep(.el-button--primary) {
