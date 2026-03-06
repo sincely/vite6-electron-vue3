@@ -5,7 +5,7 @@ export const useAppStore = defineStore('app', {
     theme: 'light',
     sidebarCollapsed: false,
     loading: false,
-    loadingTargets: new Set()
+    loadingTargets: []
   }),
   getters: {
     isDark: (state) => state.theme === 'dark'
@@ -35,16 +35,21 @@ export const useAppStore = defineStore('app', {
     },
     // 添加loading目标
     addLoadingTarget(target) {
-      this.loadingTargets.add(target)
+      if (!this.loadingTargets.includes(target)) {
+        this.loadingTargets.push(target)
+      }
     },
     // 移除loading目标
     removeLoadingTarget(target) {
-      this.loadingTargets.delete(target)
+      const index = this.loadingTargets.indexOf(target)
+      if (index > -1) {
+        this.loadingTargets.splice(index, 1)
+      }
     },
 
     // 清空所有loading目标
     clearLoadingTargets() {
-      this.loadingTargets.clear()
+      this.loadingTargets = []
     },
     // 重置应用状态
     resetAppState() {

@@ -60,6 +60,6 @@ export const useUpdateStore = defineStore('version', {
   // 只持久化 currentVersion：安装前乐观写入新版本号，重启后立即可用，避免版本闪烁
   // 其余过渡状态（isUpdating / downloadProgress 等）不跨重启保留
   persist: {
-    paths: ['currentVersion']
+    paths: ['currentVersion', 'latestVersion']
   }
 })
