@@ -5,161 +5,128 @@
 // ---------- Light Theme ----------
 :root,
 html[data-theme='light'] {
-  // 背景色
-  --color-bg-window: #fff;
+  // 背景色 (NginxPulse Light - 极浅灰蓝)
+  --color-bg-window: #f4f7fb;
   --color-bg-titlebar: #fff;
   --color-bg-sidebar: #fff;
-  --color-bg-sidebar-titlebar: #f2f6fa;
-  --color-bg-content: #edf3f8;
-  --color-bg-hover: #f6f9fc;
-  --color-bg-active: #e8eef6;
+  --color-bg-sidebar-titlebar: #fff;
+  --color-bg-content: #f4f7fb;
+  --color-bg-hover: #eff6ff; // Blue-50
+  --color-bg-active: #eff6ff; // 侧边栏选中背景
   --color-bg-card: #fff;
-  --color-bg-input: #f6f9fc;
-  --color-bg-status: #e8eef6;
+  --color-bg-input: #f9fafb;
+  --color-bg-status: #eff6ff;
 
-  // 文字色
-  --color-text-primary: #0f172a; // Slate-900
-  --color-text-secondary: #4f6077;
-  --color-text-muted: #94a3b8; // Slate-400
-  --color-text-active: #0f172a;
-  --color-text-link: #6366f1; // 科技蓝
+  // 文字色 (NginxPulse Light - 深黑)
+  --color-text-primary: #111827; // Gray-900
+  --color-text-secondary: #6b7280; // Gray-500
+  --color-text-muted: #9ca3af; // Gray-400
+  --color-text-active: #2563eb; // 选中文字蓝
+  --color-text-link: #2563eb;
 
   // 边框
-  --color-border: #dce5ef;
-  --color-border-light: #edf3f8;
+  --color-border: #e5e7eb; // Gray-200
+  --color-border-light: #f3f4f6;
 
-  // 阴影
-  --shadow-sm: 0 8px 18px -12px rgb(15 23 42 / 30%);
-  --shadow-md: 0 12px 28px -14px rgb(15 23 42 / 36%);
-  --shadow-lg: 0 22px 36px -20px rgb(15 23 42 / 38%);
+  // 阴影 (柔和投影)
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 8%), 0 2px 4px -1px rgb(0 0 0 / 4%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 8%), 0 4px 6px -2px rgb(0 0 0 / 4%);
 
-  // 圆角
-  --radius-sm: 4px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 16px;
+  // 圆角 (保持较大的现代圆角)
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 
   // 滚动条
-  --scrollbar-thumb: #cbd5e1; // Slate-300
+  --scrollbar-thumb: #cbd5e1;
   --scrollbar-track: transparent;
 
-  // 状态颜色
-  --color-primary: #6366f1; // 科技靛蓝
-  --color-success: #10b981; // Emerald-500
-  --color-danger: #ef4444; // Red-500
-  --color-warning: #f59e0b;
+  // 状态颜色 (NginxPulse 风格)
+  --color-primary: #2563eb; // Blue-600 (主色)
+  --color-success: #10b981; // Emerald-500 (增长)
+  --color-danger: #ef4444; // Red-500 (下降)
+  --color-warning: #f59e0b; // Amber-500
   --color-info: #0ea5e9; // Sky-500
 
   // 侧边栏
-  --sidebar-width: 250px;
-  --sidebar-collapsed-width: 68px;
-  --titlebar-height: 60px;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --titlebar-height: 64px;
 
-  // UI 扩展变量（视觉层）
-  --brand-accent: #6366f1; // 科技靛蓝
-  --brand-accent-alt: #8b5cf6; // 紫色
-  --brand-accent-soft: color-mix(in srgb, var(--brand-accent), white 85%);
-  --app-bg-gradient:
-    radial-gradient(circle at 8% 10%, rgb(99 102 241 / 8%) 0%, transparent 45%),
-    radial-gradient(
-      circle at 88% 14%,
-      rgb(139 92 246 / 8%) 0%,
-      transparent 42%
-    ),
-    radial-gradient(circle at 52% 96%, rgb(6 182 212 / 5%) 0%, transparent 45%);
-  --glass-surface: rgb(255 255 255 / 76%);
-  --glass-surface-border: rgb(148 163 184 / 28%);
-  --sidebar-surface-bg: linear-gradient(
-    185deg,
-    rgb(255 255 255 / 82%) 0%,
-    rgb(248 250 252 / 64%) 50%,
-    rgb(255 255 255 / 84%) 100%
-  );
-  --glass-shadow-soft: 0 20px 30px -22px rgb(15 23 42 / 40%);
-  --glass-shadow-hover: 0 20px 42px -24px rgb(15 23 42 / 45%);
+  // UI 扩展变量
+  --brand-accent: #2563eb;
+  --brand-accent-alt: #3b82f6;
+  --brand-accent-soft: #eff6ff;
+  --app-bg-gradient: none; // Light 模式移除复杂渐变，保持清爽
+  --glass-surface: rgb(255 255 255 / 90%);
+  --glass-surface-border: transparent;
+  --sidebar-surface-bg: #fff;
+  --glass-shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 5%);
+  --glass-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 8%);
 }
 
 // ---------- Dark Theme ----------
 html[data-theme='dark'] {
-  // 背景色 (B端AI通用深色黑蓝色调)
-  --color-bg-window: #09090b; // 极深背景
-  --color-bg-titlebar: #141721;
-  --color-bg-sidebar: #0f111a;
-  --color-bg-sidebar-titlebar: #0f111a;
-  --color-bg-content: #0b0e14;
-  --color-bg-hover: #1e2233;
-  --color-bg-active: #272c41;
-  --color-bg-card: #151822; // 面板色
-  --color-bg-input: #1a1e2b;
-  --color-bg-status: #1e2233;
+  // 背景色 (NginxPulse Dark - 极深蓝黑)
+  --color-bg-window: #0b0c0f;
+  --color-bg-titlebar: #111318;
+  --color-bg-sidebar: #111318;
+  --color-bg-sidebar-titlebar: #111318;
+  --color-bg-content: #0b0c0f;
+  --color-bg-hover: #1f2937; // Gray-800
+  --color-bg-active: #1f2937;
+  --color-bg-card: #16191f; // 比背景稍亮
+  --color-bg-input: #1f2937;
+  --color-bg-status: #1f2937;
 
-  // 文字色 (高对比度清透白)
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  // 文字色 (高对比度)
+  --color-text-primary: #fff;
+  --color-text-secondary: #9ca3af; // Gray-400
+  --color-text-muted: #6b7280; // Gray-500
   --color-text-active: #fff;
   --color-text-link: #60a5fa;
 
-  // 边框 (带有轻微玻璃感的光泽)
-  --color-border: #282e40;
-  --color-border-light: #1f2331;
+  // 边框 (极简或无边框)
+  --color-border: #1f2937;
+  --color-border-light: #16191f;
 
-  // 阴影 (3D质感：内阴影模拟边缘光，强烈的深色外阴影)
-  --shadow-sm:
-    inset 0 1px 1px rgb(255 255 255 / 5%), 0 8px 16px -8px rgb(0 0 0 / 80%);
-  --shadow-md:
-    inset 0 1px 1px rgb(255 255 255 / 5%), 0 16px 32px -16px rgb(0 0 0 / 90%);
-  --shadow-lg:
-    inset 0 1px 1px rgb(255 255 255 / 5%), 0 24px 48px -20px rgb(0 0 0 / 95%);
+  // 阴影 (深色模式主要靠亮度区分层级，辅以深阴影)
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 50%);
 
-  // 圆角 (更柔和友好的AI风格圆角)
-  --radius-sm: 8px;
+  // 圆角
+  --radius-sm: 6px;
   --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-lg: 16px;
   --radius-xl: 24px;
 
   // 滚动条
-  --scrollbar-thumb: #353d53;
+  --scrollbar-thumb: #374151;
   --scrollbar-track: transparent;
 
-  // 状态颜色 (霓虹发光色系)
-  --color-primary: #6366f1; // 靛蓝(主AI色)
-  --color-success: #10b981; // 翠绿
-  --color-danger: #f43f5e; // 玫瑰红
-  --color-warning: #f59e0b; // 琥珀
-  --color-info: #0ea5e9; // 科技蓝
+  // 状态颜色
+  --color-primary: #3b82f6; // Blue-500 (稍亮)
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #fbbf24;
+  --color-info: #38bdf8;
 
-  // 侧边栏
-  --sidebar-width: 250px;
-  --sidebar-collapsed-width: 68px;
-  --titlebar-height: 60px;
+  // UI 扩展变量
+  --brand-accent: #3b82f6;
+  --brand-accent-alt: #2563eb;
+  --brand-accent-soft: rgb(59 130 246 / 15%);
+  --app-bg-gradient: radial-gradient(
+    circle at 50% 0%,
+    rgb(59 130 246 / 8%) 0%,
+    transparent 60%
+  ); // 顶部微弱蓝光
 
-  // UI 扩展变量（3D/玻璃视觉层）
-  --brand-accent: #6366f1; // 靛蓝
-  --brand-accent-alt: #8b5cf6; // 紫色
-  --brand-accent-soft: rgb(99 102 241 / 15%); // 轻柔点缀
-  --app-bg-gradient:
-    radial-gradient(
-      circle at 10% 20%,
-      rgb(99 102 241 / 12%) 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 90% 12%,
-      rgb(139 92 246 / 12%) 0%,
-      transparent 40%
-    ),
-    radial-gradient(circle at 50% 96%, rgb(6 182 212 / 8%) 0%, transparent 45%);
-  --glass-surface: rgb(21 24 34 / 65%);
-  --glass-surface-border: rgb(255 255 255 / 8%); // 玻璃反光白边
-  --sidebar-surface-bg: linear-gradient(
-    170deg,
-    rgb(15 17 26 / 90%) 0%,
-    rgb(21 24 34 / 80%) 50%,
-    rgb(15 17 26 / 95%) 100%
-  );
-  --glass-shadow-soft:
-    inset 0 1px 1px rgb(255 255 255 / 6%), 0 20px 40px -20px rgb(0 0 0 / 85%);
-  --glass-shadow-hover:
-    inset 0 1px 1px rgb(255 255 255 / 10%), 0 24px 48px -24px rgb(0 0 0 / 100%);
+  --glass-surface: rgb(22 25 31 / 80%);
+  --glass-surface-border: rgb(255 255 255 / 5%);
+  --sidebar-surface-bg: #111318;
+  --glass-shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 40%);
+  --glass-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 50%);
 }
