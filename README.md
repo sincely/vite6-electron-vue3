@@ -316,6 +316,117 @@ Nginx 默认支持，注意**不要**添加 `add_header Accept-Ranges none` 或�
 
 ---
 
+## NSIS（Windows 安装包）使用说明
+
+本项目 Windows 安装包使用 `electron-builder` 的 `nsis` 目标生成（`.exe` 安装程序 + 卸载器）。你可以通过 `electron-builder.json` 的 `nsis` 字段控制安装交互、安装目录、快捷方式、以及在安装/卸载时执行自定义脚本。
+
+### 1) 相关配置位置
+
+- 配置文件：`electron-builder.json`
+- NSIS 配置节点：`nsis`
+
+常用字段说明：
+
+- `oneClick`: `true` 为一键静默式安装；`false` 为向导式安装
+- `perMachine`: `true` 安装到所有用户（通常需要管理员权限）；`false` 为当前用户
+- `allowToChangeInstallationDirectory`: 允许用户自选安装目录（通常在 `oneClick: false` 时使用）
+- `createDesktopShortcut` / `createStartMenuShortcut`: 创建桌面/开始菜单快捷方式
+- `runAfterFinish`: 安装完成后是否勾选“立即运行”
+- `deleteAppDataOnUninstall`: 卸载时尝试清理应用数据（建议保留为 `true`，同时可配合自定义脚本做更彻底清理）
+- `include`: 追加一个 `.nsh` 文件（推荐方式，用于覆写/补充宏）
+- `script`: 指定完整 `.nsi` 脚本（会替换默认安装脚本，除非你非常熟悉 NSIS，否则不建议）
+
+### 2) include（.nsh）如何接入
+
+`include` 路径是**相对项目根目录**的路径，例如你将脚本放在 `scripts/installer.nsh`，则在 `electron-builder.json` 中配置：
+
+```json
+{
+  "nsis": {
+    "include": "scripts/installer.nsh"
+  }
+}
+```
+
+注意：当前仓库 `.gitignore` 默认忽略 `*.nsh`，如果你希望把脚本提交到仓库，需要移除对应忽略规则。
+
+### 3) 推荐的 .nsh 宏结构
+
+electron-builder 会在构建 NSIS 安装包时注入一组可覆写的宏。通常你只需要在 `.nsh` 中实现这些宏即可（示例结构）：
+
+```nsh
+!macro customInit
+!macroend
+
+!macro customHeader
+!macroend
+
+!macro customInstall
+!macroend
+
+!macro customUnInstall
+!macroend
+```
+
+这些宏会在安装/卸载的不同阶段被调用。宏内部可以使用 electron-builder 注入的变量（例如 `${APP_FILENAME}`、`${PRODUCT_FILENAME}`、`${COMPANY_NAME}`、`${PRODUCT_GUID}` 等），以最终构建时替换结果为准。
+
+### 4) 常见需求示例
+
+#### 4.1 安装后设置开机自启
+
+如果你希望“当前用户开机自启”，写入 `HKCU\...\Run`：
+
+```nsh
+!macro customInstall
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_FILENAME}" '"$INSTDIR\${APP_FILENAME}.exe"'
+!macroend
+```
+
+如果你是 `perMachine: true` 并希望“所有用户开机自启”，可以写入 `HKLM\...\Run`（需要管理员权限）：
+
+```nsh
+!macro customInstall
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_FILENAME}" '"$INSTDIR\${APP_FILENAME}.exe"'
+!macroend
+```
+
+#### 4.2 卸载时清理注册表（自启、应用自定义键）
+
+卸载时建议至少删除自启项，并按需删除你自己写入的应用注册表键（不要删除不属于本应用的键）：
+
+```nsh
+!macro customUnInstall
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_FILENAME}"
+  DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "${PRODUCT_FILENAME}"
+
+  DeleteRegKey HKCU "Software\${PRODUCT_FILENAME}"
+  DeleteRegKey HKLM "Software\${PRODUCT_FILENAME}"
+!macroend
+```
+
+`electron-builder`/NSIS 自身创建的卸载信息通常也会自动清理；如果你确实需要额外删除卸载键，可在确认键名来源与范围后再操作，避免误删。
+
+#### 4.3 卸载时清理用户数据
+
+如果你希望比 `deleteAppDataOnUninstall` 更明确地清理目录，可手动删除常见用户目录（按你的应用实际写入位置选择）：
+
+```nsh
+!macro customUnInstall
+  RMDir /r "$APPDATA\${APP_FILENAME}"
+  RMDir /r "$LOCALAPPDATA\${APP_FILENAME}"
+!macroend
+```
+
+### 5) 如何构建验证
+
+直接执行项目已有脚本即可（会先注入 releaseNotes，再构建前端，再调用 electron-builder）：
+
+- `npm run build-win:dev`
+- `npm run build-win:test`
+- `npm run build-win:prod`
+
+生成产物在 `release/{version}/` 下。
+
 ## 常见问题
 
 ### Windows 终端中文乱码

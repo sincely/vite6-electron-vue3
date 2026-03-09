@@ -21,7 +21,6 @@ release/
 *.njsproj
 *.sln
 *.sw?
-*.nsh
 
 
 # IDE
