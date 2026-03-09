@@ -75,7 +75,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   backdrop-filter: blur(12px);
   border: 1px solid
     color-mix(in srgb, var(--glass-surface-border), transparent 18%);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 
   &-breadcrumb {

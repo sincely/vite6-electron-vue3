@@ -10,8 +10,6 @@
         <component :is="Component" v-else :key="route.path" />
       </transition>
     </router-view>
-
-    <back-top></back-top>
   </div>
 </template>
 

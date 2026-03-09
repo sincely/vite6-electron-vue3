@@ -26,10 +26,11 @@ defineProps({
   gap: 10px;
   align-items: center;
   justify-content: center;
+  height: 100%;
   min-height: 240px;
   padding: 32px;
   text-align: center;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
 }
 
 .placeholder-icon {

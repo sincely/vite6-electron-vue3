@@ -10,9 +10,8 @@
       <el-table
         :data="tableData"
         style="width: 100%"
-        stripe
         class="log-table"
-        highlight-current-row
+        :row-class-name="tableRowClassName"
       >
         <el-table-column prop="date" label="Date" width="180" sortable />
         <el-table-column prop="name" label="Name" width="180" sortable />
@@ -20,7 +19,7 @@
       </el-table>
     </el-card>
 
-    <back-top></back-top>
+    <back-top target=".log-container .el-scrollbar__wrap"></back-top>
   </div>
 </template>
 
@@ -163,6 +162,16 @@ const tableData = [
     address: 'No. 189, Grove St, Los Angeles'
   }
 ]
+
+const tableRowClassName = ({ row, rowIndex }) => {
+  console.log(rowIndex)
+  if (rowIndex === 1) {
+    return 'warning-row'
+  } else if (rowIndex === 3) {
+    return 'success-row'
+  }
+  return ''
+}
 </script>
 
 <style lang="scss" scoped>
@@ -212,5 +221,13 @@ const tableData = [
       background-color: var(--color-bg-hover);
     }
   }
+}
+
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
 </style>

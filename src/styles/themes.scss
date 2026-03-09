@@ -5,7 +5,7 @@
 // ---------- Light Theme ----------
 :root,
 html[data-theme='light'] {
-  // 背景色 (NginxPulse Light - 极浅灰蓝)
+  // 背景色 (Light - 极浅灰蓝)
   --color-bg-window: #f4f7fb;
   --color-bg-titlebar: #fff;
   --color-bg-sidebar: #fff;
@@ -43,7 +43,7 @@ html[data-theme='light'] {
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-track: transparent;
 
-  // 状态颜色 (NginxPulse 风格)
+  // 状态颜色 ( 风格)
   --color-primary: #2563eb; // Blue-600 (主色)
   --color-success: #10b981; // Emerald-500 (增长)
   --color-danger: #ef4444; // Red-500 (下降)
@@ -61,15 +61,16 @@ html[data-theme='light'] {
   --brand-accent-soft: #eff6ff;
   --app-bg-gradient: none; // Light 模式移除复杂渐变，保持清爽
   --glass-surface: rgb(255 255 255 / 90%);
-  --glass-surface-border: transparent;
+  --glass-surface-border: #e4e3e3;
   --sidebar-surface-bg: #fff;
   --glass-shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 5%);
   --glass-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 8%);
 }
 
 // ---------- Dark Theme ----------
-html[data-theme='dark'] {
-  // 背景色 (NginxPulse Dark - 极深蓝黑)
+html[data-theme='dark'],
+html.dark {
+  // 背景色 ( Dark - 极深蓝黑)
   --color-bg-window: #0b0c0f;
   --color-bg-titlebar: #111318;
   --color-bg-sidebar: #111318;

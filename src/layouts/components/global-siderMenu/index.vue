@@ -471,8 +471,9 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     position: relative;
     z-index: 2;
     padding: 10px 8px;
-    border-top: 1px solid
-      color-mix(in srgb, var(--glass-surface-border), transparent 15%);
+
+    // border-top: 1px solid
+    //   color-mix(in srgb, var(--glass-surface-border), transparent 15%);
   }
 
   .user-profile {
