@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version-type:
+        description: '版本类型'
+        required: true
+        default: 'patch'
+        type: choice
+        options: [patch, minor, major, alpha, beta]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            build-script: build-mac:prod
+            asset-pattern: 'release/**/*.dmg release/**/*.zip'
+          - os: windows-latest
+            build-script: build-win:prod
+            asset-pattern: 'release/**/*.exe'
+          - os: ubuntu-latest
+            build-script: build-linux:prod
+            asset-pattern: 'release/**/*.AppImage release/**/*.deb'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run ${{ matrix.build-script }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: release/
+          retention-days: 1
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Merge artifacts into release/
+        run: |
+          mkdir -p release
+          cp -r artifacts/*/* release/ 2>/dev/null || true
+          ls -la release/
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Run release-it
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx release-it ${{ github.event.inputs.version-type }} --ci
