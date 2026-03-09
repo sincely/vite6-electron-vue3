@@ -1,17 +1,15 @@
 <template>
   <section class="page-placeholder page-enter glass-card">
-    <div class="placeholder-icon" :style="{ color: color }">
-      <SvgIcon :icon-class="icon" width="26px" height="26px" />
+    <div class="placeholder-icon">
+      <SvgIcon :icon-class="icon" width="400px" height="400px" />
     </div>
-    <span class="status-pill">{{ tag }}</span>
-    <h2 class="placeholder-title">{{ title }}</h2>
     <p class="placeholder-desc">{{ description }}</p>
   </section>
 </template>
 
 <script setup>
 defineProps({
-  icon: { type: String, default: 'layout-dashboard' },
+  icon: { type: String, default: '404' },
   title: { type: String, default: '页面建设中' },
   description: { type: String, default: '正在完善该模块的交互与内容。' },
   tag: { type: String, default: 'UI UX Pro Max' },
@@ -36,11 +34,12 @@ defineProps({
 .placeholder-icon {
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  background: color-mix(in srgb, currentcolor, transparent 84%);
-  border: 1px solid color-mix(in srgb, currentcolor, transparent 66%);
-  border-radius: 16px;
+
+  // width: 58px;
+  // height: 58px;
+  // background: color-mix(in srgb, currentcolor, transparent 84%);
+  // border: 1px solid color-mix(in srgb, currentcolor, transparent 66%);
+  // border-radius: 16px;
 }
 
 .placeholder-title {

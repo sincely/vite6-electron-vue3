@@ -82,36 +82,6 @@ export const asyncRouteTree = [
       }
     ]
   },
-  //  提供商
-  {
-    path: '/provider',
-    component: Layout,
-    redirect: '/provider/list',
-    meta: { title: '提供商', icon: 'building', order: 3, sidebar: true },
-    children: [
-      {
-        path: 'list',
-        name: 'provider-list',
-        component: () => import('@/views/provider/list/index.vue'),
-        meta: {
-          title: '提供商列表',
-          group: '/provider',
-          keepAlive: true,
-          transition: 'slide-up'
-        }
-      },
-      {
-        path: 'add',
-        name: 'provider-add',
-        component: () => import('@/views/provider/add/index.vue'),
-        meta: {
-          title: '添加提供商',
-          group: '/provider',
-          transition: 'slide-up'
-        }
-      }
-    ]
-  },
   {
     path: '/apikeys',
     component: Layout,
