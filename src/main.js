@@ -7,7 +7,7 @@ import { setupIcon } from './plugins'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
-import SvgIcon from '@/components/SvgIcon/index.vue'
+// import SvgIcon from '@/components/SvgIcon/index.vue'
 async function setupApp() {
   const app = createApp(App)
   setupIcon(app)
@@ -33,18 +33,18 @@ async function setupApp() {
       console.log('直接提示登录成功，模拟通知:', options)
       // notifStore.push({ title: options.title, body: options.body, type: options.type ?? 'info' })
       // 直接提示登录成功，模拟通知
-      ElNotification({
-        title: '通知',
-        message: '欢迎回来',
-        icon: h(SvgIcon, {
-          iconClass: 'celebrate',
-          width: '25px',
-          height: '25px'
-        }),
-        showClose: false,
-        position: 'top-right',
-        duration: 2500
-      })
+      // ElNotification({
+      //   title: '通知',
+      //   message: '欢迎回来',
+      //   icon: h(SvgIcon, {
+      //     iconClass: 'celebrate',
+      //     width: '25px',
+      //     height: '25px'
+      //   }),
+      //   showClose: false,
+      //   position: 'top-right',
+      //   duration: 2500
+      // })
     })
 
     // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
