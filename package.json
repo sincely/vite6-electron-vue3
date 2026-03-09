@@ -1,6 +1,6 @@
 {
   "name": "lightning",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
@@ -65,6 +65,7 @@
     "conventional-changelog-angular": "8.1.0",
     "conventional-changelog-conventionalcommits": "9.1.0",
     "dayjs": "1.11.10",
+    "echarts": "5.4.3",
     "directory-tree": "3.5.1",
     "electron": "28.3.3",
     "electron-builder": "24.13.3",

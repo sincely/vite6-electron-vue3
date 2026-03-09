@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.7](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.6...v0.0.7) (2026-03-06)
+
+### ✨ Features
+
+* 新增 toast 工具函数并更新请求错误处理 ([3882050](https://github.com/sincely/vite6-electron-vue3/commit/38820502ee5f49bb52bfe53bd4133759ebb3dd97))
+* 新增ECharts集成、用户认证、工具函数及设置模块 ([f9e298f](https://github.com/sincely/vite6-electron-vue3/commit/f9e298f44dcbd64961bb68bbfe8b98eb7afb6cfb))
+* 新增多种文件类型的SVG图标 ([023ea3e](https://github.com/sincely/vite6-electron-vue3/commit/023ea3e6e5530479968a8b875bcf8dfc27eb6a7c))
+* 更新macOS构建配置，修改artifactName格式以支持不同架构 ([518f1b7](https://github.com/sincely/vite6-electron-vue3/commit/518f1b7629d99e2740f89935a149a6062a037c1a))
+* 更新macOS构建配置，支持x64和arm64架构的dmg和zip目标 ([3706e4d](https://github.com/sincely/vite6-electron-vue3/commit/3706e4d230dc82be3fe2317785201f4111c2a7a3))
+* 更新图标生成逻辑，支持多平台图标输出并优化路径和格式; 重构自动更新模块并完善文档; 优化样式和组件配置 ([f7a774f](https://github.com/sincely/vite6-electron-vue3/commit/f7a774fe88d224dab126d2dc06680503baa46b9d))
+* 添加登录页面、权限控制和用户管理功能 ([c147f63](https://github.com/sincely/vite6-electron-vue3/commit/c147f631ebba43bb5e80f9bf6f900aa7bc7681d7))
+* 添加网络状态监听并优化通知配置 ([d263aaf](https://github.com/sincely/vite6-electron-vue3/commit/d263aaf6ba325e4f8fb0e0773d2af8f74b51bd17))
+
+### 🐞 Bug Fixes
+
+* 修复loadingTargets持久化问题并添加latestVersion持久化 ([d056e2c](https://github.com/sincely/vite6-electron-vue3/commit/d056e2c3d12cbe5288d6a97c41bb99fd6c07073d))
+* 将通知持续时间从3000毫秒减少到2500毫秒 ([0961fdc](https://github.com/sincely/vite6-electron-vue3/commit/0961fdccd43f19f3a633f5b57d7b89f24989695a))
+
+### 🎨 Styles
+
+* 优化登录组件样式和交互效果 ([965916b](https://github.com/sincely/vite6-electron-vue3/commit/965916b451d677ba79fc445e59de4b53f436b921))
+
+### ♻️ Code Refactoring
+
+* 清理代码并添加应用状态重置功能 ([8ca671c](https://github.com/sincely/vite6-electron-vue3/commit/8ca671cb10d8aea85cf84ae8088121d52d1f86a9))
+
 ## [0.0.6](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.5...v0.0.6) (2026-03-05)
 
 ### ✨ Features

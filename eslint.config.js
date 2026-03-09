@@ -18,6 +18,7 @@ export default defineFlatConfig([
       'README.md',
       '*.local',
       '.vscode/**',
+      '.trae/**',
       '.husky/**',
       '.github/**',
       'package-lock.json',

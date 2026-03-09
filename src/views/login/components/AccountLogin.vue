@@ -75,7 +75,7 @@ const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      window.ipcRenderer.send('toMain')
+      ipcRenderer.send('toMain')
     } else {
       console.log('error submit!', fields)
     }
@@ -172,63 +172,52 @@ const isInput = computed(() => {
 }
 
 :deep(.el-input__wrapper) {
-  height: 50px;
-  background-color: #f9fafb;
-  border-radius: 12px;
-  box-shadow: 0 0 0 1px #e4e7ed inset;
+  height: 48px;
+  padding: 0 16px;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+  input {
+    color: var(--color-text-primary);
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+
   &.is-focus {
-    background-color: white;
-    box-shadow: 0 0 0 2px var(--color-primary) inset !important;
+    background-color: var(--color-bg-window);
+    box-shadow:
+      0 0 0 2px var(--color-primary) inset,
+      0 4px 12px var(--brand-accent-soft) !important;
   }
 
   &:hover:not(.is-focus) {
-    box-shadow: 0 0 0 1px #c0c4cc inset;
+    background-color: var(--color-bg-hover);
+    box-shadow: 0 0 0 1px var(--color-text-muted) inset;
   }
 }
 
 :deep(.el-input-group__prepend) {
-  padding: 0 15px;
-  background-color: white;
-  border-radius: 8px 0 0 8px;
+  padding: 0 16px;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-input);
+  border: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
   box-shadow:
-    1px 0 0 0 #dcdfe6 inset,
-    0 1px 0 0 #dcdfe6 inset,
-    0 -1px 0 0 #dcdfe6 inset;
+    1px 0 0 0 var(--color-border) inset,
+    0 1px 0 0 var(--color-border) inset,
+    0 -1px 0 0 var(--color-border) inset;
 }
 
 :deep(.el-input-group--prepend .el-input__wrapper) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   box-shadow:
-    0 1px 0 0 #dcdfe6 inset,
-    0 -1px 0 0 #dcdfe6 inset,
-    -1px 0 0 0 #dcdfe6 inset;
-}
-
-:deep(.el-button--primary) {
-  color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  box-shadow:
-    0 4px 6px rgb(50 50 93 / 11%),
-    0 1px 3px rgb(0 0 0 / 8%);
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    box-shadow:
-      0 7px 14px rgb(50 50 93 / 10%),
-      0 3px 6px rgb(0 0 0 / 8%);
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    box-shadow:
-      0 4px 6px rgb(50 50 93 / 11%),
-      0 1px 3px rgb(0 0 0 / 8%);
-    transform: translateY(1px);
-  }
+    0 1px 0 0 var(--color-border) inset,
+    0 -1px 0 0 var(--color-border) inset,
+    -1px 0 0 0 var(--color-border) inset;
 }
 </style>

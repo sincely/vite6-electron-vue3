@@ -31,3 +31,4 @@ release/*
 
 # Editor directories and files
 .vscode
+.trae

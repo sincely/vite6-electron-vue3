@@ -6,7 +6,7 @@ import NProgress from 'nprogress'
 
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
-import { closeToast, showToast } from '@/utils/toast'
+import { showToast } from '@/utils/toast'
 // https://juejin.cn/post/7481117237729280000#heading-20
 // 设置取消请求的 token
 const { CancelToken } = axios
@@ -60,8 +60,8 @@ export const clearRequestQueue = () => {
 // 根据环境变量设置基础URL
 const baseURL =
   process.env.NODE_ENV === 'production'
-    ? import.meta.env.VITE_BASE_URL
-    : import.meta.env.VITE_BASE_URL
+    ? import.meta.env.VITE_API_BASE_URL
+    : import.meta.env.VITE_API_BASE_URL
 
 // 创建 axios 实例
 const service = axios.create({
@@ -139,7 +139,10 @@ service.interceptors.response.use(
     // 业务逻辑错误
     if (code !== 0 && code !== 200) {
       if (config.showErrorMessage !== false) {
-        showToast(message || '请求失败', 'error')
+        showToast({
+          message: message || '请求失败',
+          type: 'error'
+        })
       }
       return Promise.reject(new Error(message || '请求失败'))
     }
@@ -181,26 +184,29 @@ service.interceptors.response.use(
     // 处理401未授权
     if (error.response?.status === 401) {
       userStore.logout()
-      router.push('/login')
-      showToast('登录已过期，请重新登录', 'warning')
+      // router.push('/login')
+      showToast({
+        message: '登录已过期，请重新登录',
+        type: 'warning'
+      })
       return Promise.reject(error)
     }
 
-    // 处理网络错误
-    // if (!navigator.onLine) {
-    //   showToast('网络已断开，请检查网络连接', 'error')
-    //   return Promise.reject(new Error('网络已断开，请检查网络连接'))
-    // }
-
     // 处理超时
     if (error.message.includes('timeout')) {
-      showToast('请求超时，请稍后重试', 'error')
+      showToast({
+        message: '请求超时，请稍后重试',
+        type: 'error'
+      })
       return Promise.reject(new Error('请求超时，请稍后重试'))
     }
 
     // 处理其他错误
     if (config.showErrorMessage !== false) {
-      showToast(error.message || '请求失败', 'error')
+      showToast({
+        message: error.message || '请求失败',
+        type: 'error'
+      })
     }
     return Promise.reject(error)
   }

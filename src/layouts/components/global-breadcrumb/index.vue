@@ -75,7 +75,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   backdrop-filter: blur(12px);
   border: 1px solid
     color-mix(in srgb, var(--glass-surface-border), transparent 18%);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
 
   &-breadcrumb {
@@ -133,7 +133,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   }
 }
 
-@media (width <= 960px) {
+@media (width <=960px) {
   .nav-bar {
     margin-inline: 10px;
 
