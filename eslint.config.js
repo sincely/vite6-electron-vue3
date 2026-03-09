@@ -12,6 +12,7 @@ export default defineFlatConfig([
       'dist-electron/**',
       'release/**',
       'public/**',
+      'artifacts/**',
       'src/assets/**',
       'src/icons/svg/**',
       'CHANGELOG.md',

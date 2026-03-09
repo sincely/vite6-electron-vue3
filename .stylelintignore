@@ -34,7 +34,7 @@ src/icons/*
 .env
 release/**/*
 dist-electron/*
-
+artifacts/*
 # Editor directories and files
 .vscode
 .trae
