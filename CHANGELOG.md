@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.8](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.7...v0.0.8) (2026-03-09)
+
+### ✨ Features
+
+* 新增Card组件并重构BackTop组件，优化样式和布局 ([e7b4294](https://github.com/sincely/vite6-electron-vue3/commit/e7b4294a074aa1d4a632ec6a4ed994ac3b72d3f1))
+* 新增占位图标并更新页面组件样式 ([dad0bb9](https://github.com/sincely/vite6-electron-vue3/commit/dad0bb9e0c16ca1523321622417b48963c9f77d4))
+* 添加主题工厂技能和UI/UX设计资源 ([eed3d7e](https://github.com/sincely/vite6-electron-vue3/commit/eed3d7e8f291cf7c7688b3ac122ba9965d3073f5))
+* 添加操作日志表格和全局返回顶部组件 ([44ae3a9](https://github.com/sincely/vite6-electron-vue3/commit/44ae3a9179b3dd00b6c559b7be6376dd87f3cdab))
+* 集成mock数据功能用于前后端分离开发 ([e5d58b4](https://github.com/sincely/vite6-electron-vue3/commit/e5d58b4bd437c2a2c2348b15a46055e163e0239c))
+
+### 🔧 Chores
+
+* 将 artifacts 目录添加到代码检查工具的忽略列表 ([79ffac4](https://github.com/sincely/vite6-electron-vue3/commit/79ffac42646b8e9766a0d6227b4760bf504f7a43))
+* 更新构建配置文件和忽略规则 ([4e95d59](https://github.com/sincely/vite6-electron-vue3/commit/4e95d5906d0f2d5da8e0ca209615b5fcc33163cc))
+* 添加 concurrently 并更新 npm scripts ([f3916da](https://github.com/sincely/vite6-electron-vue3/commit/f3916da5e562229f994908cf035f038694ce6ced))
+* 移除不再需要的 .browserslistrc 配置文件 ([e4cb96a](https://github.com/sincely/vite6-electron-vue3/commit/e4cb96aaa490fa33eca5d39a49416ab2f68b4287))
+
+### ♻️ Code Refactoring
+
+* 重构网络状态检测钩子并更新依赖项 ([48426a6](https://github.com/sincely/vite6-electron-vue3/commit/48426a602e21f24e7025feef904de8206b6814e3))
+
+### 🏭 Build System
+
+* **nsis:** 添加Windows安装包配置和文档 ([52fef35](https://github.com/sincely/vite6-electron-vue3/commit/52fef35e586f569490f5d99dd17c387ccbfb4d01))
+
+### 🤖 Continuous Integration
+
+* 添加 GitHub Actions 工作流以自动化发布流程 ([a32affc](https://github.com/sincely/vite6-electron-vue3/commit/a32affcdc1555396192c7db34d7972330ca8e6ac))
+* 添加 GitHub Actions 工作流配置修改 ([2231263](https://github.com/sincely/vite6-electron-vue3/commit/223126378949c949408daefe7e4a9a76e1d682ce))
+
 ## [0.0.7](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.6...v0.0.7) (2026-03-06)
 
 ### ✨ Features
