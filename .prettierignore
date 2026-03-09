@@ -25,7 +25,8 @@ components.d.ts
 prettier.config.js
 
 dist-electron
-release/*
+release/**/*
+
 
 .nvmrc
 

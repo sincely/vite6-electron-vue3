@@ -32,7 +32,7 @@ src/assets/*
 src/icons/*
 .husky
 .env
-release/*
+release/**/*
 dist-electron/*
 
 # Editor directories and files
