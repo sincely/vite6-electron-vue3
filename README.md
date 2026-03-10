@@ -275,44 +275,228 @@ VITE_UPDATE_URL=https://your-update-server.com/electron-update/
 4. 按以下顺序将 `release/{version}/` 中的文件上传到服务器（**顺序不可颠倒**）：
    - `*.exe` / `*.dmg`（安装包）
    - `*.blockmap`（差量块映射）
-   - `latest.yml`（**最后上传**，上传后客户端立即感知新版本）
+   - `latest.yml` / `latest-mac.yml`（**最后上传**，上传后客户端立即感知新版本）
+
+---
+
+## 增量更新（差量下载）完整实现指南
+
+### 原理
+
+`.blockmap` 是 electron-builder 对 `.zip` 包按固定大小（默认 ≈ 4 MB）分块后生成的**块清单文件**（JSON gzip），记录每个块的 hash。`electron-updater` 利用它实现：
+
+```
+旧版 blockmap（已安装，缓存在本地）
+        ↓ diff
+新版 blockmap（从服务器下载）
+        ↓ 计算差异块列表
+仅下载变化的块（HTTP Range 请求）
+        ↓ 合并
+重新组装完整的新版 zip → 安装
+```
+
+**核心：服务器必须支持 HTTP Range 请求（206 Partial Content）**
+
+通常业务代码只改动了少量文件，`node_modules` 对应的块几乎全部复用，可节省 **60–90%** 的下载流量。
+
+---
+
+### Step 1 — 确认本地产物
+
+执行 `npm run build-mac:prod` / `npm run build-win:prod` 后，`release/{version}/` 目录包含以下文件：
+
+```
+latest-mac.yml                              ← 版本索引（更新检查入口）
+lightning-Mac-{version}-arm64.zip           ← 完整安装包
+lightning-Mac-{version}-arm64.zip.blockmap  ← 增量块清单（~90–100 KB）
+lightning-Mac-{version}-x64.zip
+lightning-Mac-{version}-x64.zip.blockmap
+lightning-Mac-{version}-arm64.dmg           ← 首次安装包（不参与增量）
+lightning-Mac-{version}-arm64.dmg.blockmap
+```
+
+> `.dmg` 及其 `.dmg.blockmap` 只用于**首次安装**，不参与增量更新流程。
+> macOS 增量更新只走 `.zip` 格式。
+
+---
+
+### Step 2 — 上传到更新服务器
+
+将以下文件上传到 `VITE_UPDATE_URL` 对应的目录（本项目为 `http://10.10.24.52:8089/electron-update/`）：
+
+```
+latest-mac.yml                              ← 最后上传！
+lightning-Mac-{version}-arm64.zip
+lightning-Mac-{version}-arm64.zip.blockmap  ← 必须与 .zip 同目录同名
+lightning-Mac-{version}-x64.zip
+lightning-Mac-{version}-x64.zip.blockmap
+```
+
+> ⚠️ **`.blockmap` 必须与 `.zip` 放在同一 URL 路径下，文件名完全匹配。**
+> `electron-updater` 会自动在 `.zip` URL 后追加 `.blockmap` 来请求该文件，路径不匹配直接退化为全量下载。
+
+---
+
+### Step 3 — Nginx 服务器配置
+
+Range 请求是增量更新的命脉，必须确保服务器正确响应 `206 Partial Content`：
+
+```nginx
+server {
+    listen 8089;
+
+    location /electron-update/ {
+        root   /data/releases;   # 实际存放文件的目录
+        autoindex off;
+
+        # ✅ 必须：声明支持 Range 请求（Nginx 静态文件默认支持，显式声明更保险）
+        add_header Accept-Ranges bytes;
+
+        # ✅ 必须：CORS 支持（允许渲染进程跨域访问时需要）
+        add_header Access-Control-Allow-Origin *;
+        add_header Access-Control-Allow-Headers Range,Content-Range;
+        add_header Access-Control-Expose-Headers Content-Range,Accept-Ranges;
+
+        # ✅ blockmap 是 gzip 压缩的二进制文件，需正确 Content-Type
+        types {
+            application/octet-stream blockmap;
+        }
+
+        # ✅ 禁用 Nginx 的 gzip 压缩（blockmap 本身已是 gzip，二次压缩会损坏）
+        gzip off;
+    }
+}
+```
+
+**如果使用反向代理（upstream）转发到文件服务器，必须额外透传 Range 头：**
+
+```nginx
+location /electron-update/ {
+    proxy_pass         http://file-backend/;
+    proxy_set_header   Range              $http_range;
+    proxy_set_header   If-Range           $http_if_range;
+    proxy_pass_header  Content-Range;
+    proxy_pass_header  Accept-Ranges;
+    # ✅ 关闭代理缓冲，否则 Range 请求可能被整体缓存后再返回，导致 206 变 200
+    proxy_buffering    off;
+}
+```
+
+---
+
+### Step 4 — 验证服务器支持 Range 请求
+
+```bash
+curl -I \
+  -H "Range: bytes=0-1023" \
+  "http://10.10.24.52:8089/electron-update/lightning-Mac-0.0.8-arm64.zip"
+```
+
+**正确响应（增量生效）：**
+
+```
+HTTP/1.1 206 Partial Content
+Content-Range: bytes 0-1023/90702381
+Accept-Ranges: bytes
+Content-Length: 1024
+```
+
+**错误响应（退化为全量）：**
+
+```
+HTTP/1.1 200 OK        ← 服务器不支持 Range，全量下载
+```
+
+---
+
+### Step 5 — 代码侧确认配置
+
+[electron/main/update.js](electron/main/update.js) 中关键配置已就位：
+
+```javascript
+// 禁用自动下载，由用户主动触发（当前项目已配置）
+autoUpdater.autoDownload = false
+
+// electron-updater 默认启用差量下载，无需额外配置
+// 但可以显式声明更新通道（默认 'latest'）
+autoUpdater.channel = 'latest'
+```
+
+`electron-builder.json` 中已配置的关键项：
+
+```json
+{
+  "asar": true,          // ✅ 必须为 true，asar 单文件才能发挥 blockmap 最大效益
+  "compression": "maximum"  // ✅ 最大压缩，减少安装包体积
+}
+```
+
+---
+
+### Step 6 — 验证增量更新日志
+
+安装旧版本后触发更新，日志路径：
+
+- **macOS**：`~/Library/Logs/lightning/main.log`
+- **Windows**：`%USERPROFILE%\AppData\Roaming\lightning\logs\main.log`
+
+**全量下载（首次更新或无旧版缓存）：**
+
+```
+Downloading full update: lightning-Mac-0.0.8-arm64.zip
+```
+
+**差量下载成功（增量生效）：**
+
+```
+Differential download: 3.2 MB / 87 MB (downloaded 3.7%)
+```
+
+> 首次更新必为全量，这是正常的。`electron-updater` 完成下载后会在本地缓存当前版本的 blockmap（路径：`~/Library/Caches/lightning-updater/`），下次更新时作为 diff 基准。
+
+---
 
 ### 增量更新注意事项
 
-electron-updater 基于 `.blockmap` 实现差量下载，仅传输两个版本之间变化的数据块，通常可节省 **70–90%** 流量（仅改了业务代码时）。使用时需注意以下几点：
+| 问题 | 原因 & 解决方案 |
+|---|---|
+| 增量退化为全量下载 | 服务器返回 `200` 而非 `206`，检查 Nginx `proxy_buffering off` 及 Range 头透传 |
+| `latest-mac.yml` 找不到（404） | `setFeedURL` 的 `url` 必须以 `/` 结尾 |
+| 首次更新必为全量 | 正常，需要旧版 blockmap 作为 diff 基准，安装后自动缓存 |
+| `.blockmap` 请求 404 | 文件未上传，或服务器 MIME 类型被过滤 |
+| macOS 增量只支持 `.zip` | DMG 不支持差量，`electron-builder.json` 中 `zip` target 必须存在（已有） |
+| Windows 增量效果有限 | NSIS 安装包本身不支持差量，Windows 增量收益主要来自 asar 内部块复用，比 macOS 低 |
+| CDN 部署时 Range 被截断 | 部分 CDN（如阿里云 CDN）默认关闭 Range 透传，需在 CDN 控制台开启「Range 回源」 |
+| 跨大版本更新差量效果差 | 文件变化块过多，接近全量大小，属正常现象 |
+| 不要手动编辑 `latest-mac.yml` | `sha512` 和 `size` 由 electron-builder 自动生成，手动改动会导致组装后校验失败，触发全量重下 |
+| `asar: false` 会破坏增量效果 | 不打包 asar 时文件分散，blockmap 无法跨块复用，增量收益接近零 |
 
-#### 1. 服务器必须支持 HTTP Range 请求
+---
 
-增量下载通过 `Range: bytes=x-y` 头拉取变化的块，服务器须返回 `206 Partial Content`，否则自动降级为全量下载。
+### 增量更新完整流程图
 
-验证方式：
-```bash
-curl -I --range 0-100 https://your-server/electron-update/lightning-x.x.x-Setup.exe
-# 返回 206 Partial Content ← 支持增量
-# 返回 200 OK              ← 降级全量
 ```
+【构建阶段】
+  npm run build-mac:prod
+    └── release/0.0.8/
+          ├── latest-mac.yml          → ① 最后上传服务器
+          ├── *.zip                   → ② 上传服务器
+          └── *.zip.blockmap          → ③ 上传服务器（关键！）
 
-Nginx 默认支持，注意**不要**添加 `add_header Accept-Ranges none` 或关闭 `proxy_buffering`。
-
-#### 2. `.blockmap` 文件必须与安装包同步上传
-
-缺少 `.blockmap` 时 electron-updater 静默降级为全量下载，不会报错，但会浪费带宽。
-
-#### 3. 保持 `asar: true`
-
-`electron-builder.json` 已配置 `"asar": true`，将所有业务代码打包为单一的 `app.asar` 文件。两个版本间 `node_modules` 未变化时，其对应的块全部复用，增量效果最佳。**不要改为 `false`**。
-
-#### 4. 减少 `asarUnpack` 的使用
-
-`asarUnpack` 中的文件（原生模块如 `sharp`）位于 `app.asar.unpacked/`，每次更新均为全量替换，不受 blockmap 保护。只将必须在 asar 外运行的原生模块放入此列表。
-
-#### 5. 不要手动编辑 `latest.yml`
-
-`latest.yml` 中的 `sha512` 和文件大小由 electron-builder 自动生成。手动修改会导致组装后的安装包校验失败，触发全量重下。
-
-#### 6. 开发环境不执行增量逻辑
-
-使用 `dev-app-update.yml` 调试时，electron-updater 仅做全量下载，增量逻辑只在生产安装包中生效。
+【客户端检查更新】
+  checkForUpdates()
+    └── GET /electron-update/latest-mac.yml
+          ↓ 发现新版本
+        GET /electron-update/lightning-Mac-0.0.8-arm64.zip.blockmap
+          ↓ 与本地缓存的旧版 blockmap 对比
+        计算差异块列表
+          ↓ 仅有差异块
+        HTTP Range 请求（可节省 60~90% 流量）
+          ↓ 下载完成
+        本地合并重组 zip
+          ↓
+        quitAndInstall() → 安装完成，自动重启
+```
 
 ---
 
