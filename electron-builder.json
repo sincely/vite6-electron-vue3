@@ -1,12 +1,9 @@
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,
-  "asarUnpack": [
-    "**/node_modules/sharp/**",
-    "**/node_modules/@img/**"
-  ],
+  "asarUnpack": ["**/node_modules/sharp/**", "**/node_modules/@img/**"],
   "productName": "lightning",
-  "copyright": "Copyright 2024 dyy.dongyuanwai",
+  "copyright": "Copyright © 2024 dyy.dongyuanwai",
   "directories": {
     "output": "release/${version}"
   },
@@ -44,26 +41,18 @@
     "target": [
       {
         "target": "dmg",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       },
       {
         "target": "zip",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       }
     ],
     "extraResources": [
       {
         "from": "resources/icons/mac",
         "to": "icons/mac",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "artifactName": "${productName}-Mac-${version}-${arch}.${ext}"
@@ -74,14 +63,10 @@
       {
         "from": "resources/icons/linux",
         "to": "icons/linux",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
-    "target": [
-      "AppImage"
-    ],
+    "target": ["AppImage"],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
@@ -90,17 +75,13 @@
       {
         "from": "resources/icons/win",
         "to": "icons/win",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       }
     ],
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
@@ -112,11 +93,7 @@
     }
   ],
   "compression": "maximum",
-  "electronLanguages": [
-    "zh-CN",
-    "en-US",
-    "en"
-  ],
+  "electronLanguages": ["zh-CN", "en-US", "en"],
   "nsis": {
     "oneClick": false,
     "perMachine": false,

@@ -10,5 +10,6 @@ export default {
   '*.{html,css,scss}': [
     'prettier --write',
     'stylelint --fix --allow-empty-input'
-  ]
+  ],
+  'package.json': ['prettier --write']
 }
