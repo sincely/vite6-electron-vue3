@@ -116,3 +116,34 @@ body {
   color: #fff;
   background: color-mix(in srgb, var(--brand-accent), black 10%);
 }
+
+/* Theme toggle transition (Element Plus-style circular reveal) */
+@media (prefers-reduced-motion: no-preference) {
+  /* Disable normal color transitions while View Transition is running. */
+  html.theme-vt,
+  html.theme-vt body {
+    transition: none !important;
+  }
+
+  ::view-transition-image-pair(root) {
+    isolation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    display: block;
+    mix-blend-mode: normal;
+    animation: none;
+  }
+
+  /* Control which snapshot sits on top depending on direction. */
+  html.theme-vt-to-dark::view-transition-old(root),
+  html.theme-vt-to-light::view-transition-new(root) {
+    z-index: 1;
+  }
+
+  html.theme-vt-to-dark::view-transition-new(root),
+  html.theme-vt-to-light::view-transition-old(root) {
+    z-index: 9999;
+  }
+}
