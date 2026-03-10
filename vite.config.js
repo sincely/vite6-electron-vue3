@@ -23,18 +23,8 @@ export default defineConfig(({ mode, command }) => {
           drop_console: true,
           drop_debugger: true,
           pure_funcs: ['console.log', 'console.info', 'console.debug'],
-          passes: 3, // 多次压缩，体积更小
-          unsafe_math: true, // 允许不安全的数学优化
-          unsafe_arrows: true,
-          dead_code: true, // 移除不可达代码
-          collapse_vars: true, // 合并声明
-          reduce_vars: true, // 优化变量
-          booleans_as_integers: false
-        },
-        mangle: {
-          safari10: true // 兼容 Safari10
-        },
-        format: { comments: false } // 删除所有注释
+          passes: 3 // 多次压缩，体积更小
+        }
       },
       reportCompressedSize: false, // 关闭压缩计算，加快构建速度
       sourcemap,
