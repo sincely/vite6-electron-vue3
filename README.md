@@ -429,15 +429,27 @@ electron-builder 会在构建 NSIS 安装包时注入一组可覆写的宏。通
 
 ## 常见问题
 
-### Windows 终端中文乱码
+### 1) Windows 终端中文乱码
 
 `dev:win` 和 `electron:win` 脚本已内置 `chcp 65001` 自动切换 UTF-8 编码。
 
-### 打包失败：符号链接权限
+### 2) NSIS 安装器 license 许可协议乱码
+
+如果在 `electron-builder` 的 `nsis` 配置中启用了 `license`，安装向导里出现中文乱码，通常是因为许可协议 `txt` 文件编码不符合 NSIS 读取要求。
+
+请将 license 文本文件转为 **ANSI** 编码（不要使用 UTF-8/GBK 混合或其他编码）：
+
+1. 用记事本打开许可协议 `txt`
+2. 点击“另存为”
+3. 编码选择 **ANSI** 后保存
+
+完成后重新打包，安装器中的 license 文本一般即可正常显示。
+
+### 3) 打包失败：符号链接权限
 
 在 Windows 上遇到 `Cannot create symbolic link` 错误，请**以管理员身份运行终端**后重试。
 
-### winCodeSign / nsis 下载失败
+### 4) winCodeSign / nsis 下载失败
 
 项目根目录 `.npmrc` 已配置国内镜像加速：
 
@@ -449,12 +461,8 @@ electron_builder_binaries_mirror=https://npmmirror.com/mirrors/electron-builder-
 - `winCodeSign` → `%LOCALAPPDATA%\electron-builder\Cache\winCodeSign`
 - `nsis` → `%LOCALAPPDATA%\electron-builder\Cache\nsis`
 
-### ASAR 中缺少 dist 目录
+### 5) ASAR 中缺少 dist 目录
 
 `build-win` / `build-mac` 脚本已内置 `vite build`，会在 electron-builder 打包前自动完成前端构建，无需手动执行。
 
 ---
-
-## 贡献
-
-欢迎提交 Pull Request 或通过 Issue 反馈问题。
