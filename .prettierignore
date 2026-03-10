@@ -34,3 +34,5 @@ artifacts/*
 # Editor directories and files
 .vscode
 .trae
+
+electron-builder.json

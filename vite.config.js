@@ -23,16 +23,31 @@ export default defineConfig(({ mode, command }) => {
           drop_console: true,
           drop_debugger: true,
           pure_funcs: ['console.log', 'console.info', 'console.debug'],
-          passes: 2 // 多次压缩，体积更小
+          passes: 3, // 多次压缩，体积更小
+          unsafe_math: true, // 允许不安全的数学优化
+          unsafe_arrows: true,
+          dead_code: true, // 移除不可达代码
+          collapse_vars: true, // 合并声明
+          reduce_vars: true, // 优化变量
+          booleans_as_integers: false
         },
-        mangle: true,
+        mangle: {
+          safari10: true // 兼容 Safari10
+        },
         format: { comments: false } // 删除所有注释
       },
       reportCompressedSize: false, // 关闭压缩计算，加快构建速度
       sourcemap,
       chunkSizeWarningLimit: 4000,
       minify: 'terser',
+      cssCodeSplit: true, // 启用 CSS 代码分割
+      assetsInlineLimit: 4096, // 小于 4kb 的资源内联为 base64
       rollupOptions: {
+        treeshake: {
+          moduleSideEffects: false, // 假设模块无副作用，激进 tree-shaking
+          propertyReadSideEffects: false,
+          tryCatchDeoptimization: false
+        },
         output: {
           manualChunks(id) {
             // Vue 核心
@@ -71,7 +86,8 @@ export default defineConfig(({ mode, command }) => {
           },
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
-          assetFileNames: '[ext]/[name]-[hash].[ext]'
+          assetFileNames: '[ext]/[name]-[hash].[ext]',
+          compact: true // 压缩生成代码的空白字符
         }
       }
     },
@@ -124,7 +140,18 @@ export default defineConfig(({ mode, command }) => {
             },
             build: {
               sourcemap,
-              minify: isBuild,
+              minify: isBuild ? 'terser' : false,
+              terserOptions: isBuild
+                ? {
+                    compress: {
+                      drop_console: true,
+                      drop_debugger: true,
+                      passes: 2
+                    },
+                    mangle: true,
+                    format: { comments: false }
+                  }
+                : undefined,
               outDir: 'dist-electron/main',
               rollupOptions: {
                 // Some third-party Node.js libraries may not be built correctly by Vite, especially `C/C++` addons,
@@ -133,7 +160,10 @@ export default defineConfig(({ mode, command }) => {
                 // Of course, this is not absolute, just this way is relatively simple. :)
                 external: Object.keys(
                   'dependencies' in pkg ? pkg.dependencies : {}
-                )
+                ),
+                treeshake: {
+                  moduleSideEffects: 'no-external'
+                }
               }
             }
           }
@@ -145,12 +175,26 @@ export default defineConfig(({ mode, command }) => {
           vite: {
             build: {
               sourcemap: sourcemap ? 'inline' : undefined, // #332
-              minify: isBuild,
+              minify: isBuild ? 'terser' : false,
+              terserOptions: isBuild
+                ? {
+                    compress: {
+                      drop_console: true,
+                      drop_debugger: true,
+                      passes: 2
+                    },
+                    mangle: true,
+                    format: { comments: false }
+                  }
+                : undefined,
               outDir: 'dist-electron/preload',
               rollupOptions: {
                 external: Object.keys(
                   'dependencies' in pkg ? pkg.dependencies : {}
-                )
+                ),
+                treeshake: {
+                  moduleSideEffects: 'no-external'
+                }
               }
             }
           }

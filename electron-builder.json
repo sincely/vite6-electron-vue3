@@ -19,24 +19,60 @@
     "!**/node_modules/*/{README.md,README,readme.md,readme,Readme.md}",
     "!**/node_modules/*/{LICENSE,LICENSE.md,license.md,LICENCE,licence}",
     "!**/node_modules/*/{.eslintrc,.eslintrc.js,.eslintrc.json,.prettierrc}",
-    "!**/node_modules/**/{test,tests,__tests__,spec,specs,__mocks__}/**",
+    "!**/node_modules/**/{test,tests,__tests__,spec,specs,__mocks__,jest,jest.config.*}/**",
     "!**/node_modules/**/{example,examples,demo,demos,sample,samples}/**",
-    "!**/node_modules/**/{docs,doc,documentation,website,gh-pages}/**",
-    "!**/node_modules/**/*.{ts,d.ts,map,coffee}",
-    "!**/node_modules/**/.{travis.yml,nycrc,npmignore,gitignore,gitattributes}",
+    "!**/node_modules/**/{docs,doc,documentation,website,gh-pages,.github}/**",
+    "!**/node_modules/**/*.{ts,d.ts,map,coffee,flow,gyp}",
+    "!**/node_modules/**/.{travis.yml,nycrc,npmignore,gitignore,gitattributes,editorconfig}",
     "!**/node_modules/**/Makefile",
     "!**/node_modules/**/{.bin}/**",
+    "!**/node_modules/**/*.{png,jpg,jpeg,gif,svg,bmp,ico,webp}",
+    "!**/node_modules/**/{*.min.js.map,*.min.css.map}",
+    "!**/node_modules/**/bench/**",
+    "!**/node_modules/**/benchmark/**",
+    "!**/node_modules/**/perf/**",
+    "!**/node_modules/**/fixtures/**",
+    "!**/node_modules/**/coverage/**",
+    "!**/node_modules/**/CONTRIBUTING*",
+    "!**/node_modules/**/HISTORY*",
+    "!**/node_modules/**/AUTHORS*",
+    "!**/node_modules/**/NOTICE*",
+    "!**/node_modules/**/*.md",
+    "!**/node_modules/**/*.txt",
+    "!**/node_modules/**/package-lock.json",
+    "!**/node_modules/**/yarn.lock",
+    "!**/node_modules/**/.nyc_output/**",
     "!**/node_modules/electron-builder/**",
     "!**/node_modules/vite/**",
     "!**/node_modules/rollup/**",
     "!**/node_modules/esbuild/**",
+    "!**/node_modules/esbuild-*/**",
     "!**/node_modules/typescript/**",
     "!**/node_modules/eslint*/**",
     "!**/node_modules/prettier/**",
     "!**/node_modules/stylelint*/**",
+    "!**/node_modules/postcss*/**",
     "!**/node_modules/sass/**",
     "!**/node_modules/sharp/**",
-    "!**/node_modules/png-to-ico/**"
+    "!**/node_modules/png-to-ico/**",
+    "!**/node_modules/@vitejs/**",
+    "!**/node_modules/vite-plugin-*/**",
+    "!**/node_modules/unplugin-*/**",
+    "!**/node_modules/vue-eslint-parser/**",
+    "!**/node_modules/husky/**",
+    "!**/node_modules/lint-staged/**",
+    "!**/node_modules/@commitlint/**",
+    "!**/node_modules/release-it/**",
+    "!**/node_modules/@release-it/**",
+    "!**/node_modules/conventional-changelog*/**",
+    "!**/node_modules/inquirer/**",
+    "!**/node_modules/directory-tree/**",
+    "!**/node_modules/treeify/**",
+    "!**/node_modules/esno/**",
+    "!**/node_modules/tsx/**",
+    "!**/node_modules/rimraf/**",
+    "!**/node_modules/concurrently/**",
+    "!**/node_modules/fs-extra/**"
   ],
   "mac": {
     "icon": "resources/icons/mac/app.icns",
@@ -62,7 +98,8 @@
         "from": "resources/icons/mac",
         "to": "icons/mac",
         "filter": [
-          "**/*"
+          "tray.png",
+          "tray@2x.png"
         ]
       }
     ],
@@ -75,7 +112,9 @@
         "from": "resources/icons/linux",
         "to": "icons/linux",
         "filter": [
-          "**/*"
+          "tray.png",
+          "256.png",
+          "512.png"
         ]
       }
     ],
@@ -91,7 +130,8 @@
         "from": "resources/icons/win",
         "to": "icons/win",
         "filter": [
-          "**/*"
+          "tray.ico",
+          "tray.png"
         ]
       }
     ],
@@ -114,8 +154,7 @@
   "compression": "maximum",
   "electronLanguages": [
     "zh-CN",
-    "en-US",
-    "en"
+    "en-US"
   ],
   "nsis": {
     "oneClick": false,
