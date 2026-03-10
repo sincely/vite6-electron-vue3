@@ -25,6 +25,7 @@
     "build-linux:dev": "npm run clean && node scripts/inject-release-notes.mjs && vite build --mode development && electron-builder --linux",
     "build-linux:test": "npm run clean && node scripts/inject-release-notes.mjs && vite build --mode test && electron-builder --linux",
     "build-linux:prod": "npm run clean && node scripts/inject-release-notes.mjs && vite build --mode production && electron-builder --linux",
+    "check-config": "electron-builder --dir --config",
     "clean": "rimraf dist dist-electron release",
     "lint": "npm run eslint:fix && npm run prettier:fix && npm run stylelint:fix",
     "lint:check": "npm run eslint:check && npm run prettier:check && npm run stylelint:check",
