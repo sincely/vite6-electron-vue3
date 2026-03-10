@@ -4,8 +4,8 @@ export const createModalWindow = (options) => {
     height: 600,
     show: false,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
+      contextIsolation: false // 禁用上下文隔离
     }
   }
   const winOptions = Object.assign(defaultOptions, options)

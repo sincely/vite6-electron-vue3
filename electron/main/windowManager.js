@@ -130,7 +130,7 @@ export function createLoginWindow() {
     center: true,
     webPreferences: {
       preload, // 预加载脚本
-      nodeIntegration: true, // 允许 Node.js 集成
+      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
       contextIsolation: true // 启用上下文隔离
     }
   })
@@ -177,7 +177,7 @@ export function createMainWindow() {
     center: true,
     webPreferences: {
       preload, // 预加载脚本
-      nodeIntegration: true, // 允许 Node.js 集成
+      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
       contextIsolation: true // 启用上下文隔离
     }
   })
@@ -240,8 +240,8 @@ export function createWindow(options = {}) {
     frame: true,
     webPreferences: {
       preload,
-      nodeIntegration: true,
-      contextIsolation: true
+      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
+      contextIsolation: true // 启用上下文隔离
     }
   }
 
