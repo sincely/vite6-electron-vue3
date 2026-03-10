@@ -1,7 +1,10 @@
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,
-  "asarUnpack": ["**/node_modules/sharp/**", "**/node_modules/@img/**"],
+  "asarUnpack": [
+    "**/node_modules/sharp/**",
+    "**/node_modules/@img/**"
+  ],
   "productName": "lightning",
   "copyright": "Copyright © 2024 dyy.dongyuanwai",
   "directories": {
@@ -41,18 +44,26 @@
     "target": [
       {
         "target": "dmg",
-        "arch": ["x64", "arm64"]
+        "arch": [
+          "x64",
+          "arm64"
+        ]
       },
       {
         "target": "zip",
-        "arch": ["x64", "arm64"]
+        "arch": [
+          "x64",
+          "arm64"
+        ]
       }
     ],
     "extraResources": [
       {
         "from": "resources/icons/mac",
         "to": "icons/mac",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "artifactName": "${productName}-Mac-${version}-${arch}.${ext}"
@@ -63,10 +74,14 @@
       {
         "from": "resources/icons/linux",
         "to": "icons/linux",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
-    "target": ["AppImage"],
+    "target": [
+      "AppImage"
+    ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
@@ -75,13 +90,17 @@
       {
         "from": "resources/icons/win",
         "to": "icons/win",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "target": [
       {
         "target": "nsis",
-        "arch": ["x64"]
+        "arch": [
+          "x64"
+        ]
       }
     ],
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
@@ -93,7 +112,11 @@
     }
   ],
   "compression": "maximum",
-  "electronLanguages": ["zh-CN", "en-US", "en"],
+  "electronLanguages": [
+    "zh-CN",
+    "en-US",
+    "en"
+  ],
   "nsis": {
     "oneClick": false,
     "perMachine": false,
@@ -107,6 +130,6 @@
     "deleteAppDataOnUninstall": true
   },
   "releaseInfo": {
-    "releaseNotes": "✨ 新增 toast 工具函数并更新请求错误处理; ✨ 新增ECharts集成、用户认证、工具函数及设置模块; ✨ 新增多种文件类型的SVG图标; ✨ 更新macOS构建配置，修改artifactName格式以支持不同架构; ✨ 更新macOS构建配置，支持x64和arm64架构的dmg和zip目标; ✨ 更新图标生成逻辑，支持多平台图标输出并优化路径和格式; 重构自动更新模块并完善文档; 优化样式和组件配置; ✨ 添加登录页面、权限控制和用户管理功能; ✨ 添加网络状态监听并优化通知配置; 🐞 修复loadingTargets持久化问题并添加latestVersion持久化; 🐞 将通知持续时间从3000毫秒减少到2500毫秒; 🎨 优化登录组件样式和交互效果; ♻️ 清理代码并添加应用状态重置功能"
+    "releaseNotes": "✨ 新增Card组件并重构BackTop组件，优化样式和布局; ✨ 新增占位图标并更新页面组件样式; ✨ 添加主题工厂技能和UI/UX设计资源; ✨ 添加操作日志表格和全局返回顶部组件; ✨ 集成mock数据功能用于前后端分离开发; 🔧 将 artifacts 目录添加到代码检查工具的忽略列表; 🔧 更新构建配置文件和忽略规则; 🔧 添加 concurrently 并更新 npm scripts; 🔧 移除不再需要的 .browserslistrc 配置文件; ♻️ 重构网络状态检测钩子并更新依赖项; 🏭 **nsis:** 添加Windows安装包配置和文档; 🤖 添加 GitHub Actions 工作流以自动化发布流程; 🤖 添加 GitHub Actions 工作流配置修改"
   }
 }
