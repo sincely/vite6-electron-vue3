@@ -164,7 +164,6 @@
     "createStartMenuShortcut": true,
     "shortcutName": "lightning",
     "runAfterFinish": true,
-    "license": "license.txt",
     "include": "installer.nsh",
     "deleteAppDataOnUninstall": true
   },
