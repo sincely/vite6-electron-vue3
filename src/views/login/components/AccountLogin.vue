@@ -1,50 +1,56 @@
 <template>
-  <div class="account-login">
-    <div class="avatar">
-      <img src="@/assets/bar/icon.png" alt="avatar" />
-    </div>
-    <h3>你好，成舟</h3>
+  <div class="account-login-form">
     <el-form
       ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
-      class="demo-ruleForm"
+      class="login-form"
       label-position="top"
+      hide-required-asterisk
     >
-      <el-form-item prop="phone" label="手机号码:">
+      <el-form-item prop="phone" label="手机号码">
         <el-input
           v-model="ruleForm.phone"
           placeholder="请输入手机号码"
-        ></el-input>
+          :prefix-icon="Iphone"
+          class="custom-input"
+        />
       </el-form-item>
-      <el-form-item prop="password" label="密码:">
+
+      <el-form-item prop="password" label="密码">
         <el-input
           v-model="ruleForm.password"
           placeholder="请输入密码"
           :type="showPassword ? 'text' : 'password'"
+          :prefix-icon="Lock"
+          class="custom-input"
         >
           <template #suffix>
-            <span
-              style="display: flex; align-items: center; cursor: pointer"
-              @click="togglePasswordVisibility"
-            >
+            <span class="password-toggle" @click="togglePasswordVisibility">
               <svg-icon
                 :iconClass="showPassword ? 'open-eye' : 'close-eye'"
                 width="16px"
                 height="16px"
-                hoverColor="#0066ff"
               />
             </span>
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item>
+
+      <div class="form-options">
+        <el-checkbox v-model="rememberMe" label="记住我" size="small" />
+        <span class="forgot-password">忘记密码?</span>
+      </div>
+
+      <el-form-item class="submit-item">
         <el-button
-          :class="isInput ? 'login-btn' : 'disabled-btn'"
-          :color="isInput ? '#0066ff' : '#f3f4f5'"
+          type="primary"
+          :class="{ 'submit-btn': true, 'is-loading': loading }"
+          :loading="loading"
+          :disabled="!isInput"
           @click="submitForm(ruleFormRef)"
         >
-          登录
+          {{ loading ? '登录中...' : '登 录' }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -52,10 +58,13 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
+import { Iphone, Lock } from '@element-plus/icons-vue'
 
 const ruleFormRef = ref()
 const showPassword = ref(false)
+const loading = ref(false)
+const rememberMe = ref(false)
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
@@ -67,157 +76,181 @@ const ruleForm = reactive({
 })
 
 const rules = reactive({
-  phone: [{ required: true, message: '请输入手机号码', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+  phone: [
+    { required: true, message: '请输入手机号码', trigger: 'blur' },
+    {
+      pattern: /^1[3-9]\d{9}$/,
+      message: '请输入有效的手机号码',
+      trigger: 'blur'
+    }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码不能少于6位', trigger: 'blur' }
+  ]
 })
 
 const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      ipcRenderer.send('toMain')
+      loading.value = true
+      // 模拟登录请求
+      setTimeout(() => {
+        window.ipcRenderer?.send('toMain')
+        loading.value = false
+      }, 800)
     } else {
       console.log('error submit!', fields)
     }
   })
 }
 
-// 是否输入了手机号码和密码
 const isInput = computed(() => {
-  return ruleForm.phone
+  return ruleForm.phone && ruleForm.password
 })
 </script>
 
 <style lang="scss" scoped>
-.account-login {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 320px;
-  transform: translate(-50%, -50%);
+.account-login-form {
+  width: 100%;
+  padding: 0 16px;
+  animation: fade-up 0.4s ease-out;
+}
 
-  .avatar img {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 10px;
-    border-radius: 18px;
+.login-form {
+  :deep(.el-form-item) {
+    margin-bottom: 24px;
   }
 
-  h3 {
-    margin-bottom: 30px;
-    font-size: 22px;
+  :deep(.el-form-item__label) {
+    padding-bottom: 8px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--color-text-primary);
+    color: var(--color-text-secondary);
   }
+}
 
-  .demo-ruleForm {
-    width: 100%;
+.custom-input {
+  :deep(.el-input__wrapper) {
+    height: 48px;
+    padding: 0 16px;
+    background-color: var(--color-bg-input);
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--color-border) inset;
+    transition: all 0.2s ease;
 
-    .login-btn {
-      width: 100%;
-      height: 40px;
-      font-size: 16px;
-      color: #fff;
-      border-radius: 18px;
+    &.is-focus {
+      background-color: var(--color-bg-card);
+      box-shadow: 0 0 0 2px var(--color-primary) inset !important;
     }
 
-    .disabled-btn {
-      width: 100%;
-      height: 40px;
-      font-size: 16px;
-      color: #bfc1c1;
-      border-radius: 18px;
+    &:hover:not(.is-focus) {
+      background-color: var(--color-bg-hover);
+      box-shadow: 0 0 0 1px var(--color-text-muted) inset;
     }
 
-    .options {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
+    input {
+      height: 100%;
+      color: var(--color-text-primary);
 
-      .el-link {
-        margin-left: 10px;
+      &::placeholder {
+        color: var(--color-text-muted);
       }
     }
   }
 
-  .footer-links {
-    display: flex;
-    gap: 15px;
-    align-items: center;
+  :deep(.el-input__prefix-inner) {
+    margin-right: 8px;
+    color: var(--color-text-secondary);
+  }
+}
+
+.password-toggle {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -8px;
+  margin-bottom: 24px;
+
+  :deep(.el-checkbox__label) {
+    color: var(--color-text-secondary);
+  }
+
+  .forgot-password {
     font-size: 12px;
-    color: #888;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: opacity 0.2s;
 
-    .separator {
-      width: 1px;
-      height: 12px;
-      background-color: #ccc;
-    }
-
-    .info-icon {
-      margin-left: 4px;
-      color: var(--color-primary);
-      cursor: pointer;
-      transition: color 0.3s;
-
-      &:hover {
-        color: var(--color-primary-dark);
-      }
+    &:hover {
+      text-decoration: underline;
+      opacity: 0.8;
     }
   }
 }
 
-:deep(.el-input__wrapper) {
+.submit-item {
+  margin-bottom: 0 !important;
+}
+
+.submit-btn {
+  width: 100%;
   height: 48px;
-  padding: 0 16px;
-  background-color: var(--color-bg-input);
-  border-radius: var(--radius-md);
-  box-shadow: 0 0 0 1px var(--color-border) inset;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--brand-accent-alt)
+  );
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px -6px
+    color-mix(in srgb, var(--color-primary), transparent 40%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  input {
-    color: var(--color-text-primary);
-
-    &::placeholder {
-      color: var(--color-text-muted);
-    }
+  &:hover:not(:disabled) {
+    box-shadow: 0 12px 24px -8px
+      color-mix(in srgb, var(--color-primary), transparent 30%);
+    transform: translateY(-2px);
   }
 
-  &.is-focus {
-    background-color: var(--color-bg-window);
-    box-shadow:
-      0 0 0 2px var(--color-primary) inset,
-      0 4px 12px var(--brand-accent-soft) !important;
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 
-  &:hover:not(.is-focus) {
-    background-color: var(--color-bg-hover);
-    box-shadow: 0 0 0 1px var(--color-text-muted) inset;
+  &.is-disabled {
+    background: var(--color-bg-active);
+    border: 1px solid var(--color-border);
+    opacity: 0.6;
   }
 }
 
-:deep(.el-input-group__prepend) {
-  padding: 0 16px;
-  color: var(--color-text-secondary);
-  background-color: var(--color-bg-input);
-  border: none;
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
-  box-shadow:
-    1px 0 0 0 var(--color-border) inset,
-    0 1px 0 0 var(--color-border) inset,
-    0 -1px 0 0 var(--color-border) inset;
-}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 
-:deep(.el-input-group--prepend .el-input__wrapper) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  box-shadow:
-    0 1px 0 0 var(--color-border) inset,
-    0 -1px 0 0 var(--color-border) inset,
-    -1px 0 0 0 var(--color-border) inset;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

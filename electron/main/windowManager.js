@@ -120,7 +120,7 @@ export function createLoginWindow() {
 
   const win = new BrowserWindow({
     width: 480,
-    height: 640,
+    height: 740,
     icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,

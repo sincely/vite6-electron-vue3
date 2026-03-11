@@ -1,6 +1,5 @@
 <template>
   <div class="content-container">
-    <div class="title">使用钉钉扫码登录</div>
     <div class="qrcode-container">
       <div class="canvas-container">
         <canvas id="myCanvas" ref="qrCanvas"></canvas>
@@ -186,6 +185,13 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .canvas-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 10px;
   background: rgb(255 255 255 / 90%);
   backdrop-filter: blur(4px);
@@ -195,14 +201,14 @@ onBeforeUnmount(() => {
 }
 
 .content-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transform: translate(-50%, -50%);
+  // position: absolute;
+  // top: 50%;
+  // left: 50%;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
+  // transform: translate(-50%, -50%);
 }
 
 .logo {

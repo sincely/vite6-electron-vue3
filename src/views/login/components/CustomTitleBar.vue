@@ -1,17 +1,13 @@
 <template>
   <div class="custom-title-bar" style="-webkit-app-region: drag">
-    <div class="tabs">
+    <div v-if="showTabs" class="tabs">
       <button
-        :class="{ active: activeTab === 'account' }"
-        @click="switchTab('account')"
+        v-for="item in actionTab"
+        :key="item.value"
+        :class="{ active: activeTab === item.value }"
+        @click="switchTab(item.value)"
       >
-        账号登录
-      </button>
-      <button
-        :class="{ active: activeTab === 'qrcode' }"
-        @click="switchTab('qrcode')"
-      >
-        扫码登录
+        {{ item.label }}
       </button>
     </div>
     <div class="window-controls">
@@ -36,10 +32,24 @@ const appStore = useAppStore()
 const emit = defineEmits(['update:active-tab'])
 const activeTab = ref('account')
 
+const showTabs = ref(false)
+
 const switchTab = (tab) => {
   activeTab.value = tab
   emit('update:active-tab', tab)
 }
+
+const actionTab = ref([
+  {
+    label: '账号登录',
+    value: 'account',
+    active: true
+  },
+  {
+    label: '扫码登录',
+    value: 'qrcode'
+  }
+])
 
 const openSettings = () => {
   appStore.toggleSettings(true)
