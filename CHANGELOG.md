@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.9](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.8...v0.0.9) (2026-03-11)
+
+### ✨ Features
+
+* 使用视图过渡 API 实现圆形动画效果 ([d9c3abb](https://github.com/sincely/vite6-electron-vue3/commit/d9c3abb04501f47bed8ae63e672f0060ecd748e7))
+* 新增HTTP相关枚举常量定义 ([0f08c03](https://github.com/sincely/vite6-electron-vue3/commit/0f08c03d439fa62c2801698556498008b374e5a7))
+* 重构设置功能并添加异常处理页面 ([37d8925](https://github.com/sincely/vite6-electron-vue3/commit/37d8925c876269bfc59f114b44d6f84e3fc11e5e))
+
+### 🐞 Bug Fixes
+
+* 更新版权信息格式并优化配置文件的格式 ([833d12d](https://github.com/sincely/vite6-electron-vue3/commit/833d12db25c3e3aa4ba9a6b377d23439a3243a47))
+
+### ⚡ Performance Improvements
+
+* 优化构建配置以减小打包体积 ([5c2a4a0](https://github.com/sincely/vite6-electron-vue3/commit/5c2a4a0bae8fed0ec0af2ef749a2b8f883babc75))
+
+### 📝 Documentation
+
+* 更新增量更新完整实现指南，添加详细步骤和注意事项 ([0f52ee6](https://github.com/sincely/vite6-electron-vue3/commit/0f52ee60fcbf8fd7022a1fb53c1f04641df0fedd))
+* 更新常见问题部分，添加 NSIS 安装器许可协议乱码解决方案 ([7d1a22d](https://github.com/sincely/vite6-electron-vue3/commit/7d1a22db2faff748349119aae26170c9da0bab5e))
+* 添加 GitHub issue 模板以规范问题报告 ([f9eb334](https://github.com/sincely/vite6-electron-vue3/commit/f9eb334745c400c5e8ac5e72097637e039653ce6))
+* 添加项目许可证文件 ([ef2da51](https://github.com/sincely/vite6-electron-vue3/commit/ef2da512198c8fbc5f566eedbc6e8b5b802f597c))
+
+### 🔧 Chores
+
+* 删除许可证文件 ([8e34ed7](https://github.com/sincely/vite6-electron-vue3/commit/8e34ed7536db71782b7550accc6692002a64ba5f))
+* 更新 electron-builder 配置文件格式和发布说明 ([906480a](https://github.com/sincely/vite6-electron-vue3/commit/906480a6ffa3fd310b67428119408a819ec25e5c))
+* 添加检查构建配置的 npm 脚本 ([28ed749](https://github.com/sincely/vite6-electron-vue3/commit/28ed749b2366c5352f24b9138954b75453e13cd4))
+* 移除 autoprefixer 依赖及相关配置 ([846183d](https://github.com/sincely/vite6-electron-vue3/commit/846183d4a6e3c2219599eed82a9692bba1607558))
+* 移除未使用的 HTML 和 Inspect 插件，优化依赖项,更新 Node.js 集成注释，明确上下文隔离设置 ([96df858](https://github.com/sincely/vite6-electron-vue3/commit/96df85836c06fb0bb817acc948a8da56fe335477))
+* 精简构建配置，移除不必要的压缩选项以提高构建速度 ([211b715](https://github.com/sincely/vite6-electron-vue3/commit/211b715001742300b9ac810ebed2095effbdf9e4))
+
+### 🏭 Build System
+
+* 移除Windows安装包中的许可文件引用 ([a57f1f7](https://github.com/sincely/vite6-electron-vue3/commit/a57f1f72ae5626b96263872c543a4f93f672791f))
+
 ## [0.0.8](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.7...v0.0.8) (2026-03-09)
 
 ### ✨ Features
