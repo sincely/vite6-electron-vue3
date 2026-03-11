@@ -51,31 +51,36 @@ export const asyncRouteTree = [
       }
     ]
   },
-  //  配额
+  //  异常处理
   {
-    path: '/quota',
+    path: '/exception',
     component: Layout,
-    redirect: '/quota/usage',
-    meta: { title: '配额', icon: 'gauge', order: 2, sidebar: true },
+    redirect: '/exception/404',
+    meta: {
+      title: '异常处理',
+      icon: 'alert-triangle',
+      order: 3,
+      sidebar: true
+    },
     children: [
       {
-        path: 'usage',
-        name: 'quota-usage',
-        component: () => import('@/views/quota/usage/index.vue'),
+        path: '404',
+        name: 'exception-404',
+        component: () => import('@/views/exception/404/index.vue'),
         meta: {
-          title: '用量统计',
-          group: '/quota',
+          title: '404 未找到',
+          group: '/exception',
           keepAlive: true,
           transition: 'slide-up'
         }
       },
       {
-        path: 'limit',
-        name: 'quota-limit',
-        component: () => import('@/views/quota/limit/index.vue'),
+        path: '500',
+        name: 'exception-500',
+        component: () => import('@/views/exception/500/index.vue'),
         meta: {
-          title: '限额管理',
-          group: '/quota',
+          title: '500 服务器错误',
+          group: '/exception',
           keepAlive: true,
           transition: 'slide-up'
         }
@@ -105,43 +110,6 @@ export const asyncRouteTree = [
         name: 'log',
         component: () => import('@/views/log/index.vue'),
         meta: { title: '日志', transition: 'slide-up' }
-      }
-    ]
-  },
-  //  设置（底部固定）
-  {
-    path: '/settings',
-    component: Layout,
-    redirect: '/settings/general',
-    meta: {
-      title: '设置',
-      icon: 'settings',
-      order: 9,
-      sidebar: true,
-      footer: true
-    },
-    children: [
-      {
-        path: 'general',
-        name: 'settings-general',
-        component: () => import('@/views/settings/general/index.vue'),
-        meta: {
-          title: '常规',
-          group: '/settings',
-          keepAlive: true,
-          transition: 'blur'
-        }
-      },
-      {
-        path: 'advanced',
-        name: 'settings-advanced',
-        component: () => import('@/views/settings/advanced/index.vue'),
-        meta: {
-          title: '高级',
-          group: '/settings',
-          keepAlive: true,
-          transition: 'blur'
-        }
       }
     ]
   }

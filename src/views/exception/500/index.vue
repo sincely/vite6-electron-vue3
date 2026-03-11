@@ -1,6 +1,6 @@
 <template>
   <PagePlaceholder
-    icon="404"
+    icon="502"
     title="用量统计"
     description="这里将展示请求趋势、Token 消耗和成本分布报表。"
     color="#10b981"

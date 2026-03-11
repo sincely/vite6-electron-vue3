@@ -1,40 +1,9 @@
 <template>
-  <div class="page-placeholder">
-    <SvgIcon
-      icon-class="key"
-      width="32px"
-      height="32px"
-      class="page-placeholder-icon"
-    />
-    <p class="page-placeholder-title">API 密钥</p>
-    <p class="page-placeholder-desc">管理你的 API 访问密钥</p>
-  </div>
+  <PagePlaceholder
+    title="限额管理"
+    description="这里将设置额度阈值、告警规则和自动熔断策略。"
+    color="#f59e0b"
+  />
 </template>
 
-<style lang="scss" scoped>
-.page-placeholder {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--color-text-muted);
-
-  &-icon {
-    opacity: 0.4;
-  }
-
-  &-title {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-  }
-
-  &-desc {
-    margin: 0;
-    font-size: 13px;
-  }
-}
-</style>
+<script setup></script>

@@ -63,7 +63,6 @@
       <div
         class="user-profile"
         :class="{ 'user-profile-active': route.path.startsWith('/settings') }"
-        @click="router.push('/settings')"
       >
         <div class="user-avatar">
           <img
@@ -81,7 +80,16 @@
           class="user-settings-icon"
           width="18px"
           height="18px"
+          @click="handleSettingsClick"
         />
+        <!-- 底部设置项 -->
+        <div v-if="showSettings" class="sidebar-footer-settings">
+          <div v-for="item in actionList" :key="item.id">
+            <div class="sidebar-setting-item" @click="handleClick(item)">
+              <div class="sidebar-label">{{ item.label }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -98,9 +106,41 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
-
+const showSettings = ref(false)
 // 检测平台
 const isMac = ref(false)
+const actionList = ref([
+  {
+    id: 'settings',
+    label: '设置',
+    route: '/settings',
+    icon: 'settings'
+  },
+  {
+    id: 'about',
+    label: '关于',
+    route: '/about',
+    icon: 'about'
+  },
+  {
+    id: 'feedback',
+    label: '反馈',
+    route: '/feedback',
+    icon: 'feedback'
+  },
+  {
+    id: 'contact',
+    label: '联系我们',
+    route: '/contact',
+    icon: 'contact'
+  },
+  {
+    id: 'logout',
+    label: '退出登录',
+    route: '/logout',
+    icon: 'logout'
+  }
+])
 if (typeof process !== 'undefined' && process.platform) {
   isMac.value = process.platform === 'darwin'
 } else {
@@ -148,6 +188,25 @@ watch(
 const handleNav = (item) => {
   if (item.children?.length && !appStore.sidebarCollapsed) {
     toggleExpand(item.id)
+  } else {
+    router.push(item.route).catch(() => {})
+  }
+}
+
+// 处理设置点击
+const handleSettingsClick = () => {
+  showSettings.value = !showSettings.value
+}
+
+// 处理设置项点击
+const handleClick = (item) => {
+  showSettings.value = false // 关闭气泡菜单
+
+  if (item.id === 'settings') {
+    appStore.toggleSettings(true)
+  } else if (item.id === 'logout') {
+    userStore.logout()
+    router.push('/login').catch(() => {})
   } else {
     router.push(item.route).catch(() => {})
   }
@@ -471,9 +530,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     position: relative;
     z-index: 2;
     padding: 10px 8px;
-
-    // border-top: 1px solid
-    //   color-mix(in srgb, var(--glass-surface-border), transparent 15%);
   }
 
   .user-profile {
@@ -556,6 +612,36 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     .user-info,
     .user-settings-icon {
       display: none;
+    }
+  }
+
+  .sidebar-footer-settings {
+    position: absolute;
+    right: 8px;
+    bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 220px;
+    padding: 8px;
+    background-color: color-mix(in srgb, var(--glass-surface), transparent 22%);
+    border: 1px solid
+      color-mix(in srgb, var(--glass-surface-border), transparent 24%);
+    border-radius: var(--radius-lg);
+
+    .sidebar-setting-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      background: color-mix(in srgb, var(--glass-surface), transparent 22%);
+      border: 1px solid
+        color-mix(in srgb, var(--glass-surface-border), transparent 24%);
+      border-radius: 8px;
+      transition: all $transition;
+
+      &:hover {
+        background: color-mix(in srgb, var(--color-bg-hover), transparent 16%);
+        border-color: color-mix(in srgb, var(--brand-accent), transparent 74%);
+      }
     }
   }
 }

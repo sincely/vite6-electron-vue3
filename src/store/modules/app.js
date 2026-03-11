@@ -3,15 +3,20 @@ import { nextTick } from 'vue'
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    theme: 'light',
-    sidebarCollapsed: false,
-    loading: false,
-    loadingTargets: []
+    theme: 'light', // 当前主题，默认是亮色主题
+    sidebarCollapsed: false, // 侧边栏是否折叠
+    settingsVisible: false, // 设置弹窗是否可见
+    loading: false, // 是否显示加载中状态
+    loadingTargets: [] // 加载中状态的目标元素
   }),
   getters: {
     isDark: (state) => state.theme === 'dark'
   },
   actions: {
+    toggleSettings(visible) {
+      this.settingsVisible =
+        visible === undefined ? !this.settingsVisible : visible
+    },
     toggleTheme() {
       this.theme = this.theme === 'dark' ? 'light' : 'dark'
       document.documentElement.setAttribute('data-theme', this.theme)

@@ -15,9 +15,9 @@
       </button>
     </div>
     <div class="window-controls">
-      <!-- <button class="control-btn" @click="openSettings">
+      <button class="control-btn" @click="openSettings">
         <SvgIcon icon-class="settings" width="16px" height="16px" />
-      </button> -->
+      </button>
       <button class="control-btn" @click="minimizeWindow">
         <SvgIcon icon-class="minus" width="16px" height="16px" />
       </button>
@@ -30,7 +30,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useAppStore } from '@/store/modules/app'
 
+const appStore = useAppStore()
 const emit = defineEmits(['update:active-tab'])
 const activeTab = ref('account')
 
@@ -40,8 +42,7 @@ const switchTab = (tab) => {
 }
 
 const openSettings = () => {
-  // TODO: Implement settings logic
-  console.log('Open settings')
+  appStore.toggleSettings(true)
 }
 
 const minimizeWindow = () => {
