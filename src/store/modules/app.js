@@ -7,21 +7,43 @@ export const useAppStore = defineStore('app', {
     sidebarCollapsed: false, // 侧边栏是否折叠
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
-    loadingTargets: [] // 加载中状态的目标元素
+    loadingTargets: [], // 加载中状态的目标元素
+    autoLaunch: false // 开机自启
   }),
   getters: {
-    isDark: (state) => state.theme === 'dark'
+    isDark: (state) => state.theme === 'dark',
+    isAutoLaunch: (state) => state.autoLaunch
   },
   actions: {
+    // 切换设置弹窗可见性
     toggleSettings(visible) {
       this.settingsVisible =
         visible === undefined ? !this.settingsVisible : visible
     },
-    toggleTheme() {
-      this.theme = this.theme === 'dark' ? 'light' : 'dark'
-      document.documentElement.setAttribute('data-theme', this.theme)
+    // 切换开机自启
+    toggleAutoLaunch(autoLaunch) {
+      const newValue = autoLaunch === undefined ? !this.autoLaunch : autoLaunch
+      this.autoLaunch = newValue
+
+      // 通过 IPC 调用主进程方法设置开机自启
+      if (window.ipcRenderer) {
+        window.ipcRenderer.send('set-auto-launch', newValue)
+      }
     },
-    toggleThemeWithTransition(event) {
+    // 切换主题
+    toggleTheme() {
+      // 如果当前是 auto，切换到 light
+      if (this.theme === 'auto') {
+        this.setTheme('light')
+        return
+      }
+      // light -> dark -> auto -> light
+      const nextTheme = this.theme === 'light' ? 'dark' : 'auto'
+      this.setTheme(nextTheme)
+    },
+    // 切换主题时添加过渡动画
+    toggleThemeWithTransition(event, theme) {
+      // 检查是否支持视图过渡 API
       const canUseViewTransition =
         typeof document !== 'undefined' &&
         typeof document.startViewTransition === 'function' &&
@@ -32,8 +54,15 @@ export const useAppStore = defineStore('app', {
         return
       }
 
-      const root = document.documentElement
-      const isGoingDark = this.theme !== 'dark'
+      // 获取下一个主题状态
+      // let nextTheme = 'light'
+      // if (this.theme === 'light') nextTheme = 'dark'
+      // else if (this.theme === 'dark') nextTheme = 'auto'
+      let nextTheme = theme
+      if (this.theme === 'light') nextTheme = 'dark'
+      else if (this.theme === 'dark') nextTheme = 'auto'
+      // 计算是否变暗（auto 模式下可能需要判断系统主题，这里简化处理）
+      const isGoingDark = nextTheme === 'dark'
 
       const point = (() => {
         const x = event?.clientX
@@ -63,6 +92,7 @@ export const useAppStore = defineStore('app', {
         `circle(${endRadius}px at ${point.x}px ${point.y}px)`
       ]
 
+      const root = document.documentElement
       root.classList.add('theme-vt')
       root.classList.toggle('theme-vt-to-dark', isGoingDark)
       root.classList.toggle('theme-vt-to-light', !isGoingDark)
@@ -70,7 +100,7 @@ export const useAppStore = defineStore('app', {
       let transition
       try {
         transition = document.startViewTransition(async () => {
-          this.toggleTheme()
+          this.setTheme(nextTheme)
           await nextTick()
         })
       } catch {
@@ -79,7 +109,7 @@ export const useAppStore = defineStore('app', {
           'theme-vt-to-dark',
           'theme-vt-to-light'
         )
-        this.toggleTheme()
+        this.setTheme(nextTheme)
         return
       }
 
@@ -107,16 +137,61 @@ export const useAppStore = defineStore('app', {
       }
       transition.finished.then(cleanup, cleanup)
     },
+    // 设置主题
     setTheme(theme) {
       this.theme = theme
-      document.documentElement.setAttribute('data-theme', theme)
+
+      let effectiveTheme = theme
+      if (theme === 'auto') {
+        // 如果是自动模式，检测系统偏好
+        const isSystemDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches
+        effectiveTheme = isSystemDark ? 'dark' : 'light'
+
+        // 监听系统主题变化
+        if (!this._systemThemeListener) {
+          this._systemThemeListener = (e) => {
+            if (this.theme === 'auto') {
+              const newTheme = e.matches ? 'dark' : 'light'
+              document.documentElement.setAttribute('data-theme', newTheme)
+              if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark')
+              } else {
+                document.documentElement.classList.remove('dark')
+              }
+            }
+          }
+          window
+            .matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', this._systemThemeListener)
+        }
+      } else {
+        // 移除监听器
+        if (this._systemThemeListener) {
+          window
+            .matchMedia('(prefers-color-scheme: dark)')
+            .removeEventListener('change', this._systemThemeListener)
+          this._systemThemeListener = null
+        }
+      }
+
+      document.documentElement.setAttribute('data-theme', effectiveTheme)
+      if (effectiveTheme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
     },
+    // 初始化主题
     initTheme() {
-      document.documentElement.setAttribute('data-theme', this.theme)
+      this.setTheme(this.theme)
     },
+    // 切换侧边栏折叠状态
     toggleSidebar() {
       this.sidebarCollapsed = !this.sidebarCollapsed
     },
+    // 设置侧边栏折叠状态
     setSidebarCollapsed(val) {
       this.sidebarCollapsed = val
     },
@@ -145,10 +220,12 @@ export const useAppStore = defineStore('app', {
     },
     // 重置应用状态
     resetAppState() {
-      this.theme = 'light'
-      this.sidebarCollapsed = false
+      // this.theme = 'light'
+      // this.sidebarCollapsed = false
       this.loading = false
       this.clearLoadingTargets()
+      this.settingsVisible = false
+      // this.autoLaunch = false
     }
   },
   persist: true

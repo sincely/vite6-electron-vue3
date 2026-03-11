@@ -56,7 +56,7 @@
                           跟随系统启动自动运行应用程序
                         </span>
                       </div>
-                      <el-switch v-model="form.autoLaunch" />
+                      <el-switch v-model="autoLaunch" />
                     </div>
                     <div class="setting-item">
                       <div class="item-info">
@@ -97,7 +97,9 @@
                       <div
                         class="theme-card"
                         :class="{ active: appStore.theme === 'light' }"
-                        @click="appStore.toggleThemeWithTransition"
+                        @click="
+                          appStore.toggleThemeWithTransition($event, 'light')
+                        "
                       >
                         <div class="theme-preview light">
                           <div class="preview-sidebar"></div>
@@ -111,7 +113,9 @@
                       <div
                         class="theme-card"
                         :class="{ active: appStore.theme === 'dark' }"
-                        @click="appStore.toggleThemeWithTransition"
+                        @click="
+                          appStore.toggleThemeWithTransition($event, 'dark')
+                        "
                       >
                         <div class="theme-preview dark">
                           <div class="preview-sidebar"></div>
@@ -122,7 +126,13 @@
                         </div>
                         <span class="theme-label">深色</span>
                       </div>
-                      <div class="theme-card disabled">
+                      <div
+                        class="theme-card"
+                        :class="{ active: appStore.theme === 'auto' }"
+                        @click="
+                          appStore.toggleThemeWithTransition($event, 'auto')
+                        "
+                      >
                         <div class="theme-preview auto">
                           <div class="preview-split"></div>
                         </div>
@@ -190,7 +200,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAppStore } from '@/store/modules/app'
-// import pkg from '../../../package.json'
+import pkg from '../../../package.json'
 
 const appStore = useAppStore()
 const visible = computed({
@@ -198,11 +208,18 @@ const visible = computed({
   set: (val) => appStore.toggleSettings(val)
 })
 
-const appVersion = '11'
+const autoLaunch = computed({
+  get: () => appStore.isAutoLaunch,
+  set: (val) => appStore.toggleAutoLaunch(val)
+})
+
+console.log(visible.value)
+
+const appVersion = pkg.version
 
 const tabs = [
   { id: 'general', label: '常规设置', icon: 'settings' },
-  { id: 'appearance', label: '外观显示', icon: 'monitor' },
+  { id: 'appearance', label: '外观显示', icon: 'appearance' },
   { id: 'about', label: '关于软件', icon: 'info' }
 ]
 
@@ -394,7 +411,6 @@ const handleClose = () => {
   padding: 16px;
   margin-bottom: 12px;
   background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
   border-radius: 12px;
   transition: border-color 0.2s;
 

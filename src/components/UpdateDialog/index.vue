@@ -217,7 +217,9 @@ let onError = null
 
 onMounted(() => {
   onProgress = (_, progress) => {
-    updateStore.setDownloadProgress(progress.percent ?? 0)
+    setTimeout(() => {
+      updateStore.setDownloadProgress(progress.percent ?? 0)
+    }, 300)
   }
   onDownloaded = () => {
     updateStore.setUpdating(false)

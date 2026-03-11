@@ -618,7 +618,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   .sidebar-footer-settings {
     position: absolute;
     right: 8px;
-    bottom: 60px;
+    bottom: 70px;
     display: flex;
     flex-direction: column;
     gap: 4px;

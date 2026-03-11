@@ -63,7 +63,12 @@
         <button
           class="icon-btn"
           title="切换主题"
-          @click="appStore.toggleThemeWithTransition($event)"
+          @click="
+            appStore.toggleThemeWithTransition(
+              $event,
+              isDark ? 'light' : 'dark'
+            )
+          "
         >
           <SvgIcon
             :icon-class="appStore.isDark ? 'sun' : 'moon'"
@@ -110,6 +115,8 @@ const showUpdateDialog = () => {
 const handleNotice = () => {
   noticeStore.togglePanel()
 }
+
+const isDark = computed(() => appStore.isDark)
 
 const reload = () => location.reload()
 const minimize = () => ipcRenderer.send('minimize-window')

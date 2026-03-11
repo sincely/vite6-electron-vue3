@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage } from 'electron'
+import { app, BrowserWindow, nativeImage, nativeTheme } from 'electron'
 import os from 'node:os'
 import path from 'node:path'
 import { registerIpc } from '../ipc'
@@ -42,6 +42,17 @@ app.whenReady().then(() => {
   createLoginWindow()
   // 创建托盘图标
   createTray()
+
+  // 监听系统主题变化
+  nativeTheme.on('updated', () => {
+    const allWindows = BrowserWindow.getAllWindows()
+    allWindows.forEach((win) => {
+      win.webContents.send(
+        'system-theme-updated',
+        nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
+      )
+    })
+  })
 })
 
 // 当应用准备退出时

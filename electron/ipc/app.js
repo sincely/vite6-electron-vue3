@@ -27,6 +27,19 @@ export default [
     }
   },
   {
+    channel: 'set-auto-launch',
+    type: 'on',
+    handler: (event, enable) => {
+      // 生产环境下设置开机自启
+      if (app.isPackaged) {
+        app.setLoginItemSettings({
+          openAtLogin: enable,
+          openAsHidden: false
+        })
+      }
+    }
+  },
+  {
     channel: 'get-app-version',
     type: 'handle',
     handler: () => {

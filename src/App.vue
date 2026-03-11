@@ -4,7 +4,7 @@
     <div v-else class="app-container">
       <router-view />
     </div>
-    <SettingsDialog />
+    <setting-dialog />
   </div>
 </template>
 
