@@ -163,8 +163,7 @@ const tableData = [
   }
 ]
 
-const tableRowClassName = ({ row, rowIndex }) => {
-  console.log(rowIndex)
+const tableRowClassName = ({ rowIndex }) => {
   if (rowIndex === 1) {
     return 'warning-row'
   } else if (rowIndex === 3) {

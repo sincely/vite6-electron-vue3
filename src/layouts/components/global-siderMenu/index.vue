@@ -8,7 +8,7 @@
 
     <!-- 主导航 -->
     <nav class="sidebar-nav">
-      <template v-for="item in mainItems" :key="item.id">
+      <div v-for="item in mainItems" :key="item.id">
         <!-- 顶级菜单项 -->
         <a
           class="sidebar-item"
@@ -44,26 +44,25 @@
               !appStore.sidebarCollapsed && isExpanded(item.id)
           }"
         >
-          <a
-            v-for="child in item.children"
-            :key="child.id"
-            class="sidebar-item sidebar-item-child"
-            :class="{ 'sidebar-item-active': isChildActive(child) }"
-            @click="router.push(child.route).catch(() => {})"
-          >
-            <span class="sidebar-child-dot" />
-            <span class="sidebar-label">{{ child.label }}</span>
-          </a>
+          <div class="sidebar-submenu-inner">
+            <a
+              v-for="child in item.children"
+              :key="child.id"
+              class="sidebar-item sidebar-item-child"
+              :class="{ 'sidebar-item-active': isChildActive(child) }"
+              @click="router.push(child.route)"
+            >
+              <span class="sidebar-child-dot" />
+              <span class="sidebar-label">{{ child.label }}</span>
+            </a>
+          </div>
         </div>
-      </template>
+      </div>
     </nav>
 
     <!-- 底部用户信息区 -->
     <div class="sidebar-footer">
-      <div
-        class="user-profile"
-        :class="{ 'user-profile-active': route.path.startsWith('/settings') }"
-      >
+      <div class="user-profile">
         <div class="user-avatar">
           <img
             src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
@@ -461,24 +460,44 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   }
 
   &-submenu {
-    max-height: 0;
-    margin: -2px 6px 6px;
+    display: grid;
+    grid-template-rows: 0fr;
+    margin: 0 6px;
     overflow: hidden;
+    background: transparent;
     border: 1px solid transparent;
     border-radius: 12px;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      margin 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.35s ease,
+      border-color 0.35s ease;
+  }
+
+  &-submenu-inner {
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   &-submenu-open {
     position: relative;
-    max-height: 240px;
+    grid-template-rows: 1fr;
     padding: 4px;
+    margin: -2px 6px 6px;
     background: color-mix(in srgb, var(--glass-surface), transparent 18%);
     border-color: color-mix(
       in srgb,
       var(--glass-surface-border),
       transparent 36%
     );
+
+    .sidebar-submenu-inner {
+      opacity: 1;
+      transition-delay: 0.1s;
+    }
 
     &::before {
       position: absolute;
@@ -493,6 +512,14 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
         transparent 100%
       );
       border-radius: 1px;
+      opacity: 0;
+      animation: fadeIn 0.3s ease 0.1s forwards;
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
     }
   }
 
