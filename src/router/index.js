@@ -34,7 +34,7 @@ export const asyncRouteTree = [
     component: Layout,
     meta: {
       title: '仪表板',
-      icon: 'layout-dashboard',
+      icon: 'home',
       order: 1,
       sidebar: true
     },
