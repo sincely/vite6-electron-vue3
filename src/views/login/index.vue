@@ -50,7 +50,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
 import CustomTitleBar from './components/CustomTitleBar.vue'
 import AccountLogin from './components/AccountLogin.vue'
 import QRCodeLogin from './components/QRCodeLogin.vue'

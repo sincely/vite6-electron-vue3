@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
 import { ElProgress, ElCard, ElButton } from 'element-plus'
 

@@ -25,7 +25,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { isMac } from '@/utils/platform'
 

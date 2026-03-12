@@ -136,7 +136,6 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
 import { useDraggable } from '@vueuse/core'
 const updateStore = useUpdateStore()

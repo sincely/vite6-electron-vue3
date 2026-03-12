@@ -60,7 +60,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import QRCode from 'qrcode'
 
 const referralCode = ref('sadasq2e1q2ee3232332')

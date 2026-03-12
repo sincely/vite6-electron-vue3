@@ -56,7 +56,6 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
 import { Iphone, Lock } from '@element-plus/icons-vue'
 
 const ruleFormRef = ref()

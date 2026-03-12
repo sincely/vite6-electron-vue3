@@ -198,7 +198,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import pkg from '../../../package.json'
 

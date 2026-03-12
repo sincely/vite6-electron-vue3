@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import { ref, nextTick, provide } from 'vue'
 import GlobalSider from './components/global-siderMenu/index.vue'
 import GlobalHeader from './components/global-header/index.vue'
 import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'

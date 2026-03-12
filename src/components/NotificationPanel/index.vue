@@ -91,7 +91,6 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
 import { useNotificationStore } from '@/store/modules/notification'
 
 const props = defineProps({

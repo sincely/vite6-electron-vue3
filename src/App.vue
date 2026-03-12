@@ -9,8 +9,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useUpdater } from '@/core/update'
 import { useNetwork } from '@/hooks/useNetwork'
 

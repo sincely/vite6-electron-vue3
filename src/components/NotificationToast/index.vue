@@ -45,7 +45,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useNotificationStore } from '@/store/modules/notification'
 
 const DURATION = 4000 // 自动消失时间 ms
