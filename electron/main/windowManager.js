@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, screen } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -84,11 +84,19 @@ const loadHash = (win, hash) => {
   // 开发环境使用 loadURL 加载 Vite 开发服务器
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL)
+    // win.webContents.openDevTools()
   } else {
     // 生产环境使用 loadFile 加载本地文件
     // hash 直接通过 options 传递，Electron 会自动处理
     win.loadFile(indexHtml, hash ? { hash } : {})
   }
+
+  // 监听键盘事件，F12 打开开发者工具
+  win.webContents.on('before-input-event', (_event, input) => {
+    if (input.key === 'F12') {
+      win?.webContents.toggleDevTools()
+    }
+  })
 }
 
 // 获取主窗口
@@ -162,17 +170,21 @@ export function createMainWindow() {
       return win
     }
   }
-
+  // 获取屏幕尺寸
+  const { width: screenWidth, height: screenHeight } =
+    screen.getPrimaryDisplay().workAreaSize
+  // 计算窗口大小，默认为屏幕的 80%
+  const windowWidth = Math.floor(screenWidth * 0.8)
+  const windowHeight = Math.floor(screenHeight * 0.8)
   const win = new BrowserWindow({
-    width: 1280,
-    height: 880,
+    width: windowWidth,
+    height: windowHeight,
     minWidth: 800,
     minHeight: 600,
     icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,
-    // 1. 隐藏原生标题栏
-    titleBarStyle: 'hidden',
+    titleBarStyle: 'hidden', // 隐藏原生标题栏
     resizable: true,
     center: true,
     webPreferences: {
@@ -203,10 +215,7 @@ export function createMainWindow() {
   loadHash(win, 'desktop')
   setupWindow(win)
 
-  // 开发环境自动打开开发者工具
-  if (VITE_DEV_SERVER_URL) win.webContents.openDevTools()
-
-  // 点击关闭按钮时默认最小化到托盘，避免直接退出
+  // 点击关闭按钮时默认最小化到托盘，避免直接退出应用
   win.on('close', (event) => {
     if (!app.isQuiting) {
       event.preventDefault()
