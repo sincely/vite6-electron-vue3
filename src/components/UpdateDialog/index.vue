@@ -2,7 +2,7 @@
   <Teleport to="body">
     <Transition name="update-dialog">
       <div v-if="visible" class="update-overlay" @click.self="handleLater">
-        <div class="update-dialog">
+        <div ref="dialogRef" class="update-dialog" :style="style">
           <!-- 顶部装饰光晕 -->
           <div class="update-dialog__glow" aria-hidden="true" />
 
@@ -136,10 +136,19 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
-
+import { useDraggable } from '@vueuse/core'
 const updateStore = useUpdateStore()
+
+const dialogRef = ref(null)
+const { style } = useDraggable(dialogRef, {
+  initialValue: {
+    x: window.innerWidth / 2 - 200, // 220 是宽度的一半 (440/2)
+    y: window.innerHeight / 2 - 200 // 200 是预估高度的一半
+  },
+  containerElement: document.body
+})
 
 const visible = computed(() => updateStore.dialogVisible)
 const latestVersion = computed(() => updateStore.latestVersion)
@@ -255,7 +264,9 @@ onUnmounted(() => {
 }
 
 .update-dialog {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 440px;
   overflow: hidden;
   background: var(--glass-surface);
@@ -286,6 +297,7 @@ onUnmounted(() => {
     gap: 14px;
     align-items: flex-start;
     padding: 24px 24px 0;
+    cursor: move;
   }
 
   &__title-group {
