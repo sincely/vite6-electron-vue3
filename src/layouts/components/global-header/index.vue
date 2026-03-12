@@ -99,12 +99,13 @@
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
+import { isMac } from '@/utils/platform'
+
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
 const noticeStore = useNotificationStore()
 
 const latestVersion = computed(() => updateStore.latestVersion)
-const isMac = computed(() => window.process?.platform === 'darwin')
 const updateAvailable = computed(() => updateStore.updateAvailable)
 const bellBtnRef = ref(null)
 

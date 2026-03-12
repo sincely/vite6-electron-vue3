@@ -12,15 +12,8 @@
 
 <script setup>
 import { useAppStore } from '@/store/modules/app'
-
+import { isMac } from '@/utils/platform'
 const appStore = useAppStore()
-
-const isMac = ref(false)
-if (typeof process !== 'undefined' && process.platform) {
-  isMac.value = process.platform === 'darwin'
-} else {
-  isMac.value = navigator.platform.toLowerCase().includes('mac')
-}
 </script>
 
 <style lang="scss" scoped>

@@ -101,14 +101,14 @@ import { useUserStore } from '@/store/modules/user'
 import { useRouter, useRoute } from 'vue-router'
 import { menuItems } from '@/config/menu'
 import GlobalLogo from '../global-logo/index.vue'
+import { isMac } from '@/utils/platform'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 const showSettings = ref(false)
-// 检测平台
-const isMac = ref(false)
+
 const actionList = ref([
   {
     id: 'settings',
@@ -141,12 +141,6 @@ const actionList = ref([
     icon: 'logout'
   }
 ])
-if (typeof process !== 'undefined' && process.platform) {
-  isMac.value = process.platform === 'darwin'
-} else {
-  isMac.value = navigator.platform.toLowerCase().indexOf('mac') >= 0
-}
-
 // 按footer字段拆分为主导航（排除底部固定的设置项）
 const mainItems = menuItems.filter((item) => !item.footer)
 

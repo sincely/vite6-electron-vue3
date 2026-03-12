@@ -14,10 +14,10 @@
       <button class="control-btn" @click="openSettings">
         <SvgIcon icon-class="settings" width="16px" height="16px" />
       </button>
-      <button class="control-btn" @click="minimizeWindow">
+      <button v-if="!isMac" class="control-btn" @click="minimizeWindow">
         <SvgIcon icon-class="minus" width="16px" height="16px" />
       </button>
-      <button class="control-btn close-btn" @click="closeWindow">
+      <button v-if="!isMac" class="control-btn close-btn" @click="closeWindow">
         <SvgIcon icon-class="close" width="16px" height="16px" />
       </button>
     </div>
@@ -27,6 +27,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAppStore } from '@/store/modules/app'
+import { isMac } from '@/utils/platform'
 
 const appStore = useAppStore()
 const emit = defineEmits(['update:active-tab'])
@@ -73,7 +74,8 @@ const closeWindow = () => {
   width: 100%;
   height: 50px;
   padding: 0 10px;
-  background-color: transparent;
+
+  // background-color: transparent;
 
   // 虚线
   border-bottom: 1px solid var(--color-border);

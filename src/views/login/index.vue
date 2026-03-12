@@ -131,13 +131,13 @@ const updateActiveTab = (tab) => {
 .login-card {
   display: flex;
   flex-direction: column;
-  width: 400px;
-  height: 620px;
-  padding: 15px;
+  width: 360px;
+  height: 500px;
+  padding: 24px 28px;
   background: var(--glass-surface);
   backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-surface-border);
-  border-radius: 24px;
+  border: 0.5px solid var(--glass-surface-border);
+  border-radius: 16px;
   box-shadow:
     0 25px 50px -12px rgb(0 0 0 / 15%),
     0 0 0 1px rgb(255 255 255 / 10%) inset;
@@ -156,33 +156,33 @@ const updateActiveTab = (tab) => {
 
   .logo-wrapper {
     display: inline-flex;
-    padding: 12px;
-    margin-bottom: 16px;
+    padding: 8px;
+    margin-bottom: 10px;
     background: linear-gradient(
       135deg,
       var(--color-bg-card),
       var(--color-bg-hover)
     );
-    border-radius: 20px;
+    border-radius: 12px;
     box-shadow: var(--shadow-sm);
 
     .app-logo {
-      width: 48px;
-      height: 48px;
+      width: 32px;
+      height: 32px;
     }
   }
 
   .app-title {
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 800;
     color: var(--color-text-primary);
     letter-spacing: -0.5px;
   }
 
   .app-subtitle {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--color-text-secondary);
   }
 }
@@ -190,13 +190,13 @@ const updateActiveTab = (tab) => {
 .login-tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   border-bottom: 1px solid var(--color-border);
 
   .tab-item {
     position: relative;
-    padding: 12px 24px;
-    font-size: 15px;
+    padding: 8px 16px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--color-text-muted);
     cursor: pointer;

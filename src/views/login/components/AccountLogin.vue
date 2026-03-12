@@ -44,10 +44,8 @@
 
       <el-form-item class="submit-item">
         <el-button
-          type="primary"
           :class="{ 'submit-btn': true, 'is-loading': loading }"
           :loading="loading"
-          :disabled="!isInput"
           @click="submitForm(ruleFormRef)"
         >
           {{ loading ? '登录中...' : '登 录' }}
@@ -114,17 +112,18 @@ const isInput = computed(() => {
 <style lang="scss" scoped>
 .account-login-form {
   width: 100%;
+  height: 100%;
   padding: 0 16px;
   animation: fade-up 0.4s ease-out;
 }
 
 .login-form {
   :deep(.el-form-item) {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   :deep(.el-form-item__label) {
-    padding-bottom: 8px;
+    padding-bottom: 6px;
     font-size: 13px;
     font-weight: 600;
     color: var(--color-text-secondary);
@@ -133,10 +132,10 @@ const isInput = computed(() => {
 
 .custom-input {
   :deep(.el-input__wrapper) {
-    height: 48px;
-    padding: 0 16px;
+    height: 44px;
+    padding: 0 14px;
     background-color: var(--color-bg-input);
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 0 0 1px var(--color-border) inset;
     transition: all 0.2s ease;
 
@@ -184,8 +183,8 @@ const isInput = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: -8px;
-  margin-bottom: 24px;
+  margin-top: -6px;
+  margin-bottom: 20px;
 
   :deep(.el-checkbox__label) {
     color: var(--color-text-secondary);
@@ -210,36 +209,14 @@ const isInput = computed(() => {
 
 .submit-btn {
   width: 100%;
-  height: 48px;
-  font-size: 16px;
+  height: 40px;
+  font-size: 15px;
   font-weight: 600;
+  color: aliceblue;
   letter-spacing: 1px;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--brand-accent-alt)
-  );
+  background: #007bff;
   border: none;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px -6px
-    color-mix(in srgb, var(--color-primary), transparent 40%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:hover:not(:disabled) {
-    box-shadow: 0 12px 24px -8px
-      color-mix(in srgb, var(--color-primary), transparent 30%);
-    transform: translateY(-2px);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &.is-disabled {
-    background: var(--color-bg-active);
-    border: 1px solid var(--color-border);
-    opacity: 0.6;
-  }
+  border-radius: 10px;
 }
 
 @keyframes fade-up {
