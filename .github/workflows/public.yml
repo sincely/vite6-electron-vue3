@@ -11,7 +11,7 @@ on:
         options: [patch, minor, major, alpha, beta]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22.20.0'
 
 jobs:
   build:
