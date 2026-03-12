@@ -137,7 +137,7 @@
 
 <script setup>
 import { useUpdateStore } from '@/store/modules/version'
-import { useDraggable } from '@vueuse/core'
+// import { useDraggable } from '@vueuse/core'
 const updateStore = useUpdateStore()
 
 const dialogRef = ref(null)

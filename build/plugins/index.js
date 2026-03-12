@@ -8,8 +8,6 @@ import mock from './mock' // mock
  * @param isBuild - 是否编译
  */
 export default function createVitePlugins(viteEnv, isBuild = false) {
-  // Electron uses modern Chromium, so legacy bundles are opt-in only.
-  const enableLegacyBuild = viteEnv.VITE_USE_LEGACY === 'true'
   const vitePlugins = [vue(), mock(viteEnv), ...unplugin(), svgIconPlugin()]
   return vitePlugins
 }

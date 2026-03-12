@@ -32,12 +32,12 @@ const isFocused = ref(false)
   display: flex;
   gap: 7px;
   align-items: center;
-  min-width: 130px;
-  max-width: 220px;
+  min-width: 140px;
+  max-width: 240px;
   height: 30px;
   padding: 0 10px;
   background: color-mix(in srgb, var(--color-bg-input), transparent 30%);
-  border: 1px solid color-mix(in srgb, var(--color-border), transparent 45%);
+  border: 1px solid color-mix(in srgb, var(--color-border), transparent 35%);
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
   -webkit-app-region: no-drag;

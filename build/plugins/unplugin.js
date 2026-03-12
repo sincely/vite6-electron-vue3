@@ -4,7 +4,8 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default function createVitePlugins() {
   return [
     AutoImport({
-      imports: ['vue', 'vue-router', 'pinia'],
+      imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
+      include: [/\.[tj]sx?$/, /\.vue$/], // 匹配的文件，也就是哪些后缀的文件需要自动引入
       resolvers: [
         // 自动引入修改主题色添加这一行，使用预处理样式，不添加将会导致使用ElMessage，ElNotification等组件时默认的主题色会覆盖自定义的主题色
         ElementPlusResolver({ importStyle: 'sass' })
