@@ -20,7 +20,7 @@
       </template>
     </PageHeader>
 
-    <advance-table :data="tableData">
+    <AdvanceTable :data="tableData">
       <el-table-column prop="date" label="时间" width="180" sortable>
         <template #default="{ row }">
           <span class="date-cell">{{ row.date }}</span>
@@ -52,15 +52,74 @@
           ></div>
         </template>
       </el-table-column>
-    </advance-table>
+      <el-table-column label="操作" width="100" align="center">
+        <template #default="{ row }">
+          <el-button
+            type="primary"
+            link
+            size="small"
+            @click="handleDetail(row)"
+          >
+            查看
+          </el-button>
+        </template>
+      </el-table-column>
+    </AdvanceTable>
+
+    <!-- 详情弹窗 -->
+    <ModalDialog
+      v-model="dialogVisible"
+      title="日志详情"
+      subtitle="查看完整的操作日志信息"
+      icon="document"
+      width="600px"
+    >
+      <div v-if="currentRow" class="detail-content">
+        <div class="detail-item">
+          <span class="label">操作时间</span>
+          <span class="value">{{ currentRow.date }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">操作人员</span>
+          <div class="user-value">
+            <div class="user-avatar-sm">{{ currentRow.name.charAt(0) }}</div>
+            <span>{{ currentRow.name }}</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <span class="label">日志类型</span>
+          <span class="status-pill type-pill">系统操作</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">操作内容</span>
+          <span class="value">{{ currentRow.address }}</span>
+        </div>
+        <div class="detail-item full">
+          <span class="label">原始数据</span>
+          <pre class="code-block">{{
+            JSON.stringify(currentRow, null, 2)
+          }}</pre>
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="dialogVisible = false">关闭</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          导出记录
+        </el-button>
+      </template>
+    </ModalDialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
+import PageHeader from '@/components/PageHeader/index.vue'
+import ModalDialog from '@/components/ModalDialog/index.vue'
 
 const searchKeyword = ref('')
+
+const currentRow = ref(null)
 
 const tableData = [
   {
@@ -164,6 +223,13 @@ const tableData = [
     address: '重置了用户 User 的密码'
   }
 ]
+
+const dialogVisible = ref(false)
+
+const handleDetail = (row) => {
+  dialogVisible.value = true
+  currentRow.value = row
+}
 </script>
 
 <style lang="scss" scoped>
@@ -260,8 +326,84 @@ const tableData = [
 
   &.warning {
     background-color: var(--color-warning);
-    box-shadow: 0 0 0 2px
-      color-mix(in srgb, var(--color-warning), transparent 80%);
+    box-shadow: 0 0 10px
+      color-mix(in srgb, var(--color-warning), transparent 40%);
   }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+/* Detail Dialog */
+.detail-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full {
+    grid-column: span 2;
+  }
+
+  .label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  .value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+}
+
+.user-value {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.user-avatar-sm {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--brand-accent)
+  );
+  border-radius: 50%;
+}
+
+.code-block {
+  padding: 12px;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-bg-card), transparent 50%);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
 }
 </style>
