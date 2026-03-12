@@ -8,7 +8,7 @@ log.initialize()
 const installPath = path.dirname(app.getPath('exe'))
 
 // 设置日志文件路径到安装路径
-log.transports.file.resolvePath = () =>
+log.transports.file.resolvePathFn = () =>
   path.join(installPath + '/logs', 'app.log')
 
 log.transports.console.level = 'debug' // 控制台输出的日志等级
