@@ -3,7 +3,7 @@
     <CustomTitleBar class="login-titlebar" />
 
     <div class="login-content">
-      <div class="login-card glass-effect">
+      <div class="login-card">
         <!-- Logo / Branding Area -->
         <div class="login-header">
           <div class="logo-wrapper">
@@ -41,9 +41,9 @@
         </div>
 
         <!-- Footer / Copyright -->
-        <!-- <div class="login-footer">
+        <div class="login-footer">
           <span>© 2024 Lightning Inc.</span>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -124,7 +124,6 @@ const updateActiveTab = (tab) => {
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding-bottom: 40px; // Visual balance
 }
 
 .login-card {
@@ -132,21 +131,6 @@ const updateActiveTab = (tab) => {
   flex-direction: column;
   width: 360px;
   height: 500px;
-  padding: 24px 28px;
-  background: var(--glass-surface);
-  backdrop-filter: blur(24px);
-  border: 0.5px solid var(--glass-surface-border);
-  border-radius: 16px;
-  box-shadow:
-    0 25px 50px -12px rgb(0 0 0 / 15%),
-    0 0 0 1px rgb(255 255 255 / 10%) inset;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.glass-effect {
-  background: color-mix(in srgb, var(--color-bg-card), transparent 20%);
 }
 
 .login-header {
@@ -166,8 +150,8 @@ const updateActiveTab = (tab) => {
     box-shadow: var(--shadow-sm);
 
     .app-logo {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
     }
   }
 

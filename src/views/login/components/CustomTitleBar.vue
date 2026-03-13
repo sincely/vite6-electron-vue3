@@ -11,7 +11,7 @@
       </button>
     </div>
     <div class="window-controls">
-      <button class="control-btn" @click="openSettings">
+      <button v-if="false" class="control-btn" @click="openSettings">
         <SvgIcon icon-class="settings" width="16px" height="16px" />
       </button>
       <button v-if="!isMac" class="control-btn" @click="minimizeWindow">
@@ -47,7 +47,8 @@ const actionTab = ref([
   },
   {
     label: '扫码登录',
-    value: 'qrcode'
+    value: 'qrcode',
+    active: true
   }
 ])
 
@@ -72,9 +73,10 @@ const closeWindow = () => {
   justify-content: center;
   width: 100%;
   height: 50px;
-  padding: 0 10px;
 
-  // background-color: transparent;
+  // padding: 0 10px;
+
+  background-color: transparent;
 
   // 虚线
   border-bottom: 1px solid var(--color-border);
