@@ -31,7 +31,11 @@ export default defineConfig(({ mode, command }) => {
     base: viteEnv.VITE_BASE_URL,
     server: {
       port: 3200, // 指定服务器端口
-      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined
+      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined,
+      headers: {
+        'Content-Security-Policy':
+          "default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; connect-src 'self' blob: data: https://unpkg.com http://localhost:3200 http://localhost:3000;"
+      }
     },
     build: {
       // 传递给Terser的更多 minify 选项。

@@ -1,8 +1,8 @@
-import 'nprogress/nprogress.css'
+// import 'nprogress/nprogress.css'
 
 import axios from 'axios'
 import md5 from 'md5'
-import NProgress from 'nprogress'
+// import NProgress from 'nprogress'
 
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
@@ -61,7 +61,7 @@ export const clearRequestQueue = () => {
 const baseURL =
   process.env.NODE_ENV === 'production'
     ? import.meta.env.VITE_API_BASE_URL
-    : import.meta.env.VITE_API_BASE_URL
+    : 'http://localhost:3200'
 
 // 创建 axios 实例
 const service = axios.create({
@@ -85,7 +85,7 @@ service.interceptors.request.use(
     }
 
     // 启动进度条
-    NProgress.start()
+    // NProgress.start()
     // 添加请求到队列，防止重复请求
     removePendingRequest(config)
     addRequestToQueue(config)
@@ -102,7 +102,7 @@ service.interceptors.request.use(
   },
   (error) => {
     // 关闭进度条
-    NProgress.done()
+    // NProgress.done()
     return Promise.reject(error)
   }
 )
@@ -134,7 +134,9 @@ service.interceptors.response.use(
       return response.data
     }
 
-    const { code, data, message } = response.data
+    console.log('response响应体', response)
+
+    const { code, result, message } = response.data
 
     // 业务逻辑错误
     if (code !== 0 && code !== 200) {
@@ -157,11 +159,11 @@ service.interceptors.response.use(
     //   }
     //   localStorage.setItem(`http_cache_${cacheKey}`, JSON.stringify(cacheData))
     // }
-    return data
+    return result
   },
   (error) => {
     // 关闭进度条
-    NProgress.done()
+    // NProgress.done()
     const appStore = useAppStore()
     const userStore = useUserStore()
 

@@ -64,10 +64,7 @@
     <div class="sidebar-footer">
       <div class="user-profile">
         <div class="user-avatar">
-          <img
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-            alt="avatar"
-          />
+          <SvgIcon icon-class="user" width="26px" height="26px" />
         </div>
         <div class="user-info">
           <div class="user-name">{{ userStore.name }}</div>

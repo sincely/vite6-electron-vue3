@@ -19,51 +19,51 @@
         </el-button>
       </template>
     </PageHeader>
+    <!-- 搜索栏 -->
+    <DynamicSearchBar
+      :items="searchItems"
+      :params="searchParams"
+      @query="handleQuery"
+      @reset="handleReset"
+    />
+    <!-- 表格 -->
+    <AdvanceTable
+      ref="tableRef"
+      :columns="columns"
+      :func="getTableList"
+      :params="searchParams"
+    >
+      <template #date="{ row }">
+        <span class="date-cell">{{ row.date }}</span>
+      </template>
 
-    <AdvanceTable :data="tableData">
-      <el-table-column prop="date" label="时间" width="180" sortable>
-        <template #default="{ row }">
-          <span class="date-cell">{{ row.date }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="name" label="操作人" width="180" sortable>
-        <template #default="{ row }">
-          <div class="user-cell">
-            <div class="user-avatar">{{ row.name.charAt(0) }}</div>
-            <span>{{ row.name }}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="type" label="类型" width="120">
-        <template #default>
-          <span class="status-pill type-pill">系统操作</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="address" label="详情信息" show-overflow-tooltip>
-        <template #default="{ row }">
-          <span class="address-text">{{ row.address }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="100" align="center">
-        <template #default="{ $index }">
-          <div
-            class="status-dot"
-            :class="$index % 3 === 0 ? 'success' : 'warning'"
-          ></div>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="100" align="center">
-        <template #default="{ row }">
-          <el-button
-            type="primary"
-            link
-            size="small"
-            @click="handleDetail(row)"
-          >
-            查看
-          </el-button>
-        </template>
-      </el-table-column>
+      <template #name="{ row }">
+        <div class="user-cell">
+          <div class="user-avatar">{{ row.name.charAt(0) }}</div>
+          <span>{{ row.name }}</span>
+        </div>
+      </template>
+
+      <template #type="{ row }">
+        <span class="status-pill type-pill">{{ row.type }}</span>
+      </template>
+
+      <template #address="{ row }">
+        <span class="address-text">{{ row.address }}</span>
+      </template>
+
+      <template #status="{ row }">
+        <div
+          class="status-dot"
+          :class="row.status === 'Success' ? 'success' : 'warning'"
+        ></div>
+      </template>
+
+      <template #action="{ row }">
+        <el-button type="primary" link size="small" @click="handleDetail(row)">
+          查看
+        </el-button>
+      </template>
     </AdvanceTable>
 
     <!-- 详情弹窗 -->
@@ -113,122 +113,132 @@
 </template>
 
 <script setup>
+import { ref, h } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader/index.vue'
-import ModalDialog from '@/components/ModalDialog/index.vue'
+import AdvanceTable from '@/components/AdvanceTable/index.vue'
+import { useDialog } from '@/hooks/useDialog'
+import { getTableList } from '@/api/table'
+import { ElButton } from 'element-plus'
 
 const searchKeyword = ref('')
-
+const dialogVisible = ref(false)
 const currentRow = ref(null)
 
-const tableData = [
+const columns = [
   {
-    date: '2024-03-15 14:23:45',
-    name: 'Admin',
-    address: '登录系统成功 (IP: 192.168.1.10)'
+    prop: 'date',
+    label: '时间',
+    width: 180,
+    sortable: true,
+    slot: 'date'
   },
   {
-    date: '2024-03-15 13:12:33',
-    name: 'User',
-    address: '修改了个人配置文件'
+    prop: 'name',
+    label: '操作人',
+    width: 180,
+    sortable: true,
+    slot: 'name'
   },
-  {
-    date: '2024-03-15 12:45:12',
-    name: 'System',
-    address: '自动备份完成'
-  },
-  {
-    date: '2024-03-15 11:30:00',
-    name: 'Admin',
-    address: '更新了系统设置参数'
-  },
-  {
-    date: '2024-03-15 10:15:22',
-    name: 'User',
-    address: '尝试访问未授权资源'
-  },
-  {
-    date: '2024-03-15 09:20:11',
-    name: 'System',
-    address: '服务启动成功'
-  },
-  {
-    date: '2024-03-14 18:45:33',
-    name: 'Admin',
-    address: '登出系统'
-  },
-  {
-    date: '2024-03-14 16:30:45',
-    name: 'User',
-    address: '上传了文件 report_2024.pdf'
-  },
-  {
-    date: '2024-03-14 15:12:10',
-    name: 'Admin',
-    address: '删除了过期日志'
-  },
-  {
-    date: '2024-03-14 14:05:55',
-    name: 'System',
-    address: '检测到新版本 v1.2.0'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  }
+  { prop: 'type', label: '类型', width: 120, slot: 'type' },
+  { prop: 'address', label: '详情信息', slot: 'address' },
+  { label: '状态', width: 100, slot: 'status', align: 'center' },
+  { label: '操作', width: 100, slot: 'action', align: 'center' }
 ]
 
-const dialogVisible = ref(false)
+const searchItems = [
+  {
+    prop: 'date',
+    label: '时间:',
+    type: 'date',
+    permi: 'user:query',
+    component: {
+      name: 'DatePicker',
+      props: {
+        value: { type: String, default: '' },
+        format: { type: String, default: 'yyyy-MM-dd' },
+        valueFormat: { type: String, default: 'yyyy-MM-dd' }
+      }
+    }
+  },
+  { prop: 'name', label: '操作人:', type: 'input', permi: 'user:query' },
+  {
+    prop: 'type',
+    label: '类型',
+    type: 'select',
+    permi: 'user:query',
+    component: {
+      placeholder: '请选择日志类型',
+      options: [
+        { label: '系统操作', value: 'System' },
+        { label: '用户操作', value: 'User' },
+        { label: '管理员操作', value: 'Admin' }
+      ]
+    }
+  },
+  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' },
+  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' },
+  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' },
+  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' }
+]
+
+const searchParams = reactive({
+  date: '',
+  name: '',
+  type: '',
+  address: ''
+})
+
+const tableRef = ref(null)
+
+const handleQuery = () => {
+  tableRef.value?.getList()
+}
+
+const handleReset = () => {
+  tableRef.value?.resetQuery()
+}
+
+const { open } = useDialog()
 
 const handleDetail = (row) => {
-  dialogVisible.value = true
-  currentRow.value = row
+  open({
+    title: '日志详情',
+    subtitle: '查看完整的操作日志信息',
+    icon: 'document',
+    width: '600px',
+    content: () =>
+      h('div', { class: 'detail-content' }, [
+        h('div', { class: 'detail-item' }, [
+          h('span', { class: 'label' }, '操作时间'),
+          h('span', { class: 'value' }, row.date)
+        ]),
+        h('div', { class: 'detail-item' }, [
+          h('span', { class: 'label' }, '操作人员'),
+          h('div', { class: 'user-value' }, [
+            h('div', { class: 'user-avatar-sm' }, row.name.charAt(0)),
+            h('span', null, row.name)
+          ])
+        ]),
+        h('div', { class: 'detail-item' }, [
+          h('span', { class: 'label' }, '日志类型'),
+          h('span', { class: 'status-pill type-pill' }, '系统操作')
+        ]),
+        h('div', { class: 'detail-item' }, [
+          h('span', { class: 'label' }, '操作内容'),
+          h('span', { class: 'value' }, row.address)
+        ]),
+        h('div', { class: 'detail-item full' }, [
+          h('span', { class: 'label' }, '原始数据'),
+          h('pre', { class: 'code-block' }, JSON.stringify(row, null, 2))
+        ])
+      ]),
+    footer: ({ close }) =>
+      h('div', [
+        h(ElButton, { onClick: close }, () => '关闭'),
+        h(ElButton, { type: 'primary', onClick: close }, () => '导出记录')
+      ])
+  })
 }
 </script>
 

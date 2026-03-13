@@ -1,3 +1,4 @@
+import SvgIcon from '../components/SvgIcon/index.vue'
 export const showToast = (options) => {
   ElNotification({
     title: options.title || '通知',
