@@ -391,24 +391,6 @@ const handleSave = async (row, index) => {
     return
   }
 
-  // 兼容旧的 required 属性校验（如果不在 rules 中）
-  const requiredColumns = props.columns.filter(
-    (col) => col.required && (!props.rules || !props.rules[col.prop])
-  )
-  for (const col of requiredColumns) {
-    const value = row[col.prop]
-    // 检查空字符串、undefined、null
-    if (value === '' || value === undefined || value === null) {
-      ElMessage.warning(`请填写${col.label}`)
-      return
-    }
-    // 检查空数组（针对多选等情况）
-    if (Array.isArray(value) && value.length === 0) {
-      ElMessage.warning(`请选择${col.label}`)
-      return
-    }
-  }
-
   const key = row[mergedConfig.value.rowKey]
 
   // 移除 _isNew 标记
