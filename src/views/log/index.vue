@@ -33,6 +33,11 @@
       :func="getTableList"
       :params="searchParams"
     >
+      <!-- 定义插槽内容 -->
+      <template #nameHeader="{ column }">
+        <el-icon><User /></el-icon>
+        <span style="margin-left: 4px">{{ column.label }}</span>
+      </template>
       <template #date="{ row }">
         <span class="date-cell">{{ row.date }}</span>
       </template>
@@ -137,6 +142,7 @@ const columns = [
     prop: 'name',
     label: '操作人',
     width: 180,
+    headerSlot: 'nameHeader', // 指定插槽名称
     sortable: true,
     slot: 'name'
   },

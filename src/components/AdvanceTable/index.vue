@@ -62,7 +62,12 @@
 
           <!-- 表头提示 -->
           <template #header>
-            <span>{{ column.label }}</span>
+            <slot
+              v-if="column.headerSlot"
+              :name="column.headerSlot"
+              :column="column"
+            />
+            <span v-else>{{ column.label }}</span>
             <el-tooltip
               v-if="column.tip"
               :content="column.tip.content"
