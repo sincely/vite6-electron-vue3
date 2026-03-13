@@ -20,51 +20,14 @@
       </template>
     </PageHeader>
 
-    <AdvanceTable :data="tableData">
-      <el-table-column prop="date" label="时间" width="180" sortable>
-        <template #default="{ row }">
-          <span class="date-cell">{{ row.date }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="name" label="操作人" width="180" sortable>
-        <template #default="{ row }">
-          <div class="user-cell">
-            <div class="user-avatar">{{ row.name.charAt(0) }}</div>
-            <span>{{ row.name }}</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="type" label="类型" width="120">
-        <template #default>
-          <span class="status-pill type-pill">系统操作</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="address" label="详情信息" show-overflow-tooltip>
-        <template #default="{ row }">
-          <span class="address-text">{{ row.address }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="100" align="center">
-        <template #default="{ $index }">
-          <div
-            class="status-dot"
-            :class="$index % 3 === 0 ? 'success' : 'warning'"
-          ></div>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="100" align="center">
-        <template #default="{ row }">
-          <el-button
-            type="primary"
-            link
-            size="small"
-            @click="handleDetail(row)"
-          >
-            查看
-          </el-button>
-        </template>
-      </el-table-column>
-    </AdvanceTable>
+    <EditTable
+      v-model:data="tableData"
+      :columns="columns"
+      :rules="rules"
+      @save="handleSave"
+      @delete="handleDelete"
+      @add="handleAdd"
+    />
   </div>
 </template>
 
@@ -73,111 +36,102 @@ import { Search } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader/index.vue'
 import { useDialog } from '@/hooks/useDialog'
 import { ElButton } from 'element-plus'
+import EditTable from '@/components/EditTable/index.vue'
+import { ref } from 'vue'
 
 const searchKeyword = ref('')
-
-const tableData = [
+const columns = [
+  { prop: 'name', label: '姓名', editType: 'input', required: true },
   {
+    prop: 'role',
+    label: '角色',
+    editType: 'select',
+    required: true,
+    options: [
+      { label: '管理员', value: 'admin' },
+      { label: '用户', value: 'user' }
+    ]
+  },
+  {
+    prop: 'age',
+    label: '年龄',
+    editType: 'number',
+    rules: [
+      { required: true, message: '请输入年龄', trigger: 'blur' },
+      { type: 'number', min: 18, message: '年龄必须大于18岁', trigger: 'blur' }
+    ]
+  },
+  // 日期选择
+  {
+    prop: 'date',
+    label: '操作时间',
+    editType: 'datetime',
+    editWidth: '200px',
+    required: true
+  },
+  // 日期范围
+  {
+    prop: 'range',
+    label: '时间范围',
+    editType: 'daterange',
+    editWidth: '240px',
+    editProps: {
+      'start-placeholder': '开始',
+      'end-placeholder': '结束',
+      'value-format': 'YYYY-MM-DD'
+    },
+    required: true
+  }
+]
+const rules = {
+  name: [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+  ],
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
+  date: [{ required: true, message: '请选择操作时间', trigger: 'change' }],
+  range: [
+    {
+      required: true,
+      message: '请选择时间范围',
+      trigger: 'change',
+      type: 'array'
+    }
+  ]
+}
+
+const tableData = ref([
+  {
+    id: 1,
     date: '2024-03-15 14:23:45',
     name: 'Admin',
+    role: 'admin',
+    age: 30,
     address: '登录系统成功 (IP: 192.168.1.10)'
   },
   {
+    id: 2,
     date: '2024-03-15 13:12:33',
     name: 'User',
+    role: 'user',
+    age: 25,
     address: '修改了个人配置文件'
-  },
-  {
-    date: '2024-03-15 12:45:12',
-    name: 'System',
-    address: '自动备份完成'
-  },
-  {
-    date: '2024-03-15 11:30:00',
-    name: 'Admin',
-    address: '更新了系统设置参数'
-  },
-  {
-    date: '2024-03-15 10:15:22',
-    name: 'User',
-    address: '尝试访问未授权资源'
-  },
-  {
-    date: '2024-03-15 09:20:11',
-    name: 'System',
-    address: '服务启动成功'
-  },
-  {
-    date: '2024-03-14 18:45:33',
-    name: 'Admin',
-    address: '登出系统'
-  },
-  {
-    date: '2024-03-14 16:30:45',
-    name: 'User',
-    address: '上传了文件 report_2024.pdf'
-  },
-  {
-    date: '2024-03-14 15:12:10',
-    name: 'Admin',
-    address: '删除了过期日志'
-  },
-  {
-    date: '2024-03-14 14:05:55',
-    name: 'System',
-    address: '检测到新版本 v1.2.0'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
-  },
-  {
-    date: '2024-03-14 11:22:33',
-    name: 'User',
-    address: '查询了用户列表'
-  },
-  {
-    date: '2024-03-14 09:10:05',
-    name: 'Admin',
-    address: '重置了用户 User 的密码'
   }
-]
+])
+
+const handleSave = (row, index) => {
+  console.log('保存', row, index)
+  // 模拟保存后更新数据
+  // tableData.value[index] = { ...row }
+}
+const handleDelete = (row, index) => {
+  console.log('删除', row, index)
+  // EditTable 内部已经处理了 splice，这里只需要处理后端请求
+}
+const handleAdd = (row) => {
+  console.log('添加', row)
+  // EditTable 内部已经处理了 push，这里只需要处理后端请求
+}
 
 const { open } = useDialog()
 

@@ -19,7 +19,12 @@ export default [
           name: keyword ? `User ${keyword} ${index}` : `User ${index}`,
           address: `No. ${index}, Grove St, Los Angeles`,
           status: Math.random() > 0.5 ? 'Success' : 'Pending',
-          type: ['System', 'User', 'Admin'][Math.floor(Math.random() * 3)]
+          type: ['System', 'User', 'Admin'][Math.floor(Math.random() * 3)],
+          age: Math.floor(Math.random() * 50) + 18,
+          range: [
+            `2024-03-${Math.floor(Math.random() * 10) + 1} 12:00:00`,
+            `2024-03-${Math.floor(Math.random() * 10) + 15} 12:00:00`
+          ]
         })
       }
 
