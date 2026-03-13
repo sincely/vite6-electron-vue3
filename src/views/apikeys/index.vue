@@ -27,7 +27,13 @@
       @save="handleSave"
       @delete="handleDelete"
       @add="handleAdd"
-    />
+      @sort-change="handleSortChange"
+    >
+      <template #nameHeader="{ column }">
+        <span style="color: red">*</span>
+        {{ column.label }} (自定义)
+      </template>
+    </EditTable>
   </div>
 </template>
 
@@ -41,12 +47,20 @@ import { ref } from 'vue'
 
 const searchKeyword = ref('')
 const columns = [
-  { prop: 'name', label: '姓名', editType: 'input', required: true },
+  {
+    prop: 'name',
+    label: '姓名',
+    editType: 'input',
+    required: true,
+    sortable: true,
+    headerSlot: 'nameHeader'
+  },
   {
     prop: 'role',
     label: '角色',
     editType: 'select',
     required: true,
+    // sortable: true,
     options: [
       { label: '管理员', value: 'admin' },
       { label: '用户', value: 'user' }
@@ -56,6 +70,7 @@ const columns = [
     prop: 'age',
     label: '年龄',
     editType: 'number',
+    // sortable: 'custom',
     rules: [
       { required: true, message: '请输入年龄', trigger: 'blur' },
       { type: 'number', min: 18, message: '年龄必须大于18岁', trigger: 'blur' }
@@ -131,6 +146,20 @@ const handleDelete = (row, index) => {
 const handleAdd = (row) => {
   console.log('添加', row)
   // EditTable 内部已经处理了 push，这里只需要处理后端请求
+}
+
+const handleSortChange = ({ prop, order }) => {
+  console.log('排序', prop, order)
+  if (prop === 'age' && order) {
+    // 模拟后端排序
+    tableData.value.sort((a, b) => {
+      if (order === 'ascending') {
+        return a.age - b.age
+      } else {
+        return b.age - a.age
+      }
+    })
+  }
 }
 
 const { open } = useDialog()

@@ -6,6 +6,7 @@
         :data="formData.list"
         v-bind="mergedConfig.table"
         style="width: 100%"
+        @sort-change="handleSortChange"
       >
         <el-table-column type="index" label="序号" width="60" align="center" />
 
@@ -29,8 +30,20 @@
             :prop="column.prop"
             :label="column.label"
             :width="column.width"
+            :sortable="column.sortable"
             :show-overflow-tooltip="true"
           >
+            <!-- 自定义表头 -->
+            <template #header="{ column, $index }">
+              <slot
+                v-if="column.headerSlot"
+                :name="column.headerSlot"
+                :column="column"
+                :index="$index"
+              />
+              <span v-else>{{ column.label }}</span>
+            </template>
+
             <template #default="{ row, $index }">
               <!-- 处于编辑状态且列可编辑 -->
               <div
@@ -224,7 +237,13 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:data', 'save', 'delete', 'add'])
+const emit = defineEmits([
+  'update:data',
+  'save',
+  'delete',
+  'add',
+  'sort-change'
+])
 
 // 表单引用
 const formRef = ref(null)
@@ -432,6 +451,11 @@ const handleAdd = () => {
 
   tableData.value.push(newRow)
   emit('add', newRow)
+}
+
+// 排序变化
+const handleSortChange = (data) => {
+  emit('sort-change', data)
 }
 
 defineExpose({
