@@ -109,10 +109,19 @@ export function getLoginWindow() {
   return loginWindowId ? windows.get(loginWindowId) : null
 }
 
+// 移除窗口事件
+const removeWindowListeners = (win) => {
+  win.removeAllListeners()
+  win.webContents.removeAllListeners()
+}
+
 // 关闭登录窗口
 export function closeLoginWindow() {
   const win = getLoginWindow()
-  if (win && !win.isDestroyed()) win.close()
+  if (win && !win.isDestroyed()) {
+    removeWindowListeners(win)
+    win.close()
+  }
 }
 
 // 创建登录窗口
@@ -153,6 +162,7 @@ export function createLoginWindow() {
   setupWindow(win)
 
   win.on('closed', () => {
+    removeWindowListeners(win)
     windows.delete(windowId)
     if (windowId === loginWindowId) loginWindowId = null
   })

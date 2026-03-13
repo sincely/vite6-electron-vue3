@@ -162,17 +162,20 @@ export const useAppStore = defineStore('app', {
               }
             }
           }
-          window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', this._systemThemeListener)
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+          mediaQuery.addEventListener('change', this._systemThemeListener)
+          // 保存 mediaQuery 引用以便后续移除监听
+          this._systemThemeMediaQuery = mediaQuery
         }
       } else {
         // 移除监听器
-        if (this._systemThemeListener) {
-          window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .removeEventListener('change', this._systemThemeListener)
+        if (this._systemThemeListener && this._systemThemeMediaQuery) {
+          this._systemThemeMediaQuery.removeEventListener(
+            'change',
+            this._systemThemeListener
+          )
           this._systemThemeListener = null
+          this._systemThemeMediaQuery = null
         }
       }
 
