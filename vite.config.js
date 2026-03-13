@@ -4,12 +4,29 @@ import createVitePlugins from './build/plugins'
 import { proxyServer } from './build/config/proxy'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
+import fs from 'fs'
+
 export default defineConfig(({ mode, command }) => {
   const viteEnv = loadEnv(mode, process.cwd())
   console.log('viteEnv:', viteEnv)
   const isServe = command === 'serve'
   const isBuild = command === 'build'
   const sourcemap = isServe
+  // 解决终端optimized dependencies changed时，reload问题
+  const optimizeDepsElementPlusIncludes = ['element-plus/es']
+  fs.readdirSync('node_modules/element-plus/es/components').map((dirname) => {
+    fs.access(
+      `node_modules/element-plus/es/components/${dirname}/style/css.mjs`,
+      (err) => {
+        if (!err) {
+          console.log(dirname)
+          optimizeDepsElementPlusIncludes.push(
+            `element-plus/es/components/${dirname}/style/css`
+          )
+        }
+      }
+    )
+  })
   return defineConfig({
     base: viteEnv.VITE_BASE_URL,
     server: {
@@ -195,6 +212,9 @@ export default defineConfig(({ mode, command }) => {
         resolve: {}
       }),
       ...createVitePlugins(viteEnv, command === 'build')
-    ]
+    ],
+    optimizeDeps: {
+      include: optimizeDepsElementPlusIncludes
+    }
   })
 })
