@@ -31,6 +31,7 @@
       ref="tableRef"
       :columns="columns"
       :func="getTableList"
+      :config="config"
       :params="searchParams"
     >
       <!-- 定义插槽内容 -->
@@ -151,6 +152,12 @@ const columns = [
   { label: '状态', width: 100, slot: 'status', align: 'center' },
   { label: '操作', width: 100, slot: 'action', align: 'center' }
 ]
+
+const config = {
+  selection: true,
+  // sort: false,
+  notPagination: false
+}
 
 const searchItems = [
   {

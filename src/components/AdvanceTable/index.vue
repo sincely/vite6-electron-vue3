@@ -6,7 +6,16 @@
       :data="tableData"
       v-bind="mergedConfig.table"
       @sort-change="handleSortChange"
+      @selection-change="handleSelectionChange"
     >
+      <!-- 多选列 (根据 config.selection 开启) -->
+      <el-table-column
+        v-if="mergedConfig.selection"
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+      />
+
       <template v-for="column in visibleColumns" :key="column.prop">
         <!-- selection / index 列 -->
         <el-table-column
@@ -132,6 +141,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['selection-change'])
+
 // Expose
 const tableRef = ref(null)
 defineExpose({
@@ -157,6 +168,7 @@ const mergedConfig = computed(() => {
     table: {
       border: true,
       stripe: true,
+      rowKey: 'id', // 默认 rowKey，支持跨页勾选
       ...props.config.table
     },
     // 分页配置
@@ -166,15 +178,21 @@ const mergedConfig = computed(() => {
       ...props.config.pagination
     },
     sort: props.config.sort ?? false, // 是否启用排序
+    selection: props.config.selection ?? false, // 是否启用多选
     notPagination: props.config.notPagination ?? false, // 是否禁用分页
     autoPagination: props.config.autoPagination ?? false, // 是否自动分页
     initResquest: props.config.initResquest ?? true // 是否初始化请求
   }
 })
 
-// 可见列（过滤 hide = true 的列）
+// 可见列（过滤 hide = true 的列，同时避免重复渲染 selection 列）
 const visibleColumns = computed(() => {
-  return props.columns.filter((col) => !col.hide)
+  return props.columns.filter((col) => {
+    if (mergedConfig.value.selection && col.type === 'selection') {
+      return false
+    }
+    return !col.hide
+  })
 })
 
 // 格式化时间
@@ -243,6 +261,11 @@ function handleSortChange({ prop, order }) {
     }
     getList()
   }
+}
+
+// 多选变更
+function handleSelectionChange(selection) {
+  emit('selection-change', selection)
 }
 
 // 分页大小变更
