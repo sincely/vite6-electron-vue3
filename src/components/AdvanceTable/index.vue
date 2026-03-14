@@ -16,6 +16,7 @@
       v-loading="loading"
       :data="tableData"
       v-bind="mergedConfig.table"
+      :height="mergedConfig.table.height || tableHeight"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
@@ -35,6 +36,7 @@
         <el-table-column
           v-if="column.type === 'selection'"
           type="selection"
+          fixed
           :width="column.width || 55"
         />
         <el-table-column
@@ -116,22 +118,25 @@
     </el-table>
 
     <!-- 分页 -->
-    <el-pagination
-      v-if="!mergedConfig.notPagination && total > 0"
-      v-model:current-page="queryParams.pageNum"
-      v-model:page-size="queryParams.pageSize"
-      :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      v-bind="mergedConfig.pagination"
-      @size-change="handleSizeChange"
-      @current-change="getList"
-    />
+    <div class="pagination-container">
+      <el-pagination
+        v-if="!mergedConfig.notPagination && total > 0"
+        v-model:current-page="queryParams.pageNum"
+        v-model:page-size="queryParams.pageSize"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        v-bind="mergedConfig.pagination"
+        @size-change="handleSizeChange"
+        @current-change="getList"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { parseTime } from '@/utils/time'
 import ColumnSetting from './components/ColumnSetting.vue'
+import { useTableHeight } from '@/hooks/useTableHeight'
 
 // Props
 const props = defineProps({
@@ -160,11 +165,14 @@ const props = defineProps({
 const emit = defineEmits(['selection-change'])
 
 // Expose
-const tableRef = ref(null)
+const { tableHeight, tableRef, calcHeight } = useTableHeight() // 动态计算表格高度，底部留白 80px
+const router = useRouter()
+
 defineExpose({
   getList,
   resetQuery,
-  reload
+  reload,
+  calcHeight
 })
 
 // 响应式数据
@@ -344,7 +352,17 @@ watch(
 
 <style scoped lang="scss">
 .smart-table {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100%;
+  padding: 16px 16px 0;
+  overflow-y: hidden;
+  background: var(--glass-surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-surface-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .table-toolbar {
@@ -373,5 +391,12 @@ watch(
 .no-data img {
   width: 120px;
   opacity: 0.6;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0;
+  margin-top: auto;
 }
 </style>

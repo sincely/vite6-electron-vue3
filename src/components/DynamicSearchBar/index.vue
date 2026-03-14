@@ -193,28 +193,7 @@ const emit = defineEmits(['query', 'reset'])
 .search-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-
-  :deep(.el-form-item) {
-    margin-right: 0;
-    margin-bottom: 16px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-weight: 500;
-    color: var(--color-text-secondary);
-  }
-
-  :deep(.el-input__wrapper) {
-    background-color: color-mix(in srgb, var(--color-bg-card), transparent 50%);
-    box-shadow: 0 0 0 1px var(--color-border) inset;
-
-    &:hover,
-    &.is-focus {
-      background-color: var(--color-bg-window);
-      box-shadow: 0 0 0 1px var(--color-primary) inset;
-    }
-  }
+  gap: 10px;
 }
 
 .search-item {
@@ -223,10 +202,6 @@ const emit = defineEmits(['query', 'reset'])
 
 .search-actions {
   margin-left: auto;
-
-  :deep(.el-form-item__content) {
-    justify-content: flex-end;
-  }
 }
 
 .expand-btn {

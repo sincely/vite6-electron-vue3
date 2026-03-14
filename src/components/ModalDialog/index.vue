@@ -9,12 +9,20 @@
     align-center
     draggable
   >
+    <!-- 顶部装饰光晕 -->
+    <div class="modal-dialog__glow" aria-hidden="true" />
+
     <!-- Header 插槽 -->
     <template #header>
       <div class="modal-dialog__header">
         <div class="header-content">
           <div v-if="icon" class="header-icon">
-            <SvgIcon :icon-class="icon" width="20px" height="20px" />
+            <SvgIcon
+              :icon-class="icon"
+              width="28px"
+              height="28px"
+              class="header-icon-svg"
+            />
           </div>
           <div class="header-text">
             <h3 class="header-title">{{ title }}</h3>
@@ -93,6 +101,21 @@ const dialogRef = ref(null)
   box-shadow:
     var(--glass-shadow-soft),
     0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 80%);
+
+  &__glow {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-primary), transparent 68%) 0%,
+      transparent 70%
+    );
+    border-radius: 999px;
+  }
 
   &__header {
     display: flex;
