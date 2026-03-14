@@ -1,16 +1,20 @@
 <template>
-  <div class="app-box" :class="{ 'is-login': isLoginPage }">
-    <router-view v-if="isLoginPage" />
-    <div v-else class="app-container">
-      <router-view />
+  <el-config-provider :locale="zhCn">
+    <div class="app-box" :class="{ 'is-login': isLoginPage }">
+      <router-view v-if="isLoginPage" />
+      <div v-else class="app-container">
+        <router-view />
+      </div>
+      <setting-dialog />
     </div>
-    <setting-dialog />
-  </div>
+  </el-config-provider>
 </template>
 
 <script setup>
 import { useUpdater } from '@/core/update'
 import { useNetwork } from '@/hooks/useNetwork'
+import { ElConfigProvider } from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
