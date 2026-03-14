@@ -88,28 +88,41 @@ export const asyncRouteTree = [
     ]
   },
   {
-    path: '/apikeys',
+    path: '/editableTable',
     component: Layout,
-    meta: { title: 'API 密钥', icon: 'key', order: 6, sidebar: true },
+    meta: { title: '可编辑表格', icon: 'key', order: 6, sidebar: true },
     children: [
       {
         path: '',
-        name: 'apikeys',
-        component: () => import('@/views/apikeys/index.vue'),
-        meta: { title: 'API 密钥', keepAlive: true, transition: 'slide-up' }
+        name: 'editableTable',
+        component: () => import('@/views/editableTable/index.vue'),
+        meta: { title: '可编辑表格', keepAlive: true, transition: 'slide-up' }
       }
     ]
   },
   {
-    path: '/log',
+    path: '/advanceTable',
     component: Layout,
-    meta: { title: '日志', icon: 'file-text', order: 7, sidebar: true },
+    meta: { title: '高级表格', icon: 'file-text', order: 7, sidebar: true },
     children: [
       {
         path: '',
-        name: 'log',
-        component: () => import('@/views/log/index.vue'),
-        meta: { title: '日志', transition: 'slide-up' }
+        name: 'advanceTable',
+        component: () => import('@/views/advanceTable/index.vue'),
+        meta: { title: '高级表格', transition: 'slide-up' }
+      }
+    ]
+  },
+  {
+    path: '/treeTable',
+    component: Layout,
+    meta: { title: '树型表格', icon: 'file-text', order: 7, sidebar: true },
+    children: [
+      {
+        path: '',
+        name: 'treeTable',
+        component: () => import('@/views/treeTable/index.vue'),
+        meta: { title: '树型表格', transition: 'slide-up' }
       }
     ]
   }

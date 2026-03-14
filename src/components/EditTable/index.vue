@@ -69,7 +69,6 @@
                   <el-input
                     v-else-if="column.editType === 'input' || !column.editType"
                     v-model="row[column.prop]"
-                    size="small"
                     :placeholder="
                       column.editProps?.placeholder || `请输入${column.label}`
                     "
@@ -77,11 +76,10 @@
                     v-bind="column.editProps"
                   />
 
-                  <!-- 数字输入 -->
+                  <!-- 数字输入框 -->
                   <el-input-number
                     v-else-if="column.editType === 'number'"
                     v-model.number="row[column.prop]"
-                    size="small"
                     :placeholder="
                       column.editProps?.placeholder || `请输入${column.label}`
                     "
@@ -93,7 +91,6 @@
                   <el-select
                     v-else-if="column.editType === 'select'"
                     v-model="row[column.prop]"
-                    size="small"
                     :placeholder="
                       column.editProps?.placeholder || `请选择${column.label}`
                     "
@@ -107,6 +104,36 @@
                       :value="opt.value"
                     />
                   </el-select>
+
+                  <!-- 多选框 -->
+                  <el-checkbox-group
+                    v-else-if="column.editType === 'check-box-group'"
+                    v-model="row[column.prop]"
+                    v-bind="column.editProps"
+                  >
+                    <el-checkbox
+                      v-for="opt in column.editProps?.options"
+                      :key="opt.value"
+                      :value="opt.value"
+                    >
+                      {{ opt.label }}
+                    </el-checkbox>
+                  </el-checkbox-group>
+
+                  <!-- 单选框 -->
+                  <el-radio-group
+                    v-else-if="column.editType === 'radio-group'"
+                    v-model="row[column.prop]"
+                    v-bind="column.editProps"
+                  >
+                    <el-radio
+                      v-for="opt in column.editProps?.options"
+                      :key="opt.value"
+                      :value="opt.value"
+                    >
+                      {{ opt.label }}
+                    </el-radio>
+                  </el-radio-group>
 
                   <!-- 日期选择 -->
                   <el-date-picker
@@ -123,7 +150,6 @@
                     "
                     v-model="row[column.prop]"
                     :type="column.editType"
-                    size="small"
                     :placeholder="
                       column.editProps?.placeholder || `请选择${column.label}`
                     "
@@ -142,7 +168,7 @@
                   :index="$index"
                   :column="column"
                 />
-                <span v-else>{{ row[column.prop] }}</span>
+                <span v-else>{{ formatDisplayValue(row, column) }}</span>
               </div>
             </template>
           </el-table-column>
@@ -152,38 +178,18 @@
         <el-table-column label="操作" width="150" align="center" fixed="right">
           <template #default="{ row, $index }">
             <div v-if="isEditing(row)" class="action-cell">
-              <el-button
-                type="success"
-                link
-                size="small"
-                @click="handleSave(row, $index)"
-              >
+              <el-button type="success" link @click="handleSave(row, $index)">
                 保存
               </el-button>
-              <el-button
-                type="warning"
-                link
-                size="small"
-                @click="handleCancel(row, $index)"
-              >
+              <el-button type="warning" link @click="handleCancel(row, $index)">
                 取消
               </el-button>
             </div>
             <div v-else class="action-cell">
-              <el-button
-                type="primary"
-                link
-                size="small"
-                @click="handleEdit(row, $index)"
-              >
+              <el-button type="primary" link @click="handleEdit(row, $index)">
                 编辑
               </el-button>
-              <el-button
-                type="danger"
-                link
-                size="small"
-                @click="handleDelete(row, $index)"
-              >
+              <el-button type="danger" link @click="handleDelete(row, $index)">
                 删除
               </el-button>
             </div>
@@ -334,6 +340,7 @@ const handleCancel = (row, index) => {
 }
 
 // 获取行校验规则
+// 获取行校验规则
 const getRules = (prop) => {
   // 优先使用外部传入的 rules
   if (props.rules && props.rules[prop]) {
@@ -346,33 +353,61 @@ const getRules = (prop) => {
     return column.rules
   }
 
-  // 检查列配置中的 required
-  if (column?.required) {
-    // 根据类型生成默认提示
-    let message = `请选择${column.label}`
-    if (
-      column.editType === 'input' ||
-      column.editType === 'number' ||
-      !column.editType
-    ) {
-      message = `请输入${column.label}`
-    }
-
-    return [{ required: true, message, trigger: ['blur', 'change'] }]
-  }
-
   return []
 }
-
-// 兼容旧的 required 属性检查
+// 判断字段是否必填，用于展示必填红星/红三角
 const isRequired = (prop) => {
-  const column = props.columns.find((col) => col.prop === prop)
-  if (column?.required) return true
-  const rule = props.rules[prop]
-  if (Array.isArray(rule)) {
-    return rule.some((r) => r.required)
+  // 1. 从 getRules 动态获取合并后的规则
+  const rules = getRules(prop)
+  if (Array.isArray(rules)) {
+    return rules.some((r) => r.required)
   }
-  return rule?.required
+  return rules?.required || false
+}
+
+// 格式化非编辑状态下的显示值
+const formatDisplayValue = (row, column) => {
+  const value = row[column.prop]
+  if (value === null || value === undefined || value === '') return '-'
+
+  // 处理 Select / Radio (从 options 中找 label)
+  if (
+    column.editType === 'select' ||
+    column.editType === 'radio' ||
+    column.editType === 'radio-group'
+  ) {
+    const options = column.options || column.editProps?.options || []
+    const option = options.find((opt) => opt.value === value)
+    return option ? option.label : value
+  }
+
+  // 处理 Checkbox / CheckboxGroup (数组转 label 拼接)
+  if (column.editType === 'checkbox' || column.editType === 'check-box-group') {
+    if (Array.isArray(value)) {
+      const options = column.options || column.editProps?.options || []
+      const labels = value.map((val) => {
+        const option = options.find((opt) => opt.value === val)
+        return option ? option.label : val
+      })
+      return labels.join(', ')
+    }
+    // 单个 checkbox (布尔值)
+    return value ? '是' : '否'
+  }
+
+  // 处理日期范围 (数组转字符串拼接)
+  if (
+    column.editType === 'daterange' ||
+    column.editType === 'datetimerange' ||
+    column.editType === 'monthrange'
+  ) {
+    if (Array.isArray(value) && value.length === 2) {
+      const separator = column.editProps?.rangeSeparator || ' 至 '
+      return `${value[0]}${separator}${value[1]}`
+    }
+  }
+
+  return value
 }
 
 // 保存
@@ -425,6 +460,11 @@ const handleAdd = () => {
       // 根据 editType 设置默认值
       if (col.editType === 'number') {
         newRow[col.prop] = undefined // 数字类型初始化为 undefined
+      } else if (
+        col.editType === 'check-box-group' ||
+        col.editType === 'radio-group'
+      ) {
+        newRow[col.prop] = [] // checkbox group 初始化为数组
       } else {
         newRow[col.prop] = ''
       }
