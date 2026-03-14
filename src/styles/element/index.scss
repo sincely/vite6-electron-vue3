@@ -1,0 +1,10 @@
+// 自定义Element Plus 命名空间!!!!
+@forward 'element-plus/theme-chalk/src/mixins/config.scss' with (
+  $namespace: 'el'
+);
+
+// 引入 Element Plus 亮色模式变量
+@use './light';
+
+// 引入 Element Plus 亮色模式变量
+@use './dark';
