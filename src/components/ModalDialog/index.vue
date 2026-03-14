@@ -1,11 +1,13 @@
 <template>
   <el-dialog
     v-bind="$attrs"
+    ref="dialogRef"
     class="modal-dialog"
     :class="{ 'modal-dialog--glass': glass }"
     :show-close="false"
     append-to-body
     align-center
+    draggable
   >
     <!-- Header 插槽 -->
     <template #header>
@@ -48,6 +50,10 @@
 </template>
 
 <script setup>
+defineOptions({
+  inheritAttrs: false
+})
+
 defineProps({
   title: {
     type: String,
@@ -72,37 +78,21 @@ defineProps({
 })
 
 defineEmits(['update:modelValue'])
+
+const dialogRef = ref(null)
 </script>
 
 <style lang="scss">
 // 注意：el-dialog 是 append-to-body 的，所以样式不能 scoped，或者需要穿透
 .modal-dialog {
-  // 覆盖 el-dialog 默认样式
-  --el-dialog-bg-color: var(--color-bg-card);
-  --el-dialog-box-shadow: var(--shadow-lg);
-  --el-dialog-border-radius: 20px;
-  --el-dialog-padding-primary: 0;
-
   overflow: hidden;
-  border: 1px solid var(--color-border);
-
-  // Glassmorphism 变体
-  &--glass {
-    --el-dialog-bg-color: var(--glass-surface);
-
-    background-color: var(--el-dialog-bg-color);
-    backdrop-filter: blur(24px);
-    border-color: var(--glass-surface-border);
-    box-shadow:
-      0 25px 50px -12px rgb(0 0 0 / 25%),
-      0 0 0 1px rgb(255 255 255 / 10%) inset;
-  }
-
-  // Header 样式
-  .el-dialog__header {
-    padding: 0;
-    margin: 0;
-  }
+  background: var(--glass-surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-surface-border);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    var(--glass-shadow-soft),
+    0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 80%);
 
   &__header {
     display: flex;
@@ -179,21 +169,11 @@ defineEmits(['update:modelValue'])
     }
   }
 
-  // Body 样式
-  .el-dialog__body {
-    padding: 0;
-  }
-
   &__content {
     padding: 0 24px 24px;
     font-size: 14px;
     line-height: 1.6;
     color: var(--color-text-primary);
-  }
-
-  // Footer 样式
-  .el-dialog__footer {
-    padding: 0;
   }
 
   &__footer {
@@ -202,8 +182,25 @@ defineEmits(['update:modelValue'])
     align-items: center;
     justify-content: flex-end;
     padding: 16px 24px;
-    background: color-mix(in srgb, var(--el-dialog-bg-color), transparent 50%);
-    border-top: 1px solid var(--color-border-light);
+
+    // background: color-mix(in srgb, var(--el-dialog-bg-color), transparent 50%);
+    border-top: px solid var(--color-border-light);
+  }
+
+  // Body 样式
+  .el-dialog__body {
+    padding: 0;
+  }
+
+  // Footer 样式
+  .el-dialog__footer {
+    padding: 0;
+  }
+
+  // Header 样式
+  .el-dialog__header {
+    padding: 0;
+    margin: 0;
   }
 }
 </style>

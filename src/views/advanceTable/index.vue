@@ -266,32 +266,6 @@ const handleDetail = (row) => {
 
 .search-input {
   width: 240px;
-
-  :deep(.el-input__wrapper) {
-    background-color: var(--color-bg-card);
-    border-radius: 8px;
-    box-shadow: 0 0 0 1px var(--color-border) inset;
-    transition: all 0.2s;
-
-    &:hover,
-    &.is-focus {
-      background-color: var(--color-bg-window);
-      box-shadow: 0 0 0 1px var(--color-primary) inset;
-    }
-  }
-}
-
-.export-btn {
-  display: flex;
-  gap: 6px;
-  height: 32px;
-  padding: 0 16px;
-  font-weight: 600;
-  border-radius: 8px;
-
-  span {
-    margin-left: 4px;
-  }
 }
 
 .date-cell {
@@ -351,18 +325,6 @@ const handleDetail = (row) => {
     background-color: var(--color-warning);
     box-shadow: 0 0 10px
       color-mix(in srgb, var(--color-warning), transparent 40%);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(2);
   }
 }
 

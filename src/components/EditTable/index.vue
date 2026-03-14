@@ -528,14 +528,14 @@ defineExpose({
 .edit-form-item {
   margin-bottom: 0;
 
-  :deep(.el-form-item__content) {
-    line-height: inherit;
-  }
+  // :deep(.el-form-item__content) {
+  //   line-height: inherit;
+  // }
 
-  :deep(.el-form-item__error) {
-    top: 100%;
-    z-index: 1;
-    padding-top: 2px;
-  }
+  // :deep(.el-form-item__error) {
+  //   top: 100%;
+  //   z-index: 1;
+  //   padding-top: 2px;
+  // }
 }
 </style>
