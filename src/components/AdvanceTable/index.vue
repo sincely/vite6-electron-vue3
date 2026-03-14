@@ -1,5 +1,16 @@
 <template>
   <div class="smart-table">
+    <!-- 表格工具栏 -->
+    <div class="table-toolbar">
+      <div class="toolbar-left">
+        <slot name="toolbar-left" />
+      </div>
+      <div class="toolbar-right">
+        <slot name="toolbar-right" />
+        <ColumnSetting v-model:columns="localColumns" />
+      </div>
+    </div>
+
     <el-table
       ref="tableRef"
       v-loading="loading"
@@ -16,7 +27,10 @@
         :reserve-selection="true"
       />
 
-      <template v-for="column in visibleColumns" :key="column.prop">
+      <template
+        v-for="column in visibleColumns"
+        :key="column.prop || column.label"
+      >
         <!-- selection / index 列 -->
         <el-table-column
           v-if="column.type === 'selection'"
@@ -36,6 +50,7 @@
           :prop="column.prop"
           :label="column.label"
           :width="column.width"
+          :fixed="column.fixed"
           :sortable="column.sortable || false"
           :show-overflow-tooltip="true"
         >
@@ -116,6 +131,7 @@
 
 <script setup>
 import { parseTime } from '@/utils/time'
+import ColumnSetting from './components/ColumnSetting.vue'
 
 // Props
 const props = defineProps({
@@ -160,6 +176,18 @@ const queryParams = reactive({
   pageSize: 10,
   ...props.params
 })
+const localColumns = ref([])
+
+// 初始化列配置
+watch(
+  () => props.columns,
+  (newVal) => {
+    if (newVal) {
+      localColumns.value = [...newVal]
+    }
+  },
+  { immediate: true, deep: true }
+)
 
 // 合并配置
 const mergedConfig = computed(() => {
@@ -187,11 +215,18 @@ const mergedConfig = computed(() => {
 
 // 可见列（过滤 hide = true 的列，同时避免重复渲染 selection 列）
 const visibleColumns = computed(() => {
-  return props.columns.filter((col) => {
+  return localColumns.value.filter((col) => {
     if (mergedConfig.value.selection && col.type === 'selection') {
       return false
     }
-    return !col.hide
+    // ColumnSetting 组件会控制 show 属性，如果没有 show 属性默认视为显示
+    // 如果 props 中定义了 hide: true，那么初始化时 show 应该是 false (ColumnSetting组件逻辑已处理)
+    // 这里我们主要依赖 localColumns 中的 show 属性
+    // 如果 show 属性不存在（比如初始化前），则回退到 props 的 hide 属性逻辑
+    if (col.show === false) return false
+    if (col.show === undefined && col.hide) return false
+
+    return true
   })
 })
 
@@ -307,9 +342,27 @@ watch(
 )
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .smart-table {
   width: 100%;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  .toolbar-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .toolbar-right {
+    display: flex;
+    gap: 12px;
+  }
 }
 
 .no-data {
