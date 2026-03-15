@@ -2,9 +2,7 @@
 @use './text-ellipsis'; // 文字溢出样式
 @use './scroll'; // 通用样式
 @use './transition'; // 动画样式
-@use './button'; // 按钮样式
-// 引入 Element Plus 暗黑模式 CSS 变量
-@use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *;
+@use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *; // 引入 Element Plus 暗黑模式 CSS 变量
 
 /* =========================
  * 样式说明（UI 层）
@@ -16,7 +14,6 @@
  *    - --glass-shadow-soft / --glass-shadow-hover：卡片阴影层级
  * 2) 工具类：
  *    - .glass-card：玻璃卡片容器
- *    - .status-pill：状态胶囊标签
  *    - .page-enter：页面入场动效
  * 3) 动效：
  *    - fade-up：轻量上浮淡入
@@ -28,19 +25,6 @@
   backdrop-filter: blur(16px);
   border: 1px solid var(--glass-surface-border);
   box-shadow: var(--glass-shadow-soft);
-}
-
-.status-pill {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--brand-accent);
-  background: color-mix(in srgb, var(--brand-accent), transparent 86%);
-  border: 1px solid color-mix(in srgb, var(--brand-accent), transparent 72%);
-  border-radius: 999px;
 }
 
 .page-enter {
@@ -102,23 +86,10 @@ body {
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
-}
-
-::selection {
-  color: #fff;
-  background: color-mix(in srgb, var(--brand-accent), black 10%);
-}
+// ::selection {
+//   color: #fff;
+//   background: color-mix(in srgb, var(--brand-accent), black 10%);
+// }
 
 /* Theme toggle transition (Element Plus-style circular reveal) */
 @media (prefers-reduced-motion: no-preference) {

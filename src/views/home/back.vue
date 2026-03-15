@@ -2,7 +2,6 @@
   <div class="dashboard page-enter">
     <section class="hero glass-card">
       <div class="hero-content">
-        <span class="status-pill">控制台总览</span>
         <h2 class="hero-title">仪表板</h2>
         <p class="hero-subtitle">
           欢迎回来，这里展示当前模型服务状态与请求概况。

@@ -4,41 +4,35 @@
     ref="dialogRef"
     class="modal-dialog"
     :class="{ 'modal-dialog--glass': glass }"
-    :show-close="false"
+    :show-close="showClose"
     append-to-body
     align-center
     draggable
   >
     <!-- 顶部装饰光晕 -->
-    <div class="modal-dialog__glow" aria-hidden="true" />
+    <div class="modal-dialog__glow" aria-hidden="true"></div>
 
     <!-- Header 插槽 -->
     <template #header>
       <div class="modal-dialog__header">
         <div class="header-content">
-          <div v-if="icon" class="header-icon">
-            <SvgIcon
-              :icon-class="icon"
-              width="28px"
-              height="28px"
-              class="header-icon-svg"
-            />
-          </div>
           <div class="header-text">
             <h3 class="header-title">{{ title }}</h3>
-            <p v-if="subtitle" class="header-subtitle">{{ subtitle }}</p>
           </div>
         </div>
         <div class="header-actions">
           <slot name="header-actions"></slot>
-          <button
-            v-if="showClose"
-            class="close-btn"
-            title="关闭"
-            @click="$emit('update:modelValue', false)"
-          >
-            <SvgIcon icon-class="close" width="16px" height="16px" />
-          </button>
+          <!-- 头部按钮 -->
+          <template v-for="item in headerActions" :key="item.icon">
+            <button
+              v-if="item.isShow"
+              class="close-btn"
+              :title="item.title"
+              @click="$emit(item.event, false)"
+            >
+              <SvgIcon :icon-class="item.icon" width="16px" height="16px" />
+            </button>
+          </template>
         </div>
       </div>
     </template>
@@ -59,7 +53,7 @@
 
 <script setup>
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: true
 })
 
 defineProps({
@@ -67,17 +61,9 @@ defineProps({
     type: String,
     default: ''
   },
-  subtitle: {
-    type: String,
-    default: ''
-  },
-  icon: {
-    type: String,
-    default: ''
-  },
   showClose: {
     type: Boolean,
-    default: true
+    default: false
   },
   glass: {
     type: Boolean,
@@ -85,13 +71,31 @@ defineProps({
   }
 })
 
-defineEmits(['update:modelValue'])
+defineEmits(['update:modelValue', 'update:download'])
 
-const dialogRef = ref(null)
+// 获取当前组件插槽
+const slots = getCurrentInstance().slots
+console.log(slots)
+
+// 头部按钮集合
+const headerActions = ref([
+  {
+    icon: 'download',
+    title: '下载',
+    isShow: true,
+    event: 'update:download'
+  },
+  {
+    icon: 'close',
+    title: '取消',
+    isShow: true,
+    event: 'update:modelValue'
+  }
+])
 </script>
 
 <style lang="scss">
-// 注意：el-dialog 是 append-to-body 的，所以样式不能 scoped，或者需要穿透
+// 注意：el-dialog是append-to-body 的，所以样式不能scoped，或者需要穿透
 .modal-dialog {
   overflow: hidden;
   background: var(--glass-surface);
@@ -115,14 +119,6 @@ const dialogRef = ref(null)
       transparent 70%
     );
     border-radius: 999px;
-  }
-
-  &__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 24px 24px 0;
-    margin-bottom: 20px;
   }
 
   .header-content {
@@ -192,10 +188,16 @@ const dialogRef = ref(null)
     }
   }
 
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px;
+  }
+
   &__content {
-    padding: 0 24px 24px;
+    padding: 12px;
     font-size: 14px;
-    line-height: 1.6;
     color: var(--color-text-primary);
   }
 
@@ -204,10 +206,7 @@ const dialogRef = ref(null)
     gap: 12px;
     align-items: center;
     justify-content: flex-end;
-    padding: 16px 24px;
-
-    // background: color-mix(in srgb, var(--el-dialog-bg-color), transparent 50%);
-    border-top: px solid var(--color-border-light);
+    padding: 12px;
   }
 
   // Body 样式

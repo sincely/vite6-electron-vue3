@@ -123,8 +123,9 @@ html.dark {
     circle at 50% 0%,
     rgb(59 130 246 / 8%) 0%,
     transparent 60%
-  ); // 顶部微弱蓝光
+  );
 
+  // 顶部微弱蓝光
   --glass-surface: rgb(22 25 31 / 80%);
   --glass-surface-border: rgb(255 255 255 / 5%);
   --sidebar-surface-bg: #111318;

@@ -51,7 +51,7 @@
       </template>
 
       <template #type="{ row }">
-        <span class="status-pill type-pill">{{ row.type }}</span>
+        <span class="type-pill">{{ row.type }}</span>
       </template>
 
       <template #address="{ row }">
@@ -94,7 +94,7 @@
         </div>
         <div class="detail-item">
           <span class="label">日志类型</span>
-          <span class="status-pill type-pill">系统操作</span>
+          <span class="type-pill">系统操作</span>
         </div>
         <div class="detail-item">
           <span class="label">操作内容</span>
@@ -123,6 +123,7 @@ import { ref, h } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader/index.vue'
 import AdvanceTable from '@/components/AdvanceTable/index.vue'
+import LogDetail from './components/LogDetail.vue'
 import { useDialog } from '@/hooks/useDialog'
 import { getTableList } from '@/api/table'
 import { ElButton } from 'element-plus'
@@ -220,37 +221,28 @@ const handleDetail = (row) => {
     subtitle: '查看完整的操作日志信息',
     icon: 'document',
     width: '600px',
-    content: () =>
-      h('div', { class: 'detail-content' }, [
-        h('div', { class: 'detail-item' }, [
-          h('span', { class: 'label' }, '操作时间'),
-          h('span', { class: 'value' }, row.date)
-        ]),
-        h('div', { class: 'detail-item' }, [
-          h('span', { class: 'label' }, '操作人员'),
-          h('div', { class: 'user-value' }, [
-            h('div', { class: 'user-avatar-sm' }, row.name.charAt(0)),
-            h('span', null, row.name)
-          ])
-        ]),
-        h('div', { class: 'detail-item' }, [
-          h('span', { class: 'label' }, '日志类型'),
-          h('span', { class: 'status-pill type-pill' }, '系统操作')
-        ]),
-        h('div', { class: 'detail-item' }, [
-          h('span', { class: 'label' }, '操作内容'),
-          h('span', { class: 'value' }, row.address)
-        ]),
-        h('div', { class: 'detail-item full' }, [
-          h('span', { class: 'label' }, '原始数据'),
-          h('pre', { class: 'code-block' }, JSON.stringify(row, null, 2))
-        ])
-      ]),
-    footer: ({ close }) =>
-      h('div', [
-        h(ElButton, { onClick: close }, () => '关闭'),
-        h(ElButton, { type: 'primary', onClick: close }, () => '导出记录')
-      ])
+    component: LogDetail, // 内容组件
+    componentProps: { row }, // 传递给内容组件的属性
+    dialogProps: {
+      width: '900px'
+    },
+    footer: [
+      {
+        label: '关闭',
+        onClick: ({ close, exposed }) => {
+          exposed.onCancel()
+          close()
+        }
+      },
+      {
+        label: '导出记录',
+        type: 'primary',
+        onClick: ({ close, exposed }) => {
+          exposed.onOk()
+          close()
+        }
+      }
+    ]
   })
 }
 </script>
