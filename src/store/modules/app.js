@@ -54,13 +54,8 @@ export const useAppStore = defineStore('app', {
         return
       }
 
-      // 获取下一个主题状态
-      // let nextTheme = 'light'
-      // if (this.theme === 'light') nextTheme = 'dark'
-      // else if (this.theme === 'dark') nextTheme = 'auto'
-      let nextTheme = theme
-      if (this.theme === 'light') nextTheme = 'dark'
-      else if (this.theme === 'dark') nextTheme = 'auto'
+      // 使用传入的目标主题
+      const nextTheme = theme
       // 计算是否变暗（auto 模式下可能需要判断系统主题，这里简化处理）
       const isGoingDark = nextTheme === 'dark'
 
