@@ -16,7 +16,6 @@
       v-loading="loading"
       :data="tableData"
       v-bind="mergedConfig.table"
-      :height="mergedConfig.table.height || tableHeight"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
@@ -109,7 +108,7 @@
       </template>
 
       <!-- 空状态 -->
-      <template #empty>
+      <template v-if="tableData.length === 0" #empty>
         <div class="no-data">
           <img src="@/assets/images/empty.png" alt="无数据" />
           <p>暂无数据</p>
@@ -356,7 +355,7 @@ watch(
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 16px 16px 0;
+  padding: 12px;
   overflow-y: hidden;
   background: var(--glass-surface);
   backdrop-filter: blur(20px);
@@ -397,6 +396,7 @@ watch(
   display: flex;
   justify-content: flex-end;
   padding: 16px 0;
-  margin-top: auto;
+
+  // margin-top: auto;
 }
 </style>

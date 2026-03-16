@@ -1,6 +1,6 @@
 <template>
   <div class="edit-table">
-    <el-form ref="formRef" :model="formData" :rules="rules" size="small">
+    <el-form ref="formRef" :model="formData" :rules="rules">
       <el-table
         ref="tableRef"
         :data="formData.list"
@@ -11,7 +11,7 @@
         <el-table-column type="index" label="序号" width="60" align="center" />
 
         <template v-for="column in visibleColumns" :key="column.prop">
-          <!-- selection / index 列 -->
+          <!-- selection/index 列 -->
           <el-table-column
             v-if="column.type === 'selection'"
             type="selection"
@@ -24,14 +24,14 @@
             :width="column.width || 60"
           />
 
-          <!-- 普通列 / 编辑列 -->
+          <!-- 普通列/编辑列 -->
           <el-table-column
             v-else
             :prop="column.prop"
             :label="column.label"
             :width="column.width"
             :sortable="column.sortable"
-            :show-overflow-tooltip="true"
+            :show-overflow-tooltip="!hasEditingRow"
           >
             <!-- 自定义表头 -->
             <template #header="{ column, $index }">
@@ -105,36 +105,6 @@
                     />
                   </el-select>
 
-                  <!-- 多选框 -->
-                  <el-checkbox-group
-                    v-else-if="column.editType === 'check-box-group'"
-                    v-model="row[column.prop]"
-                    v-bind="column.editProps"
-                  >
-                    <el-checkbox
-                      v-for="opt in column.editProps?.options"
-                      :key="opt.value"
-                      :value="opt.value"
-                    >
-                      {{ opt.label }}
-                    </el-checkbox>
-                  </el-checkbox-group>
-
-                  <!-- 单选框 -->
-                  <el-radio-group
-                    v-else-if="column.editType === 'radio-group'"
-                    v-model="row[column.prop]"
-                    v-bind="column.editProps"
-                  >
-                    <el-radio
-                      v-for="opt in column.editProps?.options"
-                      :key="opt.value"
-                      :value="opt.value"
-                    >
-                      {{ opt.label }}
-                    </el-radio>
-                  </el-radio-group>
-
                   <!-- 日期选择 -->
                   <el-date-picker
                     v-else-if="
@@ -175,21 +145,21 @@
         </template>
 
         <!-- 操作列 -->
-        <el-table-column label="操作" width="150" align="center" fixed="right">
+        <el-table-column label="操作" width="250" align="center" fixed="right">
           <template #default="{ row, $index }">
             <div v-if="isEditing(row)" class="action-cell">
-              <el-button type="success" link @click="handleSave(row, $index)">
+              <el-button type="success" @click="handleSave(row, $index)">
                 保存
               </el-button>
-              <el-button type="warning" link @click="handleCancel(row, $index)">
+              <el-button type="warning" @click="handleCancel(row, $index)">
                 取消
               </el-button>
             </div>
             <div v-else class="action-cell">
-              <el-button type="primary" link @click="handleEdit(row, $index)">
+              <el-button type="primary" @click="handleEdit(row, $index)">
                 编辑
               </el-button>
-              <el-button type="danger" link @click="handleDelete(row, $index)">
+              <el-button type="danger" @click="handleDelete(row, $index)">
                 删除
               </el-button>
             </div>
@@ -286,6 +256,13 @@ const visibleColumns = computed(() => {
   return props.columns.filter((col) => !col.hide)
 })
 
+// 是否有正在编辑的行（用于禁用 show-overflow-tooltip，避免 tooltip 包裹破坏 form 上下文）
+const hasEditingRow = computed(() => {
+  return (
+    editingIds.value.length > 0 || tableData.value.some((row) => row._isNew)
+  )
+})
+
 // 监听外部数据变化
 watch(
   () => props.data,
@@ -355,6 +332,14 @@ const getRules = (prop) => {
 
   return []
 }
+
+// 获取编辑组件的 props（排除 options，避免与手动渲染的选项冲突）
+const getEditProps = (column) => {
+  if (!column.editProps) return {}
+  const { options, ...rest } = column.editProps
+  return rest
+}
+
 // 判断字段是否必填，用于展示必填红星/红三角
 const isRequired = (prop) => {
   // 1. 从 getRules 动态获取合并后的规则
@@ -391,7 +376,6 @@ const formatDisplayValue = (row, column) => {
       })
       return labels.join(', ')
     }
-    // 单个 checkbox (布尔值)
     return value ? '是' : '否'
   }
 
@@ -414,8 +398,6 @@ const formatDisplayValue = (row, column) => {
 const handleSave = async (row, index) => {
   // 触发表单校验
   try {
-    // 这里需要精细化校验当前行的字段，而不是所有字段
-    // 简单起见，我们遍历所有正在编辑的列进行校验
     const validateFields = props.columns
       .filter((col) => !col.hide && col.prop)
       .map((col) => `list.${index}.${col.prop}`)
@@ -460,11 +442,8 @@ const handleAdd = () => {
       // 根据 editType 设置默认值
       if (col.editType === 'number') {
         newRow[col.prop] = undefined // 数字类型初始化为 undefined
-      } else if (
-        col.editType === 'check-box-group' ||
-        col.editType === 'radio-group'
-      ) {
-        newRow[col.prop] = [] // checkbox group 初始化为数组
+      } else if (col.editType === 'check-box-group') {
+        newRow[col.prop] = [] // checkbox group 初始化为空数组
       } else {
         newRow[col.prop] = ''
       }
@@ -526,16 +505,20 @@ defineExpose({
 }
 
 .edit-form-item {
-  margin-bottom: 0;
+  // margin-bottom: 18px;
 
   // :deep(.el-form-item__content) {
   //   line-height: inherit;
   // }
 
-  // :deep(.el-form-item__error) {
-  //   top: 100%;
-  //   z-index: 1;
-  //   padding-top: 2px;
-  // }
+  :deep(.el-form-item__error) {
+    // width: 100%;
+    // top: 100%;
+    z-index: 1;
+    padding-top: 4px;
+
+    // display: block;
+    // text-align: center;
+  }
 }
 </style>

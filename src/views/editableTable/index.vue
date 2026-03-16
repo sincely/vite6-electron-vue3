@@ -65,6 +65,7 @@ const columns = [
       { label: '用户', value: 'user' }
     ]
   },
+
   {
     prop: 'age',
     label: '年龄',
@@ -95,33 +96,6 @@ const columns = [
       'value-format': 'YYYY-MM-DD'
     },
     required: true
-  },
-  // 多选框
-  {
-    prop: 'hobbies',
-    label: '爱好',
-    editType: 'check-box-group',
-    editProps: {
-      options: [
-        { label: '篮球', value: 'basketball' },
-        { label: '足球', value: 'football' },
-        { label: '跑步', value: 'running' }
-      ]
-    },
-    required: true
-  },
-  // 单选框
-  {
-    prop: 'gender',
-    label: '性别',
-    editType: 'radio-group',
-    editProps: {
-      options: [
-        { label: '男', value: 'male' },
-        { label: '女', value: 'female' }
-      ]
-    },
-    required: false
   }
 ]
 const rules = {
@@ -138,48 +112,10 @@ const rules = {
       trigger: 'change',
       type: 'array'
     }
-  ],
-  hobbies: [
-    {
-      required: true,
-      message: '请至少选择一个爱好',
-      trigger: 'change',
-      type: 'array'
-    }
-  ],
-  gender: [
-    {
-      required: true,
-      message: '请选择性别',
-      trigger: 'change'
-    }
   ]
 }
 
-const tableData = ref([
-  {
-    id: 1,
-    date: '2024-03-15 14:23:45',
-    name: 'Admin',
-    role: 'admin',
-    age: 30,
-    address: '登录系统成功 (IP: 192.168.1.10)',
-    hobbies: ['basketball', 'football'],
-    gender: 'male',
-    range: ['2024-03-15', '2024-03-20']
-  },
-  {
-    id: 2,
-    date: '2024-03-15 13:12:33',
-    name: 'User',
-    role: 'user',
-    age: 25,
-    address: '修改了个人配置文件',
-    hobbies: ['running'],
-    gender: 'female',
-    range: ['2024-03-15', '2024-03-20']
-  }
-])
+const tableData = ref([])
 
 const handleSave = (row, index) => {
   console.log('保存', row, index)

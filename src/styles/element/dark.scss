@@ -60,8 +60,7 @@ $dark-theme-overrides: (
   'fill-color-light': #16191f,
   'fill-color-lighter': #111318,
   'fill-color-dark': #2d3748,
-  'fill-color-blank': #1f2937,
-
+  // 'fill-color-blank': #1f2937,
   // 阴影
   'box-shadow': (0 1px 2px 0 rgb(0 0 0 / 0.3)),
   'box-shadow-light': (0 1px 2px 0 rgb(0 0 0 / 0.3)),
@@ -77,9 +76,8 @@ $dark-theme-overrides: (
   'table-border-color': #374151,
   'table-header-text-color': #d1d5db,
   'table-text-color': #f9fafb,
-  'table-tr-bg-color': #111827,
+  'table-tr-bg-color': #0c63dc,
   'table-bg-color': #111827,
-
   // 输入框
   'input-bg-color': #1f2937,
   'input-border-color': #374151,
