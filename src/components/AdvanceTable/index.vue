@@ -6,7 +6,8 @@
         <slot name="toolbar-left" />
       </div>
       <div class="toolbar-right">
-        <slot name="toolbar-right" />
+        <slot name="toolbar" />
+
         <ColumnSetting v-model:columns="localColumns" />
       </div>
     </div>
@@ -395,8 +396,7 @@ watch(
 .pagination-container {
   display: flex;
   justify-content: flex-end;
-  padding: 16px 0;
-
-  // margin-top: auto;
+  padding: 12px 0;
+  margin-top: auto;
 }
 </style>

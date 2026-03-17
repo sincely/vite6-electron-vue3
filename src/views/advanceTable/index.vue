@@ -34,6 +34,11 @@
       :config="config"
       :params="searchParams"
     >
+      <template #toolbar>
+        <el-button icon="setting" />
+        <el-button icon="setting" />
+        <el-button icon="setting" />
+      </template>
       <!-- 定义插槽内容 -->
       <template #nameHeader="{ column }">
         <el-icon><User /></el-icon>
@@ -119,7 +124,7 @@
 </template>
 
 <script setup>
-import { ref, h } from 'vue'
+import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader/index.vue'
 import AdvanceTable from '@/components/AdvanceTable/index.vue'

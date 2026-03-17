@@ -6,6 +6,7 @@
         :data="formData.list"
         v-bind="mergedConfig.table"
         style="width: 100%"
+        size="small"
         @sort-change="handleSortChange"
       >
         <el-table-column type="index" label="序号" width="60" align="center" />
@@ -499,8 +500,8 @@ defineExpose({
     left: 0;
     z-index: 10;
     content: '';
-    border-top: 6px solid var(--color-danger);
-    border-right: 6px solid transparent;
+    border-top: 8px solid var(--color-danger);
+    border-right: 8px solid transparent;
   }
 }
 
@@ -515,10 +516,9 @@ defineExpose({
     // width: 100%;
     // top: 100%;
     z-index: 1;
+    display: block;
     padding-top: 4px;
-
-    // display: block;
-    // text-align: center;
+    text-align: center;
   }
 }
 </style>

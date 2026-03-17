@@ -6,7 +6,7 @@
     popper-class="column-setting-popover"
   >
     <template #reference>
-      <el-button circle icon="Operation" />
+      <el-button circle icon="setting" />
     </template>
 
     <div class="column-setting">
