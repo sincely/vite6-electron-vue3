@@ -19,7 +19,6 @@ export default defineConfig(({ mode, command }) => {
       `node_modules/element-plus/es/components/${dirname}/style/css.mjs`,
       (err) => {
         if (!err) {
-          console.log(dirname)
           optimizeDepsElementPlusIncludes.push(
             `element-plus/es/components/${dirname}/style/css`
           )

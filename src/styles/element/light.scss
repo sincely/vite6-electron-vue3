@@ -1,5 +1,7 @@
-// 亮色模式下的 Element 组件样式
-// only scss variables
+// ==========================================
+// 亮色/全局模式下的 Element Plus SCSS 变量覆盖
+// 使用方式 1：在编译时覆盖默认 SCSS 变量
+// ==========================================
 
 $--colors: (
   'primary': (
@@ -22,106 +24,9 @@ $--colors: (
   )
 );
 
-// 用于覆盖 element-plus 的样式变量
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // ------------------------------------------
+  // 1. 全局基础维度 (Global Variables)
+  // ------------------------------------------
   $colors: $--colors
 );
-
-// 定义覆盖变量
-$light-theme-overrides: (
-  // 全局
-  'border-radius-base': 6px,
-  'border-radius-small': 4px,
-  'border-radius-round': 20px,
-  'border-radius-circle': 100%,
-
-  // 文本颜色
-  'text-color-primary': #111827,
-  'text-color-regular': #374151,
-  'text-color-secondary': #6b7280,
-  'text-color-placeholder': #9ca3af,
-  'text-color-disabled': #d1d5db,
-
-  // 边框颜色
-  'border-color': #e5e7eb,
-  'border-color-light': #f3f4f6,
-  'border-color-lighter': #f9fafb,
-  'border-color-extra-light': #f9fafb,
-  'border-color-dark': #d1d5db,
-  'border-color-darker': #9ca3af,
-
-  // 背景颜色
-  'bg-color-page': #f9fafb,
-  'bg-color-overlay': #ffffff,
-
-  // 填充颜色
-  'fill-color': #ffffff,
-  'fill-color-light': #f9fafb,
-  'fill-color-lighter': #f3f4f6,
-  'fill-color-dark': #d1d5db,
-  'fill-color-blank': #ffffff,
-
-  // 阴影
-  'box-shadow': (0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)),
-  'box-shadow-light': (0 1px 2px 0 rgb(0 0 0 / 0.05)),
-  'box-shadow-lighter': (0 1px 2px 0 rgb(0 0 0 / 0.05)),
-  'box-shadow-dark': (
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1)
-  ),
-
-  // Table
-  'table-header-bg-color': #f9fafb,
-  'table-row-hover-bg-color': #f3f4f6,
-  'table-border-color': #1b6ce6,
-  'table-header-text-color': #374151,
-  'table-text-color': #111827,
-
-  // 输入框
-  'input-bg-color': #ffffff,
-  'input-border-color': #d1d5db,
-  'input-hover-border-color': #9ca3af,
-  'input-text-color': #111827,
-  'input-placeholder-color': #9ca3af,
-
-  // 选择框
-  'select-input-color': #111827,
-  'select-border-color-hover': #9ca3af,
-
-  // 按钮
-  'button-font-weight': 500,
-  'button-border-color': #d1d5db,
-  'button-bg-color': #ffffff,
-  'button-text-color': #374151,
-  'button-hover-bg-color': #eff6ff,
-  'button-active-bg-color': #eff6ff,
-
-  // 卡片
-  'card-bg-color': #ffffff,
-  'card-border-color': #e5e7eb,
-  'card-border-radius': 8px,
-  'card-padding': 20px,
-
-  // 对话框
-  'dialog-border-radius': 12px,
-  'dialog-padding-primary': 24px,
-
-  // 分页器
-  'pagination-bg-color': #ffffff,
-  'pagination-text-color': #374151,
-  'pagination-button-bg-color': #ffffff,
-
-  // 开关
-  'switch-off-color': #d1d5db,
-
-  // 复选框
-  'checkbox-text-color': #374151,
-  'checkbox-input-border': #d1d5db
-);
-
-// 生成 CSS 变量
-:root {
-  @each $key, $value in $light-theme-overrides {
-    --el-#{$key}: #{$value};
-  }
-}

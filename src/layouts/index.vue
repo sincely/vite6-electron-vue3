@@ -1,9 +1,9 @@
 <template>
   <div class="layout-container">
     <!-- 侧边栏 -->
-    <aside class="layout-sidebar">
+    <div class="layout-sidebar">
       <GlobalSider />
-    </aside>
+    </div>
 
     <!-- 右侧主区域 -->
     <div class="layout-main">

@@ -76,9 +76,7 @@
             height="16px"
           />
         </button>
-        <!-- Windows 窗口控制 -->
-
-        <div v-if="isWindows" class="window-controls">
+        <div v-if="isWindows()" class="window-controls">
           <button class="icon-btn" title="最小化" @click="minimize">
             <SvgIcon icon-class="minus" width="16px" height="16px" />
           </button>
@@ -99,6 +97,8 @@ import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
 import { isWindows } from '@/utils/platform'
+
+console.log(isWindows)
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
