@@ -99,7 +99,7 @@ const headerActions = ref([
 .modal-dialog {
   overflow: hidden;
   background: var(--glass-surface);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(5px);
   border: 1px solid var(--glass-surface-border);
   border-radius: var(--radius-xl);
   box-shadow:

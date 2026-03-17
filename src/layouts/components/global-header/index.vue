@@ -77,19 +77,18 @@
           />
         </button>
         <!-- Windows 窗口控制 -->
-        <template v-if="!isMac">
-          <div class="window-controls">
-            <button class="icon-btn" title="最小化" @click="minimize">
-              <SvgIcon icon-class="minus" width="16px" height="16px" />
-            </button>
-            <button class="icon-btn" title="最大化" @click="maximize">
-              <SvgIcon icon-class="plus" width="16px" height="16px" />
-            </button>
-            <button class="icon-btn" title="关闭" @click="close">
-              <SvgIcon icon-class="close" width="16px" height="16px" />
-            </button>
-          </div>
-        </template>
+
+        <div v-if="isWindows" class="window-controls">
+          <button class="icon-btn" title="最小化" @click="minimize">
+            <SvgIcon icon-class="minus" width="16px" height="16px" />
+          </button>
+          <button class="icon-btn" title="最大化" @click="maximize">
+            <SvgIcon icon-class="plus" width="16px" height="16px" />
+          </button>
+          <button class="icon-btn" title="关闭" @click="close">
+            <SvgIcon icon-class="close" width="16px" height="16px" />
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -99,7 +98,7 @@
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
-import { isMac } from '@/utils/platform'
+import { isWindows } from '@/utils/platform'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
@@ -159,6 +158,7 @@ const close = () => ipcRenderer.send('close-window')
 
 .window-controls {
   display: flex;
+  gap: 6px;
   align-items: center;
   height: 100%;
 }
