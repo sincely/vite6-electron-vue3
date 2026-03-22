@@ -1,3 +1,7 @@
+/**
+ * @see https://www.electron.build/configuration/configuration
+ * JSON5 支持注释；此文件可按需添加行注释或块注释。
+ */
 {
   "appId": "ichengzhou@icloud.com",
   "asar": true,

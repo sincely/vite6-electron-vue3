@@ -1,6 +1,9 @@
 {
   "javascript.format.insertSpaceBeforeFunctionParenthesis": false,
   "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
+  "files.associations": {
+    "*.json5": "jsonc"
+  },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },

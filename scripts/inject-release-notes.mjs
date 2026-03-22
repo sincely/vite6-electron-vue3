@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import JSON5 from 'json5'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
@@ -33,16 +34,26 @@ const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf-8')
  *   ## 0.0.6
  */
 const escapedVer = version.replace(/\./g, '\\.')
-const pattern = new RegExp(`^##\\s+(?:v?${escapedVer}|\\[v?${escapedVer}\\][^\\n]*)[ \\t]*$`, 'm')
+const pattern = new RegExp(
+  `^##\\s+(?:v?${escapedVer}|\\[v?${escapedVer}\\][^\\n]*)[ \\t]*$`,
+  'm'
+)
 
 let releaseNotes = `v${version} 版本更新` // 默认值，找不到时使用
 
 const matchIndex = changelog.search(pattern)
 if (matchIndex !== -1) {
   // 截取从标题行下一行开始，到下一个 ## 标题（或文件末尾）之间的内容
-  const afterHeading = changelog.slice(matchIndex).split('\n').slice(1).join('\n')
+  const afterHeading = changelog
+    .slice(matchIndex)
+    .split('\n')
+    .slice(1)
+    .join('\n')
   const nextSectionIndex = afterHeading.search(/^##\s/m)
-  const section = nextSectionIndex !== -1 ? afterHeading.slice(0, nextSectionIndex) : afterHeading
+  const section =
+    nextSectionIndex !== -1
+      ? afterHeading.slice(0, nextSectionIndex)
+      : afterHeading
 
   // 按子章节解析，跳过 Contributors，给每条目保留章节 emoji 前缀
   const sectionLines = section.split('\n')
@@ -79,15 +90,22 @@ if (matchIndex !== -1) {
   if (items.length) releaseNotes = items.join('; ')
 }
 
-// ── 写入 electron-builder.json ───────────────────────────────
-const configPath = resolve(root, 'electron-builder.json')
-const builderConfig = JSON.parse(readFileSync(configPath, 'utf-8'))
+// ── 写入 electron-builder.json5 ──────────────────────────────
+const configPath = resolve(root, 'electron-builder.json5')
+const builderConfig = JSON5.parse(readFileSync(configPath, 'utf-8'))
 builderConfig.releaseInfo = { releaseNotes }
-writeFileSync(configPath, JSON.stringify(builderConfig, null, 2) + '\n', 'utf-8')
+writeFileSync(
+  configPath,
+  JSON5.stringify(builderConfig, null, 2) + '\n',
+  'utf-8'
+)
 
 // ── 输出摘要 ─────────────────────────────────────────────────
-const preview = releaseNotes.length > 120 ? releaseNotes.slice(0, 120) + '…' : releaseNotes
-console.log(`✅ [inject-release-notes] v${version} 更新内容已写入 electron-builder.json`)
+const preview =
+  releaseNotes.length > 120 ? releaseNotes.slice(0, 120) + '…' : releaseNotes
+console.log(
+  `✅ [inject-release-notes] v${version} 更新内容已写入 electron-builder.json5`
+)
 console.log('─'.repeat(60))
 console.log(preview)
 console.log('─'.repeat(60))
