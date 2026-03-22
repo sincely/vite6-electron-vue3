@@ -7,7 +7,11 @@
       </div>
       <div class="toolbar-right">
         <slot name="toolbar" />
-
+        <RefreshRight
+          class="toolbar-icon"
+          :class="{ 'is-spinning': loading }"
+          @click="refresh"
+        />
         <ColumnSetting v-model:columns="localColumns" />
       </div>
     </div>
@@ -137,7 +141,7 @@
 import { parseTime } from '@/utils/time'
 import ColumnSetting from './components/ColumnSetting.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
-
+import { RefreshRight } from '@element-plus/icons-vue'
 // Props
 const props = defineProps({
   columns: {
@@ -282,6 +286,10 @@ async function getList() {
   }
 }
 
+const refresh = () => {
+  getList()
+}
+
 // 重置查询
 function resetQuery() {
   queryParams.pageNum = 1
@@ -380,6 +388,29 @@ watch(
   .toolbar-right {
     display: flex;
     gap: 12px;
+    align-items: center;
+
+    .toolbar-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--el-text-color-regular);
+      cursor: pointer;
+
+      &.is-spinning {
+        pointer-events: none;
+        animation: rotate 0.8s linear infinite;
+      }
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 

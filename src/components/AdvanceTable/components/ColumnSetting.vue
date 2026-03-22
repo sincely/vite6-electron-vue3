@@ -6,7 +6,7 @@
     popper-class="column-setting-popover"
   >
     <template #reference>
-      <el-button circle icon="setting" />
+      <el-button circle :icon="Operation" />
     </template>
 
     <div class="column-setting">
@@ -34,9 +34,7 @@
           @drop="drop($event, index)"
         >
           <div class="drag-icon">
-            <el-icon v-if="!isFixed(element)" style="cursor: move">
-              <Rank />
-            </el-icon>
+            <Rank v-if="!isFixed(element)" class="drag-rank-icon" />
           </div>
           <el-checkbox
             v-model="element.show"
@@ -52,7 +50,6 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
 import { Operation, Rank } from '@element-plus/icons-vue'
 import { cloneDeep } from 'lodash-es'
 
@@ -211,6 +208,10 @@ const drop = (e, index) => {
     width: 20px;
     margin-right: 4px;
     color: var(--color-text-secondary);
+
+    .drag-rank-icon {
+      cursor: move;
+    }
   }
 }
 </style>
