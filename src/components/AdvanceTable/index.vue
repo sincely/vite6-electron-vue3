@@ -68,9 +68,9 @@
           :tooltip-formatter="column.tooltipFormatter"
         >
           <template #default="{ row, column: col, $index }">
-            <!-- 插槽优先 -->
+            <!-- 插槽优先（仅在父组件真实提供该插槽时渲染） -->
             <slot
-              v-if="column.slot"
+              v-if="column.slot && $slots[column.slot]"
               :name="column.slot"
               :row="row"
               :column="column"
@@ -78,7 +78,7 @@
             />
             <!-- formatter 格式化 -->
             <span v-else-if="column.formatter">
-              {{ column.formatter(row, col, row[column.prop], $index) }}
+              {{ formatCellValue(column, row, col, $index) }}
             </span>
             <!-- 默认文本 -->
             <span v-else>{{ row[column.prop] }}</span>
@@ -224,16 +224,14 @@ const visibleColumns = computed(() => {
     if (mergedConfig.value.selection && col.type === 'selection') {
       return false
     }
-    // ColumnSetting 组件会控制 hidden 属性，如果没有 hidden 属性默认视为显示
-    // 如果 props 中定义了 hidden: true，那么初始化时 hidden 应该是 true (ColumnSetting组件逻辑已处理)
-    // 这里我们主要依赖 localColumns 中的 hidden 属性
-    // 如果 hidden 属性不存在（比如初始化前），则回退到 props 的 hidden 属性逻辑
-    if (col.hidden === false) return false
-    if (col.hidden === undefined && col.hidden) return false
-
-    return true
+    return col.hidden !== true
   })
 })
+
+function formatCellValue(column, row, col, index) {
+  if (typeof column.formatter !== 'function') return row[column.prop]
+  return column.formatter(row, col, row[column.prop], index)
+}
 
 // 获取数据
 async function getList() {
