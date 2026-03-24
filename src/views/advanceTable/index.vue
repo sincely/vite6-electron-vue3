@@ -33,6 +33,7 @@
       :func="getTableList"
       :config="config"
       :params="searchParams"
+      @selection-change="handleSelectionChange"
     >
       <!-- 定义插槽内容 -->
       <template #nameHeader="{ column }">
@@ -168,6 +169,7 @@ const config = {
     sort: false,
     highlightCurrentRow: true, // 高亮当前行
     reserveSelection: true, // 保留选择状态
+    rowKey: 'id', // 行键，用于唯一标识每一行
     tableLayout: 'fixed'
   },
   pagination: {
@@ -232,6 +234,10 @@ const handleReset = () => {
 }
 
 const { open } = useDialog()
+
+const handleSelectionChange = (selection) => {
+  console.log('selection-change', selection)
+}
 
 const handleDetail = (row) => {
   open({
