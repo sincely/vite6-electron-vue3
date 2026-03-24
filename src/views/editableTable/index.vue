@@ -230,40 +230,6 @@ const columns = [
     rules: [{ required: true, message: '请选择年份', trigger: 'change' }]
   }
 ]
-const rules = {
-  name: [
-    { required: true, message: '请输入姓名', trigger: 'blur' },
-    { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-  ],
-  bio: [{ required: true, message: '请输入简介', trigger: 'blur' }],
-  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
-  enabled: [{ required: true, message: '请选择启用状态', trigger: 'change' }],
-  tags: [
-    { required: true, message: '请选择标签', trigger: 'change', type: 'array' }
-  ],
-  gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
-  date: [{ required: true, message: '请选择日期', trigger: 'change' }],
-  datetime: [{ required: true, message: '请选择日期时间', trigger: 'change' }],
-  dateRange: [
-    {
-      required: true,
-      message: '请选择日期范围',
-      trigger: 'change',
-      type: 'array'
-    }
-  ],
-  datetimeRange: [
-    {
-      required: true,
-      message: '请选择日期时间范围',
-      trigger: 'change',
-      type: 'array'
-    }
-  ],
-  month: [{ required: true, message: '请选择月份', trigger: 'change' }],
-  year: [{ required: true, message: '请选择年份', trigger: 'change' }],
-  week: [{ required: true, message: '请选择周', trigger: 'change' }]
-}
 
 const tableData = ref([
   {
