@@ -132,7 +132,6 @@
 </template>
 
 <script setup>
-import { parseTime } from '@/utils/time'
 import ColumnSetting from './components/ColumnSetting.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { RefreshRight } from '@element-plus/icons-vue'
@@ -235,12 +234,6 @@ const visibleColumns = computed(() => {
     return true
   })
 })
-
-// 格式化时间
-function formatDate(value, format = '{y}-{m}-{d}') {
-  if (!value) return ''
-  return parseTime(value, format)
-}
 
 // 获取数据
 async function getList() {

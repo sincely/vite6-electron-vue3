@@ -39,9 +39,6 @@
         <el-icon><User /></el-icon>
         <span style="margin-left: 4px">{{ column.label }}</span>
       </template>
-      <template #date="{ row }">
-        <span class="date-cell">{{ row.date }}</span>
-      </template>
       <template #action="{ row }">
         <el-button type="primary" link size="small" @click="handleDetail(row)">
           查看
@@ -97,7 +94,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Search, RefreshRight } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import LogDetail from './components/LogDetail.vue'
 import { useDialog } from '@/hooks/useDialog'
 import { getTableList } from '@/api/table'
@@ -109,8 +106,8 @@ const currentRow = ref(null)
 const columns = [
   {
     type: 'index',
+    prop: 'index',
     label: '序号',
-    // width: 180
     align: 'center'
   },
   {
