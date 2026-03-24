@@ -1,4 +1,4 @@
-import { render, h, ref, isRef } from 'vue'
+import { render, h, ref } from 'vue'
 import { ElButton } from 'element-plus'
 import ModalDialog from '@/components/ModalDialog/index.vue'
 
@@ -53,11 +53,13 @@ export function useDialog() {
       showClose,
       glass,
       component,
+      content,
       footer,
       onConfirm,
       onCancel,
       componentProps: componentProps = {}
     } = options
+    const dialogContent = component ?? content
 
     const visible = ref(true)
     const componentRef = ref(null)
@@ -90,10 +92,15 @@ export function useDialog() {
       },
       {
         default: () => {
-          if (typeof component === 'function') return component(componentProps)
-          if (typeof component === 'object')
-            return h(component, { ...componentProps, ref: componentRef })
-          return component
+          if (dialogContent == null) return null
+          if (typeof dialogContent === 'string') return dialogContent
+          if (
+            typeof dialogContent === 'function' ||
+            typeof dialogContent === 'object'
+          ) {
+            return h(dialogContent, { ...componentProps, ref: componentRef })
+          }
+          return null
         },
         footer: footer
           ? () => {
