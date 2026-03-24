@@ -42,29 +42,6 @@
       <template #date="{ row }">
         <span class="date-cell">{{ row.date }}</span>
       </template>
-
-      <template #name="{ row }">
-        <div class="user-cell">
-          <div class="user-avatar">{{ row.name.charAt(0) }}</div>
-          <span>{{ row.name }}</span>
-        </div>
-      </template>
-
-      <template #type="{ row }">
-        <span class="type-pill">{{ row.type }}</span>
-      </template>
-
-      <template #address="{ row }">
-        <span class="address-text">{{ row.address }}</span>
-      </template>
-
-      <template #status="{ row }">
-        <div
-          class="status-dot"
-          :class="row.status === 'Success' ? 'success' : 'warning'"
-        ></div>
-      </template>
-
       <template #action="{ row }">
         <el-button type="primary" link size="small" @click="handleDetail(row)">
           查看
@@ -131,11 +108,10 @@ const currentRow = ref(null)
 
 const columns = [
   {
-    prop: 'date',
-    label: '时间',
-    width: 180,
-    sortable: true,
-    slot: 'date'
+    type: 'index',
+    label: '序号',
+    // width: 180
+    align: 'center'
   },
   {
     prop: 'name',
@@ -143,18 +119,66 @@ const columns = [
     width: 180,
     headerSlot: 'nameHeader', // 指定插槽名称
     sortable: true,
-    slot: 'name'
+    showOverflowTooltip: true,
+    align: 'center'
   },
-  { prop: 'type', label: '类型', width: 120, slot: 'type' },
-  { prop: 'address', label: '详情信息', slot: 'address' },
-  { label: '状态', width: 100, slot: 'status', align: 'center' },
+  {
+    prop: 'type',
+    label: '类型',
+    width: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'address',
+    label: '详情信息',
+    align: 'center',
+    width: 120,
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'status',
+    label: '状态',
+    align: 'center',
+    formatter: (row) => {
+      return row.status === 'Pending' ? '等待' : '已完成'
+    },
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'date',
+    label: '时间',
+    width: 180,
+    sortable: true,
+    slot: 'date',
+    filters: [
+      { text: '2024-05-01', value: '2024-03-01' },
+      { text: '2024-05-02', value: '2024-03-02' },
+      { text: '2024-05-03', value: '2024-03-03' },
+      { text: '2024-05-04', value: '2024-03-04' }
+    ],
+    filterMethod: (value, row, column) => {
+      return row.date.includes(value)
+    },
+    showOverflowTooltip: true,
+    align: 'center'
+  },
   { label: '操作', width: 100, slot: 'action', align: 'center' }
 ]
 
 const config = {
-  selection: true,
-  // sort: false,
-  notPagination: false
+  table: {
+    sort: false,
+    highlightCurrentRow: true, // 高亮当前行
+    reserveSelection: true, // 保留选择状态
+    tableLayout: 'fixed'
+  },
+  pagination: {
+    pageSize: 10,
+    pageSizeOptions: [10, 20, 30, 40]
+  },
+  selection: true, //开启多选列
+  notPagination: false // 是否禁用分页
 }
 
 const searchItems = [

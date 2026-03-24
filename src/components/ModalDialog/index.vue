@@ -75,7 +75,6 @@ defineEmits(['update:modelValue', 'update:download'])
 
 // 获取当前组件插槽
 const slots = getCurrentInstance().slots
-console.log(slots)
 
 // 头部按钮集合
 const headerActions = ref([

@@ -46,6 +46,7 @@
         <el-table-column
           v-else-if="column.type === 'index'"
           type="index"
+          :align="column.align || 'left'"
           :label="column.label"
           :width="column.width || 60"
         />
@@ -56,36 +57,29 @@
           :prop="column.prop"
           :label="column.label"
           :width="column.width"
+          :min-width="column.minWidth || 100"
+          :align="column.align || 'left'"
           :fixed="column.fixed"
           :sortable="column.sortable || false"
-          :show-overflow-tooltip="true"
+          :formatter="column.formatter"
+          :show-overflow-tooltip="column.showOverflowTooltip || false"
+          :filters="column.filters"
+          :filter-method="column.filterMethod"
+          :tooltip-formatter="column.tooltipFormatter"
         >
-          <template #default="{ row }">
+          <template #default="{ row, column: col, $index }">
             <!-- 插槽优先 -->
             <slot
               v-if="column.slot"
               :name="column.slot"
               :row="row"
               :column="column"
+              :index="$index"
             />
-            <!-- 字典标签 -->
-            <DictTag
-              v-else-if="column.dict"
-              :value="row[column.prop]"
-              :options="column.dict"
-            />
-            <!-- 时间格式化 -->
-            <span v-else-if="column.date">
-              {{ formatDate(row[column.prop], column.dateFormat) }}
+            <!-- formatter 格式化 -->
+            <span v-else-if="column.formatter">
+              {{ column.formatter(row, col, row[column.prop], $index) }}
             </span>
-            <!-- 链接 -->
-            <el-link
-              v-else-if="column.link"
-              type="primary"
-              @click="handleLinkClick(column, row)"
-            >
-              {{ row[column.prop] }}
-            </el-link>
             <!-- 默认文本 -->
             <span v-else>{{ row[column.prop] }}</span>
           </template>
@@ -225,18 +219,18 @@ const mergedConfig = computed(() => {
   }
 })
 
-// 可见列（过滤 hide = true 的列，同时避免重复渲染 selection 列）
+// 可见列（过滤 hidden = true 的列，同时避免重复渲染 selection 列）
 const visibleColumns = computed(() => {
   return localColumns.value.filter((col) => {
     if (mergedConfig.value.selection && col.type === 'selection') {
       return false
     }
-    // ColumnSetting 组件会控制 show 属性，如果没有 show 属性默认视为显示
-    // 如果 props 中定义了 hide: true，那么初始化时 show 应该是 false (ColumnSetting组件逻辑已处理)
-    // 这里我们主要依赖 localColumns 中的 show 属性
-    // 如果 show 属性不存在（比如初始化前），则回退到 props 的 hide 属性逻辑
-    if (col.show === false) return false
-    if (col.show === undefined && col.hide) return false
+    // ColumnSetting 组件会控制 hidden 属性，如果没有 hidden 属性默认视为显示
+    // 如果 props 中定义了 hidden: true，那么初始化时 hidden 应该是 true (ColumnSetting组件逻辑已处理)
+    // 这里我们主要依赖 localColumns 中的 hidden 属性
+    // 如果 hidden 属性不存在（比如初始化前），则回退到 props 的 hidden 属性逻辑
+    if (col.hidden === false) return false
+    if (col.hidden === undefined && col.hidden) return false
 
     return true
   })

@@ -32,8 +32,6 @@ const addRequestToQueue = (config) => {
       pendingRequests.set(requestKey, cancel)
     }
   })
-
-  console.log('pendingRequests', pendingRequests)
 }
 
 // 移除队列中的请求
@@ -133,8 +131,6 @@ service.interceptors.response.use(
     ) {
       return response.data
     }
-
-    console.log('response响应体', response)
 
     const { code, result, message } = response.data
 
