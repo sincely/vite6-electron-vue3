@@ -61,7 +61,7 @@
     "@eslint/js": "8.57.0",
     "@release-it/conventional-changelog": "10.0.4",
     "@vitejs/plugin-vue": "5.2.3",
-    "axios": "1.6.8",
+    "axios": "1.7.3",
     "concurrently": "9.2.1",
     "@vueuse/core": "14.2.1",
     "conventional-changelog-conventionalcommits": "9.1.0",
