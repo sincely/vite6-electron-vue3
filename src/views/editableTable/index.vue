@@ -1,3 +1,4 @@
+0.
 <template>
   <div class="log-container page-enter">
     <PageHeader
@@ -23,7 +24,6 @@
     <EditTable
       v-model:data="tableData"
       :columns="columns"
-      :rules="rules"
       @save="handleSave"
       @delete="handleDelete"
       @add="handleAdd"
@@ -56,71 +56,92 @@ const columns = [
   {
     prop: 'name',
     label: '姓名',
-    editType: 'input',
+    type: 'input',
     required: true,
     sortable: true,
-    align: 'center',
+
     fixed: 'left',
-    headerSlot: 'nameHeader'
+    headerSlot: 'nameHeader',
+    rules: [
+      { required: true, message: '请输入姓名', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    ]
   },
   {
     prop: 'bio',
     label: '简介',
-    editType: 'textarea',
+    type: 'textarea',
     required: true,
-    editProps: {
+    componentProps: {
       rows: 1,
-      maxlength: 120,
-      'show-word-limit': true
-    }
+      maxlength: 120
+      // 'show-word-limit': true
+    },
+    rules: [{ required: true, message: '请输入简介', trigger: 'blur' }]
   },
   {
     prop: 'role',
     label: '角色',
-    editType: 'select',
+    type: 'select',
     required: true,
     options: [
       { label: '管理员', value: 'admin' },
       { label: '用户', value: 'user' }
-    ]
+    ],
+    rules: [{ required: true, message: '请选择角色', trigger: 'change' }]
   },
   {
     prop: 'enabled',
     label: '启用',
-    editType: 'switch',
+    type: 'switch',
     required: false,
-    editProps: {
+
+    componentProps: {
       'active-text': '开',
       'inactive-text': '关'
-    }
+    },
+    rules: [{ required: true, message: '请选择启用状态', trigger: 'change' }]
   },
   {
     prop: 'tags',
     label: '标签',
-    editType: 'check-bo-groub',
+    type: 'check-bo-groub',
     width: 300,
     required: true,
     options: [
       { label: '高优先级', value: 'high' },
       { label: '自动化', value: 'auto' },
       { label: '已归档', value: 'archived' }
+    ],
+    rules: [
+      {
+        required: true,
+        message: '请选择标签',
+        trigger: 'change',
+        type: 'array'
+      }
     ]
   },
   {
     prop: 'gender',
     label: '性别',
-    editType: 'radio-group',
+    type: 'radio-group',
     required: true,
+    width: 280,
+
     options: [
       { label: '男', value: 'male' },
       { label: '女', value: 'female' },
       { label: '保密', value: 'secret' }
-    ]
+    ],
+    rules: [{ required: true, message: '请选择性别', trigger: 'change' }]
   },
   {
     prop: 'age',
     label: '年龄',
-    editType: 'number',
+    width: 200,
+    type: 'number',
+    required: false,
     sortable: 'custom',
     rules: [
       { required: true, message: '请输入年龄', trigger: 'blur' },
@@ -130,69 +151,83 @@ const columns = [
   {
     prop: 'date',
     label: '日期',
-    editType: 'date',
-    required: true,
-    editProps: {
+    type: 'date',
+
+    required: false,
+    componentProps: {
       'value-format': 'YYYY-MM-DD'
-    }
+    },
+    rules: [{ required: true, message: '请选择日期', trigger: 'change' }]
   },
   {
     prop: 'datetime',
     label: '日期时间',
-    editType: 'datetime',
+    type: 'datetime',
     required: true,
-    editProps: {
+    componentProps: {
       'value-format': 'YYYY-MM-DD HH:mm:ss'
-    }
+    },
+    rules: [{ required: true, message: '请选择日期时间', trigger: 'change' }]
   },
   {
     prop: 'dateRange',
     label: '日期范围',
-    editType: 'daterange',
+    type: 'daterange',
     required: true,
-    editProps: {
+    width: 300,
+    componentProps: {
       'start-placeholder': '开始时间',
       'end-placeholder': '结束时间',
       'value-format': 'YYYY-MM-DD'
-    }
+    },
+    rules: [
+      {
+        required: true,
+        message: '请选择日期范围',
+        trigger: 'change',
+        type: 'array'
+      }
+    ]
   },
   {
     prop: 'datetimeRange',
     label: '日期时间范围',
-    editType: 'datetimerange',
+    width: 300,
+    type: 'datetimerange',
     required: true,
-    editProps: {
+    componentProps: {
       'start-placeholder': '开始日期时间',
       'end-placeholder': '结束日期时间',
       'value-format': 'YYYY-MM-DD HH:mm:ss'
-    }
+    },
+    rules: [
+      {
+        required: true,
+        message: '请选择日期时间范围',
+        trigger: 'change',
+        type: 'array'
+      }
+    ]
   },
   {
     prop: 'month',
     label: '月份',
-    editType: 'month',
+    type: 'month',
     required: true,
-    editProps: {
+    componentProps: {
       'value-format': 'YYYY-MM'
-    }
+    },
+    rules: [{ required: true, message: '请选择月份', trigger: 'change' }]
   },
   {
     prop: 'year',
     label: '年份',
-    editType: 'year',
+    type: 'year',
     required: true,
-    editProps: {
+    componentProps: {
       'value-format': 'YYYY'
-    }
-  },
-  {
-    prop: 'week',
-    label: '周',
-    editType: 'week',
-    required: true,
-    editProps: {
-      'value-format': 'YYYY-[W]WW'
-    }
+    },
+    rules: [{ required: true, message: '请选择年份', trigger: 'change' }]
   }
 ]
 const rules = {

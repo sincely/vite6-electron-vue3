@@ -25,7 +25,7 @@
             :label="column.label"
             :width="column.width"
             :min-width="column.minWidth || mergedConfig.columnMinWidth"
-            :align="column.align || 'left'"
+            :align="column.align || 'center'"
             :fixed="column.fixed"
             :sortable="column.sortable"
             :show-overflow-tooltip="!hasEditingRow"
@@ -45,8 +45,10 @@
               <!-- 处于编辑状态且列可编辑 -->
               <div
                 v-if="isEditing(row) && column.editable !== false"
-                class="edit-cell"
-                :class="{ required: isRequired(column.prop) }"
+                :class="[
+                  isRequired(column.prop) ? 'required' : '',
+                  'edit-cell'
+                ]"
               >
                 <el-form-item
                   :prop="`list.${$index}.${column.prop}`"
@@ -64,45 +66,50 @@
 
                   <!-- 输入框 -->
                   <el-input
-                    v-else-if="column.editType === 'input' || !column.editType"
+                    v-else-if="column.type === 'input' || !column.type"
                     v-model="row[column.prop]"
                     :placeholder="
-                      column.editProps?.placeholder || `请输入${column.label}`
+                      column.componentProps?.placeholder ||
+                      `请输入${column.label}`
                     "
-                    :style="{ width: column.editWidth || '100%' }"
+                    :style="{ width: '100%' }"
                     v-bind="getEditProps(column)"
+                    clearable
                   />
 
                   <el-input
-                    v-else-if="column.editType === 'textarea'"
+                    v-else-if="column.type === 'textarea'"
                     v-model="row[column.prop]"
                     type="textarea"
                     :placeholder="
-                      column.editProps?.placeholder || `请输入${column.label}`
+                      column.componentProps?.placeholder ||
+                      `请输入${column.label}`
                     "
-                    :style="{ width: column.editWidth || '100%' }"
+                    :style="{ width: '100%' }"
                     v-bind="getEditProps(column)"
                   />
 
                   <!-- 数字输入框 -->
                   <el-input-number
-                    v-else-if="column.editType === 'number'"
+                    v-else-if="column.type === 'number'"
                     v-model.number="row[column.prop]"
                     :placeholder="
-                      column.editProps?.placeholder || `请输入${column.label}`
+                      column.componentProps?.placeholder ||
+                      `请输入${column.label}`
                     "
-                    :style="{ width: column.editWidth || '100%' }"
+                    :style="{ width: '100%' }"
                     v-bind="getEditProps(column)"
                   />
 
                   <!-- 选择框 -->
                   <el-select
-                    v-else-if="column.editType === 'select'"
+                    v-else-if="column.type === 'select'"
                     v-model="row[column.prop]"
                     :placeholder="
-                      column.editProps?.placeholder || `请选择${column.label}`
+                      column.componentProps?.placeholder ||
+                      `请选择${column.label}`
                     "
-                    :style="{ width: column.editWidth || '100%' }"
+                    :style="{ width: '100%' }"
                     v-bind="getEditProps(column)"
                   >
                     <el-option
@@ -114,8 +121,9 @@
                   </el-select>
 
                   <el-switch
-                    v-else-if="column.editType === 'switch'"
+                    v-else-if="column.type === 'switch'"
                     v-model="row[column.prop]"
+                    class="center-control"
                     v-bind="getEditProps(column)"
                   />
 
@@ -125,9 +133,10 @@
                         'checkbox-group',
                         'check-box-group',
                         'check-bo-groub'
-                      ].includes(column.editType)
+                      ].includes(column.type)
                     "
                     v-model="row[column.prop]"
+                    class="center-control"
                     v-bind="getEditProps(column)"
                   >
                     <el-checkbox
@@ -140,10 +149,9 @@
                   </el-checkbox-group>
 
                   <el-radio-group
-                    v-else-if="
-                      ['radio-group', 'radio'].includes(column.editType)
-                    "
+                    v-else-if="['radio-group', 'radio'].includes(column.type)"
                     v-model="row[column.prop]"
+                    class="center-control"
                     v-bind="getEditProps(column)"
                   >
                     <el-radio
@@ -164,16 +172,18 @@
                         'daterange',
                         'datetimerange',
                         'month',
-                        'year',
-                        'week'
-                      ].includes(column.editType)
+                        'year'
+                      ].includes(column.type)
                     "
                     v-model="row[column.prop]"
-                    :type="column.editType"
+                    :type="column.type"
                     :placeholder="
-                      column.editProps?.placeholder || `请选择${column.label}`
+                      column.componentProps?.placeholder ||
+                      `请选择${column.label}`
                     "
-                    :style="{ width: column.editWidth || '100%' }"
+                    clearable
+                    :style="{ width: '100%' }"
+                    :show-week-number="column.prop.type === 'week'"
                     v-bind="getEditProps(column)"
                   />
                 </el-form-item>
@@ -253,11 +263,6 @@ const props = defineProps({
   },
   // 配置项
   config: {
-    type: Object,
-    default: () => ({})
-  },
-  // 校验规则
-  rules: {
     type: Object,
     default: () => ({})
   }
@@ -368,17 +373,12 @@ const handleCancel = (row, index) => {
 }
 
 // 获取行校验规则
-// 获取行校验规则
 const getRules = (prop) => {
-  // 优先使用外部传入的 rules
-  if (props.rules && props.rules[prop]) {
-    return props.rules[prop]
-  }
-
   // 检查列配置中的 rules
-  const column = props.columns.find((col) => col.prop === prop)
-  if (column?.rules) {
-    return column.rules
+  const target = props.columns.find((col) => col.prop === prop)
+  console.log('target', target)
+  if (target.required) {
+    return target.rules
   }
 
   return []
@@ -386,23 +386,24 @@ const getRules = (prop) => {
 
 // 获取编辑组件的 props（排除 options，避免与手动渲染的选项冲突）
 const getEditProps = (column) => {
-  if (!column.editProps) return {}
-  const { options, ...rest } = column.editProps
+  if (!column.componentProps) return {}
+  const { options, ...rest } = column.componentProps
   return rest
 }
 
 const getColumnOptions = (column) => {
-  return column.options || column.editProps?.options || []
+  return column.options || column.componentProps?.options || []
 }
 
 // 判断字段是否必填，用于展示必填红星/红三角
 const isRequired = (prop) => {
-  // 1. 从 getRules 动态获取合并后的规则
-  const rules = getRules(prop)
-  if (Array.isArray(rules)) {
-    return rules.some((r) => r.required)
+  // 检查列配置中的 required 字段
+  const column = props.columns.find((col) => col.prop === prop)
+  if (column?.required) {
+    return true
   }
-  return rules?.required || false
+
+  return false
 }
 
 // 格式化非编辑状态下的显示值
@@ -412,9 +413,9 @@ const formatDisplayValue = (row, column) => {
 
   // 处理 Select / Radio (从 options 中找 label)
   if (
-    column.editType === 'select' ||
-    column.editType === 'radio' ||
-    column.editType === 'radio-group'
+    column.type === 'select' ||
+    column.type === 'radio' ||
+    column.type === 'radio-group'
   ) {
     const options = getColumnOptions(column)
     const option = options.find((opt) => opt.value === value)
@@ -423,9 +424,9 @@ const formatDisplayValue = (row, column) => {
 
   // 处理 Checkbox / CheckboxGroup (数组转 label 拼接)
   if (
-    column.editType === 'checkbox' ||
+    column.type === 'checkbox' ||
     ['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(
-      column.editType
+      column.type
     )
   ) {
     if (Array.isArray(value)) {
@@ -439,18 +440,18 @@ const formatDisplayValue = (row, column) => {
     return value ? '是' : '否'
   }
 
-  if (column.editType === 'switch') {
+  if (column.type === 'switch') {
     return value ? '是' : '否'
   }
 
   // 处理日期范围 (数组转字符串拼接)
   if (
-    column.editType === 'daterange' ||
-    column.editType === 'datetimerange' ||
-    column.editType === 'monthrange'
+    column.type === 'daterange' ||
+    column.type === 'datetimerange' ||
+    column.type === 'monthrange'
   ) {
     if (Array.isArray(value) && value.length === 2) {
-      const separator = column.editProps?.rangeSeparator || ' 至 '
+      const separator = column.componentProps?.rangeSeparator || ' 至 '
       return `${value[0]}${separator}${value[1]}`
     }
   }
@@ -503,16 +504,16 @@ const handleAdd = () => {
   // 初始化列数据
   props.columns.forEach((col) => {
     if (col.prop) {
-      // 根据 editType 设置默认值
-      if (col.editType === 'number') {
+      // 根据 type 设置默认值
+      if (col.type === 'number') {
         newRow[col.prop] = undefined // 数字类型初始化为 undefined
       } else if (
         ['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(
-          col.editType
+          col.type
         )
       ) {
         newRow[col.prop] = [] // checkbox group 初始化为空数组
-      } else if (col.editType === 'switch') {
+      } else if (col.type === 'switch') {
         newRow[col.prop] = false
       } else {
         newRow[col.prop] = ''
@@ -528,6 +529,16 @@ const handleAdd = () => {
 const handleSortChange = (data) => {
   emit('sort-change', data)
 }
+
+const rules = computed(() => {
+  const result = {}
+  props.columns.forEach((col) => {
+    if (col.prop && col.rules) {
+      result[col.prop] = col.rules
+    }
+  })
+  return result
+})
 
 defineExpose({
   tableRef
@@ -560,7 +571,7 @@ defineExpose({
 }
 
 .edit-cell {
-  position: relative;
+  // position: relative;
   width: 100%;
 
   &.required::before {
@@ -575,19 +586,15 @@ defineExpose({
 }
 
 .edit-form-item {
-  // margin-bottom: 18px;
+  width: 100%;
+  margin-bottom: 0;
 
-  // :deep(.el-form-item__content) {
-  //   line-height: inherit;
-  // }
+  :deep(.el-form-item__content) {
+    justify-content: center;
+  }
 
-  :deep(.el-form-item__error) {
-    // width: 100%;
-    // top: 100%;
-    z-index: 1;
-    display: block;
-    padding-top: 4px;
-    text-align: center;
+  :deep(.center-control) {
+    justify-content: center;
   }
 }
 </style>
