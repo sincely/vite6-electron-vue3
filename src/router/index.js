@@ -125,6 +125,19 @@ export const asyncRouteTree = [
         meta: { title: '树型表格', transition: 'slide-up' }
       }
     ]
+  },
+  {
+    path: '/form',
+    component: Layout,
+    meta: { title: '表单', icon: 'file-text', order: 7, sidebar: true },
+    children: [
+      {
+        path: '',
+        name: 'form',
+        component: () => import('@/views/form/index.vue'),
+        meta: { title: '表单', transition: 'slide-up' }
+      }
+    ]
   }
 ]
 

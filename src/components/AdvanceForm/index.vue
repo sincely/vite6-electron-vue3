@@ -45,6 +45,7 @@
               v-bind="getComponentProps(item)"
               :placeholder="getPlaceholder(item)"
               clearable
+              @change="handleChange(item.prop, $event)"
               @update:model-value="setFieldValue(item.prop, $event)"
             >
               <el-option
@@ -235,17 +236,13 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-  formItemProps: {
-    type: Object,
-    default: () => ({})
-  },
   rowProps: {
     type: Object,
-    default: () => ({ gutter: 16 })
+    default: () => ({ gutter: 12 })
   },
   colProps: {
     type: Object,
-    default: () => ({ span: 8 })
+    default: () => ({ span: 12 })
   },
   useGrid: {
     type: Boolean,
@@ -301,6 +298,20 @@ const setFieldValue = (prop, value) => {
     localModel.value = {}
   }
   localModel.value[prop] = value
+}
+
+const handleChange = (prop, value) => {
+  console.log(prop, value)
+  const schema = props.schemas.find((item) => item.prop === prop)
+  if (typeof schema?.handleChange === 'function') {
+    schema.handleChange(value, {
+      prop,
+      item: schema,
+      model: localModel.value,
+      getFieldValue,
+      setFieldValue
+    })
+  }
 }
 
 const mergedRules = computed(() => {
@@ -367,11 +378,11 @@ const getColProps = (item) => {
 
 const getFormItemProps = (item) => {
   return {
-    label: item.label,
+    label: item.label + ':',
     prop: item.prop,
     rules: item.rules,
     required: item.required,
-    ...props.formItemProps,
+    labelPosition: item.labelPosition || 'right',
     ...(item.formItemProps || {})
   }
 }
@@ -469,7 +480,7 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.el-form {
-  width: 100%;
-}
+// .el-form {
+//   width: 100%;
+// }
 </style>

@@ -2,12 +2,13 @@
   <el-dialog
     v-bind="$attrs"
     ref="dialogRef"
+    :model-value="modelValue"
     class="modal-dialog"
     :class="{ 'modal-dialog--glass': glass }"
     :show-close="showClose"
     append-to-body
     align-center
-    draggable
+    @update:model-value="emit('update:modelValue', $event)"
   >
     <!-- 顶部装饰光晕 -->
     <div class="modal-dialog__glow" aria-hidden="true"></div>
@@ -21,16 +22,22 @@
           </div>
         </div>
         <div class="header-actions">
-          <slot name="header-actions"></slot>
           <!-- 头部按钮 -->
           <template v-for="item in headerActions" :key="item.icon">
             <button
               v-if="item.isShow"
+              type="button"
               class="close-btn"
               :title="item.title"
-              @click="$emit(item.event, false)"
+              @mousedown.stop
+              @click.stop="handleAction(item.event)"
             >
-              <SvgIcon :icon-class="item.icon" width="16px" height="16px" />
+              <SvgIcon
+                v-if="item.isShow"
+                :icon-class="item.icon"
+                width="16px"
+                height="16px"
+              />
             </button>
           </template>
         </div>
@@ -56,7 +63,11 @@ defineOptions({
   inheritAttrs: true
 })
 
-defineProps({
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
   title: {
     type: String,
     default: ''
@@ -71,24 +82,44 @@ defineProps({
   }
 })
 
-defineEmits(['update:modelValue', 'update:download'])
+const emit = defineEmits([
+  'update:modelValue',
+  'update:download',
+  'download',
+  'open',
+  'opened',
+  'close',
+  'closed'
+])
 
-// 获取当前组件插槽
-const slots = getCurrentInstance().slots
+const handleAction = (event) => {
+  if (event === 'close') {
+    emit('close')
+    emit('update:modelValue', false)
+    return
+  }
 
+  if (event === 'download') {
+    emit('download')
+    emit('update:download')
+    return
+  }
+
+  emit(event)
+}
 // 头部按钮集合
 const headerActions = ref([
   {
     icon: 'download',
     title: '下载',
     isShow: true,
-    event: 'update:download'
+    event: 'download'
   },
   {
     icon: 'close',
     title: '取消',
     isShow: true,
-    event: 'update:modelValue'
+    event: 'close'
   }
 ])
 </script>
@@ -164,6 +195,7 @@ const headerActions = ref([
   }
 
   .header-actions {
+    z-index: 100;
     display: flex;
     gap: 8px;
     align-items: center;
@@ -171,6 +203,7 @@ const headerActions = ref([
 
   .close-btn {
     display: grid;
+    gap: 8px;
     place-items: center;
     width: 28px;
     height: 28px;
@@ -191,11 +224,11 @@ const headerActions = ref([
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 12px;
+    padding: 10px;
   }
 
   &__content {
-    padding: 12px;
+    padding: 10px;
     font-size: 14px;
     color: var(--color-text-primary);
   }
@@ -205,7 +238,7 @@ const headerActions = ref([
     gap: 12px;
     align-items: center;
     justify-content: flex-end;
-    padding: 12px;
+    padding: 10px;
   }
 
   // Body 样式
