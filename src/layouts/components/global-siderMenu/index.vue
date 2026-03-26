@@ -578,7 +578,10 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     }
 
     .user-avatar {
+      display: flex;
       flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
       width: 36px;
       height: 36px;
       overflow: hidden;
