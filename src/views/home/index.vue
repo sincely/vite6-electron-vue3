@@ -549,7 +549,6 @@ watch(
   color: var(--color-text-primary);
 
   :deep(.el-icon) {
-    padding: 6px;
     font-size: 17px;
     color: var(--color-primary);
     background: var(--brand-accent-soft);
