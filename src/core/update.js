@@ -19,14 +19,47 @@ export function useUpdater() {
     updateStore.setLatestVersion('')
   }
 
+  const onDownloadProgress = (_event, progress) => {
+    window.dispatchEvent(
+      new CustomEvent('update:download-progress', {
+        detail: progress
+      })
+    )
+  }
+
+  const onUpdateDownloaded = (_event, info) => {
+    if (info?.version) {
+      updateStore.setLatestVersion(info.version)
+    }
+    window.dispatchEvent(
+      new CustomEvent('update:downloaded', {
+        detail: info
+      })
+    )
+  }
+
+  const onUpdateError = (_event, message) => {
+    window.dispatchEvent(
+      new CustomEvent('update:error', {
+        detail: message
+      })
+    )
+  }
+
   onMounted(() => {
     appStore.resetAppState()
     ipcRenderer.on('update-available', onUpdateAvailable)
     ipcRenderer.on('update-not-available', onUpdateNotAvailable)
+    ipcRenderer.on('download-progress', onDownloadProgress)
+    ipcRenderer.on('update-downloaded', onUpdateDownloaded)
+    ipcRenderer.on('update-error', onUpdateError)
   })
 
   onUnmounted(() => {
     ipcRenderer.off('update-available', onUpdateAvailable)
     ipcRenderer.off('update-not-available', onUpdateNotAvailable)
+    ipcRenderer.off('download-progress', onDownloadProgress)
+    ipcRenderer.off('update-downloaded', onUpdateDownloaded)
+    ipcRenderer.off('update-error', onUpdateError)
   })
 }
