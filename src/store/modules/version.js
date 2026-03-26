@@ -2,63 +2,17 @@ import { defineStore } from 'pinia'
 
 export const useUpdateStore = defineStore('version', {
   state: () => ({
-    // 过渡状态（不持久化，启动时总是重置）──
-    checkingForUpdate: false, // 正在检查中
-    isUpdating: false, // 正在下载中
-    downloadProgress: 0, // 下载进度 0-100
-    updateDownloaded: false, // 已下载完成等待安装
-
-    // 版本信息
-    currentVersion: '', // 当前安装版本（启动时由主进程注入）
-    latestVersion: '', // 检测到的最新版本
-    releaseNotes: '', // 更新说明（来自 latest.yml 的 releaseNotes 字段）
-
-    // UI控制
-    updateAvailable: false, // 是否有可用更新
-    dialogVisible: false // 弹框是否可见
+    currentVersion: '', // 当前版本
+    latestVersion: '' // 最新版本
   }),
   actions: {
-    setCheckingForUpdate(status) {
-      this.checkingForUpdate = status
-    },
-    setUpdating(status) {
-      this.isUpdating = status
-    },
-    setDownloadProgress(progress) {
-      this.downloadProgress = progress
-    },
-    setUpdateAvailable(status) {
-      this.updateAvailable = status
-    },
-    setUpdateDownloaded(status) {
-      this.updateDownloaded = status
-    },
     setLatestVersion(version) {
       this.latestVersion = version
     },
     setCurrentVersion(version) {
       this.currentVersion = version
-    },
-    setReleaseNotes(notes) {
-      this.releaseNotes = notes
-    },
-    setDialogVisible(visible) {
-      this.dialogVisible = visible
-    },
-    // 重置所有过渡态（不清空版本号），供关闭弹框或错误恢复时使用
-    resetUpdateState() {
-      this.checkingForUpdate = false
-      this.isUpdating = false
-      this.downloadProgress = 0
-      this.updateAvailable = false
-      this.updateDownloaded = false
-      this.latestVersion = ''
-      this.releaseNotes = ''
-      this.dialogVisible = false
     }
   },
-  // 只持久化 currentVersion：安装前乐观写入新版本号，重启后立即可用，避免版本闪烁
-  // 其余过渡状态（isUpdating / downloadProgress 等）不跨重启保留
   persist: {
     paths: ['currentVersion', 'latestVersion']
   }

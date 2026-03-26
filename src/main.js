@@ -1,4 +1,4 @@
-import { createApp, h } from 'vue'
+import { createApp } from 'vue'
 import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由
@@ -50,11 +50,15 @@ async function setupApp() {
     // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
     if (import.meta.env.DEV) {
       setTimeout(() => {
-        updateStore.setCurrentVersion(updateStore.currentVersion || '0.0.3') // 设置当前版本
-        updateStore.setLatestVersion('0.1.0') // 设置最新版本（比当前高）
-        updateStore.setUpdateAvailable(true) // 标记有可用更新
-        updateStore.setDialogVisible(true) // 显示更新提示框
-        // 模拟几条通知
+        updateStore.setCurrentVersion(updateStore.currentVersion || '0.0.3')
+        updateStore.setLatestVersion('0.1.0')
+        window.dispatchEvent(
+          new CustomEvent('update:available', {
+            detail: {
+              version: '0.1.0'
+            }
+          })
+        )
         notifStore.push({
           title: '欢迎使用',
           body: '应用已成功启动，祝您使用愉快！',

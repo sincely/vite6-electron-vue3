@@ -105,11 +105,14 @@ const updateStore = useUpdateStore()
 const noticeStore = useNotificationStore()
 
 const latestVersion = computed(() => updateStore.latestVersion)
-const updateAvailable = computed(() => updateStore.updateAvailable)
+const updateAvailable = computed(
+  () =>
+    !!latestVersion.value && latestVersion.value !== updateStore.currentVersion
+)
 const bellBtnRef = ref(null)
 
 const showUpdateDialog = () => {
-  updateStore.setDialogVisible(true)
+  window.dispatchEvent(new Event('update:open-dialog'))
 }
 
 const handleNotice = () => {

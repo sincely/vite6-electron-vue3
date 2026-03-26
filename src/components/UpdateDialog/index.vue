@@ -47,18 +47,6 @@
             </div>
           </div>
 
-          <!-- 更新说明（来自 latest.yml releaseNotes 字段，有内容才显示）-->
-          <div v-if="releaseNotes" class="update-dialog__notes">
-            <p class="notes-title">
-              <SvgIcon icon-class="list" width="14px" height="14px" />
-              更新内容
-            </p>
-            <!-- releaseNotes 可能是纯文本或 HTML，统一按纯文本每行拆分展示 -->
-            <ul class="notes-list">
-              <li v-for="(line, i) in releaseNoteLines" :key="i">{{ line }}</li>
-            </ul>
-          </div>
-
           <!-- 下载进度视图 -->
           <template v-if="isUpdating">
             <div class="update-dialog__progress">
@@ -137,7 +125,6 @@
 
 <script setup>
 import { useUpdateStore } from '@/store/modules/version'
-// import { useDraggable } from '@vueuse/core'
 const updateStore = useUpdateStore()
 
 const dialogRef = ref(null)
@@ -149,97 +136,129 @@ const { style } = useDraggable(dialogRef, {
   containerElement: document.body
 })
 
-const visible = computed(() => updateStore.dialogVisible)
+const visible = ref(false)
 const latestVersion = computed(() => updateStore.latestVersion)
 const currentVersion = computed(() => updateStore.currentVersion)
-const isUpdating = computed(() => updateStore.isUpdating)
-const updateDownloaded = computed(() => updateStore.updateDownloaded)
-const downloadProgress = computed(() => updateStore.downloadProgress)
-const releaseNotes = computed(() => updateStore.releaseNotes)
-/** 将 releaseNotes 按分号或换行拆成列表行，过滤空行 */
-const releaseNoteLines = computed(() =>
-  (releaseNotes.value || '')
-    .split(/;|；|\r?\n/)
-    .map((s) => s.replace(/^[-*]\s*/, '').trim())
-    .filter(Boolean)
-)
+const isUpdating = ref(false)
+const updateDownloaded = ref(false)
+const downloadProgress = ref(0)
+
 let mockTimer = null
+
+const resetDownloadState = () => {
+  isUpdating.value = false
+  updateDownloaded.value = false
+  downloadProgress.value = 0
+}
 
 const startMockDownload = () => {
   if (mockTimer) {
     clearInterval(mockTimer)
     mockTimer = null
   }
-  updateStore.setUpdating(true)
-  updateStore.setUpdateDownloaded(false)
-  updateStore.setDownloadProgress(0)
+  isUpdating.value = true
+  updateDownloaded.value = false
+  downloadProgress.value = 0
 
   let progress = 0
   mockTimer = setInterval(() => {
     progress += Math.random() * 8 + 4
     if (progress >= 100) {
       progress = 100
-      updateStore.setDownloadProgress(100)
+      downloadProgress.value = 100
       clearInterval(mockTimer)
       mockTimer = null
       setTimeout(() => {
-        updateStore.setUpdating(false)
-        updateStore.setUpdateDownloaded(true)
+        isUpdating.value = false
+        updateDownloaded.value = true
       }, 350)
       return
     }
-    updateStore.setDownloadProgress(progress)
+    downloadProgress.value = progress
   }, 260)
 }
 
 const handleConfirm = () => {
-  // 不关闭弹框，切换为进度视图
   if (import.meta.env.DEV) {
     startMockDownload()
     return
   }
-  updateStore.setUpdating(true)
+  isUpdating.value = true
+  updateDownloaded.value = false
+  downloadProgress.value = 0
   ipcRenderer.send('start-download')
 }
 
 const handleInstall = () => {
-  // 乐观更新：将 latestVersion 写入 currentVersion 并持久化
-  // 使 app 重启后立即能读到正确版本号，无需等待异步 IPC 回调
   if (latestVersion.value) {
     updateStore.setCurrentVersion(latestVersion.value)
   }
-  updateStore.setDialogVisible(false)
+  visible.value = false
   ipcRenderer.send('install-update')
 }
 
 const handleLater = () => {
-  // 下载中不允许关闭
   if (isUpdating.value) return
-  updateStore.setDialogVisible(false)
+  visible.value = false
 }
 
-// ── 生产环境：监听主进程推送的下载进度事件 ──
 let onProgress = null
 let onDownloaded = null
 let onError = null
+let onNotAvailable = null
+let onAvailable = null
+let onOpenDialog = null
 
 onMounted(() => {
+  if (latestVersion.value && latestVersion.value !== currentVersion.value) {
+    visible.value = true
+  }
+
   onProgress = (_, progress) => {
     setTimeout(() => {
-      updateStore.setDownloadProgress(progress.percent ?? 0)
+      downloadProgress.value = progress.percent ?? 0
     }, 300)
   }
-  onDownloaded = () => {
-    updateStore.setUpdating(false)
-    updateStore.setUpdateDownloaded(true)
+  onDownloaded = (_event, info) => {
+    isUpdating.value = false
+    updateDownloaded.value = true
+    if (info?.version) {
+      updateStore.setLatestVersion(info.version)
+    }
   }
   onError = (_, message) => {
-    updateStore.setUpdating(false)
+    isUpdating.value = false
     console.error('[updater] 下载出错：', message)
   }
+  onNotAvailable = () => {
+    if (!isUpdating.value) {
+      visible.value = false
+      resetDownloadState()
+    }
+  }
+  onAvailable = (event) => {
+    const info = event.detail || {}
+    if (info.version) {
+      updateStore.setLatestVersion(info.version)
+    }
+    resetDownloadState()
+    visible.value = true
+  }
+  onOpenDialog = () => {
+    if (latestVersion.value && latestVersion.value !== currentVersion.value) {
+      resetDownloadState()
+      visible.value = true
+      return
+    }
+    ipcRenderer.send('check-for-updates')
+  }
+
   ipcRenderer.on('download-progress', onProgress)
   ipcRenderer.on('update-downloaded', onDownloaded)
   ipcRenderer.on('update-error', onError)
+  ipcRenderer.on('update-not-available', onNotAvailable)
+  window.addEventListener('update:available', onAvailable)
+  window.addEventListener('update:open-dialog', onOpenDialog)
 })
 
 onUnmounted(() => {
@@ -247,6 +266,9 @@ onUnmounted(() => {
   ipcRenderer.off('download-progress', onProgress)
   ipcRenderer.off('update-downloaded', onDownloaded)
   ipcRenderer.off('update-error', onError)
+  ipcRenderer.off('update-not-available', onNotAvailable)
+  window.removeEventListener('update:available', onAvailable)
+  window.removeEventListener('update:open-dialog', onOpenDialog)
 })
 </script>
 

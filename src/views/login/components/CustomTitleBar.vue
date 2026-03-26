@@ -29,10 +29,8 @@
 </template>
 
 <script setup>
-import { useAppStore } from '@/store/modules/app'
 import { isMac } from '@/utils/platform'
 
-const appStore = useAppStore()
 const emit = defineEmits(['update:active-tab'])
 const activeTab = ref('account')
 
