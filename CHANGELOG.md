@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.13](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.12...v0.0.13) (2026-03-26)
+
+### ✨ Features
+
+* 完善首页 ([ed0b647](https://github.com/sincely/vite6-electron-vue3/commit/ed0b64769aad36b40f2e7f11007444e4a57dc48a))
+* 添加应用启动加载动画并优化更新对话框显示逻辑 ([25266e8](https://github.com/sincely/vite6-electron-vue3/commit/25266e8551192242f41d3b323d3c080496e5a62b))
+
+### 🐞 Bug Fixes
+
+* 修复 bug ([c1b203c](https://github.com/sincely/vite6-electron-vue3/commit/c1b203cd4eb71c0e8ffffb5d2391fc6c2ec25978))
+* 修复主窗口加载动画显示逻辑 ([7b6dea1](https://github.com/sincely/vite6-electron-vue3/commit/7b6dea130fd9480397d33f95152c335812f1b547))
+* 修复可编辑表格 ([9ca5f5d](https://github.com/sincely/vite6-electron-vue3/commit/9ca5f5dff998dafcc4e774678db8f1e82cd6f2a3))
+
+### 🎨 Styles
+
+* 优化仪表盘及组件视觉间距与交互效果 ([8308b21](https://github.com/sincely/vite6-electron-vue3/commit/8308b2101565e4965e0ff58fd6bf462619495016))
+* 移除图标内边距以统一视觉样式 ([7e59941](https://github.com/sincely/vite6-electron-vue3/commit/7e59941330823e83cab5486212031f0c06773cd2))
+* 调整头像容器为 flex 居中布局 ([5a19cc7](https://github.com/sincely/vite6-electron-vue3/commit/5a19cc71d05f9f23c815f90180be78d0f6a9398e))
+
 ## [0.0.12](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.11...v0.0.12) (2026-03-26)
 
 ### ✨ Features
