@@ -177,8 +177,6 @@
     "shortcutName": "lightning",
     // 是否在安装完成后运行应用程序
     "runAfterFinish": true,
-    // 安装完成后是否显示安装目录
-    "showInstallationDirectory": true,
     // 安装脚本文件
     "include": "installer.nsh",
     // 是否在卸载时删除应用程序数据目录
