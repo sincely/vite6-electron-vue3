@@ -105,9 +105,9 @@ const columns = [
   {
     prop: 'tags',
     label: '标签',
-    type: 'check-bo-groub',
+    type: 'checkbox-group',
     width: 300,
-    required: true,
+    required: false,
     options: [
       { label: '高优先级', value: 'high' },
       { label: '自动化', value: 'auto' },
@@ -126,7 +126,7 @@ const columns = [
     prop: 'gender',
     label: '性别',
     type: 'radio-group',
-    required: true,
+    required: false,
     width: 280,
 
     options: [
@@ -231,42 +231,7 @@ const columns = [
   }
 ]
 
-const tableData = ref([
-  {
-    id: 1,
-    name: '张三',
-    bio: '负责权限管理与审计',
-    role: 'admin',
-    enabled: true,
-    tags: ['high', 'auto'],
-    gender: 'male',
-    age: 28,
-    date: '2026-03-10',
-    datetime: '2026-03-10 09:30:00',
-    dateRange: ['2026-03-01', '2026-03-31'],
-    datetimeRange: ['2026-03-10 09:30:00', '2026-03-10 18:30:00'],
-    month: '2026-03',
-    year: '2026',
-    week: '2026-W11'
-  },
-  {
-    id: 2,
-    name: '李四',
-    bio: '负责日常工单处理',
-    role: 'user',
-    enabled: false,
-    tags: ['archived'],
-    gender: 'female',
-    age: 32,
-    date: '2026-03-12',
-    datetime: '2026-03-12 14:20:00',
-    dateRange: ['2026-03-05', '2026-03-20'],
-    datetimeRange: ['2026-03-12 14:20:00', '2026-03-12 19:00:00'],
-    month: '2026-03',
-    year: '2026',
-    week: '2026-W11'
-  }
-])
+const tableData = ref([])
 
 const handleSave = (row, index) => {
   console.log('保存', row, index)
