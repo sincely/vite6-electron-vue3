@@ -50,7 +50,6 @@ export default defineConfig(({ mode, command }) => {
       assetsInlineLimit: 4096, // 小于 4kb 的资源内联为 base64
       rollupOptions: {
         treeshake: {
-          moduleSideEffects: false, // 假设模块无副作用，激进 tree-shaking
           propertyReadSideEffects: false,
           tryCatchDeoptimization: false
         },
