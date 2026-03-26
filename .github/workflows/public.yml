@@ -75,8 +75,12 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Rebase latest main
+        run: |
+          git fetch origin main
+          git rebase origin/main
       - name: Run release-it
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           npx release-it ${{ github.event.inputs.version-type }} --ci
