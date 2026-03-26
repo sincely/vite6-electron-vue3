@@ -1,10 +1,9 @@
 import { app, BrowserWindow, nativeImage, nativeTheme } from 'electron'
-import os from 'node:os'
 import path from 'node:path'
 import { registerIpc } from '../ipc'
 import createTray from './tray'
 
-import { createLoginWindow, restoreMainWindow } from './windowManager.js'
+import { createLoginWindow, restoreMainWindow } from './windowManager'
 import '../config'
 
 // 禁用安全警告
@@ -12,10 +11,6 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
 // 应用是否正在退出
 app.isQuiting = false
-
-// 禁用硬件加速，解决在Windows 7上的问题
-if (os.release().startsWith('6.1')) app.disableHardwareAcceleration()
-
 // 设置应用用户模型ID，用于Windows任务栏分组
 if (process.platform === 'win32') app.setAppUserModelId(app.getName())
 
@@ -42,7 +37,6 @@ app.whenReady().then(() => {
   createLoginWindow()
   // 创建托盘图标
   createTray()
-
   // 监听系统主题变化
   nativeTheme.on('updated', () => {
     const allWindows = BrowserWindow.getAllWindows()
