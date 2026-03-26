@@ -447,7 +447,7 @@ watch(
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   min-height: 100%;
   padding: 2px;
 }
@@ -458,7 +458,7 @@ watch(
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 20px;
 }
 
 .stat-card {
@@ -527,22 +527,33 @@ watch(
 // 图表行
 // =============================================
 .chart-row {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 12px;
+  display: flex;
+  gap: 20px;
+}
+
+.chart-card {
+  flex: 1;
+  min-width: 0;
+
+  &--narrow {
+    flex: 0 0 425px;
+  }
 }
 
 .card-title {
   display: flex;
   gap: 8px;
   align-items: center;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text-primary);
 
   :deep(.el-icon) {
+    padding: 6px;
     font-size: 17px;
     color: var(--color-primary);
+    background: var(--brand-accent-soft);
+    border-radius: 8px;
   }
 }
 
