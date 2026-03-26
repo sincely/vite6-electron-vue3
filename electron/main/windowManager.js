@@ -2,13 +2,13 @@ import { app, BrowserWindow, shell, screen } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { VITE_DEV_SERVER_URL, RENDERER_DIST } from '../config'
+import { VITE_DEV_SERVER_URL, renderer_dist } from '../config'
 import { initUpdater } from './update' // 更新器
 import createNotification from './notification' // 创建通知
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
-const indexHtml = path.join(RENDERER_DIST, 'index.html') // index.html 的绝对路径
+const indexHtml = path.join(renderer_dist, 'index.html') // index.html 的绝对路径
 
 console.log('__dirname:', __dirname)
 console.log('preload:', preload)
@@ -86,8 +86,8 @@ const loadHash = (win, hash) => {
     win.loadURL(hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL)
     // win.webContents.openDevTools()
   } else {
-    // 生产环境使用 loadFile 加载本地文件
-    // hash 直接通过 options 传递，Electron 会自动处理
+    // 生产环境使用loadFile加载本地文件
+    // hash直接通过options传递，Electron 会自动处理
     win.loadFile(indexHtml, hash ? { hash } : {})
   }
 
