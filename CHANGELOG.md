@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.12](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.11...v0.0.12) (2026-03-26)
+
+### ✨ Features
+
+* 添加下载进度和状态事件处理 ([cbfac65](https://github.com/sincely/vite6-electron-vue3/commit/cbfac6515b7cc364799ca37fbcdf2ce8544d9a23))
+* 集成vite-plugin-mock并启用生产环境mock数据 ([5457ca4](https://github.com/sincely/vite6-electron-vue3/commit/5457ca4dcb884c0b1591c72a52c61e17de8a9435))
+
+### 🐞 Bug Fixes
+
+* 禁止登录窗口最大化以防止双击标题栏扩大 ([b66255c](https://github.com/sincely/vite6-electron-vue3/commit/b66255c6a6f8b45fc9560f73c6029c7438b90f6e))
+
+### 🎨 Styles
+
+* 将配置常量从大写蛇形命名改为小写蛇形命名 ([72c528f](https://github.com/sincely/vite6-electron-vue3/commit/72c528fc0ddc3f7f4e79f93a3e4fd9626fbbf461))
+
+### 🔧 Chores
+
+* 从 clean 脚本中移除 release 目录并删除 fs-extra 依赖 ([089e981](https://github.com/sincely/vite6-electron-vue3/commit/089e981cfd8adca35064ef9375790fdc3ac165ab))
+* 将API基础URL统一设置为根路径 ([c292e47](https://github.com/sincely/vite6-electron-vue3/commit/c292e4757257efe041a3cafe81036516c1d14c63))
+* 移除mock插件和electron构建目标相关配置 ([95b8a3c](https://github.com/sincely/vite6-electron-vue3/commit/95b8a3c31a97569270722388b8b0f68972ffd37e))
+
+### ♻️ Code Refactoring
+
+* 将 SVG 图标注册移至主入口并调整 tree-shaking 配置 ([07655d6](https://github.com/sincely/vite6-electron-vue3/commit/07655d6c86cadcbcc319bda85bd664d1c1c033ab))
+* 重构更新模块为事件驱动并简化状态管理 ([013f06a](https://github.com/sincely/vite6-electron-vue3/commit/013f06a012c9db0a1352efd6b46f18e46fa3bdc4))
+
+### 🏭 Build System
+
+* 从打包配置中移除fs-extra排除项和发行说明 ([9e9f602](https://github.com/sincely/vite6-electron-vue3/commit/9e9f6027e2d6ac3f59de5d1e71bf12b4bb91c256))
+
 ## [0.0.11](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.10...v0.0.11) (2026-03-26)
 
 ### ✨ Features
