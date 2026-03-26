@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
-    "node": ">=16.14"
+    "node": ">=20.20.0"
   },
   "description": "A Vite6 Electron Vue3 project",
   "author": "chengzhou",
@@ -12,7 +12,6 @@
     "dev": "concurrently -k \"npm run dev:win\"",
     "dev:win": "chcp 65001 && vite --mode development",
     "dev:mac": "vite --mode development",
-    "electron:postinstall": "electron-builder install-app-deps",
     "build:dev": "vite build --mode development",
     "build:test": "vite build --mode test",
     "build:prod": "vite build --mode production",
@@ -27,6 +26,7 @@
     "build-linux:prod": "npm run clean && vite build --mode production && electron-builder --linux",
     "check-config": "electron-builder --dir --config",
     "clean": "rimraf dist dist-electron release",
+    "electron:postinstall": "electron-builder install-app-deps",
     "lint": "npm run eslint:fix && npm run prettier:fix && npm run stylelint:fix",
     "lint:check": "npm run eslint:check && npm run prettier:check && npm run stylelint:check",
     "eslint:fix": "eslint \"**/*.{vue,js}\" --fix",

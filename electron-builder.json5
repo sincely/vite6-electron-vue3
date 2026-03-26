@@ -107,7 +107,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Mac-${version}-${arch}.${ext}"
+    "artifactName": "${productName}-${platform}-${version}-${arch}.${ext}"
   },
   "linux": {
     "icon": "resources/icons/linux/app",
@@ -147,11 +147,13 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
+    "artifactName": "${productName}-${platform}-${version}-Setup.${ext}"
   },
   "publish": [
     {
+      // 发布到泛型服务器
       "provider": "generic",
+      // 发布到的URL
       "url": "http://10.10.24.52:8089/electron-update"
     }
   ],
@@ -161,14 +163,25 @@
     "en-US"
   ],
   "nsis": {
+    // 不允许一键安装
     "oneClick": false,
+    // 每台机器只安装一次，不是根据用户进行安装的
     "perMachine": false,
+    // 是否允许用户选择安装目录
     "allowToChangeInstallationDirectory": true,
+    // 是否创建桌面快捷方式
     "createDesktopShortcut": true,
+    // 是否创建开始菜单快捷方式
     "createStartMenuShortcut": true,
+    // 开始菜单快捷方式名称
     "shortcutName": "lightning",
+    // 是否在安装完成后运行应用程序
     "runAfterFinish": true,
+    // 安装完成后是否显示安装目录
+    "showInstallationDirectory": true,
+    // 安装脚本文件
     "include": "installer.nsh",
+    // 是否在卸载时删除应用程序数据目录
     "deleteAppDataOnUninstall": true
   },
   "releaseInfo": {

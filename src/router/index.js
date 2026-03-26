@@ -171,7 +171,13 @@ const router = createRouter({
     ...constantRoutes,
     ...asyncRouteTree,
     { path: '/:pathMatch(.*)*', redirect: '/desktop' }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    return { top: 0 }
+  }
 })
 
 export default router
