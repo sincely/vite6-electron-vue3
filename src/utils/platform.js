@@ -12,12 +12,3 @@ export const isMac = () => {
 export const isLinux = () => {
   return window.process?.platform === 'linux'
 }
-
-// 是否是electron平台
-export const isElectron = () => {
-  return !!(
-    window?.process?.type === 'renderer' ||
-    window?.process?.versions?.electron ||
-    navigator?.userAgent?.includes('Electron')
-  )
-}
