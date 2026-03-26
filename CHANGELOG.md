@@ -3,6 +3,79 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.11](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.10...v0.0.11) (2026-03-26)
+
+### ✨ Features
+
+* **AdvanceTable:** 新增动态表格高度和视觉优化 ([7d9b6ac](https://github.com/sincely/vite6-electron-vue3/commit/7d9b6ac9a3363c75eee8d908715b1cccfabdc142))
+* **AdvanceTable:** 添加列设置组件支持显示/隐藏和拖拽排序 ([9af54f9](https://github.com/sincely/vite6-electron-vue3/commit/9af54f9eed90f0943f6c84606503638f766d3ff7))
+* **table:** 新增可编辑表格组件并替换原表格 ([fb44c07](https://github.com/sincely/vite6-electron-vue3/commit/fb44c07d325df471e5afdc7307ee7f580bfc60ed))
+* 包装应用组件以支持Element Plus中文配置 ([86a3098](https://github.com/sincely/vite6-electron-vue3/commit/86a3098e49f18659b3e617f399acdd35e3cf657f))
+* 增加表格多选功能支持 ([a7dcd24](https://github.com/sincely/vite6-electron-vue3/commit/a7dcd24ad634969aa47648ed5c46f6540997ce42))
+* 增强安全配置并支持多环境构建 ([1796606](https://github.com/sincely/vite6-electron-vue3/commit/17966066503b372d1dd36a99f7795fe682ad2afe))
+* 扩展可编辑表格组件以支持更多表单控件类型 ([1ea7793](https://github.com/sincely/vite6-electron-vue3/commit/1ea77937771197da83cfc83535378b88ff6eb2c6))
+* 支持列排序和自定义表头插槽 ([e0b9a48](https://github.com/sincely/vite6-electron-vue3/commit/e0b9a4840bd39e710815a3aa3408365dbab3eb97))
+* 支持表头自定义插槽 ([cefbe5d](https://github.com/sincely/vite6-electron-vue3/commit/cefbe5d53a9e2c255950679bd3786fa3ad7f609a))
+* 新增可编辑表格、高级表格和树型表格功能 ([07db8fc](https://github.com/sincely/vite6-electron-vue3/commit/07db8fc3508523fb6e7da8fef6a6d78af4668266))
+* 新增多个组合式函数和图表组件 ([b80185b](https://github.com/sincely/vite6-electron-vue3/commit/b80185b3f38be6e120ad6242d2e53e8a34dc4880))
+* 新增对话框组件、按钮样式和日志查看功能 ([a925314](https://github.com/sincely/vite6-electron-vue3/commit/a925314df4802fd5c9ce2a43f2b79799c083e674))
+* 新增树形表格组件支持数据分页和排序 ([055c58e](https://github.com/sincely/vite6-electron-vue3/commit/055c58e29e58ed0005bd17252c4e12f2505bd705))
+* 新增表单页面并优化高级表单和模态框组件 ([0df2c80](https://github.com/sincely/vite6-electron-vue3/commit/0df2c8062a4e81e99c94900ef42ca97195041c46))
+* **日志管理:** 重构日志页面并新增动态搜索栏和通用表格组件 ([5d9e102](https://github.com/sincely/vite6-electron-vue3/commit/5d9e1022aab2d6393354f0a8e096900730ff45eb))
+* 更新列设置组件，优化图标和复选框逻辑，添加刷新功能 ([8967362](https://github.com/sincely/vite6-electron-vue3/commit/896736232a3f7d4ebc05e8a4312da17cbab9a35f))
+* 更新可编辑表格组件，统一表单控件类型并添加校验规则 ([e4d5f4c](https://github.com/sincely/vite6-electron-vue3/commit/e4d5f4cec8577b4aa87ea59833a53599661c7699))
+* 添加 electron-builder.json5 配置文件并更新注入更新日志脚本 ([83923aa](https://github.com/sincely/vite6-electron-vue3/commit/83923aa70fe6da66327ab9d5af15783faf4868ef))
+* 添加Element Plus主题自定义支持 ([053ca5e](https://github.com/sincely/vite6-electron-vue3/commit/053ca5e69f6f778093ee1ac432ea937e53fc4ebb))
+* 添加可编辑表格组件，支持动态列配置和表单验证规则 ([7191f64](https://github.com/sincely/vite6-electron-vue3/commit/7191f64a8ec5c81ddba2a88cc6d2d1ace0f817a1))
+* 添加对 Vue 模板的支持并优化依赖项配置 ([01ed982](https://github.com/sincely/vite6-electron-vue3/commit/01ed98206749486a6c616d491e58d8c5ae9ff543))
+* 添加行选择状态处理函数 ([a81a8cc](https://github.com/sincely/vite6-electron-vue3/commit/a81a8ccedbcf5b2957e6780aef41f4aef6b0f60a))
+* 重构主题配置并添加应用设置模块 ([64dcbba](https://github.com/sincely/vite6-electron-vue3/commit/64dcbba7598b011fad67273793bf6f1c0e75f3ca))
+* 重构日志页面并新增通用组件 ([d413a5c](https://github.com/sincely/vite6-electron-vue3/commit/d413a5c0022b7ac1b0628a85a8316805e992b9d0))
+
+### 🐞 Bug Fixes
+
+* **AdvanceTable:** 修复工具栏插槽命名错误并调整样式 ([d4d0d46](https://github.com/sincely/vite6-electron-vue3/commit/d4d0d46dc46199f7c785e4d48f38da26831956fb))
+* **dark.scss:** 更新暗黑模式基础颜色以匹配设计规范 ([614ad23](https://github.com/sincely/vite6-electron-vue3/commit/614ad23613e423f4b098b84d16694c8066a19510))
+* 修复主题切换 bug ([cedb3dc](https://github.com/sincely/vite6-electron-vue3/commit/cedb3dcb6784599601dee1d3250b88d2531f27ad))
+* 修复列显示逻辑和插槽条件渲染问题 ([ac229f5](https://github.com/sincely/vite6-electron-vue3/commit/ac229f52f34c2d55ddceb089eadc4448175f2e33))
+* 修复可编辑表格样式和功能问题 ([d07dabe](https://github.com/sincely/vite6-electron-vue3/commit/d07dabeed54cb3ecf64b3901a7ac83c4aa4f50ab))
+* 修复浅色主题背景色设置错误 ([e46cbce](https://github.com/sincely/vite6-electron-vue3/commit/e46cbcea0f731a7a3053524d0693bba5c644e546))
+* 修复窗口和主题监听器内存泄漏问题 ([1f77c96](https://github.com/sincely/vite6-electron-vue3/commit/1f77c96a480539d73f59d85184772a8a8f127551))
+* 修复窗口控制按钮在macOS上的显示条件 ([6028504](https://github.com/sincely/vite6-electron-vue3/commit/6028504f4f5865e596c1e13983a63f1205a2e03c))
+* 移除已废弃的 required 属性兼容校验逻辑 ([c0bdaec](https://github.com/sincely/vite6-electron-vue3/commit/c0bdaec2b7e79e36f7a40e06e03d6844c2fd9536))
+
+### 📝 Documentation
+
+* 添加相关技术文章的参考链接 ([e4ca1aa](https://github.com/sincely/vite6-electron-vue3/commit/e4ca1aa676fb8818f0fa4b99034a4d056f5a58ef))
+
+### 🎨 Styles
+
+* 优化登录界面样式和布局 ([4968edc](https://github.com/sincely/vite6-electron-vue3/commit/4968edc9e42cbda5c74964083ade5bea9f5fecde))
+* 减少对话框模糊效果并优化窗口控制逻辑 ([b54414f](https://github.com/sincely/vite6-electron-vue3/commit/b54414f122156edd6f40902386367b57f7a42034))
+* 更新 Element Plus 主题变量并移除冗余样式 ([679fdc7](https://github.com/sincely/vite6-electron-vue3/commit/679fdc732b1373edb9afc761ed978603fbe03027))
+
+### 🔧 Chores
+
+* 在Windows构建脚本中添加清理步骤 ([7a4ba0d](https://github.com/sincely/vite6-electron-vue3/commit/7a4ba0db68ffe039ec287728771bd134e034e4c6))
+* 移除安装后显示目录的配置项 ([b0ea509](https://github.com/sincely/vite6-electron-vue3/commit/b0ea509dad26129ae364bd06591a0bf74225314b))
+
+### ♻️ Code Refactoring
+
+* 移除Windows 7硬件加速禁用逻辑并清理导入 ([9040d84](https://github.com/sincely/vite6-electron-vue3/commit/9040d84b03bd3581ef3a100ff5180f37dc9aeade))
+* 移除未使用的日期格式化函数和模板 ([27e1f85](https://github.com/sincely/vite6-electron-vue3/commit/27e1f85abf90d76f1ba6a7951e9822d612526408))
+* 移除调试日志并重构表格列配置 ([c6aaec5](https://github.com/sincely/vite6-electron-vue3/commit/c6aaec5d3480556c9ddeda1432e630d1644367fc))
+* 统一对话框内容处理逻辑并支持字符串内容 ([dacadd5](https://github.com/sincely/vite6-electron-vue3/commit/dacadd5d9375eb155f34f2ad55b5297e2a5bbb01))
+* 重构样式文件结构并优化组件复用 ([1f3336f](https://github.com/sincely/vite6-electron-vue3/commit/1f3336f7451b048f403deeeb19ff6f13943699c1))
+
+### 🏭 Build System
+
+* 更新 element-plus 依赖至 2.11.8 版本 ([f9915fe](https://github.com/sincely/vite6-electron-vue3/commit/f9915fecc6664cbeb33beec2120db4a3266d0a2b))
+
+### 🤖 Continuous Integration
+
+* 在发布工作流中优先使用 PAT_TOKEN 并添加 rebase 步骤 ([6930bb5](https://github.com/sincely/vite6-electron-vue3/commit/6930bb58f8166485b8601500c83c7d7e57352e71))
+* 将Node.js版本从20升级到22并添加注释 ([1980ad1](https://github.com/sincely/vite6-electron-vue3/commit/1980ad12f760326568ca540ff92f39149d9a21ce))
+
 ## [0.0.10](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.9...v0.0.10) (2026-03-12)
 
 ### ✨ Features
