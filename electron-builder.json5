@@ -75,8 +75,7 @@
     "!**/node_modules/esno/**",
     "!**/node_modules/tsx/**",
     "!**/node_modules/rimraf/**",
-    "!**/node_modules/concurrently/**",
-    "!**/node_modules/fs-extra/**"
+    "!**/node_modules/concurrently/**"
   ],
   "mac": {
     "icon": "resources/icons/mac/app.icns",
@@ -181,8 +180,5 @@
     "include": "installer.nsh",
     // 是否在卸载时删除应用程序数据目录
     "deleteAppDataOnUninstall": true
-  },
-  "releaseInfo": {
-    "releaseNotes": "✨ 新增Card组件并重构BackTop组件，优化样式和布局; ✨ 新增占位图标并更新页面组件样式; ✨ 添加主题工厂技能和UI/UX设计资源; ✨ 添加操作日志表格和全局返回顶部组件; ✨ 集成mock数据功能用于前后端分离开发; 🔧 将 artifacts 目录添加到代码检查工具的忽略列表; 🔧 更新构建配置文件和忽略规则; 🔧 添加 concurrently 并更新 npm scripts; 🔧 移除不再需要的 .browserslistrc 配置文件; ♻️ 重构网络状态检测钩子并更新依赖项; 🏭 **nsis:** 添加Windows安装包配置和文档; 🤖 添加 GitHub Actions 工作流以自动化发布流程; 🤖 添加 GitHub Actions 工作流配置修改"
   }
 }
