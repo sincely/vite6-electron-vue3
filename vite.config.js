@@ -11,7 +11,6 @@ export default defineConfig(({ mode, command }) => {
   console.log('viteEnv:', viteEnv)
   const isServe = command === 'serve'
   const isBuild = command === 'build'
-  const isElectron = viteEnv.VITE_BUILD_TARGET === 'electron'
   const sourcemap = isServe
   // 解决终端optimized dependencies changed时，reload问题
   const optimizeDepsElementPlusIncludes = ['element-plus/es']
@@ -45,7 +44,6 @@ export default defineConfig(({ mode, command }) => {
       },
       reportCompressedSize: false, // 关闭压缩计算，加快构建速度
       sourcemap,
-      outDir: isElectron ? 'dist-electron' : 'dist',
       chunkSizeWarningLimit: 4000,
       minify: 'terser',
       cssCodeSplit: true, // 启用 CSS 代码分割
