@@ -38,8 +38,20 @@ export default defineConfig(({ mode, command }) => {
         compress: {
           drop_console: true,
           drop_debugger: true,
-          pure_funcs: ['console.log', 'console.info', 'console.debug'],
-          passes: 3 // 多次压缩，体积更小
+          pure_funcs: [
+            'console.log',
+            'console.info',
+            'console.debug',
+            'console.warn'
+          ],
+          passes: 3, // 多次压缩，体积更小
+          reduce_funcs: true // 减小函数体积
+        },
+        mangle: {
+          toplevel: true // 混淆顶级变量和函数名
+        },
+        format: {
+          comments: false // 移除所有注释
         }
       },
       reportCompressedSize: false, // 关闭压缩计算，加快构建速度
@@ -72,6 +84,10 @@ export default defineConfig(({ mode, command }) => {
             if (id.includes('node_modules/@element-plus/icons-vue/')) {
               return 'element-icons'
             }
+            // ECharts 图表库
+            if (id.includes('node_modules/echarts/')) {
+              return 'echarts'
+            }
             // 工具库
             if (
               id.includes('node_modules/axios/') ||
@@ -88,10 +104,26 @@ export default defineConfig(({ mode, command }) => {
             if (id.includes('node_modules/nprogress/')) {
               return 'nprogress'
             }
+            // qrcode
+            if (id.includes('node_modules/qrcode/')) {
+              return 'qrcode'
+            }
           },
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
-          assetFileNames: '[ext]/[name]-[hash].[ext]',
+          assetFileNames(assetInfo) {
+            const info = assetInfo.name.split('.')
+            const ext = info[info.length - 1]
+            if (/png|jpe?g|gif|tiff|bmp|ico|webp|svg/i.test(ext)) {
+              return `images/[name]-[hash][extname]`
+            } else if (/woff|woff2|eot|ttf|otf/i.test(ext)) {
+              return `fonts/[name]-[hash][extname]`
+            } else if (ext === 'css') {
+              return `css/[name]-[hash][extname]`
+            } else {
+              return `assets/[name]-[hash][extname]`
+            }
+          },
           compact: true // 压缩生成代码的空白字符
         }
       }
