@@ -145,6 +145,7 @@ export function createLoginWindow() {
     frame: false,
     resizable: false,
     center: true,
+    maximizable: false, // 禁止最大化，从而禁止双击标题栏扩大
     webPreferences: {
       preload, // 预加载脚本
       nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
