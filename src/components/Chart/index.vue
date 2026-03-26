@@ -4,7 +4,7 @@
 
 <script setup>
 import * as echarts from 'echarts'
-import { markRaw, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
+import { markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 defineOptions({
   name: 'chart'
 })
@@ -35,12 +35,15 @@ const emit = defineEmits(['init'])
 const chart = ref(null)
 const chartRef = ref()
 
+// options 变化时只更新，不重新 init（原来重新 init 会导致实例泄漏）
 watch(
   () => props.options,
-  () => init(),
-  {
-    deep: true
-  }
+  (newOptions) => {
+    if (chart.value && newOptions && Object.keys(newOptions).length) {
+      chart.value.setOption(newOptions, true)
+    }
+  },
+  { deep: true }
 )
 
 onMounted(() => {
@@ -48,19 +51,18 @@ onMounted(() => {
   window.addEventListener('resize', resizeChart)
 })
 
-onBeforeMount(() => {
-  if (!chart.value) {
-    return
+// 原来写的是 onBeforeMount（组件挂载前触发，此时 chart.value 必然为 null，永远不会清理）
+// 修复为 onBeforeUnmount，确保组件销毁时正确释放 ECharts 实例
+onBeforeUnmount(() => {
+  if (chart.value) {
+    chart.value.dispose()
+    chart.value = null
   }
-  chart.value.dispose()
-  chart.value = null
-})
-
-onUnmounted(() => {
   window.removeEventListener('resize', resizeChart)
 })
+
 /**
- * 初始化
+ * 初始化（只在 onMounted 调用一次）
  * @private
  */
 function init() {
@@ -78,7 +80,8 @@ function init() {
       showBackground: true
     }
   })
-  // 初始化图表
+
+  // 初始化图表实例
   chart.value = markRaw(
     echarts.init(chartRef.value, 'chart', {
       width: props.width,
@@ -87,8 +90,11 @@ function init() {
   )
 
   setTimeout(() => {
-    // 设置true清空echart缓存
-    chart.value.setOption(props.options, true)
+    if (!chart.value) return
+    // options 为空时不调用 setOption，避免报错
+    if (props.options && Object.keys(props.options).length) {
+      chart.value.setOption(props.options, true)
+    }
     resizeChart()
     emit('init', chart.value)
   }, 100)

@@ -347,19 +347,38 @@ function buildOptions() {
       }
     },
     color: [primary, success, warning, info],
-    series: ['华东', '华南', '华北', '西部'].map((name, i) => ({
-      name,
-      type: 'bar',
-      barWidth: 8,
-      barGap: '20%',
-      itemStyle: { borderRadius: [4, 4, 0, 0] },
-      data: [
-        [18000, 21000, 19500, 24000, 22500, 28000],
-        [14000, 16500, 15000, 18500, 17000, 21000],
-        [11000, 13000, 12500, 15000, 14000, 17500],
-        [8500, 9500, 9000, 11000, 10500, 13000]
-      ][i]
-    }))
+    series: ['华东', '华南', '华北', '西部'].map((name, i) => {
+      const colors = [primary, success, warning, info]
+      const col = colors[i]
+      return {
+        name,
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: { color: col, width: 2 },
+        itemStyle: { color: col },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: col + '30' },
+              { offset: 1, color: col + '00' }
+            ]
+          }
+        },
+        data: [
+          [18000, 21000, 19500, 24000, 22500, 28000],
+          [14000, 16500, 15000, 18500, 17000, 21000],
+          [11000, 13000, 12500, 15000, 14000, 17500],
+          [8500, 9500, 9000, 11000, 10500, 13000]
+        ][i]
+      }
+    })
   }
 
   // ---- 雷达图 ----
