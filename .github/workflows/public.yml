@@ -1,6 +1,9 @@
 name: Public
 
 on:
+  # 当main, master分支有新push时，执行以下操作
+  # push:
+  #   branches: [main, master]
   workflow_dispatch:
     inputs:
       version-type:
