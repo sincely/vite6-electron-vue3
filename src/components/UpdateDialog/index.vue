@@ -208,11 +208,37 @@ let onError = null
 let onNotAvailable = null
 let onAvailable = null
 let onOpenDialog = null
+let onRemoveLoading = null
 
 onMounted(() => {
-  if (latestVersion.value && latestVersion.value !== currentVersion.value) {
-    visible.value = true
+  // 标志 loading 是否已经结束
+  let loadingFinished = false
+
+  const checkAndShowDialog = () => {
+    if (
+      loadingFinished &&
+      latestVersion.value &&
+      latestVersion.value !== currentVersion.value
+    ) {
+      visible.value = true
+    }
   }
+
+  onRemoveLoading = (event) => {
+    if (event.data?.payload === 'loadingFinished') {
+      loadingFinished = true
+      checkAndShowDialog()
+    }
+  }
+  window.addEventListener('message', onRemoveLoading)
+
+  // 兜底：如果没收到消息，5秒后也认为 loading 结束了 (对应 preload 中的 setTimeout)
+  setTimeout(() => {
+    if (!loadingFinished) {
+      loadingFinished = true
+      checkAndShowDialog()
+    }
+  }, 5000)
 
   onProgress = (_, progress) => {
     setTimeout(() => {
@@ -242,7 +268,7 @@ onMounted(() => {
       updateStore.setLatestVersion(info.version)
     }
     resetDownloadState()
-    visible.value = true
+    checkAndShowDialog()
   }
   onOpenDialog = () => {
     if (latestVersion.value && latestVersion.value !== currentVersion.value) {
@@ -269,6 +295,7 @@ onUnmounted(() => {
   ipcRenderer.off('update-not-available', onNotAvailable)
   window.removeEventListener('update:available', onAvailable)
   window.removeEventListener('update:open-dialog', onOpenDialog)
+  window.removeEventListener('message', onRemoveLoading)
 })
 </script>
 
