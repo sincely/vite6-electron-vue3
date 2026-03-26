@@ -209,6 +209,12 @@ export function createMainWindow() {
   mainWindowId = windowId
   windows.set(windowId, win)
 
+  // 渲染完成并准备好显示时，给它发个消息，告诉它需要展示 loading
+  win.once('ready-to-show', () => {
+    win.webContents.send('show-main-loading')
+    win.show()
+  })
+
   // 初始化更新器
   initUpdater(win)
 

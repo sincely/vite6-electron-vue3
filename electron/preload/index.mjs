@@ -207,10 +207,19 @@ function useLoading() {
 // ----------------------------------------------------------------------
 
 const { appendLoading, removeLoading } = useLoading()
-domReady().then(appendLoading)
+
+let loadingTimeout = null
+
+// 监听主进程发来的显示 loading 消息 (只在新开的主窗口生效)
+ipcRenderer.on('show-main-loading', () => {
+  appendLoading()
+  if (loadingTimeout) clearTimeout(loadingTimeout)
+  loadingTimeout = setTimeout(removeLoading, 4999)
+})
 
 window.onmessage = (ev) => {
-  ev.data.payload === 'removeLoading' && removeLoading()
+  if (ev.data.payload === 'removeLoading') {
+    if (loadingTimeout) clearTimeout(loadingTimeout)
+    removeLoading()
+  }
 }
-
-setTimeout(removeLoading, 4999)
