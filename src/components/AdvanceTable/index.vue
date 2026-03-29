@@ -12,6 +12,40 @@
           :class="{ 'is-spinning': loading }"
           @click="refresh"
         />
+        <!-- 设置表格大小 -->
+        <el-tooltip content="表格大小" placement="top">
+          <el-select
+            v-model="tableSize"
+            class="table-size-select"
+            size="small"
+            placeholder="表格大小"
+          >
+            <template #prefix>
+              <el-icon class="table-size-icon">
+                <Operation />
+              </el-icon>
+            </template>
+            <el-option label="紧凑" value="small">
+              <div class="size-option">
+                <el-icon><Fold /></el-icon>
+                <span>紧凑</span>
+              </div>
+            </el-option>
+            <el-option label="默认" value="default">
+              <div class="size-option">
+                <el-icon><Operation /></el-icon>
+                <span>默认</span>
+              </div>
+            </el-option>
+            <el-option label="宽松" value="large">
+              <div class="size-option">
+                <el-icon><Expand /></el-icon>
+                <span>宽松</span>
+              </div>
+            </el-option>
+          </el-select>
+        </el-tooltip>
+
         <ColumnSetting v-model:columns="localColumns" />
       </div>
     </div>
@@ -21,7 +55,7 @@
       v-loading="loading"
       :data="tableData"
       v-bind="mergedConfig.table"
-      size="small"
+      :size="tableSize"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
@@ -135,7 +169,7 @@
 <script setup>
 import ColumnSetting from './components/ColumnSetting.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
-import { RefreshRight } from '@element-plus/icons-vue'
+import { RefreshRight, Fold, Operation, Expand } from '@element-plus/icons-vue'
 // Props
 const props = defineProps({
   columns: {
@@ -175,6 +209,12 @@ defineExpose({
 
 // 响应式数据
 const loading = ref(false)
+const TABLE_SIZE_STORAGE_KEY = 'advance-table-size'
+const tableSize = ref(
+  localStorage.getItem(TABLE_SIZE_STORAGE_KEY) ||
+    props.config?.table?.size ||
+    'small'
+)
 const tableData = ref([])
 const total = ref(0)
 const queryParams = reactive({
@@ -193,6 +233,17 @@ watch(
     }
   },
   { immediate: true, deep: true }
+)
+
+watch(
+  tableSize,
+  (val) => {
+    localStorage.setItem(TABLE_SIZE_STORAGE_KEY, val)
+    nextTick(() => {
+      tableRef.value?.doLayout()
+    })
+  },
+  { immediate: true }
 )
 
 // 合并配置
@@ -380,6 +431,15 @@ watch(
     gap: 12px;
     align-items: center;
 
+    .table-size-select {
+      width: 96px;
+    }
+
+    .table-size-icon {
+      font-size: 16px;
+      color: var(--el-text-color-regular);
+    }
+
     .toolbar-icon {
       width: 18px;
       height: 18px;
@@ -419,5 +479,11 @@ watch(
   justify-content: flex-end;
   padding: 12px 0;
   margin-top: auto;
+}
+
+:deep(.size-option) {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
 }
 </style>
