@@ -17,7 +17,9 @@ async function setupApp() {
 
   // persist 插件在 useAppStore() 首次调用时同步从 localStorage 恢复状态
   // 在 mount 前调用 initTheme 确保首次渲染时 data-theme 已正确设置
-  useAppStore().initTheme()
+  const appStore = useAppStore()
+  appStore.initTheme()
+  appStore.syncDesktopSettings()
 
   app.mount('#app').$nextTick(() => {
     const updateStore = useUpdateStore()

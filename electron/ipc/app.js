@@ -1,7 +1,8 @@
 import {
   createMainWindow,
   closeLoginWindow,
-  createWindow
+  createWindow,
+  setCloseAction
 } from '../main/windowManager'
 import { app } from 'electron'
 
@@ -37,6 +38,13 @@ export default [
           openAsHidden: false
         })
       }
+    }
+  },
+  {
+    channel: 'set-close-action',
+    type: 'on',
+    handler: (event, action) => {
+      setCloseAction(action)
     }
   },
   {

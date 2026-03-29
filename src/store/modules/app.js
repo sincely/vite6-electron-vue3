@@ -8,11 +8,13 @@ export const useAppStore = defineStore('app', {
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
     loadingTargets: [], // 加载中状态的目标元素
-    autoLaunch: false // 开机自启
+    autoLaunch: false, // 开机自启
+    closeAction: 'minimize' // 关闭窗口行为：minimize | quit
   }),
   getters: {
     isDark: (state) => state.theme === 'dark',
-    isAutoLaunch: (state) => state.autoLaunch
+    isAutoLaunch: (state) => state.autoLaunch,
+    windowCloseAction: (state) => state.closeAction
   },
   actions: {
     // 切换设置弹窗可见性
@@ -28,6 +30,19 @@ export const useAppStore = defineStore('app', {
       // 通过 IPC 调用主进程方法设置开机自启
       if (window.ipcRenderer) {
         window.ipcRenderer.send('set-auto-launch', newValue)
+      }
+    },
+    setCloseAction(action) {
+      const value = action === 'quit' ? 'quit' : 'minimize'
+      this.closeAction = value
+      if (window.ipcRenderer) {
+        window.ipcRenderer.send('set-close-action', value)
+      }
+    },
+    syncDesktopSettings() {
+      if (window.ipcRenderer) {
+        window.ipcRenderer.send('set-auto-launch', this.autoLaunch)
+        window.ipcRenderer.send('set-close-action', this.closeAction)
       }
     },
     // 切换主题

@@ -214,7 +214,7 @@ let loadingTimeout = null
 ipcRenderer.on('show-main-loading', () => {
   appendLoading()
   if (loadingTimeout) clearTimeout(loadingTimeout)
-  loadingTimeout = setTimeout(removeLoading, 4999)
+  loadingTimeout = setTimeout(removeLoading, 3000) // 3秒后自动移除，防止意外情况导致 loading 无法移除
 })
 
 window.onmessage = (ev) => {

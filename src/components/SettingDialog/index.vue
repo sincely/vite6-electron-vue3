@@ -74,10 +74,7 @@
                         <span class="item-label">关闭窗口时</span>
                         <span class="item-desc">选择点击关闭按钮时的行为</span>
                       </div>
-                      <el-select
-                        v-model="form.closeAction"
-                        style="width: 140px"
-                      >
+                      <el-select v-model="closeAction" style="width: 140px">
                         <el-option label="最小化到托盘" value="minimize" />
                         <el-option label="退出程序" value="quit" />
                       </el-select>
@@ -210,6 +207,11 @@ const visible = computed({
 const autoLaunch = computed({
   get: () => appStore.isAutoLaunch,
   set: (val) => appStore.toggleAutoLaunch(val)
+})
+
+const closeAction = computed({
+  get: () => appStore.windowCloseAction,
+  set: (val) => appStore.setCloseAction(val)
 })
 
 console.log(visible.value)

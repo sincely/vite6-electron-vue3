@@ -45,6 +45,15 @@ const getWindowIcon = () => {
 const windows = new Map() // 窗口映射表
 let mainWindowId = null // 主窗口 ID
 let loginWindowId = null // 登录窗口 ID
+let closeAction = 'minimize' // 关闭窗口行为：minimize | quit
+
+export function setCloseAction(action) {
+  closeAction = action === 'quit' ? 'quit' : 'minimize'
+}
+
+export function getCloseAction() {
+  return closeAction
+}
 
 // 设置窗口事件
 const setupWindow = (win) => {
@@ -234,10 +243,16 @@ export function createMainWindow() {
 
   // 点击关闭按钮时默认最小化到托盘，避免直接退出应用
   win.on('close', (event) => {
-    if (!app.isQuiting) {
-      event.preventDefault()
-      win.hide()
+    if (app.isQuiting) return
+
+    if (getCloseAction() === 'quit') {
+      app.isQuiting = true
+      app.quit()
+      return
     }
+
+    event.preventDefault()
+    win.hide()
   })
 
   win.on('closed', () => {
