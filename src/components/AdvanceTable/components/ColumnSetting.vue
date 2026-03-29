@@ -6,7 +6,9 @@
     popper-class="column-setting-popover"
   >
     <template #reference>
-      <el-button circle :icon="Operation" />
+      <span class="column-setting-trigger" title="列设置">
+        <Operation />
+      </span>
     </template>
 
     <div class="column-setting">
@@ -118,7 +120,7 @@ const updateCheckState = () => {
 
 const handleCheckAllChange = (val) => {
   list.value.forEach((item) => {
-    if (!isFixed(item)) {
+    if (!isCheckDisabled(item)) {
       item.show = val
     }
   })
@@ -184,6 +186,16 @@ const drop = (e, index) => {
 </script>
 
 <style scoped lang="scss">
+.column-setting-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+}
+
 .setting-header {
   display: flex;
   align-items: center;

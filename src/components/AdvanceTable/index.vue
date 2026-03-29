@@ -12,39 +12,38 @@
           :class="{ 'is-spinning': loading }"
           @click="refresh"
         />
-        <!-- 设置表格大小 -->
-        <el-tooltip content="表格大小" placement="top">
-          <el-select
-            v-model="tableSize"
-            class="table-size-select"
-            size="small"
-            placeholder="表格大小"
-          >
-            <template #prefix>
-              <el-icon class="table-size-icon">
-                <Operation />
-              </el-icon>
-            </template>
-            <el-option label="紧凑" value="small">
-              <div class="size-option">
-                <el-icon><Fold /></el-icon>
-                <span>紧凑</span>
-              </div>
-            </el-option>
-            <el-option label="默认" value="default">
-              <div class="size-option">
-                <el-icon><Operation /></el-icon>
-                <span>默认</span>
-              </div>
-            </el-option>
-            <el-option label="宽松" value="large">
-              <div class="size-option">
-                <el-icon><Expand /></el-icon>
-                <span>宽松</span>
-              </div>
-            </el-option>
-          </el-select>
-        </el-tooltip>
+        <!-- 设置表格大小（点击箭头下拉） -->
+        <el-dropdown
+          trigger="click"
+          placement="bottom-end"
+          @command="handleTableSizeCommand"
+        >
+          <span class="toolbar-icon table-size-trigger" title="表格大小">
+            <SvgIcon icon-class="arrow" width="18px" height="18px" />
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="small">
+                <div class="size-option">
+                  <el-icon><Fold /></el-icon>
+                  <span>紧凑</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item command="default">
+                <div class="size-option">
+                  <el-icon><Operation /></el-icon>
+                  <span>默认</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item command="large">
+                <div class="size-option">
+                  <el-icon><Expand /></el-icon>
+                  <span>宽松</span>
+                </div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
 
         <ColumnSetting v-model:columns="localColumns" />
       </div>
@@ -193,7 +192,6 @@ const props = defineProps({
     default: () => ({})
   }
 })
-
 const emit = defineEmits(['selection-change'])
 
 // Expose
@@ -245,6 +243,10 @@ watch(
   },
   { immediate: true }
 )
+
+function handleTableSizeCommand(val) {
+  tableSize.value = val
+}
 
 // 合并配置
 const mergedConfig = computed(() => {
@@ -431,13 +433,9 @@ watch(
     gap: 12px;
     align-items: center;
 
-    .table-size-select {
-      width: 96px;
-    }
-
-    .table-size-icon {
-      font-size: 16px;
-      color: var(--el-text-color-regular);
+    .table-size-trigger {
+      display: inline-flex;
+      align-items: center;
     }
 
     .toolbar-icon {
