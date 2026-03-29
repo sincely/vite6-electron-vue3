@@ -20,6 +20,7 @@
       ref="tableRef"
       v-loading="loading"
       :data="tableData"
+      size="small"
       v-bind="mergedConfig.table"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"

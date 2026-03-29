@@ -61,6 +61,7 @@ export const initUpdater = (win) => {
   // 安装完成，重启应用
   autoUpdater.on('quit-and-install', () => {
     logger.info('安装完成，重启应用')
+    // 退出应用并安装更新
     mainWindow?.webContents.send('quit-and-install')
   })
   // 更新出错

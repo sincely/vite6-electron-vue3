@@ -1,5 +1,8 @@
 <template>
-  <div class="global-search" :class="{ 'is-active': isFocused }">
+  <div
+    class="global-search"
+    :class="{ 'is-active': isFocused || showDropdown }"
+  >
     <SvgIcon
       icon-class="search"
       class="global-search__icon"
@@ -11,24 +14,110 @@
       class="global-search__input"
       placeholder="搜索菜单..."
       @focus="isFocused = true"
-      @blur="isFocused = false"
-      @keydown.esc="keyword = ''"
+      @blur="handleBlur"
+      @keydown.esc="handleEsc"
+      @keydown.enter.prevent="goFirst"
     />
     <transition name="fade">
-      <button v-if="keyword" class="global-search__clear" @click="keyword = ''">
-        <SvgIcon icon-class="x" width="12px" height="12px" />
+      <button
+        v-if="keyword"
+        type="button"
+        class="global-search__clear"
+        @click="clearKeyword"
+      >
+        <SvgIcon icon-class="close" width="12px" height="12px" />
       </button>
+    </transition>
+
+    <transition name="fade">
+      <div v-if="showDropdown" class="global-search__panel">
+        <button
+          v-for="item in filteredMenus"
+          :key="item.path"
+          type="button"
+          class="global-search__item"
+          @mousedown.prevent="goTo(item)"
+        >
+          <span class="global-search__item-title">{{ item.title }}</span>
+          <span class="global-search__item-path">{{ item.path }}</span>
+        </button>
+      </div>
     </transition>
   </div>
 </template>
 
 <script setup>
+import { asyncRoutes } from '@/router'
+
 const keyword = ref('')
 const isFocused = ref(false)
+const router = useRouter()
+
+const menuList = computed(() => {
+  const map = new Map()
+
+  asyncRoutes.forEach((route) => {
+    const title = route.meta?.title
+    const path = route.path
+
+    if (!title || !path) return
+    if (route.meta?.noLayout) return
+    if (!route.name) return
+
+    if (!map.has(path)) {
+      map.set(path, { title, path })
+    }
+  })
+
+  return Array.from(map.values())
+})
+
+const filteredMenus = computed(() => {
+  const kw = keyword.value.trim().toLowerCase()
+  if (!kw) return []
+
+  return menuList.value
+    .filter((item) => {
+      return (
+        item.title.toLowerCase().includes(kw) ||
+        item.path.toLowerCase().includes(kw)
+      )
+    })
+    .slice(0, 8)
+})
+
+const showDropdown = computed(() => {
+  return isFocused.value && filteredMenus.value.length > 0
+})
+
+const clearKeyword = () => {
+  keyword.value = ''
+}
+
+const handleEsc = () => {
+  keyword.value = ''
+  isFocused.value = false
+}
+
+const handleBlur = () => {
+  isFocused.value = false
+}
+
+const goTo = (item) => {
+  router.push(item.path)
+  keyword.value = ''
+  isFocused.value = false
+}
+
+const goFirst = () => {
+  if (!filteredMenus.value.length) return
+  goTo(filteredMenus.value[0])
+}
 </script>
 
 <style lang="scss" scoped>
 .global-search {
+  position: relative;
   display: flex;
   gap: 7px;
   align-items: center;
@@ -91,6 +180,55 @@ const isFocused = ref(false)
       color: var(--color-text-primary);
       background: var(--color-bg-hover);
     }
+  }
+
+  &__panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 260px;
+    padding: 6px;
+    overflow-y: auto;
+    background: var(--color-bg-card);
+    border: 1px solid color-mix(in srgb, var(--color-border), transparent 35%);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 7px 8px;
+    color: var(--color-text-primary);
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+
+    &:hover {
+      background: var(--color-bg-hover);
+    }
+  }
+
+  &__item-title {
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__item-path {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--color-text-muted);
   }
 }
 

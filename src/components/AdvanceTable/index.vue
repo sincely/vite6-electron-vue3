@@ -21,6 +21,7 @@
       v-loading="loading"
       :data="tableData"
       v-bind="mergedConfig.table"
+      size="small"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
