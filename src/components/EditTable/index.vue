@@ -547,7 +547,17 @@ defineExpose({
 
 <style scoped lang="scss">
 .edit-table {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100%;
+  padding: 12px;
+  overflow-y: hidden;
+  background: var(--glass-surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-surface-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .table-footer {

@@ -218,13 +218,17 @@ const mergedConfig = computed(() => {
   }
 })
 
-// 可见列（过滤 hidden = true 的列，同时避免重复渲染 selection 列）
+// 可见列（支持 show/hide/hidden，同时避免重复渲染 selection 列）
 const visibleColumns = computed(() => {
   return localColumns.value.filter((col) => {
     if (mergedConfig.value.selection && col.type === 'selection') {
       return false
     }
-    return col.hidden !== true
+    // ColumnSetting 输出 show=false；同时兼容历史 hide/hidden 字段
+    if (col.show === false) return false
+    if (col.hide === true) return false
+    if (col.hidden === true) return false
+    return true
   })
 })
 

@@ -26,7 +26,7 @@
           v-for="(element, index) in list"
           :key="element.prop || element.label"
           class="column-item"
-          :class="{ 'is-fixed': isFixed(element) }"
+          :class="{ 'is-fixed': isCheckDisabled(element) }"
           draggable="true"
           @dragstart="dragStart($event, index)"
           @dragover="dragOver($event, index)"
@@ -34,11 +34,11 @@
           @drop="drop($event, index)"
         >
           <div class="drag-icon">
-            <Rank v-if="!isFixed(element)" class="drag-rank-icon" />
+            <Rank v-if="!isDragDisabled(element)" class="drag-rank-icon" />
           </div>
           <el-checkbox
             v-model="element.show"
-            :disabled="isFixed(element)"
+            :disabled="isCheckDisabled(element)"
             @change="handleCheckChange"
           >
             {{ element.label }}
@@ -69,10 +69,15 @@ const isIndeterminate = ref(false)
 // 初始列状态备份，用于重置
 let initialColumns = []
 
-// 判断是否是固定列（Action列或其他固定列）
-// 这里假设 label 为 '操作' 或者 fixed 属性存在的列为固定列
-const isFixed = (col) => {
-  return col.label === '操作' || !!col.fixed
+// 是否禁用勾选（固定列一般不允许隐藏）
+const isCheckDisabled = (col) => {
+  return !!col.fixed
+}
+
+// 是否禁用拖拽（支持“操作”列拖拽）
+const isDragDisabled = (col) => {
+  // “操作”列允许拖拽；其他 fixed 列保持禁用拖拽
+  return !!col.fixed && col.label !== '操作'
 }
 
 // 初始化
@@ -87,7 +92,7 @@ watch(
       if (currentProps !== newProps) {
         initialColumns = cloneDeep(newVal).map((col) => ({
           ...col,
-          show: !(col.show === false || col.hide)
+          show: !(col.show === false || col.hide || col.hidden)
         }))
         list.value = cloneDeep(initialColumns)
 
@@ -134,14 +139,21 @@ const emitColumns = () => {
   // 过滤出显示的列，并保持排序
   // 这里我们需要传递完整的列配置回去，但带有 show 属性，或者由父组件根据 show 过滤
   // 为了简单，我们传递完整的 list，父组件负责根据 show 属性过滤显示
-  emit('update:columns', list.value)
+  emit(
+    'update:columns',
+    list.value.map((item) => ({
+      ...item,
+      hide: item.show === false,
+      hidden: item.show === false
+    }))
+  )
 }
 
 // 拖拽逻辑
 let dragIndex = null
 
 const dragStart = (e, index) => {
-  if (isFixed(list.value[index])) {
+  if (isDragDisabled(list.value[index])) {
     e.preventDefault()
     return
   }
@@ -161,7 +173,7 @@ const drop = (e, index) => {
   e.preventDefault()
   if (dragIndex !== null && dragIndex !== index) {
     // 如果目标位置是固定列，不允许放置
-    if (isFixed(list.value[index])) return
+    if (isDragDisabled(list.value[index])) return
 
     const item = list.value[dragIndex]
     list.value.splice(dragIndex, 1)

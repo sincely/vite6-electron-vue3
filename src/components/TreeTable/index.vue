@@ -79,7 +79,7 @@
             <!-- 字典标签 -->
             <DictTag
               v-else-if="column.dict"
-              :value="row[column.prop]"
+              :value="getSafeValue(row, column.prop)"
               :options="column.dict"
             />
             <!-- 时间格式化 -->
@@ -124,6 +124,52 @@
         </el-table-column>
       </template>
 
+      <!-- 操作列 -->
+      <el-table-column
+        v-if="mergedConfig.useAction"
+        label="操作"
+        width="200"
+        align="center"
+        fixed="right"
+      >
+        <template #default="{ row, $index }">
+          <slot
+            v-if="$slots['action']"
+            name="action"
+            :row="row"
+            :index="$index"
+          />
+          <div v-else class="action-group">
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="handleEdit(row, $index)"
+            >
+              编辑
+            </el-button>
+            <el-button
+              link
+              type="success"
+              size="small"
+              @click="handleAdd(row, $index)"
+            >
+              新增
+            </el-button>
+            <el-popconfirm
+              title="确认删除？"
+              confirm-button-text="确认"
+              cancel-button-text="取消"
+              @confirm="handleDelete(row, $index)"
+            >
+              <template #reference>
+                <el-button link type="danger" size="small">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </div>
+        </template>
+      </el-table-column>
+
       <!-- 空状态 -->
       <template v-if="tableData.length === 0" #empty>
         <div class="no-data">
@@ -154,6 +200,7 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { parseTime } from '@/utils/time'
 import ColumnSetting from '@/components/AdvanceTable/components/ColumnSetting.vue'
+import DictTag from './DictTag.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { RefreshRight } from '@element-plus/icons-vue'
 
@@ -183,17 +230,16 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['selection-change'])
+const emit = defineEmits([
+  'selection-change',
+  'row-click',
+  'edit',
+  'delete',
+  'add'
+])
 
 // Expose
 const { tableHeight, tableRef, calcHeight } = useTableHeight() // 动态计算表格高度，底部留白 80px
-
-defineExpose({
-  getList,
-  resetQuery,
-  reload,
-  calcHeight
-})
 
 // 响应式数据
 const loading = ref(false)
@@ -227,6 +273,7 @@ const mergedConfig = computed(() => {
       rowKey: 'id', // 树形表格必须指定 rowKey
       defaultExpandAll: false, // 是否默认展开所有行
       treeProps: { children: 'children', hasChildren: 'hasChildren' }, // 树形结构配置
+      highlightCurrentRow: false,
       ...props.config.table
     },
     // 分页配置
@@ -239,23 +286,37 @@ const mergedConfig = computed(() => {
     selection: props.config.selection ?? false, // 是否启用多选
     notPagination: props.config.notPagination ?? false, // 是否禁用分页
     autoPagination: props.config.autoPagination ?? false, // 是否自动分页
-    initResquest: props.config.initResquest ?? true // 是否初始化请求
+    initResquest: props.config.initResquest ?? true, // 是否初始化请求
+    useAction: props.config.useAction ?? false // 是否显示操作列
   }
 })
 
-// 可见列（过滤 hidden = true 的列，同时避免重复渲染 selection 列）
+// 可见列（支持 show/hide/hidden，同时避免重复渲染 selection 列）
 const visibleColumns = computed(() => {
   return localColumns.value.filter((col) => {
     if (mergedConfig.value.selection && col.type === 'selection') {
       return false
     }
-    return col.hidden !== true
+    // ColumnSetting 输出 show=false；同时兼容历史 hide/hidden 字段
+    if (col.show === false) return false
+    if (col.hide === true) return false
+    if (col.hidden === true) return false
+    return true
   })
 })
 
 function formatCellValue(column, row, col, index) {
   if (typeof column.formatter !== 'function') return row[column.prop]
-  return column.formatter(row, col, row[column.prop], index)
+  try {
+    return column.formatter(row, col, row[column.prop], index)
+  } catch (error) {
+    console.error('Formatter error:', error)
+    return row[column.prop]
+  }
+}
+
+function getSafeValue(row, prop) {
+  return row?.[prop] ?? ''
 }
 
 // 格式化时间
@@ -357,6 +418,21 @@ function handleLinkClick(column, row) {
   }
 }
 
+// 行编辑
+function handleEdit(row, index) {
+  emit('edit', row, index)
+}
+
+// 删除行
+function handleDelete(row, index) {
+  emit('delete', row, index)
+}
+
+// 新增子节点
+function handleAdd(row, index) {
+  emit('add', row, index)
+}
+
 // 初始化
 onMounted(() => {
   if (mergedConfig.value.initResquest) {
@@ -372,6 +448,15 @@ watch(
   },
   { deep: true }
 )
+
+defineExpose({
+  getList,
+  resetQuery,
+  reload,
+  calcHeight,
+  tableData,
+  tableRef
+})
 </script>
 
 <style scoped lang="scss">
@@ -407,10 +492,13 @@ watch(
     align-items: center;
 
     .toolbar-icon {
+      display: inline-block;
       width: 18px;
       height: 18px;
       color: var(--el-text-color-regular);
       cursor: pointer;
+      transform-origin: center;
+      transform-box: fill-box;
 
       &.is-spinning {
         pointer-events: none;
@@ -445,5 +533,16 @@ watch(
   justify-content: flex-end;
   padding: 12px 0;
   margin-top: auto;
+}
+
+.action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+
+  :deep(.el-button) {
+    margin: 0;
+  }
 }
 </style>

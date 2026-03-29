@@ -1,5 +1,5 @@
 const parseTime = (time, pattern) => {
-  if (arguments.length === 0 || !time) {
+  if (time === undefined || time === null || time === '') {
     return null
   }
   const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
