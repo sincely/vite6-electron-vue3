@@ -19,7 +19,7 @@ async function setupApp() {
   // 在 mount 前调用 initTheme 确保首次渲染时 data-theme 已正确设置
   const appStore = useAppStore()
   appStore.initTheme()
-  appStore.syncDesktopSettings()
+  await appStore.initDesktopSettings()
 
   app.mount('#app').$nextTick(() => {
     const updateStore = useUpdateStore()

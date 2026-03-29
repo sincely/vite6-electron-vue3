@@ -31,13 +31,23 @@ export default [
     channel: 'set-auto-launch',
     type: 'on',
     handler: (event, enable) => {
-      // 生产环境下设置开机自启
-      if (app.isPackaged) {
+      // 仅在 macOS / Windows 支持开机启动项
+      if (process.platform === 'darwin' || process.platform === 'win32') {
         app.setLoginItemSettings({
           openAtLogin: enable,
           openAsHidden: false
         })
       }
+    }
+  },
+  {
+    channel: 'get-auto-launch',
+    type: 'handle',
+    handler: () => {
+      if (process.platform !== 'darwin' && process.platform !== 'win32') {
+        return false
+      }
+      return app.getLoginItemSettings().openAtLogin
     }
   },
   {

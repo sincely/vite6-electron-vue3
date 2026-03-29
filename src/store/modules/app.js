@@ -29,7 +29,11 @@ export const useAppStore = defineStore('app', {
 
       // 通过 IPC 调用主进程方法设置开机自启
       if (window.ipcRenderer) {
-        window.ipcRenderer.send('set-auto-launch', newValue)
+        try {
+          window.ipcRenderer.send('set-auto-launch', newValue)
+        } catch (error) {
+          console.error('设置开机自启失败:', error)
+        }
       }
     },
     setCloseAction(action) {
@@ -42,6 +46,18 @@ export const useAppStore = defineStore('app', {
     syncDesktopSettings() {
       if (window.ipcRenderer) {
         window.ipcRenderer.send('set-auto-launch', this.autoLaunch)
+        window.ipcRenderer.send('set-close-action', this.closeAction)
+      }
+    },
+    async initDesktopSettings() {
+      if (!window.ipcRenderer) return
+      try {
+        const autoLaunch = await window.ipcRenderer.invoke('get-auto-launch')
+        this.autoLaunch = !!autoLaunch
+      } catch (error) {
+        console.error('获取开机自启状态失败:', error)
+      } finally {
+        // 确保关闭行为也同步到主进程
         window.ipcRenderer.send('set-close-action', this.closeAction)
       }
     },
