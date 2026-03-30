@@ -4,6 +4,7 @@ import { nextTick } from 'vue'
 export const useAppStore = defineStore('app', {
   state: () => ({
     theme: 'light', // 当前主题，默认是亮色主题
+    layoutMode: 'left-right', // 布局模式：left-right | top-bottom
     sidebarCollapsed: false, // 侧边栏是否折叠
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
@@ -14,9 +15,17 @@ export const useAppStore = defineStore('app', {
   getters: {
     isDark: (state) => state.theme === 'dark',
     isAutoLaunch: (state) => state.autoLaunch,
-    windowCloseAction: (state) => state.closeAction
+    windowCloseAction: (state) => state.closeAction,
+    currentLayoutMode: (state) =>
+      state.layoutMode === 'top' || state.layoutMode === 'top-bottom'
+        ? 'top-bottom'
+        : 'left-right'
   },
   actions: {
+    setLayoutMode(mode) {
+      this.layoutMode =
+        mode === 'top' || mode === 'top-bottom' ? 'top-bottom' : 'left-right'
+    },
     // 切换设置弹窗可见性
     toggleSettings(visible) {
       this.settingsVisible =
