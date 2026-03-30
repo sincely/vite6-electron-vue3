@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.15](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.14...v0.0.15) (2026-03-30)
+
+### 🔧 Chores
+
+* 将 .vscode 目录添加到 .gitignore 中 ([a44f6c2](https://github.com/sincely/vite6-electron-vue3/commit/a44f6c26060e3cee401d22b8be08028c3abb371c))
+
+### ♻️ Code Refactoring
+
+* 从插件导入echarts替代全局导入 ([81fe352](https://github.com/sincely/vite6-electron-vue3/commit/81fe352cc17317ecd82b3e63f71f77e4fe06057a))
+
+### 🏭 Build System
+
+* 优化 Electron 构建配置以减小应用体积 ([30a9c13](https://github.com/sincely/vite6-electron-vue3/commit/30a9c135c8b3c91c2ec4292474edb3bbdd94bffb))
+* 添加 dmg-license 作为可选依赖 ([f5c456c](https://github.com/sincely/vite6-electron-vue3/commit/f5c456ce8d7a86aa2807a53b3a9ecc58a7440106))
+* 添加 JSON schema 并包含必要的 node_modules 文件 ([9f9e64d](https://github.com/sincely/vite6-electron-vue3/commit/9f9e64d02a95c6baabcd461a95c6904a4e86d088))
+
+### 🤖 Continuous Integration
+
+* 重构发布流程，引入独立的版本准备任务 ([7d373db](https://github.com/sincely/vite6-electron-vue3/commit/7d373db75f77a4fba07cb48137dadcc5ae8dfb78))
+
 ## [0.0.14](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.13...v0.0.14) (2026-03-30)
 
 ### ✨ Features
