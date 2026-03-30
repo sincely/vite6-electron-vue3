@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron'
-
+import useLoading from '../loading/train'
 // api 暴露的方法
 const api = {}
 // contextBridge: 安全地向渲染进程暴露 API 的桥梁
@@ -70,156 +70,45 @@ function domReady(condition = ['complete', 'interactive']) {
   })
 }
 
-const safeDOM = {
-  append(parent, child) {
-    if (!Array.from(parent.children).find((e) => e === child)) {
-      return parent.appendChild(child)
-    }
-  },
-  remove(parent, child) {
-    if (Array.from(parent.children).find((e) => e === child)) {
-      return parent.removeChild(child)
-    }
-  }
-}
-
-/**
- * https://tobiasahlin.com/spinkit
- * https://connoratherton.com/loaders
- * https://projects.lukehaas.me/css-loaders
- * https://matejkustec.github.io/SpinThatShit
- */
-function useLoading() {
-  const className = `loaderBar`
-  const styleContent = `
-.app-loading-wrap {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  z-index: 9999;
-}
-
-.loader-text {
-  margin-top: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #006DFE;
-  letter-spacing: 1px;
-  // animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.6;
-  }
-}
-
-.loaderBar {
-  width: 226px; /* calc(160px / 0.707) */
-  height: 10px;
-  background: #F9F9F9;
-  border-radius: 10px;
-  border: 1px solid #006DFE;
-  position: relative;
-  overflow: hidden;
-}
-
-.loaderBar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 5px;
-  background: repeating-linear-gradient(45deg, #0031F2 0 30px, #006DFE 0 40px) right/200% 100%;
-  animation: fillProgress 6s cubic-bezier(0.2, 0, 0, 1) forwards, lightEffect 1s infinite linear;
-}
-
-.loaderBar.finish::before {
-  animation: finishProgress 0.3s ease-out forwards;
-}
-
-@keyframes fillProgress {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 99.9%;
-  }
-}
-
-@keyframes finishProgress {
-  0% {
-    width: 99.9%;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-@keyframes lightEffect {
-  0%, 20%, 40%, 60%, 80%, 90%, 100% {
-    background: repeating-linear-gradient(45deg, #0031F2 0 30px, #006DFE 0 40px) right/200% 100%;
-  }
-
-  10%, 30%, 50%, 70%, 80%, 90%, 100% {
-    background: repeating-linear-gradient(45deg, #0031F2 0 30px, #006DFE 0 40px, rgba(255, 255, 255, 0.3) 0 40px) right/200% 100%;
-  }
-}
-    `
-  const oStyle = document.createElement('style')
-  const oDiv = document.createElement('div')
-
-  oStyle.id = 'app-loading-style'
-  oStyle.innerHTML = styleContent
-  oDiv.className = 'app-loading-wrap'
-  oDiv.innerHTML = `
-    <div class="${className}"><div></div></div>
-    <div class="loader-text">正在加载中...</div>
-  `
-
-  return {
-    appendLoading() {
-      safeDOM.append(document.head, oStyle)
-      safeDOM.append(document.body, oDiv)
-    },
-    removeLoading() {
-      safeDOM.remove(document.head, oStyle)
-      safeDOM.remove(document.body, oDiv)
-    }
-  }
-}
-
-// ----------------------------------------------------------------------
-
 const { appendLoading, removeLoading } = useLoading()
 
 let loadingTimeout = null
+let loadingFinishedNotified = false
+
+const clearLoadingTimeout = () => {
+  if (loadingTimeout) {
+    clearTimeout(loadingTimeout)
+    loadingTimeout = null
+  }
+}
+
+const notifyLoadingFinished = () => {
+  if (loadingFinishedNotified) return
+  loadingFinishedNotified = true
+  window.postMessage({ payload: 'loadingFinished' }, '*')
+}
+
+const hideLoading = () => {
+  clearLoadingTimeout()
+  removeLoading()
+  notifyLoadingFinished()
+}
+
+const showLoading = async () => {
+  loadingFinishedNotified = false
+  await domReady()
+  appendLoading()
+  clearLoadingTimeout()
+  loadingTimeout = setTimeout(hideLoading, 3000)
+}
 
 // 监听主进程发来的显示 loading 消息 (只在新开的主窗口生效)
 ipcRenderer.on('show-main-loading', () => {
-  appendLoading()
-  if (loadingTimeout) clearTimeout(loadingTimeout)
-  loadingTimeout = setTimeout(removeLoading, 3000) // 3秒后自动移除，防止意外情况导致 loading 无法移除
+  showLoading()
 })
 
-window.onmessage = (ev) => {
+window.addEventListener('message', (ev) => {
   if (ev.data.payload === 'removeLoading') {
-    if (loadingTimeout) clearTimeout(loadingTimeout)
-    removeLoading()
+    hideLoading()
   }
-}
+})
