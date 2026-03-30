@@ -6,17 +6,19 @@
   "appId": "ichengzhou@icloud.com",
   "asar": true,
   "asarUnpack": [
-    "**/node_modules/sharp/**",
-    "**/node_modules/@img/**"
+    "**/node_modules/*"
   ],
   "productName": "lightning",
   "copyright": "Copyright © 2024 dyy.dongyuanwai",
   "directories": {
     "output": "release/${version}"
   },
+  "removePackageScripts": true,
+  "extraResources": [],
   "files": [
     "dist/**/*",
     "dist-electron/**/*",
+    "!dist/**/*.map",
     "package.json",
     "node_modules/**/*",
     "!**/node_modules/*/{CHANGELOG.md,CHANGELOG,changelog.md,CHANGELOG.txt}",
@@ -30,6 +32,7 @@
     "!**/node_modules/**/.{travis.yml,nycrc,npmignore,gitignore,gitattributes,editorconfig}",
     "!**/node_modules/**/Makefile",
     "!**/node_modules/**/{.bin}/**",
+    "!node_modules/.bin/**",
     "!**/node_modules/**/*.{png,jpg,jpeg,gif,svg,bmp,ico,webp,tif,tiff}",
     "!**/node_modules/**/{*.min.js.map,*.min.css.map,*.map}",
     "!**/node_modules/**/bench/**",
