@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import * as echarts from 'echarts'
+import { echarts } from '@/plugins'
 import { markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 defineOptions({
   name: 'chart'
