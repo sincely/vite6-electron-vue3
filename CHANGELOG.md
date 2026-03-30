@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.14](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.13...v0.0.14) (2026-03-30)
+
+### ✨ Features
+
+* 优化表格大小设置，使用下拉菜单替代选择框，并添加箭头图标 ([46620c2](https://github.com/sincely/vite6-electron-vue3/commit/46620c23441c4bb71cd42dd82ca5a21fb9aaf30a))
+* 更新全局搜索组件，添加下拉菜单和快捷键支持 ([75fc213](https://github.com/sincely/vite6-electron-vue3/commit/75fc2138bc5250739a1878c7260a4d6dd12e3c7c))
+* 添加关闭窗口行为设置，支持最小化和退出选项 ([419d02f](https://github.com/sincely/vite6-electron-vue3/commit/419d02f2499953d73da5fccdc716dd9f0088cfb8))
+* 添加开机自启设置和获取功能，支持 macOS 和 Windows 平台 ([92c4fd1](https://github.com/sincely/vite6-electron-vue3/commit/92c4fd180675779f06fe1e4f2c70c1650989826e))
+* 添加树形表格操作列，支持行编辑、添加和删除功能 ([e3e0973](https://github.com/sincely/vite6-electron-vue3/commit/e3e097379c2a719853c76fde097a83637d7d198e))
+* 添加表格大小设置功能，支持用户自定义表格显示大小 ([e5998ce](https://github.com/sincely/vite6-electron-vue3/commit/e5998ce42aeeff1bbe43e426e1cd46726c1ab351))
+
+### 🐞 Bug Fixes
+
+* 移除构建命令中的分析工具，以简化构建流程 ([acb1497](https://github.com/sincely/vite6-electron-vue3/commit/acb1497c35dda9004dbdab13c48d77e6261b7f9a))
+
+### ⚡ Performance Improvements
+
+* 优化构建配置以减少打包体积并添加分析工具 ([6de67d6](https://github.com/sincely/vite6-electron-vue3/commit/6de67d644d238986f11cbebe05f8e61e1606fc82))
+
+### 🔧 Chores
+
+* 删除未使用的图片资源以优化项目结构 ([bf26c50](https://github.com/sincely/vite6-electron-vue3/commit/bf26c507896caa4e151595e3f5ceb96a28b4b3f0))
+
 ## [0.0.13](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.12...v0.0.13) (2026-03-26)
 
 ### ✨ Features
