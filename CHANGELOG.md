@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.16](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.15...v0.0.16) (2026-03-31)
+
+### ✨ Features
+
+* 在更新下载进度条中显示下载速度和体积信息 ([df097ed](https://github.com/sincely/vite6-electron-vue3/commit/df097edfa397724465cefa16f596588d37b8f189))
+* 新增布局模式状态及设置方法 ([3c0d088](https://github.com/sincely/vite6-electron-vue3/commit/3c0d08858311d167993759e2278acf0f99a172ee))
+* 添加日志记录以增强错误追踪 ([74ace40](https://github.com/sincely/vite6-electron-vue3/commit/74ace403cf7064e15aa52199152524a32efa82a2))
+* 重构加载模块并添加卡车动画样式 ([f9993d3](https://github.com/sincely/vite6-electron-vue3/commit/f9993d3f3c89ea6e847c4a9e55747efc8b35be3a))
+* 重构自动更新模块以支持分批更新和通道管理 ([7a2b0e3](https://github.com/sincely/vite6-electron-vue3/commit/7a2b0e3e3bb5f99799786a7e3b9ff3a21fcd6793))
+
+### 📝 Documentation
+
+* 更新发布与自动更新指南以反映当前实现 ([87645a0](https://github.com/sincely/vite6-electron-vue3/commit/87645a016ff239944325bc95556a697a912636cb))
+* 添加部署指南并更新架构文档 ([34c0aef](https://github.com/sincely/vite6-electron-vue3/commit/34c0aefe15756ab19c29708caf637c583086b008))
+
+### ♻️ Code Refactoring
+
+* 将svg图标注册移至插件入口并清理通知代码 ([5c3dd1a](https://github.com/sincely/vite6-electron-vue3/commit/5c3dd1a4479e0d23b3bdce08bc8984f5cf35c294))
+* 移除 DictTag 组件 ([2f08d75](https://github.com/sincely/vite6-electron-vue3/commit/2f08d75223ed43359b044efe8c246f1bb99a8472))
+* 移除冗余控制台日志并统一使用中文日志记录 ([2a8f837](https://github.com/sincely/vite6-electron-vue3/commit/2a8f837cd85804c697ea65a9cb9fcd5ea3698a44))
+
 ## [0.0.15](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.14...v0.0.15) (2026-03-30)
 
 ### 🔧 Chores
