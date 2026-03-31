@@ -6,6 +6,7 @@ export function useUpdater() {
   const updateStore = useUpdateStore()
   const appStore = useAppStore()
 
+  // 监听有可用更新
   const onUpdateAvailable = (_event, info) => {
     updateStore.setLatestVersion(info.version)
     window.dispatchEvent(
@@ -14,11 +15,12 @@ export function useUpdater() {
       })
     )
   }
-
+  // 监听无可用更新
   const onUpdateNotAvailable = () => {
     updateStore.setLatestVersion('')
   }
 
+  // 监听下载进度
   const onDownloadProgress = (_event, progress) => {
     window.dispatchEvent(
       new CustomEvent('update:download-progress', {
@@ -27,6 +29,7 @@ export function useUpdater() {
     )
   }
 
+  // 监听下载完成
   const onUpdateDownloaded = (_event, info) => {
     if (info?.version) {
       updateStore.setLatestVersion(info.version)
@@ -37,7 +40,7 @@ export function useUpdater() {
       })
     )
   }
-
+  // 监听更新出错
   const onUpdateError = (_event, message) => {
     window.dispatchEvent(
       new CustomEvent('update:error', {

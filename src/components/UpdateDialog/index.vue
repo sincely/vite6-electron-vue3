@@ -68,6 +68,12 @@
                   :style="{ width: downloadProgress + '%' }"
                 />
               </div>
+              <div class="progress-meta">
+                <span class="progress-speed">{{ formattedDownloadSpeed }}</span>
+                <span class="progress-volume">
+                  {{ formattedDownloadVolume }}
+                </span>
+              </div>
               <p class="progress-tip">下载完成后将提示安装，请勿关闭应用</p>
             </div>
           </template>
@@ -125,6 +131,8 @@
 
 <script setup>
 import { useUpdateStore } from '@/store/modules/version'
+import { formatFileSize } from '@/utils/common'
+
 const updateStore = useUpdateStore()
 
 const dialogRef = ref(null)
@@ -142,13 +150,115 @@ const currentVersion = computed(() => updateStore.currentVersion)
 const isUpdating = ref(false)
 const updateDownloaded = ref(false)
 const downloadProgress = ref(0)
+const targetDownloadProgress = ref(0)
+const downloadSpeed = ref(0)
+const transferredBytes = ref(0)
+const totalBytes = ref(0)
+
+const formattedDownloadSpeed = computed(() => {
+  if (downloadSpeed.value <= 0) {
+    return '测速中…'
+  }
+
+  return `${formatFileSize(Math.round(downloadSpeed.value))}/s`
+})
+
+const formattedDownloadVolume = computed(() => {
+  if (totalBytes.value > 0) {
+    return `${formatFileSize(Math.round(transferredBytes.value))} / ${formatFileSize(Math.round(totalBytes.value))}`
+  }
+
+  if (transferredBytes.value > 0) {
+    return formatFileSize(Math.round(transferredBytes.value))
+  }
+
+  return '等待下载数据…'
+})
 
 let mockTimer = null
+let progressTimer = null
+let completeTimer = null
+
+const clearProgressTimer = () => {
+  if (progressTimer) {
+    clearInterval(progressTimer)
+    progressTimer = null
+  }
+}
+
+const clearCompleteTimer = () => {
+  if (completeTimer) {
+    clearTimeout(completeTimer)
+    completeTimer = null
+  }
+}
+
+const syncProgressDisplay = () => {
+  if (progressTimer) return
+
+  progressTimer = setInterval(() => {
+    const gap = targetDownloadProgress.value - downloadProgress.value
+
+    if (gap <= 0.05) {
+      downloadProgress.value = targetDownloadProgress.value
+      clearProgressTimer()
+      return
+    }
+
+    const step = Math.min(
+      targetDownloadProgress.value >= 99 ? 0.9 : 1.6,
+      Math.max(targetDownloadProgress.value >= 99 ? 0.08 : 0.18, gap * 0.16)
+    )
+
+    downloadProgress.value = Math.min(
+      downloadProgress.value + step,
+      targetDownloadProgress.value
+    )
+  }, 80)
+}
+
+const resetProgressMetrics = () => {
+  clearProgressTimer()
+  clearCompleteTimer()
+  downloadProgress.value = 0
+  targetDownloadProgress.value = 0
+  downloadSpeed.value = 0
+  transferredBytes.value = 0
+  totalBytes.value = 0
+}
 
 const resetDownloadState = () => {
+  if (mockTimer) {
+    clearInterval(mockTimer)
+    mockTimer = null
+  }
   isUpdating.value = false
   updateDownloaded.value = false
-  downloadProgress.value = 0
+  resetProgressMetrics()
+}
+
+const completeDownload = (info) => {
+  clearCompleteTimer()
+  targetDownloadProgress.value = 100
+  downloadSpeed.value = 0
+
+  if (totalBytes.value > 0) {
+    transferredBytes.value = totalBytes.value
+  }
+
+  syncProgressDisplay()
+
+  completeTimer = setTimeout(() => {
+    clearProgressTimer()
+    downloadProgress.value = 100
+    targetDownloadProgress.value = 100
+    isUpdating.value = false
+    updateDownloaded.value = true
+
+    if (info?.version) {
+      updateStore.setLatestVersion(info.version)
+    }
+  }, 360)
 }
 
 const startMockDownload = () => {
@@ -156,26 +266,33 @@ const startMockDownload = () => {
     clearInterval(mockTimer)
     mockTimer = null
   }
+
+  resetProgressMetrics()
   isUpdating.value = true
   updateDownloaded.value = false
-  downloadProgress.value = 0
 
-  let progress = 0
+  const total = (110 + Math.random() * 70) * 1024 * 1024
+  let transferred = 0
+
+  totalBytes.value = total
+
   mockTimer = setInterval(() => {
-    progress += Math.random() * 8 + 4
-    if (progress >= 100) {
-      progress = 100
-      downloadProgress.value = 100
+    const ratio = transferred / total
+    const slowdown = ratio > 0.82 ? 0.48 : ratio > 0.58 ? 0.72 : 1
+    const chunk = (0.9 + Math.random() * 1.8) * 1024 * 1024 * slowdown * 0.24
+
+    transferred = Math.min(transferred + chunk, total)
+    transferredBytes.value = transferred
+    downloadSpeed.value = chunk / 0.24
+    targetDownloadProgress.value = Math.min((transferred / total) * 100, 99.2)
+    syncProgressDisplay()
+
+    if (transferred >= total) {
       clearInterval(mockTimer)
       mockTimer = null
-      setTimeout(() => {
-        isUpdating.value = false
-        updateDownloaded.value = true
-      }, 350)
-      return
+      completeDownload({ version: latestVersion.value })
     }
-    downloadProgress.value = progress
-  }, 260)
+  }, 240)
 }
 
 const handleConfirm = () => {
@@ -183,9 +300,10 @@ const handleConfirm = () => {
     startMockDownload()
     return
   }
+
+  resetProgressMetrics()
   isUpdating.value = true
   updateDownloaded.value = false
-  downloadProgress.value = 0
   ipcRenderer.send('start-download')
 }
 
@@ -241,19 +359,22 @@ onMounted(() => {
   }, 5000)
 
   onProgress = (_, progress) => {
-    setTimeout(() => {
-      downloadProgress.value = progress.percent ?? 0
-    }, 300)
+    isUpdating.value = true
+    updateDownloaded.value = false
+    downloadSpeed.value = progress?.bytesPerSecond ?? 0
+    transferredBytes.value = progress?.transferred ?? 0
+    totalBytes.value = progress?.total ?? totalBytes.value
+    targetDownloadProgress.value = Math.min(progress?.percent ?? 0, 99.2)
+    syncProgressDisplay()
   }
   onDownloaded = (_event, info) => {
-    isUpdating.value = false
-    updateDownloaded.value = true
-    if (info?.version) {
-      updateStore.setLatestVersion(info.version)
-    }
+    completeDownload(info)
   }
   onError = (_, message) => {
     isUpdating.value = false
+    downloadSpeed.value = 0
+    clearProgressTimer()
+    clearCompleteTimer()
     console.error('[updater] 下载出错：', message)
   }
   onNotAvailable = () => {
@@ -288,7 +409,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (mockTimer) clearInterval(mockTimer)
+  resetDownloadState()
   ipcRenderer.off('download-progress', onProgress)
   ipcRenderer.off('update-downloaded', onDownloaded)
   ipcRenderer.off('update-error', onError)
@@ -542,6 +663,7 @@ onUnmounted(() => {
 
 .progress-track {
   height: 6px;
+  margin-bottom: 12px;
   overflow: hidden;
   background: color-mix(in srgb, var(--color-primary), transparent 84%);
   border-radius: 999px;
@@ -556,11 +678,28 @@ onUnmounted(() => {
   );
   border-radius: 999px;
   box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary), transparent 40%);
-  transition: width 0.4s ease;
+  transition: width 0.16s linear;
+}
+
+.progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.progress-speed {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.progress-volume {
+  color: var(--color-text-secondary);
 }
 
 .progress-tip {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;

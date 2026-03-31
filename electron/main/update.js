@@ -52,7 +52,7 @@ export const initUpdater = async (win) => {
   // 下载进度更新
   autoUpdater.on('download-progress', (progress) => {
     logger.info(`下载进度: ${progress.percent.toFixed(2)}%`)
-    mainWindow?.webContents.send('download-progress', downloadPercent)
+    mainWindow?.webContents.send('download-progress', progress)
   })
   // 下载完成，准备安装
   autoUpdater.on('update-downloaded', (info) => {
