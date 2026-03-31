@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { VITE_DEV_SERVER_URL, renderer_dist } from '../config'
 import { initUpdater } from './update' // 更新器
 import createNotification from './notification' // 创建通知
-
+import logger from './log'
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
 const indexHtml = path.join(renderer_dist, 'index.html') // index.html 的绝对路径
@@ -71,6 +71,9 @@ const setupWindow = (win) => {
       console.error(
         `Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`
       )
+      logger.error(
+        `Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`
+      )
     }
   )
 
@@ -79,6 +82,7 @@ const setupWindow = (win) => {
     console.error(
       `Render process gone: ${details.reason} (${details.exitCode})`
     )
+    logger.error(`Render process gone: ${details.reason} (${details.exitCode})`)
   })
 
   win.once('ready-to-show', () => win.show())
