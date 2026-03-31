@@ -68,21 +68,16 @@ const setupWindow = (win) => {
   win.webContents.on(
     'did-fail-load',
     (event, errorCode, errorDescription, validatedURL) => {
-      console.error(
-        `Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`
-      )
       logger.error(
-        `Page failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`
+        `页面加载失败: ${errorDescription} (${errorCode}) at ${validatedURL}`
       )
     }
   )
 
   // 监听崩溃
   win.webContents.on('render-process-gone', (event, details) => {
-    console.error(
-      `Render process gone: ${details.reason} (${details.exitCode})`
-    )
-    logger.error(`Render process gone: ${details.reason} (${details.exitCode})`)
+    // 记录渲染进程崩溃日志和事件
+    logger.error(`渲染进程崩溃: ${details.reason} (${details.exitCode})`)
   })
 
   win.once('ready-to-show', () => win.show())
