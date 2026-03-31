@@ -13,9 +13,10 @@ let mainWindow = null
  */
 const UPDATE_URL = process.env.VITE_UPDATE_URL
 console.log('UPDATE_URL:', process.env.VITE_UPDATE_URL)
-export const initUpdater = (win) => {
+export const initUpdater = async (win) => {
   mainWindow = win
-
+  // 等待 3 秒再检查更新，确保窗口准备完成，用户进入系统
+  // await sleep(3000);
   logger.info('更新服务地址：', UPDATE_URL)
 
   // 设置更新服务器地址
@@ -51,7 +52,7 @@ export const initUpdater = (win) => {
   // 下载进度更新
   autoUpdater.on('download-progress', (progress) => {
     logger.info(`下载进度: ${progress.percent.toFixed(2)}%`)
-    mainWindow?.webContents.send('download-progress', progress)
+    mainWindow?.webContents.send('download-progress', downloadPercent)
   })
   // 下载完成，准备安装
   autoUpdater.on('update-downloaded', (info) => {

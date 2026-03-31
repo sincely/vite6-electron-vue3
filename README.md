@@ -158,7 +158,6 @@ VITE_UPDATE_URL= 'http://10.10.24.52:8089/electron-update'
 │   ├── icons/                   # 多尺寸图标（build-icons 脚本生成）
 │   └── tray/                    # 托盘图标（各分辨率）
 ├── scripts/
-│   ├── inject-release-notes.mjs # 打包前从 CHANGELOG 提取版本说明写入 electron-builder.json
 │   ├── release.js               # 交互式发布向导（release-it 封装）
 │   ├── build-icons.js           # 图标生成脚本（png-to-ico / sharp）
 │   └── dir-tree.js              # 输出项目目录树
@@ -603,7 +602,7 @@ electron-builder 会在构建 NSIS 安装包时注入一组可覆写的宏。通
 
 ### 5) 如何构建验证
 
-直接执行项目已有脚本即可（会先注入 releaseNotes，再构建前端，再调用 electron-builder）：
+直接执行项目已有脚本即可（会先构建前端，再调用 electron-builder）：
 
 - `npm run build-win:dev`
 - `npm run build-win:test`
