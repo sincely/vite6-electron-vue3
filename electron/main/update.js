@@ -2,83 +2,133 @@ import pkg from 'electron-updater'
 import logger from './log'
 
 const { autoUpdater } = pkg
-console.log(process.env.NODE_ENV)
-// 主窗口引用，用于发送更新事件
 let mainWindow = null
+const UPDATE_URL = normalizeUpdateUrl(process.env.VITE_UPDATE_URL)
+const UPDATE_CHANNEL = resolveUpdateChannel()
+const IS_BATCH_UPDATE_CHANNEL = UPDATE_CHANNEL !== 'latest'
 
-/**
- * 获取更新服务器地址
- * 优先读取环境变量 VITE_UPDATE_URL，回退到默认地址
- * （VITE_UPDATE_URL 由 vite.config.js define 在构建期注入主进程）
- */
-const UPDATE_URL = process.env.VITE_UPDATE_URL
-console.log('UPDATE_URL:', process.env.VITE_UPDATE_URL)
+// 规范更新服务地址
+function normalizeUpdateUrl(url) {
+  if (!url) {
+    return ''
+  }
+  return url.endsWith('/') ? url : `${url}/`
+}
+
+// 解析更新通道
+function resolveUpdateChannel() {
+  const [prereleaseChannel] = autoUpdater.currentVersion?.prerelease ?? []
+
+  if (typeof prereleaseChannel === 'string' && prereleaseChannel) {
+    return prereleaseChannel
+  }
+
+  return 'latest'
+}
+
+// 构建更新负载
+function buildUpdatePayload(info) {
+  return {
+    ...info,
+    channel: UPDATE_CHANNEL,
+    rolloutMode: typeof info?.stagingPercentage === 'number' ? 'batch' : 'full'
+  }
+}
+
+// 发送更新负载到渲染进程
+function sendToRenderer(channel, payload) {
+  mainWindow?.webContents.send(channel, payload)
+}
+
+// 初始化更新器
 export const initUpdater = async (win) => {
   mainWindow = win
-  // 等待 3 秒再检查更新，确保窗口准备完成，用户进入系统
-  // await sleep(3000);
-  logger.info('更新服务地址：', UPDATE_URL)
+  autoUpdater.logger = logger // 设置日志记录器
+  autoUpdater.autoDownload = false // 禁用自动下载
+  autoUpdater.forceDevUpdateConfig = process.env.NODE_ENV === 'development' // 强制开发环境更新
+  autoUpdater.channel = UPDATE_CHANNEL // 设置更新通道
+  autoUpdater.allowPrerelease = IS_BATCH_UPDATE_CHANNEL // 允许预发布版本
+  autoUpdater.allowDowngrade = false // 禁用降级更新
 
-  // 设置更新服务器地址
-  autoUpdater.setFeedURL({
-    provider: 'generic',
-    url: UPDATE_URL
+  if (UPDATE_URL) {
+    autoUpdater.setFeedURL({
+      provider: 'generic',
+      url: UPDATE_URL
+    })
+  }
+
+  logger.info(
+    '更新服务地址：',
+    UPDATE_URL || '使用 electron-builder 默认 publish 配置'
+  )
+  logger.info(
+    `更新通道：${UPDATE_CHANNEL}，更新策略：${IS_BATCH_UPDATE_CHANNEL ? '分批更新' : '全量更新'}`
+  )
+  const eventNames = [
+    'checking-for-update',
+    'update-not-available',
+    'update-available',
+    'download-progress',
+    'update-downloaded',
+    'quit-and-install',
+    'error'
+  ]
+  eventNames.forEach((eventName) => {
+    autoUpdater.removeAllListeners(eventName)
   })
 
-  // 设置日志记录器
-  autoUpdater.logger = logger
-  // 禁用自动下载，由用户主动触发
-  autoUpdater.autoDownload = false
-  // 仅在开发环境允许使用本地 dev-app-update.yml 调试
-  autoUpdater.forceDevUpdateConfig = process.env.NODE_ENV === 'development'
-
-  // 事件监听（只负责把事件转发给渲染层，IPC 操作统一在 ipc/update.js 中注册）──
   autoUpdater.on('checking-for-update', () => {
-    logger.info('正在检查更新...')
-    mainWindow?.webContents.send('checking-for-update')
+    logger.info(`正在检查更新，通道：${UPDATE_CHANNEL}`)
+    sendToRenderer('checking-for-update')
   })
 
-  // 无可用更新
   autoUpdater.on('update-not-available', (info) => {
-    logger.info('当前已是最新版本', info.version)
-    console.log(info)
-    mainWindow?.webContents.send('update-not-available', info)
+    const payload = buildUpdatePayload(info)
+    logger.info(
+      `当前已是最新版本 ${payload.version || autoUpdater.currentVersion.version}，通道：${payload.channel}`
+    )
+    sendToRenderer('update-not-available', payload)
   })
-  // 有可用更新
+
   autoUpdater.on('update-available', (info) => {
-    logger.info('检测到新版本', info.version)
-    mainWindow?.webContents.send('update-available', info)
+    const payload = buildUpdatePayload(info)
+    const rolloutText =
+      typeof payload.stagingPercentage === 'number'
+        ? `分批比例：${payload.stagingPercentage}%`
+        : '全量发布'
+    logger.info(
+      `检测到新版本 ${payload.version}，通道：${payload.channel}，${rolloutText}`
+    )
+    sendToRenderer('update-available', payload)
   })
-  // 下载进度更新
+
   autoUpdater.on('download-progress', (progress) => {
     logger.info(`下载进度: ${progress.percent.toFixed(2)}%`)
-    mainWindow?.webContents.send('download-progress', progress)
-  })
-  // 下载完成，准备安装
-  autoUpdater.on('update-downloaded', (info) => {
-    logger.info('下载完成，准备安装', info.version)
-    mainWindow?.webContents.send('update-downloaded', info)
-  })
-  // 安装完成，重启应用
-  autoUpdater.on('quit-and-install', () => {
-    logger.info('安装完成，重启应用')
-    // 退出应用并安装更新
-    mainWindow?.webContents.send('quit-and-install')
-  })
-  // 更新出错
-  autoUpdater.on('error', (error) => {
-    logger.error('更新出错：', error.message)
-    mainWindow?.webContents.send('update-error', error.message)
+    sendToRenderer('download-progress', progress)
   })
 
-  // 窗口销毁时清空引用，防止向已销毁窗口发送消息
+  autoUpdater.on('update-downloaded', (info) => {
+    const payload = buildUpdatePayload(info)
+    logger.info(
+      `下载完成，准备安装 ${payload.version}，通道：${payload.channel}`
+    )
+    sendToRenderer('update-downloaded', payload)
+  })
+
+  autoUpdater.on('quit-and-install', () => {
+    logger.info('安装完成，重启应用')
+    sendToRenderer('quit-and-install')
+  })
+
+  autoUpdater.on('error', (error) => {
+    logger.error('更新出错：', error.message)
+    sendToRenderer('update-error', error.message)
+  })
+
   win.on('closed', () => {
     mainWindow = null
   })
 
-  // 必须等待渲染进程加载完毕（Vue onMounted 已执行、IPC 监听已注册）后
-  // 再发起检查，否则 update-available 消息在监听器注册前就发出会直接丢失
-  // 窗口加载完成时，自动触发一次版本更新检查，以保持应用为最新版本
   win.webContents.once('did-finish-load', () => {
     autoUpdater.checkForUpdates()
   })
