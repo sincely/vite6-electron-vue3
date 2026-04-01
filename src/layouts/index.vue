@@ -1,14 +1,20 @@
 <template>
-  <div class="layout-container" :class="[`layout-mode-${appStore.layoutMode}`]">
+  <div
+    class="layout-container"
+    :class="[
+      `layout-mode-${appStore.layoutMode}`,
+      { 'is-fullscreen': isFullscreen }
+    ]"
+  >
     <!-- 侧边栏 -->
-    <div v-if="!isTopMenu" class="layout-sidebar">
+    <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
       <GlobalSider />
     </div>
 
     <!-- 右侧主区域 -->
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
-      <GlobalHeader>
+      <GlobalHeader v-show="!isFullscreen">
         <template #center>
           <GlobalSearch v-if="!isTopMenu" />
         </template>
@@ -19,6 +25,18 @@
         <template #extra>
           <button class="icon-btn" title="刷新" @click="reload">
             <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
+          </button>
+
+          <button
+            class="icon-btn"
+            :title="isFullscreen ? '退出全屏' : '全屏'"
+            @click="toggleFullscreen"
+          >
+            <SvgIcon
+              :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
+              width="16px"
+              height="16px"
+            />
           </button>
         </template>
       </GlobalBreadcrumb>
@@ -42,12 +60,42 @@ import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
 import { useAppStore } from '@/store/modules/app'
-import { computed, ref, nextTick, provide } from 'vue'
+import { computed, ref, nextTick, provide, onMounted, onUnmounted } from 'vue'
 
 const appStore = useAppStore()
 const isTopMenu = computed(
   () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
 )
+
+// 全屏状态管理
+const isFullscreen = ref(false)
+
+const toggleFullscreen = () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch((err) => {
+      console.warn(
+        `Error attempting to enable full-screen mode: ${err.message}`
+      )
+    })
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    }
+  }
+}
+
+// 监听全屏状态变化（如用户按下 ESC 键退出全屏）
+const handleFullscreenChange = () => {
+  isFullscreen.value = !!document.fullscreenElement
+}
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange)
+})
 
 // 页面刷新逻辑：通过 v-if 销毁并重建组件
 const isRouterAlive = ref(true)
@@ -114,6 +162,42 @@ provide('reload', reload)
       &:active {
         background-color: var(--color-bg-active);
       }
+    }
+  }
+
+  .fullscreen-exit-float {
+    position: fixed;
+    top: 32px;
+    right: 32px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    background: var(--glass-surface);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-surface-border);
+    border-radius: 50%;
+    box-shadow: var(--shadow-lg);
+    opacity: 0.3;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      color: var(--color-text-primary);
+      background: color-mix(
+        in srgb,
+        var(--glass-surface),
+        var(--color-bg-hover) 10%
+      );
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 }
