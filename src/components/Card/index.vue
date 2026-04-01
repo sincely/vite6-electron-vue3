@@ -20,11 +20,6 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: var(--glass-shadow-hover);
-    transform: translateY(-4px);
-  }
 }
 
 .card-header {

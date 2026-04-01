@@ -4,47 +4,47 @@
       <div class="nav-bar-content">
         <!-- 面包屑导航 -->
         <div class="nav-bar-breadcrumb">
-          <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
-            <!-- 分隔符（第一项之后出现） -->
-            <SvgIcon
-              v-if="idx > 0"
-              icon-class="chevron-right"
-              class="nav-bar-sep"
-              width="16px"
-              height="16px"
-            />
-            <!-- 面包屑节点 -->
-            <span
-              class="nav-bar-crumb"
-              :class="{
-                'nav-bar-crumb-active': idx === breadcrumb.length - 1,
-                'nav-bar-crumb-link': idx < breadcrumb.length - 1
-              }"
-              @click="
-                idx < breadcrumb.length - 1
-                  ? router.push(crumb.route)
-                  : undefined
-              "
-            >
-              <!-- 仅第一个节点显示图标 -->
+          <div class="nav-bar-breadcrumb-track">
+            <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
               <SvgIcon
-                v-if="idx === 0 && crumb.icon"
-                :icon-class="crumb.icon"
-                class="nav-bar-icon"
-                width="16px"
-                height="16px"
+                v-if="idx > 0"
+                icon-class="chevron-right"
+                class="nav-bar-sep"
+                width="14px"
+                height="14px"
               />
-              {{ crumb.label }}
-            </span>
-          </template>
+              <span
+                class="nav-bar-crumb"
+                :class="{
+                  'nav-bar-crumb-active': idx === breadcrumb.length - 1,
+                  'nav-bar-crumb-link': idx < breadcrumb.length - 1
+                }"
+                @click="
+                  idx < breadcrumb.length - 1
+                    ? router.push(crumb.route)
+                    : undefined
+                "
+              >
+                <SvgIcon
+                  v-if="idx === 0 && crumb.icon"
+                  :icon-class="crumb.icon"
+                  class="nav-bar-icon"
+                  width="14px"
+                  height="14px"
+                />
+                <span class="nav-bar-crumb-label">{{ crumb.label }}</span>
+              </span>
+            </template>
 
-          <!-- 无匹配时的降级展示 -->
-          <span
-            v-if="!breadcrumb.length"
-            class="nav-bar-crumb nav-bar-crumb-active"
-          >
-            {{ route.name ?? route.path }}
-          </span>
+            <span
+              v-if="!breadcrumb.length"
+              class="nav-bar-crumb nav-bar-crumb-active"
+            >
+              <span class="nav-bar-crumb-label">
+                {{ route.name ?? route.path }}
+              </span>
+            </span>
+          </div>
         </div>
 
         <!-- 右侧插槽，供各页面扩展 -->
@@ -58,6 +58,8 @@
 
 <script setup>
 import { findMenuPath } from '@/config/menu'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
@@ -70,64 +72,105 @@ const breadcrumb = computed(() => findMenuPath(route.path))
 .nav-bar {
   margin: 12px 14px 0;
 
-  // 覆盖 Card 默认内边距以适应顶部导航的纤薄感
   :deep(.card-container) {
-    padding: 10px 16px;
-    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    border-radius: var(--radius-xl);
   }
 
   &-content {
     display: flex;
+    gap: 12px;
     align-items: center;
     justify-content: space-between;
-    height: 30px; // 内容区高度，加上 padding 总高度约为 50px
+    min-width: 0;
+    min-height: 32px;
   }
 
   &-breadcrumb {
     display: flex;
-    gap: 5px;
+    flex: 1;
     align-items: center;
     min-width: 0;
+  }
+
+  &-breadcrumb-track {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    padding: 4px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-bg-hover), transparent 30%);
+    backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, var(--color-border), transparent 30%);
+    border-radius: 999px;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 5%),
+      0 6px 18px -16px rgb(15 23 42 / 28%);
   }
 
   &-sep {
     flex-shrink: 0;
     color: var(--color-text-muted);
-    opacity: 0.5;
+    opacity: 0.45;
   }
 
   &-crumb {
     display: flex;
     gap: 6px;
     align-items: center;
-    max-width: 220px;
+    max-width: 240px;
+    min-height: 32px;
+    padding: 0 10px;
     overflow: hidden;
     font-size: 13px;
+    font-weight: 500;
     color: var(--color-text-muted);
     text-overflow: ellipsis;
     white-space: nowrap;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
 
     &-active {
       font-weight: 600;
       color: var(--color-text-primary);
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-primary), transparent 90%) 0%,
+        color-mix(in srgb, var(--brand-accent), transparent 92%) 100%
+      );
+      border-color: color-mix(in srgb, var(--color-primary), transparent 72%);
+      box-shadow: 0 8px 18px -16px
+        color-mix(in srgb, var(--color-primary), transparent 20%);
     }
 
     &-link {
-      padding: 2px 4px;
       cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.15s ease;
 
       &:hover {
         color: var(--color-text-primary);
-        background: color-mix(in srgb, var(--color-bg-hover), transparent 15%);
+        background: color-mix(in srgb, var(--color-bg-hover), transparent 5%);
+        border-color: color-mix(in srgb, var(--color-border), transparent 45%);
       }
     }
+  }
+
+  &-crumb-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &-icon {
     flex-shrink: 0;
     color: var(--color-text-secondary);
+    opacity: 0.9;
   }
 
   &-extra {
@@ -142,8 +185,13 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   .nav-bar {
     margin-inline: 10px;
 
+    &-breadcrumb-track {
+      max-width: 100%;
+    }
+
     &-crumb {
       max-width: 150px;
+      padding-inline: 8px;
     }
   }
 }

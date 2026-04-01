@@ -406,7 +406,7 @@ const handleClose = () => {
 .settings-container {
   display: flex;
   width: 800px;
-  height: 560px;
+  height: 600px;
   overflow: hidden;
   background: var(--color-bg-window);
   border: 1px solid var(--color-border);
@@ -561,7 +561,8 @@ const handleClose = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
+  padding: 8px;
+  margin-bottom: 8px;
   background: var(--color-bg-card);
   border-radius: 12px;
   transition: border-color 0.2s;
