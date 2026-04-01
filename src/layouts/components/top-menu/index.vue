@@ -110,7 +110,6 @@ const handleNav = (item) => {
     .top-submenu {
       visibility: visible;
       opacity: 1;
-      transform: translateY(0);
     }
   }
 

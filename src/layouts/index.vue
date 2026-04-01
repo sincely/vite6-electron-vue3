@@ -30,7 +30,7 @@
           <button
             class="icon-btn"
             :title="isFullscreen ? '退出全屏' : '全屏'"
-            @click="toggleFullscreen"
+            @click="handleFullscreenChange"
           >
             <SvgIcon
               :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
@@ -70,23 +70,23 @@ const isTopMenu = computed(
 // 全屏状态管理
 const isFullscreen = ref(false)
 
-const toggleFullscreen = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch((err) => {
-      console.warn(
-        `Error attempting to enable full-screen mode: ${err.message}`
-      )
-    })
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen()
-    }
-  }
-}
+// const toggleFullscreen = () => {
+//   if (!document.fullscreenElement) {
+//     document.documentElement.requestFullscreen().catch((err) => {
+//       console.warn(
+//         `Error attempting to enable full-screen mode: ${err.message}`
+//       )
+//     })
+//   } else {
+//     if (document.exitFullscreen) {
+//       document.exitFullscreen()
+//     }
+//   }
+// }
 
 // 监听全屏状态变化（如用户按下 ESC 键退出全屏）
 const handleFullscreenChange = () => {
-  isFullscreen.value = !!document.fullscreenElement
+  isFullscreen.value = !isFullscreen.value
 }
 
 onMounted(() => {

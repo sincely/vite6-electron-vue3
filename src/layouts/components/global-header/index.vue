@@ -62,6 +62,23 @@
           </button>
           <NotificationPanel :anchor-ref="bellBtnRef" />
         </div>
+        <!-- 主题切换 -->
+        <button
+          class="icon-btn"
+          title="切换主题"
+          @click="
+            appStore.toggleThemeWithTransition(
+              $event,
+              isDark ? 'light' : 'dark'
+            )
+          "
+        >
+          <SvgIcon
+            :icon-class="appStore.isDark ? 'sun' : 'moon'"
+            width="16px"
+            height="16px"
+          />
+        </button>
         <!-- 顶部模式下的用户信息和设置 -->
         <el-dropdown
           v-if="isTopMenu"
