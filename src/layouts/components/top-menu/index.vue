@@ -59,29 +59,53 @@ const handleNav = (item) => {
 <style lang="scss" scoped>
 .top-menu {
   display: flex;
-  gap: 4px;
+  gap: 8px;
   align-items: center;
   height: 100%;
-  margin-left: 20px;
+  margin-left: 24px;
   -webkit-app-region: no-drag;
 }
 
 .top-menu-item {
   position: relative;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
-  height: 36px;
+  height: 38px;
   padding: 0 16px;
   font-size: 14px;
+  font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  transition: all 0.2s;
+  border-radius: var(--radius-md);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .menu-icon {
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+  }
+
+  &::after {
+    position: absolute;
+    bottom: -13px; // 距离底部的距离，根据 title-bar 高度微调
+    left: 50%;
+    width: 0;
+    height: 3px;
+    content: '';
+    background: var(--color-primary);
+    border-radius: 3px 3px 0 0;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+  }
 
   &:hover {
     color: var(--color-text-primary);
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
+    background: color-mix(in srgb, var(--color-bg-hover), transparent 40%);
+
+    .menu-icon {
+      color: var(--color-primary);
+    }
 
     .top-submenu {
       visibility: visible;
@@ -91,44 +115,83 @@ const handleNav = (item) => {
   }
 
   &.active {
-    font-weight: 500;
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary), transparent 90%);
+
+    .menu-icon {
+      color: var(--color-primary);
+    }
+
+    &::after {
+      width: 24px;
+      opacity: 1;
+    }
   }
 }
 
 .top-submenu {
   position: absolute;
-  top: 100%;
-  left: 0;
+  top: calc(100% + 12px);
+  left: 50%;
   z-index: 100;
-  min-width: 140px;
-  padding: 8px 0;
-  margin-top: 4px;
+  min-width: 180px;
+  padding: 8px;
   visibility: hidden;
-  background: var(--color-bg-card);
+  background: var(--glass-surface);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   opacity: 0;
-  transition: all 0.2s;
-  transform: translateY(10px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate(-50%, 10px);
+
+  // 增加隐形感应区，防止鼠标移出时下拉菜单消失过快
+  &::before {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    content: '';
+    background: transparent;
+  }
 }
 
 .top-submenu-item {
-  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
   font-size: 13px;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  transition: all 0.2s;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+
+  &:not(:last-child) {
+    margin-bottom: 2px;
+  }
 
   &:hover {
     color: var(--color-text-primary);
     background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
+    transform: translateX(4px);
   }
 
   &.active {
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary), transparent 90%);
+
+    &::before {
+      position: absolute;
+      left: 6px;
+      width: 3px;
+      height: 14px;
+      content: '';
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
   }
 }
 </style>
