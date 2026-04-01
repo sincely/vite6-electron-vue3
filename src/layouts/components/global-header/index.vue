@@ -31,61 +31,28 @@
       <!-- 右侧操作区 -->
       <div class="title-bar__actions">
         <!-- 更新提示 -->
-        <button
-          v-if="updateAvailable"
-          class="icon-btn update-btn"
-          title="有新版本"
-          @click="showUpdateDialog"
-        >
-          <SvgIcon
-            icon-class="download"
-            class="update-icon"
-            width="16px"
-            height="16px"
-          />
-          <span>{{ latestVersion }}</span>
-        </button>
-        <!-- 通知铃铛 -->
-        <div class="notif-btn-wrap">
+        <el-tooltip content="有新版本" placement="bottom" :show-after="200">
           <button
-            ref="bellBtnRef"
-            class="icon-btn"
-            title="消息通知"
-            @click="handleNotice"
+            v-if="updateAvailable"
+            class="icon-btn update-btn"
+            @click="showUpdateDialog"
           >
-            <SvgIcon icon-class="notice" width="18px" height="18px" />
-            <span v-if="noticeStore.hasUnread" class="notif-badge">
-              {{
-                noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount
-              }}
-            </span>
+            <SvgIcon
+              icon-class="download"
+              class="update-icon"
+              width="16px"
+              height="16px"
+            />
+            <span>{{ latestVersion }}</span>
           </button>
-          <NotificationPanel :anchor-ref="bellBtnRef" />
-        </div>
-        <!-- 主题切换 -->
-        <button
-          class="icon-btn"
-          title="切换主题"
-          @click="
-            appStore.toggleThemeWithTransition(
-              $event,
-              isDark ? 'light' : 'dark'
-            )
-          "
-        >
-          <SvgIcon
-            :icon-class="appStore.isDark ? 'sun' : 'moon'"
-            width="16px"
-            height="16px"
-          />
-        </button>
+        </el-tooltip>
         <!-- 顶部模式下的用户信息和设置 -->
         <el-dropdown
           v-if="isTopMenu"
           trigger="click"
           @command="handleUserCommand"
         >
-          <div class="header-user-profile">
+          <div class="header-user-profile icon-btn">
             <SvgIcon icon-class="user" width="20px" height="20px" />
             <span class="user-name">{{ userStore.name }}</span>
           </div>
@@ -99,17 +66,55 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+        <!-- 通知铃铛 -->
+        <div class="notif-btn-wrap">
+          <el-tooltip content="消息通知" placement="bottom" :show-after="200">
+            <button ref="bellBtnRef" class="icon-btn" @click="handleNotice">
+              <SvgIcon icon-class="notice" width="18px" height="18px" />
+              <span v-if="noticeStore.hasUnread" class="notif-badge">
+                {{
+                  noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount
+                }}
+              </span>
+            </button>
+          </el-tooltip>
+          <NotificationPanel :anchor-ref="bellBtnRef" />
+        </div>
+        <!-- 主题切换 -->
+        <el-tooltip content="切换主题" placement="bottom" :show-after="200">
+          <button
+            class="icon-btn"
+            @click="
+              appStore.toggleThemeWithTransition(
+                $event,
+                isDark ? 'light' : 'dark'
+              )
+            "
+          >
+            <SvgIcon
+              :icon-class="appStore.isDark ? 'sun' : 'moon'"
+              width="16px"
+              height="16px"
+            />
+          </button>
+        </el-tooltip>
         <!-- 窗口控制 -->
         <div v-if="isWindows()" class="window-controls">
-          <button class="icon-btn" title="最小化" @click="minimize">
-            <SvgIcon icon-class="minus" width="16px" height="16px" />
-          </button>
-          <button class="icon-btn" title="最大化" @click="maximize">
-            <SvgIcon icon-class="plus" width="16px" height="16px" />
-          </button>
-          <button class="icon-btn" title="关闭" @click="close">
-            <SvgIcon icon-class="close" width="16px" height="16px" />
-          </button>
+          <el-tooltip content="最小化" placement="bottom" :show-after="200">
+            <button class="icon-btn" @click="minimize">
+              <SvgIcon icon-class="minus" width="16px" height="16px" />
+            </button>
+          </el-tooltip>
+          <el-tooltip content="最大化" placement="bottom" :show-after="200">
+            <button class="icon-btn" @click="maximize">
+              <SvgIcon icon-class="plus" width="16px" height="16px" />
+            </button>
+          </el-tooltip>
+          <el-tooltip content="关闭" placement="bottom" :show-after="200">
+            <button class="icon-btn" @click="close">
+              <SvgIcon icon-class="close" width="16px" height="16px" />
+            </button>
+          </el-tooltip>
         </div>
       </div>
     </div>
