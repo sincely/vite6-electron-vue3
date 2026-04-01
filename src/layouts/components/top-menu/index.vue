@@ -34,8 +34,6 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { menuItems } from '@/config/menu'
-import { computed } from 'vue'
-
 const route = useRoute()
 const router = useRouter()
 

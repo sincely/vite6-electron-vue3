@@ -23,21 +23,21 @@
       <!-- 面包屑导航（含搜索插槽） -->
       <GlobalBreadcrumb>
         <template #extra>
-          <button class="icon-btn" title="刷新" @click="reload">
-            <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
-          </button>
-
-          <button
+          <SvgIcon
+            icon-class="refresh"
+            width="18px"
+            height="18px"
             class="icon-btn"
-            :title="isFullscreen ? '退出全屏' : '全屏'"
+            @click="reload"
+          />
+
+          <SvgIcon
+            class="icon-btn"
+            :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
+            width="18px"
+            height="18px"
             @click="handleFullscreenChange"
-          >
-            <SvgIcon
-              :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
-              width="16px"
-              height="16px"
-            />
-          </button>
+          />
         </template>
       </GlobalBreadcrumb>
 
@@ -136,32 +136,8 @@ provide('reload', reload)
     background: var(--color-bg-content, var(--glass-surface));
 
     .icon-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      color: var(--color-text-secondary);
+      margin-right: 8px;
       cursor: pointer;
-      background: color-mix(in srgb, var(--color-bg-hover), transparent 38%);
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      transition: all 0.2s ease;
-      -webkit-app-region: no-drag;
-
-      &:hover {
-        color: var(--color-text-primary);
-        background-color: color-mix(
-          in srgb,
-          var(--color-bg-hover),
-          transparent 10%
-        );
-        border-color: color-mix(in srgb, var(--color-border), transparent 38%);
-      }
-
-      &:active {
-        background-color: var(--color-bg-active);
-      }
     }
   }
 

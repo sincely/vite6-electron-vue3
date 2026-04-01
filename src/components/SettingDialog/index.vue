@@ -562,7 +562,6 @@ const handleClose = () => {
   align-items: center;
   justify-content: space-between;
   padding: 10px 12px;
-  margin-bottom: 12px;
   background: var(--color-bg-card);
   border-radius: 12px;
   transition: border-color 0.2s;
