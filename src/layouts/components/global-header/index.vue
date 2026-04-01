@@ -21,7 +21,7 @@
       <GlobalLogo v-if="isTopMenu" class="top-mode-logo" />
 
       <!-- 顶部菜单 (仅顶部菜单模式显示) -->
-      <TopMenu v-if="isTopMenu" />
+      <GlobalTopMenu v-if="isTopMenu" />
 
       <!-- 中间操作区 -->
       <div class="title-bar__center" :class="{ 'is-top-mode': isTopMenu }">
@@ -128,7 +128,7 @@ import { useNotificationStore } from '@/store/modules/notification'
 import { useUserStore } from '@/store/modules/user'
 import { isWindows } from '@/utils/platform'
 import GlobalLogo from '../global-logo/index.vue'
-import TopMenu from '../top-menu/index.vue'
+import GlobalTopMenu from '../global-topMenu/index.vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
