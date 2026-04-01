@@ -508,7 +508,7 @@ const handleClose = () => {
   align-items: center;
   justify-content: space-between;
   height: 64px;
-  padding: 0 32px;
+  padding: 0 26px;
   border-bottom: 1px solid var(--color-border);
 
   .content-title {
@@ -538,7 +538,7 @@ const handleClose = () => {
 
 .content-body {
   flex: 1;
-  padding: 24px 32px;
+  padding: 24px 26px;
   overflow-y: auto;
 }
 
@@ -561,6 +561,7 @@ const handleClose = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 10px 12px;
   margin-bottom: 12px;
   background: var(--color-bg-card);
   border-radius: 12px;
