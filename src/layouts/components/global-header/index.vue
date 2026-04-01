@@ -546,16 +546,8 @@ const close = () => ipcRenderer.send('close-window')
 }
 
 .header-user-menu {
-  width: 296px;
+  width: 230px;
   overflow: hidden;
-  background: color-mix(in srgb, var(--color-bg-card), transparent 8%);
-  backdrop-filter: blur(18px);
-
-  // border: 1px solid color-mix(in srgb, var(--color-border), transparent 24%);
-  // border-radius: 20px;
-  // box-shadow:
-  //   0 22px 60px -28px rgb(15 23 42 / 55%),
-  //   0 8px 24px -18px rgb(15 23 42 / 45%);
 
   &__hero {
     display: flex;
@@ -587,8 +579,8 @@ const close = () => ipcRenderer.send('close-window')
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 56px;
-    height: 56px;
+    width: 42px;
+    height: 42px;
     overflow: hidden;
     font-size: 22px;
     font-weight: 700;
@@ -633,7 +625,7 @@ const close = () => ipcRenderer.send('close-window')
 
   &__name {
     overflow: hidden;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--color-text-primary);
     text-overflow: ellipsis;
@@ -653,7 +645,6 @@ const close = () => ipcRenderer.send('close-window')
   }
 
   &__email {
-    margin: 5px 0 0;
     overflow: hidden;
     font-size: 12px;
     color: var(--color-text-secondary);
