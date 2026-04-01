@@ -1,30 +1,36 @@
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
+import { updateElementPlusTheme } from '@/utils/color'
 
 export const useAppStore = defineStore('app', {
   state: () => ({
     theme: 'light', // 当前主题，默认是亮色主题
-    layoutMode: 'left-right', // 布局模式：left-right | top-bottom
+    layoutMode: 'left', // 布局模式：left | left-mixed | top | top-mixed
     sidebarCollapsed: false, // 侧边栏是否折叠
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
     loadingTargets: [], // 加载中状态的目标元素
     autoLaunch: false, // 开机自启
-    closeAction: 'minimize' // 关闭窗口行为：minimize | quit
+    closeAction: 'minimize', // 关闭窗口行为：minimize | quit
+    themeColors: {
+      useAlgorithm: false,
+      primary: '#2563eb',
+      infoFollowPrimary: true,
+      info: '#0ea5e9',
+      success: '#10b981',
+      warning: '#f59e0b',
+      error: '#ef4444'
+    }
   }),
   getters: {
     isDark: (state) => state.theme === 'dark',
     isAutoLaunch: (state) => state.autoLaunch,
     windowCloseAction: (state) => state.closeAction,
-    currentLayoutMode: (state) =>
-      state.layoutMode === 'top' || state.layoutMode === 'top-bottom'
-        ? 'top-bottom'
-        : 'left-right'
+    currentLayoutMode: (state) => state.layoutMode
   },
   actions: {
     setLayoutMode(mode) {
-      this.layoutMode =
-        mode === 'top' || mode === 'top-bottom' ? 'top-bottom' : 'left-right'
+      this.layoutMode = mode
     },
     // 切换设置弹窗可见性
     toggleSettings(visible) {
@@ -224,6 +230,46 @@ export const useAppStore = defineStore('app', {
     // 初始化主题
     initTheme() {
       this.setTheme(this.theme)
+      this.initThemeColors()
+    },
+    // 初始化主题颜色
+    initThemeColors() {
+      const colors = this.themeColors || {
+        useAlgorithm: false,
+        primary: '#2563eb',
+        infoFollowPrimary: true,
+        info: '#0ea5e9',
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444'
+      }
+      this.setThemeColors(colors)
+    },
+    // 设置主题颜色
+    setThemeColors(colors) {
+      this.themeColors = { ...this.themeColors, ...colors }
+
+      const { primary, infoFollowPrimary, info, success, warning, error } =
+        this.themeColors
+      const effectiveInfo = infoFollowPrimary ? primary : info
+
+      const updateColor = (type, color) => {
+        updateElementPlusTheme(type, color)
+        // 同时更新我们自己定义的 CSS 变量
+        const cssVarName =
+          type === 'error' ? '--color-danger' : `--color-${type}`
+        document.documentElement.style.setProperty(cssVarName, color)
+      }
+
+      updateColor('primary', primary)
+      updateColor('info', effectiveInfo)
+      updateColor('success', success)
+      updateColor('warning', warning)
+      updateColor('error', error)
+
+      // 更新主题色衍生变量
+      document.documentElement.style.setProperty('--brand-accent', primary)
+      document.documentElement.style.setProperty('--brand-accent-alt', primary)
     },
     // 切换侧边栏折叠状态
     toggleSidebar() {

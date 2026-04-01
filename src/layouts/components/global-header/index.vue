@@ -59,6 +59,9 @@
         <button class="icon-btn" title="刷新" @click="reload">
           <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
         </button>
+        <button class="icon-btn" title="主题配置" @click="reload">
+          <SvgIcon icon-class="theme-setting" width="16px" height="16px" />
+        </button>
         <!-- 主题切换 -->
         <button
           class="icon-btn"

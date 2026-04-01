@@ -148,6 +148,150 @@
                       <el-switch v-model="appStore.sidebarCollapsed" />
                     </div>
                   </div>
+
+                  <!-- 布局模式 -->
+                  <div class="setting-section">
+                    <h3 class="section-title">布局模式</h3>
+                    <div class="layout-options">
+                      <!-- 左侧菜单模式 -->
+                      <div
+                        class="layout-card"
+                        :class="{ active: appStore.layoutMode === 'left' }"
+                        @click="appStore.setLayoutMode('left')"
+                      >
+                        <div class="layout-preview">
+                          <div class="preview-layout-sidebar"></div>
+                          <div class="preview-layout-main">
+                            <div class="preview-layout-header"></div>
+                            <div class="preview-layout-content"></div>
+                          </div>
+                        </div>
+                        <span class="layout-label">左侧菜单模式</span>
+                      </div>
+
+                      <!-- 左侧菜单混合模式 -->
+                      <div
+                        class="layout-card"
+                        :class="{
+                          active: appStore.layoutMode === 'left-mixed'
+                        }"
+                        @click="appStore.setLayoutMode('left-mixed')"
+                      >
+                        <div class="layout-preview">
+                          <div class="preview-layout-sidebar"></div>
+                          <div class="preview-layout-sidebar-sub"></div>
+                          <div class="preview-layout-main">
+                            <div class="preview-layout-header"></div>
+                            <div class="preview-layout-content"></div>
+                          </div>
+                        </div>
+                        <span class="layout-label">左侧菜单混合模式</span>
+                      </div>
+
+                      <!-- 顶部菜单模式 -->
+                      <div
+                        class="layout-card"
+                        :class="{ active: appStore.layoutMode === 'top' }"
+                        @click="appStore.setLayoutMode('top')"
+                      >
+                        <div class="layout-preview is-top">
+                          <div class="preview-layout-header"></div>
+                          <div class="preview-layout-main">
+                            <div class="preview-layout-content"></div>
+                          </div>
+                        </div>
+                        <span class="layout-label">顶部菜单模式</span>
+                      </div>
+
+                      <!-- 顶部菜单混合模式 -->
+                      <div
+                        class="layout-card"
+                        :class="{ active: appStore.layoutMode === 'top-mixed' }"
+                        @click="appStore.setLayoutMode('top-mixed')"
+                      >
+                        <div class="layout-preview is-top">
+                          <div class="preview-layout-header"></div>
+                          <div class="preview-layout-main">
+                            <div class="preview-layout-sidebar-sub"></div>
+                            <div class="preview-layout-content"></div>
+                          </div>
+                        </div>
+                        <span class="layout-label">顶部菜单混合模式</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 主题颜色 -->
+                  <div class="setting-section">
+                    <h3 class="section-title">主题颜色</h3>
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">应用推荐算法的颜色</span>
+                      </div>
+                      <el-switch
+                        v-model="themeColors.useAlgorithm"
+                        @change="updateThemeColor"
+                      />
+                    </div>
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">主色</span>
+                      </div>
+                      <el-color-picker
+                        v-model="themeColors.primary"
+                        @change="updateThemeColor"
+                      />
+                    </div>
+                    <div class="setting-item">
+                      <div
+                        class="item-info"
+                        style="
+                          flex-direction: row;
+                          gap: 8px;
+                          align-items: center;
+                        "
+                      >
+                        <span class="item-label">信息色</span>
+                        <el-checkbox
+                          v-model="themeColors.infoFollowPrimary"
+                          @change="updateThemeColor"
+                        >
+                          跟随主色
+                        </el-checkbox>
+                      </div>
+                      <el-color-picker
+                        v-model="themeColors.info"
+                        :disabled="themeColors.infoFollowPrimary"
+                        @change="updateThemeColor"
+                      />
+                    </div>
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">成功色</span>
+                      </div>
+                      <el-color-picker
+                        v-model="themeColors.success"
+                        @change="updateThemeColor"
+                      />
+                    </div>
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">警告色</span>
+                      </div>
+                      <el-color-picker
+                        v-model="themeColors.warning"
+                        @change="updateThemeColor"
+                      />
+                    </div>
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">错误色</span>
+                      </div>
+                      <el-color-picker
+                        v-model="themeColors.error"
+                        @change="updateThemeColor"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <!-- About Settings -->
@@ -228,6 +372,14 @@ const currentTab = ref('general')
 const currentTabLabel = computed(
   () => tabs.find((t) => t.id === currentTab.value)?.label
 )
+
+const themeColors = ref({
+  ...appStore.themeColors
+})
+
+const updateThemeColor = () => {
+  appStore.setThemeColors(themeColors.value)
+}
 
 const form = ref({
   autoLaunch: false,
@@ -409,7 +561,6 @@ const handleClose = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
   margin-bottom: 12px;
   background: var(--color-bg-card);
   border-radius: 12px;
@@ -521,6 +672,118 @@ const handleClose = () => {
     }
 
     .theme-label {
+      font-weight: 500;
+      color: var(--color-primary);
+    }
+  }
+}
+
+/* Layout Cards */
+.layout-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+
+  // 居中显示
+  justify-items: center;
+  padding: 8px 0;
+}
+
+.layout-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 200px;
+  cursor: pointer;
+  border-radius: 12px;
+
+  .layout-preview {
+    display: flex;
+    gap: 8px;
+    height: 90px;
+    padding: 8px;
+    background: transparent;
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    transition: all 0.2s;
+
+    &.is-top {
+      flex-direction: column;
+
+      .preview-layout-header {
+        height: 20px;
+        border-radius: 6px;
+      }
+
+      .preview-layout-main {
+        display: flex;
+        flex: 1;
+        gap: 8px;
+      }
+    }
+
+    &:not(.is-top) {
+      .preview-layout-main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .preview-layout-header {
+        height: 20px;
+        border-radius: 6px;
+      }
+
+      .preview-layout-content {
+        flex: 1;
+        border-radius: 6px;
+      }
+    }
+
+    .preview-layout-sidebar {
+      width: 24px;
+      background: #a5b4fc;
+      border-radius: 6px;
+    }
+
+    .preview-layout-sidebar-sub {
+      width: 24px;
+      background: #a5b4fc;
+      border-radius: 6px;
+    }
+
+    .preview-layout-header {
+      background: #6366f1;
+      border-radius: 6px;
+    }
+
+    .preview-layout-content {
+      flex: 1;
+      background: #e0e7ff;
+      border-radius: 6px;
+    }
+  }
+
+  .layout-label {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
+
+  &:hover .layout-preview {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    .layout-preview {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-primary), transparent 80%);
+    }
+
+    .layout-label {
       font-weight: 500;
       color: var(--color-primary);
     }

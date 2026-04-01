@@ -16,7 +16,7 @@ const setting = {
   sidebarLogo: true,
   // 是否显示面包屑导航
   breadCrumb: true,
-  // 布局模式 (可选值：'left' 左侧菜单模式 | 'top' 顶部菜单模式)
+  // 布局模式 (可选值：'left' 左侧菜单模式 | 'left-mixed' 左侧菜单混合模式 | 'top' 顶部菜单模式 | 'top-mixed' 顶部菜单混合模式)
   layout: 'left'
 }
 
