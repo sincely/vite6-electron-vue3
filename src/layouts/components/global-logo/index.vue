@@ -1,9 +1,12 @@
 <template>
-  <div class="logo-block" :class="{ 'is-mac': isMac }">
+  <div
+    class="logo-block"
+    :class="{ 'is-mac': isMac, 'is-top-mode': isTopMenu }"
+  >
     <img src="@/assets/bar/icon.png" class="logo-block__img" alt="logo" />
     <span
       class="logo-block__name"
-      :class="{ 'is-hidden': appStore.sidebarCollapsed }"
+      :class="{ 'is-hidden': appStore.sidebarCollapsed && !isTopMenu }"
     >
       AI Desktop
     </span>
@@ -13,7 +16,12 @@
 <script setup>
 import { useAppStore } from '@/store/modules/app'
 import { isMac } from '@/utils/platform'
+import { computed } from 'vue'
+
 const appStore = useAppStore()
+const isTopMenu = computed(
+  () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
+)
 </script>
 
 <style lang="scss" scoped>
@@ -31,6 +39,17 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
   &.is-mac {
     height: 80px;
+  }
+
+  &.is-top-mode {
+    height: 100%;
+    padding: 0;
+    padding: 0 16px;
+    -webkit-app-region: no-drag;
+
+    &.is-mac {
+      height: 100%;
+    }
   }
 
   &__img {

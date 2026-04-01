@@ -1,8 +1,9 @@
 <template>
-  <header class="title-bar">
+  <header class="title-bar" :class="{ 'is-top-mode': isTopMenu }">
     <div class="title-bar__inner">
       <!-- 侧边栏折叠切换 -->
       <button
+        v-if="!isTopMenu"
         class="icon-btn sidebar-toggle"
         :title="appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'"
         @click="appStore.toggleSidebar()"
@@ -16,8 +17,14 @@
         />
       </button>
 
+      <!-- Logo 区域 (仅顶部菜单模式显示) -->
+      <GlobalLogo v-if="isTopMenu" class="top-mode-logo" />
+
+      <!-- 顶部菜单 (仅顶部菜单模式显示) -->
+      <TopMenu v-if="isTopMenu" />
+
       <!-- 中间操作区 -->
-      <div class="title-bar__center">
+      <div class="title-bar__center" :class="{ 'is-top-mode': isTopMenu }">
         <slot name="center" />
       </div>
 
@@ -55,30 +62,27 @@
           </button>
           <NotificationPanel :anchor-ref="bellBtnRef" />
         </div>
-        <!-- 刷新 -->
-        <button class="icon-btn" title="刷新" @click="reload">
-          <SvgIcon icon-class="refresh-cw" width="16px" height="16px" />
-        </button>
-        <button class="icon-btn" title="主题配置" @click="reload">
-          <SvgIcon icon-class="theme-setting" width="16px" height="16px" />
-        </button>
-        <!-- 主题切换 -->
-        <button
-          class="icon-btn"
-          title="切换主题"
-          @click="
-            appStore.toggleThemeWithTransition(
-              $event,
-              isDark ? 'light' : 'dark'
-            )
-          "
+        <!-- 顶部模式下的用户信息和设置 -->
+        <el-dropdown
+          v-if="isTopMenu"
+          trigger="click"
+          @command="handleUserCommand"
         >
-          <SvgIcon
-            :icon-class="appStore.isDark ? 'sun' : 'moon'"
-            width="16px"
-            height="16px"
-          />
-        </button>
+          <div class="header-user-profile">
+            <SvgIcon icon-class="user" width="20px" height="20px" />
+            <span class="user-name">{{ userStore.name }}</span>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="settings">设置</el-dropdown-item>
+              <el-dropdown-item command="about">关于</el-dropdown-item>
+              <el-dropdown-item divided command="logout">
+                退出登录
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <!-- 窗口控制 -->
         <div v-if="isWindows()" class="window-controls">
           <button class="icon-btn" title="最小化" @click="minimize">
             <SvgIcon icon-class="minus" width="16px" height="16px" />
@@ -99,13 +103,20 @@
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
+import { useUserStore } from '@/store/modules/user'
 import { isWindows } from '@/utils/platform'
+import GlobalLogo from '../global-logo/index.vue'
+import TopMenu from '../top-menu/index.vue'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 console.log(isWindows)
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
 const noticeStore = useNotificationStore()
+const userStore = useUserStore()
+const router = useRouter()
 
 const latestVersion = computed(() => updateStore.latestVersion)
 const updateAvailable = computed(
@@ -122,6 +133,20 @@ const handleNotice = () => {
   noticeStore.togglePanel()
 }
 
+const handleUserCommand = (command) => {
+  if (command === 'settings') {
+    appStore.toggleSettings(true)
+  } else if (command === 'logout') {
+    userStore.logout()
+    router.push('/login').catch(() => {})
+  } else {
+    router.push(`/${command}`).catch(() => {})
+  }
+}
+
+const isTopMenu = computed(
+  () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
+)
 const isDark = computed(() => appStore.isDark)
 
 const reload = () => location.reload()
@@ -151,6 +176,16 @@ const close = () => ipcRenderer.send('close-window')
     align-items: center;
     min-width: 0;
     padding: 0 12px;
+  }
+
+  &__center {
+    display: flex;
+    flex: 1;
+    align-items: center;
+
+    &.is-top-mode {
+      flex: none;
+    }
   }
 
   &__actions {
@@ -255,5 +290,26 @@ const close = () => ipcRenderer.send('close-window')
   background: var(--color-danger);
   border-radius: 999px;
   transform: translate(40%, -40%);
+}
+
+.header-user-profile {
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  -webkit-app-region: no-drag;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-bg-hover), transparent 10%);
+  }
+
+  .user-name {
+    font-size: 13px;
+    font-weight: 500;
+  }
 }
 </style>

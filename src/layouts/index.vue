@@ -1,7 +1,7 @@
 <template>
-  <div class="layout-container">
+  <div class="layout-container" :class="[`layout-mode-${appStore.layoutMode}`]">
     <!-- 侧边栏 -->
-    <div class="layout-sidebar">
+    <div v-if="!isTopMenu" class="layout-sidebar">
       <GlobalSider />
     </div>
 
@@ -10,7 +10,7 @@
       <!-- 标题栏 / 窗口控制 -->
       <GlobalHeader>
         <template #center>
-          <GlobalSearch />
+          <GlobalSearch v-if="!isTopMenu" />
         </template>
       </GlobalHeader>
 
@@ -41,6 +41,13 @@ import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
+import { useAppStore } from '@/store/modules/app'
+import { computed, ref, nextTick, provide } from 'vue'
+
+const appStore = useAppStore()
+const isTopMenu = computed(
+  () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
+)
 
 // 页面刷新逻辑：通过 v-if 销毁并重建组件
 const isRouterAlive = ref(true)

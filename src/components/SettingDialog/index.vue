@@ -170,7 +170,7 @@
                       </div>
 
                       <!-- 左侧菜单混合模式 -->
-                      <div
+                      <!-- <div
                         class="layout-card"
                         :class="{
                           active: appStore.layoutMode === 'left-mixed'
@@ -186,7 +186,7 @@
                           </div>
                         </div>
                         <span class="layout-label">左侧菜单混合模式</span>
-                      </div>
+                      </div> -->
 
                       <!-- 顶部菜单模式 -->
                       <div
@@ -204,7 +204,7 @@
                       </div>
 
                       <!-- 顶部菜单混合模式 -->
-                      <div
+                      <!-- <div
                         class="layout-card"
                         :class="{ active: appStore.layoutMode === 'top-mixed' }"
                         @click="appStore.setLayoutMode('top-mixed')"
@@ -217,7 +217,7 @@
                           </div>
                         </div>
                         <span class="layout-label">顶部菜单混合模式</span>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                   <!-- 主题颜色 -->
@@ -694,7 +694,7 @@ const handleClose = () => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 200px;
+  width: 180px;
   cursor: pointer;
   border-radius: 12px;
 
