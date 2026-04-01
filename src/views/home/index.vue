@@ -39,7 +39,7 @@
           </div>
         </template>
         <template #content>
-          <chart :options="lineOption" height="260px" />
+          <chart :options="lineOption" height="280px" />
         </template>
       </card>
 
@@ -51,7 +51,7 @@
           </div>
         </template>
         <template #content>
-          <chart :options="pieOption" height="260px" />
+          <chart :options="pieOption" height="280px" />
         </template>
       </card>
     </div>
@@ -219,7 +219,7 @@ function buildOptions() {
     grid: { top: 20, bottom: 34, left: 56, right: 20 },
     tooltip: { trigger: 'axis', ...tooltipBase },
     legend: {
-      bottom: 0,
+      // top: 10,
       data: ['本周', '上周'],
       textStyle: { color: textSecondary }
     },
@@ -326,7 +326,7 @@ function buildOptions() {
       ...tooltipBase
     },
     legend: {
-      bottom: 0,
+      // bottom: 0,
       data: ['华东', '华南', '华北', '西部'],
       textStyle: { color: textSecondary }
     },
