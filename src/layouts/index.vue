@@ -7,24 +7,18 @@
     ]"
   >
     <!-- 侧边栏 -->
-    <transition name="layout-sidebar-anim">
-      <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
-        <GlobalSider />
-      </div>
-    </transition>
+    <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
+      <GlobalSiderMenu />
+    </div>
 
     <!-- 右侧主区域 -->
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
-      <transition name="layout-header-anim">
-        <div v-show="!isFullscreen" class="layout-header-wrapper">
-          <GlobalHeader>
-            <template #center>
-              <GlobalSearch v-if="!isTopMenu" />
-            </template>
-          </GlobalHeader>
-        </div>
-      </transition>
+      <GlobalHeader v-show="!isFullscreen">
+        <template #center>
+          <GlobalSearch v-if="!isTopMenu" />
+        </template>
+      </GlobalHeader>
 
       <!-- 面包屑导航（含搜索插槽） -->
       <GlobalBreadcrumb>
@@ -59,7 +53,7 @@
 </template>
 
 <script setup>
-import GlobalSider from './components/global-siderMenu/index.vue'
+import GlobalSiderMenu from './components/global-siderMenu/index.vue'
 import GlobalHeader from './components/global-header/index.vue'
 import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import GlobalSearch from './components/global-search/index.vue'
@@ -75,20 +69,6 @@ const isTopMenu = computed(
 
 // 全屏状态管理
 const isFullscreen = ref(false)
-
-// const toggleFullscreen = () => {
-//   if (!document.fullscreenElement) {
-//     document.documentElement.requestFullscreen().catch((err) => {
-//       console.warn(
-//         `Error attempting to enable full-screen mode: ${err.message}`
-//       )
-//     })
-//   } else {
-//     if (document.exitFullscreen) {
-//       document.exitFullscreen()
-//     }
-//   }
-// }
 
 // 监听全屏状态变化（如用户按下 ESC 键退出全屏）
 const handleFullscreenChange = () => {
@@ -181,39 +161,6 @@ provide('reload', reload)
     &:active {
       transform: scale(0.95);
     }
-  }
-
-  /* ====== 全屏/退出状态过渡动画 ====== */
-  .layout-sidebar-anim-enter-active,
-  .layout-sidebar-anim-leave-active {
-    max-width: 260px;
-    overflow: hidden;
-    opacity: 1;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .layout-sidebar-anim-enter-from,
-  .layout-sidebar-anim-leave-to {
-    max-width: 0;
-    opacity: 0;
-  }
-
-  .layout-header-wrapper {
-    overflow: hidden;
-  }
-
-  .layout-header-anim-enter-active,
-  .layout-header-anim-leave-active {
-    max-height: 64px;
-    overflow: hidden;
-    opacity: 1;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .layout-header-anim-enter-from,
-  .layout-header-anim-leave-to {
-    max-height: 0;
-    opacity: 0;
   }
 }
 </style>
