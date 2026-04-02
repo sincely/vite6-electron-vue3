@@ -7,18 +7,24 @@
     ]"
   >
     <!-- 侧边栏 -->
-    <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
-      <GlobalSider />
-    </div>
+    <transition name="layout-sidebar-anim">
+      <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
+        <GlobalSider />
+      </div>
+    </transition>
 
     <!-- 右侧主区域 -->
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
-      <GlobalHeader v-show="!isFullscreen">
-        <template #center>
-          <GlobalSearch v-if="!isTopMenu" />
-        </template>
-      </GlobalHeader>
+      <transition name="layout-header-anim">
+        <div v-show="!isFullscreen" class="layout-header-wrapper">
+          <GlobalHeader>
+            <template #center>
+              <GlobalSearch v-if="!isTopMenu" />
+            </template>
+          </GlobalHeader>
+        </div>
+      </transition>
 
       <!-- 面包屑导航（含搜索插槽） -->
       <GlobalBreadcrumb>
@@ -175,6 +181,39 @@ provide('reload', reload)
     &:active {
       transform: scale(0.95);
     }
+  }
+
+  /* ====== 全屏/退出状态过渡动画 ====== */
+  .layout-sidebar-anim-enter-active,
+  .layout-sidebar-anim-leave-active {
+    max-width: 260px;
+    overflow: hidden;
+    opacity: 1;
+    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .layout-sidebar-anim-enter-from,
+  .layout-sidebar-anim-leave-to {
+    max-width: 0;
+    opacity: 0;
+  }
+
+  .layout-header-wrapper {
+    overflow: hidden;
+  }
+
+  .layout-header-anim-enter-active,
+  .layout-header-anim-leave-active {
+    max-height: 64px;
+    overflow: hidden;
+    opacity: 1;
+    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .layout-header-anim-enter-from,
+  .layout-header-anim-leave-to {
+    max-height: 0;
+    opacity: 0;
   }
 }
 </style>
