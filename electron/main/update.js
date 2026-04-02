@@ -1,5 +1,6 @@
 import pkg from 'electron-updater'
 import logger from './log'
+import { initHotUpdater, checkHotUpdate } from './hot-update'
 
 const { autoUpdater } = pkg
 let mainWindow = null
@@ -129,7 +130,20 @@ export const initUpdater = async (win) => {
     mainWindow = null
   })
 
-  win.webContents.once('did-finish-load', () => {
-    autoUpdater.checkForUpdates()
+  // 初始化热更新模块（注册 win 引用）
+  initHotUpdater(win)
+
+  win.webContents.once('did-finish-load', async () => {
+    try {
+      // 先走热更新：如果找到并下载完成，跳过全量检查
+      const hotUpdated = await checkHotUpdate()
+      if (!hotUpdated) {
+        // 无热更新可用，走 electron-updater 全量检查
+        autoUpdater.checkForUpdates()
+      }
+    } catch (err) {
+      logger.error('[update] 更新检查异常:', err.message)
+      autoUpdater.checkForUpdates()
+    }
   })
 }

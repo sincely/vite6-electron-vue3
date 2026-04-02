@@ -207,7 +207,8 @@ export function createMainWindow() {
     resizable: true,
     center: true,
     webPreferences: {
-      preload, // 预加载脚本
+      sandbox: false, // 关闭沙箱，提升启动速度
+      preload, // 预加载脚本,桥接主进程和渲染进程
       nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
       contextIsolation: true // 启用上下文隔离
     }
@@ -235,6 +236,7 @@ export function createMainWindow() {
       body: '应用已成功启动！',
       type: 'celebrate'
     })
+    win.focus() // 聚焦窗口，提升用户体验
   })
 
   loadHash(win, 'desktop')

@@ -499,7 +499,104 @@ Differential download: 3.2 MB / 87 MB (downloaded 3.7%)
 
 ---
 
-## NSIS（Windows 安装包）使用说明
+## 热更新（渲染层增量更新）
+
+> 适用于**只改动前端资源**（CSS/JS/图片）的场景，无需用户重新安装，下载 zip 后直接重载窗口，秒级生效。
+
+与上面基于 `.blockmap` 的差量下载不同，热更新完全绕开 `electron-updater`，由 `electron/main/hot-update.js` 自主实现。
+
+### 更新决策流程
+
+```
+应用启动
+    │
+    ├─ 请求 {VITE_UPDATE_URL}hot-update.json
+    │
+    ├─ 无新版本              → 走 autoUpdater.checkForUpdates()（全量）
+    ├─ 版本 < minElectron   → hot-update:need-full → 走全量更新
+    └─ 兼容热更新            → 后台下载 zip → 解压缓存 → 通知 UI
+```
+
+### Step 1 — 服务端部署
+
+在 `VITE_UPDATE_URL` 目录下放置以下两个文件：
+
+**`hot-update.json`**（固定文件名）
+
+```json
+{
+  "version": "1.2.0",
+  "minElectronVersion": "1.1.0",
+  "hotUpdateUrl": "http://10.10.24.52:8089/electron-update/hot-update/1.2.0-renderer.zip",
+  "releaseNotes": "优化界面体验"
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| `version` | 新的渲染层版本号 |
+| `minElectronVersion` | 低于此版本的客户端将走全量更新 |
+| `hotUpdateUrl` | renderer zip 完整下载地址 |
+
+**`hot-update/1.2.0-renderer.zip`** — 渲染层资源包
+
+打包命令（zip 根目录中直接包含 `index.html`）：
+
+```bash
+# 先构建前端
+npm run build:prod
+
+# 打包 dist 为 zip
+cd dist && zip -r ../hot-update-1.2.0-renderer.zip .
+```
+
+### Step 2 — UI 层响应
+
+在任意 Vue 组件中监听 `window` 事件即可，无需修改已有逻辑：
+
+```js
+// 发现更新，正在后台下载
+window.addEventListener('hot-update:available', ({ detail }) => {
+  ElNotification({ title: `发现新版本 v${detail.version}`, message: '正在后台下载…', type: 'info' })
+})
+
+// 下载进度  detail: { percent, received, total }
+window.addEventListener('hot-update:progress', ({ detail }) => {
+  console.log(`下载进度：${detail.percent}%`)
+})
+
+// 就绪，询问用户是否立即应用
+window.addEventListener('hot-update:ready', ({ detail }) => {
+  ElMessageBox.confirm(`v${detail.version} 已下载完成，立即应用？`, '热更新').then(() => {
+    ipcRenderer.send('apply-hot-update')  // 重载窗口，无需重启
+  })
+})
+
+// 不兼容当前版本，自动切换全量更新
+window.addEventListener('hot-update:need-full', () => {
+  ipcRenderer.send('check-for-updates')
+})
+```
+
+### Step 3 — 手动触发（可选）
+
+```js
+ipcRenderer.send('check-for-hot-update')   // 检查热更新
+ipcRenderer.send('apply-hot-update')        // 应用已下载的热更新
+ipcRenderer.send('check-for-updates')       // 触发全量更新检查
+```
+
+### 热更新 vs 全量更新 选择策略
+
+| 变更类型 | 推荐方式 |
+|----------|----------|
+| 纯前端改动（UI/样式/业务逻辑） | **热更新**（增量）|
+| IPC 新频道、preload 变更 | 全量 + 提高 `minElectronVersion` |
+| Node.js native 模块变更 | 全量更新 |
+
+> 热更新 zip 解压后缓存于 `~/Library/Application Support/lightning/hot-update/{version}/`，重启后自动恢复，无需重新下载。
+
+
 
 本项目 Windows 安装包使用 `electron-builder` 的 `nsis` 目标生成（`.exe` 安装程序 + 卸载器）。你可以通过 `electron-builder.json` 的 `nsis` 字段控制安装交互、安装目录、快捷方式、以及在安装/卸载时执行自定义脚本。
 
