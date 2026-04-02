@@ -152,7 +152,7 @@ const rebuildTrayMenu = () => {
 }
 
 // 创建托盘图标
-const createTray = () => {
+const initTray = () => {
   if (tray) return tray
 
   tray = new Tray(createTrayIcon())
@@ -180,4 +180,4 @@ const createTray = () => {
   return tray
 }
 
-export default createTray
+export default initTray

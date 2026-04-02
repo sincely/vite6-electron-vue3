@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, screen } from 'electron'
+import { app, BrowserWindow, shell, screen, nativeTheme } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -6,6 +6,7 @@ import { VITE_DEV_SERVER_URL, renderer_dist } from '../config'
 import { initUpdater } from './update' // 更新器
 import createNotification from './notification' // 创建通知
 import logger from './log'
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
 const indexHtml = path.join(renderer_dist, 'index.html') // index.html 的绝对路径
@@ -55,28 +56,40 @@ export function getCloseAction() {
   return closeAction
 }
 
-// 设置窗口事件
+// ─── 系统主题监听（模块级，只注册一次）──────────────────────────
+
+nativeTheme.on('updated', () => {
+  const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
+  BrowserWindow.getAllWindows().forEach((win) => {
+    win.webContents.send('system-theme-updated', theme)
+  })
+})
+
+// ─── 通用窗口工具 ─────────────────────────────────────────────────
+
+/**
+ * 设置通用窗口事件：
+ * - 拦截外部链接，使用系统浏览器打开
+ * - 记录页面加载失败日志
+ * - 记录渲染进程崩溃日志
+ * - ready-to-show 时显示窗口
+ */
 const setupWindow = (win) => {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https:')) shell.openExternal(url)
-    return {
-      action: 'deny' // 拒绝打开外部链接
-    }
+    return { action: 'deny' } // 拒绝打开外部链接
   })
 
-  // 监听加载失败
   win.webContents.on(
     'did-fail-load',
-    (event, errorCode, errorDescription, validatedURL) => {
+    (_event, errorCode, errorDescription, validatedURL) => {
       logger.error(
         `页面加载失败: ${errorDescription} (${errorCode}) at ${validatedURL}`
       )
     }
   )
 
-  // 监听崩溃
-  win.webContents.on('render-process-gone', (event, details) => {
-    // 记录渲染进程崩溃日志和事件
+  win.webContents.on('render-process-gone', (_event, details) => {
     logger.error(`渲染进程崩溃: ${details.reason} (${details.exitCode})`)
   })
 
@@ -84,9 +97,10 @@ const setupWindow = (win) => {
 }
 
 /**
- * @description 加载哈希路由
- * @param {*} win
- * @param {*} hash
+ * 加载哈希路由页面
+ * - 开发环境：loadURL (Vite 开发服务器)
+ * - 生产环境：loadFile (本地 index.html)
+ * - 注册 F12 快捷键切换 DevTools
  */
 const loadHash = (win, hash) => {
   // 开发环境使用 loadURL 加载 Vite 开发服务器
@@ -239,7 +253,9 @@ export function createMainWindow() {
     win.focus() // 聚焦窗口，提升用户体验
   })
 
+  // 加载主页面
   loadHash(win, 'desktop')
+  // 设置窗口事件
   setupWindow(win)
 
   // 点击关闭按钮时默认最小化到托盘，避免直接退出应用

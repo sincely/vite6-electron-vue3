@@ -1,7 +1,7 @@
 import { app, BrowserWindow, nativeImage, nativeTheme } from 'electron'
 import path from 'node:path'
-import { registerIpc } from '../ipc'
-import createTray from './tray'
+import initIpc from '../ipc'
+import initTray from './tray'
 
 import { createLoginWindow, restoreMainWindow } from './windowManager'
 import '../config'
@@ -31,22 +31,15 @@ app.whenReady().then(() => {
     app.dock.setIcon(nativeImage.createFromPath(devIcon))
   }
 
-  // 注册 IPC 事件
-  registerIpc()
   // 创建登录窗口
   createLoginWindow()
-  // 创建托盘图标
-  createTray()
-  // 监听系统主题变化
-  nativeTheme.on('updated', () => {
-    const allWindows = BrowserWindow.getAllWindows()
-    allWindows.forEach((win) => {
-      win.webContents.send(
-        'system-theme-updated',
-        nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
-      )
-    })
-  })
+  // 延迟500ms，初始化非核心功能
+  setTimeout(() => {
+    // 注册 IPC 事件
+    initIpc()
+    // 创建托盘图标
+    initTray()
+  }, 500)
 })
 
 // 当应用准备退出时

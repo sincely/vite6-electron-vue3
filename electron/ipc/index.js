@@ -4,7 +4,7 @@ import updateIpc from './update'
 import winControlIpc from './win-control'
 import notificationIpc from './notification'
 // 注册所有 IPC 频道
-export function registerIpc() {
+export default function initIpc() {
   const ipcList = [
     ...appIpc,
     ...updateIpc,
