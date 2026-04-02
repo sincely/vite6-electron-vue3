@@ -22,11 +22,11 @@ const props = defineProps({
   },
   width: {
     type: [Number, String],
-    default: 'auto'
+    default: null // <--- 修改默认值为 null
   },
   height: {
     type: [Number, String],
-    default: 'auto'
+    default: null // <--- 修改默认值为 null
   }
 })
 
@@ -82,12 +82,11 @@ function init() {
   })
 
   // 初始化图表实例
-  chart.value = markRaw(
-    echarts.init(chartRef.value, 'chart', {
-      width: props.width,
-      height: props.height
-    })
-  )
+  // 只在有明确值时才传 width/height，否则让 ECharts 自动检测容器大小
+  const initOpts = {}
+  if (props.width != null) initOpts.width = props.width
+  if (props.height != null) initOpts.height = props.height
+  chart.value = markRaw(echarts.init(chartRef.value, 'chart', initOpts))
 
   setTimeout(() => {
     if (!chart.value) return
