@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.17](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.16...v0.0.17) (2026-04-02)
+
+### ✨ Features
+
+* 为侧边栏和标题栏添加进入/离开过渡动画 ([a99e99b](https://github.com/sincely/vite6-electron-vue3/commit/a99e99b59a3af830d65200ce5f54a766fdcf712d))
+* 新增布局模式选择和主题颜色自定义功能 ([59a0efa](https://github.com/sincely/vite6-electron-vue3/commit/59a0efa4c52e79c842b5641d4f6557aac303d1bd))
+* 新增顶部菜单布局模式 ([aa3f50e](https://github.com/sincely/vite6-electron-vue3/commit/aa3f50e1be2503adfdd5e8c85f706859fbcddf50))
+* 添加主题切换按钮并优化全屏功能 ([f2cc68d](https://github.com/sincely/vite6-electron-vue3/commit/f2cc68d222f640e56ff543cdbc9f8ce568259494))
+* 添加全屏模式支持 ([d4b0be0](https://github.com/sincely/vite6-electron-vue3/commit/d4b0be0ebdff0f1d7833e96e9718fd716abb6d66))
+* 添加新图标并更新500错误页面图标 ([94b7dfc](https://github.com/sincely/vite6-electron-vue3/commit/94b7dfc7c09c7633b90b33143afb55fc9beef973))
+* 重构用户菜单并改进通知与主题切换样式 ([8965879](https://github.com/sincely/vite6-electron-vue3/commit/8965879c82d7880d985a704b17ebd10814d392b5))
+
+### 🐞 Bug Fixes
+
+* 优化 ([88e9e7e](https://github.com/sincely/vite6-electron-vue3/commit/88e9e7e193a47f98bc42ba3017922ef9473c74e4))
+* 修复 bug ([c69a469](https://github.com/sincely/vite6-electron-vue3/commit/c69a469a505b4c1a0d621bac55fe1922371aaa02))
+* 修复图表报错 ([305d76b](https://github.com/sincely/vite6-electron-vue3/commit/305d76bed46ce82e2b9d16128e8c4fbd3d06235e))
+* 修复错误 ([f3df980](https://github.com/sincely/vite6-electron-vue3/commit/f3df980b19ad2c0f29945c66dfd7a5618eda764c))
+* 修复问题 ([4b695bf](https://github.com/sincely/vite6-electron-vue3/commit/4b695bf1b40dc94441ff13a1dac2242fe3dc7013))
+* 增量更新提交 ([19a55c2](https://github.com/sincely/vite6-electron-vue3/commit/19a55c2fdcf4486cac51e75a69b3fdd2a36a2ec6))
+* 调整图表组件高度并注释掉底部图例位置 ([3b5c912](https://github.com/sincely/vite6-electron-vue3/commit/3b5c912cb5e2e9dc135ccbd468a54ba722a5ca29))
+
+### 🎨 Styles
+
+* **global-header:** 调整用户菜单宽度并移除冗余样式 ([20a3d2f](https://github.com/sincely/vite6-electron-vue3/commit/20a3d2fb736a9be9ee737653bff6eb03880e0ba8))
+* 为操作按钮添加统一工具提示并调整布局 ([bfb739e](https://github.com/sincely/vite6-electron-vue3/commit/bfb739e04339fb7709224bec18fea0ab9e8dfd3d))
+* 优化卡片、设置对话框和面包屑导航的样式细节 ([7b36e01](https://github.com/sincely/vite6-electron-vue3/commit/7b36e01d935b527c8452feef697578a96d574b95))
+* 优化顶部导航菜单的视觉样式和交互细节 ([a03e062](https://github.com/sincely/vite6-electron-vue3/commit/a03e062572b3de097664fda875d873f2791899c5))
+* 优化顶部菜单和设置对话框的样式 ([e1ebe54](https://github.com/sincely/vite6-electron-vue3/commit/e1ebe54b0147a157bc143a9f282acde1e39e0838))
+* 调整对话框内边距以改善视觉平衡 ([b1f488d](https://github.com/sincely/vite6-electron-vue3/commit/b1f488d6bbd78d6f21a1377aff08e1ce0a2635ae))
+
+### ♻️ Code Refactoring
+
+* 重命名顶部菜单组件以保持命名一致性 ([2c87beb](https://github.com/sincely/vite6-electron-vue3/commit/2c87bebce53257bfd436e46dbedd823ad13ed8a4))
+
 ## [0.0.16](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.15...v0.0.16) (2026-03-31)
 
 ### ✨ Features
