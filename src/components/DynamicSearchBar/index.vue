@@ -46,6 +46,7 @@
             v-model="localParams[item.prop]"
             v-bind="item.component"
             style="width: 100%"
+            :placeholder="item.component?.placeholder || `请选择${item.label}`"
             @change="handleSearch"
           />
           <!-- tree-select -->
@@ -53,6 +54,7 @@
             v-else-if="item.type === 'tree-select'"
             v-model="localParams[item.prop]"
             v-bind="item.component"
+            :placeholder="item.component?.placeholder || `请选择${item.label}`"
             @change="handleSearch"
           />
         </el-form-item>

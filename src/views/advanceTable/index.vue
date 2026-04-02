@@ -183,7 +183,7 @@ const config = {
 const searchItems = [
   {
     prop: 'date',
-    label: '时间:',
+    label: '时间',
     type: 'date',
     permi: 'user:query',
     component: {
@@ -195,7 +195,7 @@ const searchItems = [
       }
     }
   },
-  { prop: 'name', label: '操作人:', type: 'input', permi: 'user:query' },
+  { prop: 'name', label: '操作人', type: 'input', permi: 'user:query' },
   {
     prop: 'type',
     label: '类型',
@@ -210,10 +210,10 @@ const searchItems = [
       ]
     }
   },
-  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' },
-  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' },
-  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' },
-  { prop: 'address', label: '详情信息:', type: 'input', permi: 'user:query' }
+  { prop: 'address', label: '详情信息', type: 'input', permi: 'user:query' },
+  { prop: 'address', label: '详情信息', type: 'input', permi: 'user:query' },
+  { prop: 'address', label: '详情信息', type: 'input', permi: 'user:query' },
+  { prop: 'address', label: '详情信息', type: 'input', permi: 'user:query' }
 ]
 
 const searchParams = reactive({

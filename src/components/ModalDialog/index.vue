@@ -228,7 +228,9 @@ const headerActions = ref([
   }
 
   &__content {
+    max-height: 60vh;
     padding: 10px;
+    overflow-y: auto;
     font-size: 14px;
     color: var(--color-text-primary);
   }

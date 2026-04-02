@@ -1,4 +1,3 @@
-0.
 <template>
   <div class="log-container page-enter">
     <PageHeader
