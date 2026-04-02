@@ -4,6 +4,7 @@
     v-bind="formBind"
     :model="localModel"
     :rules="mergedRules"
+    :disabled="!isEdit"
   >
     <el-row v-if="useGrid" v-bind="rowProps">
       <template v-for="item in visibleSchemas" :key="item.prop || item.label">
@@ -74,10 +75,9 @@
                 v-for="opt in getOptions(item)"
                 :key="opt.value"
                 :value="opt.value"
+                :label="opt.label"
                 :disabled="opt.disabled"
-              >
-                {{ opt.label }}
-              </el-checkbox>
+              />
             </el-checkbox-group>
 
             <el-radio-group
@@ -90,10 +90,9 @@
                 v-for="opt in getOptions(item)"
                 :key="opt.value"
                 :value="opt.value"
+                :label="opt.label"
                 :disabled="opt.disabled"
-              >
-                {{ opt.label }}
-              </el-radio>
+              />
             </el-radio-group>
 
             <el-date-picker
@@ -247,6 +246,11 @@ const props = defineProps({
   useGrid: {
     type: Boolean,
     default: true
+  },
+  // 编辑状态
+  isEdit: {
+    type: Boolean,
+    default: false
   }
 })
 

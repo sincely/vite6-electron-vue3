@@ -34,6 +34,7 @@
         :schemas="formSchemas"
         :form-props="{ labelWidth: '120px' }"
         :col-props="{ span: 12 }"
+        :is-edit="isEdit"
       />
 
       <template #footer>
@@ -75,6 +76,7 @@ const formModel = ref({
 })
 
 const searchKeyword = ref('')
+const isEdit = ref(false)
 
 const actionSuggestions = [
   { value: '系统操作' },

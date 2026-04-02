@@ -143,9 +143,8 @@
                       v-for="opt in getColumnOptions(column)"
                       :key="opt.value"
                       :value="opt.value"
-                    >
-                      {{ opt.label }}
-                    </el-checkbox>
+                      :label="opt.label"
+                    />
                   </el-checkbox-group>
 
                   <el-radio-group
@@ -158,9 +157,8 @@
                       v-for="opt in getColumnOptions(column)"
                       :key="opt.value"
                       :value="opt.value"
-                    >
-                      {{ opt.label }}
-                    </el-radio>
+                      :label="opt.label"
+                    />
                   </el-radio-group>
 
                   <!-- 日期选择 -->
