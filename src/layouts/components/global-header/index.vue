@@ -554,17 +554,6 @@ const close = () => ipcRenderer.send('close-window')
     gap: 12px;
     align-items: center;
     padding: 14px 14px 13px;
-    background:
-      radial-gradient(
-        circle at top right,
-        color-mix(in srgb, var(--brand-accent), transparent 78%) 0%,
-        transparent 48%
-      ),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--color-bg-hover), transparent 24%) 0%,
-        transparent 100%
-      );
     border-bottom: 1px solid
       color-mix(in srgb, var(--color-border), transparent 34%);
   }
