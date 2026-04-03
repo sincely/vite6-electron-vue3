@@ -218,9 +218,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   backdrop-filter: blur(16px) saturate(1.06);
   border-right: 1px solid var(--glass-surface-border);
   border-radius: 0;
-  box-shadow:
-    inset -1px 0 0 rgb(255 255 255 / 6%),
-    0 22px 44px -30px rgb(2 6 23 / 85%);
   transition: width $transition;
 
   &::before {

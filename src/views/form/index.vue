@@ -76,7 +76,7 @@ const formModel = ref({
 })
 
 const searchKeyword = ref('')
-const isEdit = ref(false)
+const isEdit = ref(true)
 
 const actionSuggestions = [
   { value: '系统操作' },

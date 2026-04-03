@@ -9,7 +9,7 @@
     <el-row v-if="useGrid" v-bind="rowProps">
       <template v-for="item in visibleSchemas" :key="item.prop || item.label">
         <el-col v-bind="getColProps(item)">
-          <el-form-item v-bind="getFormItemProps(item)">
+          <el-form-item v-bind="getFormItemProps(item)" :style="itemStyle">
             <template v-if="item.labelSlot" #label>
               <slot :name="item.labelSlot" :item="item" :model="localModel" />
             </template>
@@ -241,7 +241,7 @@ const props = defineProps({
   },
   colProps: {
     type: Object,
-    default: () => ({ span: 12 })
+    default: () => ({ xl: 6, lg: 8, md: 12, sm: 24, xs: 24 })
   },
   useGrid: {
     type: Boolean,
@@ -251,6 +251,10 @@ const props = defineProps({
   isEdit: {
     type: Boolean,
     default: false
+  },
+  itemStyle: {
+    type: Object,
+    default: () => ({ padding: '4px 4px' })
   }
 })
 

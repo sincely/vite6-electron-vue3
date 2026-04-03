@@ -228,7 +228,7 @@ const headerActions = ref([
   }
 
   &__content {
-    max-height: 60vh;
+    max-height: 65vh;
     padding: 10px;
     overflow-y: auto;
     font-size: 14px;
