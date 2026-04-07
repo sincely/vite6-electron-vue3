@@ -10,7 +10,7 @@
   "author": "chengzhou",
   "scripts": {
     "dev": "concurrently -k \"npm run dev:win\"",
-    "dev:win": "chcp 65001 && vite --mode development",
+    "dev:win": "node scripts/pre-dev.js && vite --mode development",
     "dev:mac": "vite --mode development",
     "build:dev": "vite build --mode development",
     "build:test": "vite build --mode test",
