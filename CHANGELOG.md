@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 
+* ci: 修复工作流中的缩进错误 (44391d7)
+* chore: 回退版本号并更新CI依赖安装步骤 (89f9a7c)
+* chore: v0.0.18 (cee3135)
+* chore: 回滚版本并更新依赖项 (731aa5e)
+* chore: v0.0.18 (0556f76)
+* chore: 移除package.json文件末尾的换行符 (d4833b6)
+* ci: 使用 npm ci 替换 npm install 并锁定依赖版本 (0e48ff5)
+* ci: 将 npm ci 替换为 npm install 以解决依赖问题 (823516c)
+
 * chore: 回滚版本并更新依赖项 (731aa5e)
 * chore: v0.0.18 (0556f76)
 * chore: 移除package.json文件末尾的换行符 (d4833b6)
