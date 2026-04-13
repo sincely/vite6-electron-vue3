@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.20](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.19...v0.0.20) (2026-04-13)
+
+### 🏭 Build System
+
+* 回退 electron-builder 和 electron-updater 版本 ([1ceef68](https://github.com/sincely/vite6-electron-vue3/commit/1ceef68298fb86287b4f48fe1c8cc993faadcee1))
+
 ## [0.0.19](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.18...v0.0.19) (2026-04-13)
 
 ### 🔧 Chores
