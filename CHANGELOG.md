@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.18](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.17...v0.0.18) (2026-04-13)
+
+### ✨ Features
+
+* 优化表单布局并调整默认编辑状态 ([7ae2f5c](https://github.com/sincely/vite6-electron-vue3/commit/7ae2f5c3778bf0cfd0d3f40656e16975bb32f6e0))
+
+### 🐞 Bug Fixes
+
+* 修复Windows系统控制台中文乱码问题 ([4e24675](https://github.com/sincely/vite6-electron-vue3/commit/4e24675c60d0853519f1878b55f180f1ff09c5f9))
+
+### 🎨 Styles
+
+* 移除标题栏冗余背景渐变样式 ([7363911](https://github.com/sincely/vite6-electron-vue3/commit/73639112467fd6df844b08e23a13216ff1a0de3a))
+
+### 🔧 Chores
+
+* 更新依赖及构建配置 ([e90ed1a](https://github.com/sincely/vite6-electron-vue3/commit/e90ed1a947b6e4810d3d448ffa8318126cc5d867))
+
 ## [0.0.17](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.16...v0.0.17) (2026-04-02)
 
 ### ✨ Features
