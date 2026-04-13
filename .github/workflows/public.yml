@@ -74,9 +74,18 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       # - run: npm ci
-      - name: Install dependencies (force reinstall)
+      - name: Clean deps (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+          Remove-Item -Force package-lock.json -ErrorAction SilentlyContinue
+      - name: Clean deps (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           rm -rf node_modules package-lock.json
+      - name: Install dependencies (force reinstall)
+        run: |
           npm install
       - run: npm run ${{ matrix.build-script }}
       - name: Upload artifacts
