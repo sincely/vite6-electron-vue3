@@ -140,6 +140,7 @@
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
+    "signAndEditExecutable": false,
     "icon": "resources/icons/win/app.ico",
     "extraResources": [
       {
@@ -190,7 +191,7 @@
     // 是否在安装完成后运行应用程序
     "runAfterFinish": true,
     // 安装脚本文件
-    "include": "installer.nsh",
+    "include": "./scripts/installer.nsh",
     // 是否在卸载时删除应用程序数据目录
     "deleteAppDataOnUninstall": true
   }
