@@ -74,7 +74,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       # - run: npm ci
-       - name: Install dependencies (force reinstall)
+      - name: Install dependencies (force reinstall)
         run: |
           rm -rf node_modules package-lock.json
           npm install
