@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.19](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.18...v0.0.19) (2026-04-13)
+
+### 🔧 Chores
+
+* v0.0.18 ([ce1af5e](https://github.com/sincely/vite6-electron-vue3/commit/ce1af5edac7ee0d136e228908a268f73227b36f6))
+* v0.0.18 ([cee3135](https://github.com/sincely/vite6-electron-vue3/commit/cee31351e140613c02520de78624c3ba9e56a4bb))
+* v0.0.18 ([0556f76](https://github.com/sincely/vite6-electron-vue3/commit/0556f76ab80196082c2b20ab3d37e9afb2c752f2))
+* 回滚版本并更新依赖项 ([731aa5e](https://github.com/sincely/vite6-electron-vue3/commit/731aa5e72c418137188b8b02e0dc357deeaaafb3))
+* 回退版本号并更新CI依赖安装步骤 ([89f9a7c](https://github.com/sincely/vite6-electron-vue3/commit/89f9a7c8898401e34486d82d672754a1606e058b))
+* 移除package.json文件末尾的换行符 ([d4833b6](https://github.com/sincely/vite6-electron-vue3/commit/d4833b66c8aa659e4d1455b9d40b452263c7e074))
+
+### 🤖 Continuous Integration
+
+* 为 Windows 和 Linux/macOS 添加单独的清理步骤 ([73014af](https://github.com/sincely/vite6-electron-vue3/commit/73014afdfcb80e863b4179aa4f880e98bb584bb5))
+* 使用 npm ci 替换 npm install 并锁定依赖版本 ([0e48ff5](https://github.com/sincely/vite6-electron-vue3/commit/0e48ff5171947df9b8f9c95fd16abb8ce08b977a))
+* 修复工作流中的缩进错误 ([44391d7](https://github.com/sincely/vite6-electron-vue3/commit/44391d75a5434a8d6f037ea107e29d8b0d2fb1ae))
+* 将 npm ci 替换为 npm install 以解决依赖问题 ([823516c](https://github.com/sincely/vite6-electron-vue3/commit/823516c1604eead40412a622821f04097207e5bb))
+
 * ci: 修复工作流中的缩进错误 (44391d7)
 * chore: 回退版本号并更新CI依赖安装步骤 (89f9a7c)
 * chore: v0.0.18 (cee3135)
