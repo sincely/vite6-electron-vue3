@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 
+* chore: 移除package.json文件末尾的换行符 (d4833b6)
+* ci: 使用 npm ci 替换 npm install 并锁定依赖版本 (0e48ff5)
+* ci: 将 npm ci 替换为 npm install 以解决依赖问题 (823516c)
+
 ## [0.0.18](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.17...v0.0.18) (2026-04-13)
 
 ### ✨ Features
