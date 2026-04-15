@@ -386,9 +386,8 @@ location /electron-update/ {
 ### Step 4 — 验证服务器支持 Range 请求
 
 ```bash
-curl -I \
-  -H "Range: bytes=0-1023" \
-  "http://10.10.24.52:8089/electron-update/lightning-Mac-0.0.8-arm64.zip"
+curl -I -H "Range: bytes=0-1023" "http://10.10.24.52:8089/electron-update/lightning-win32-0.0.17-Setup.e
+xe"
 ```
 
 **正确响应（增量生效）：**
