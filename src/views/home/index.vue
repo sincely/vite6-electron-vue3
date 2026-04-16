@@ -567,7 +567,11 @@ watch(
 
 @media (width <= 900px) {
   .chart-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .chart-card--narrow {
+    flex: 1 1 auto;
   }
 }
 

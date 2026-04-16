@@ -4,7 +4,8 @@
 
 <script setup>
 import { echarts } from '@/plugins'
-import { markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useDebounceFn, useResizeObserver } from '@vueuse/core'
+import { markRaw, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 defineOptions({
   name: 'chart'
 })
@@ -54,6 +55,7 @@ onMounted(() => {
 // 原来写的是 onBeforeMount（组件挂载前触发，此时 chart.value 必然为 null，永远不会清理）
 // 修复为 onBeforeUnmount，确保组件销毁时正确释放 ECharts 实例
 onBeforeUnmount(() => {
+  scheduleResize.cancel()
   if (chart.value) {
     chart.value.dispose()
     chart.value = null
@@ -104,6 +106,22 @@ function resizeChart() {
     chart.value.resize()
   }
 }
+
+const scheduleResize = useDebounceFn(() => {
+  resizeChart()
+}, 16)
+
+useResizeObserver(chartRef, () => {
+  scheduleResize()
+})
+
+watch(
+  () => [props.width, props.height],
+  async () => {
+    await nextTick()
+    scheduleResize()
+  }
+)
 </script>
 
 <style lang="scss" scoped>
