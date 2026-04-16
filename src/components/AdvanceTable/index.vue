@@ -168,6 +168,7 @@
 <script setup>
 import ColumnSetting from './components/ColumnSetting.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
+import { promiseTimeout } from '@vueuse/core'
 import { RefreshRight, Fold, Operation, Expand } from '@element-plus/icons-vue'
 // Props
 const props = defineProps({
@@ -207,12 +208,7 @@ defineExpose({
 
 // 响应式数据
 const loading = ref(false)
-const TABLE_SIZE_STORAGE_KEY = 'advance-table-size'
-const tableSize = ref(
-  localStorage.getItem(TABLE_SIZE_STORAGE_KEY) ||
-    props.config?.table?.size ||
-    'small'
-)
+const tableSize = ref(props.config?.table?.size || 'small')
 const tableData = ref([])
 const total = ref(0)
 const queryParams = reactive({
@@ -235,8 +231,7 @@ watch(
 
 watch(
   tableSize,
-  (val) => {
-    localStorage.setItem(TABLE_SIZE_STORAGE_KEY, val)
+  () => {
     nextTick(() => {
       tableRef.value?.doLayout()
     })
@@ -301,8 +296,16 @@ async function getList() {
     if (props.events?.formatParams) {
       finalParams = props.events.formatParams(finalParams) || finalParams
     }
+    const requestDelay = Math.max(
+      Number(props.config?.requestDelay ?? 500) || 0,
+      0
+    )
+    const [res] = await Promise.all([
+      props.func(finalParams),
+      promiseTimeout(requestDelay)
+    ])
 
-    const res = await props.func(finalParams)
+    console.log('表格数据', res)
 
     // 触发 formatData 事件
     let finalData = res
