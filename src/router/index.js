@@ -88,6 +88,52 @@ export const asyncRouteTree = [
     ]
   },
   {
+    path: '/manage',
+    component: Layout,
+    redirect: '/manage/user',
+    meta: {
+      title: '系统管理',
+      icon: 'settings',
+      order: 4,
+      sidebar: true
+    },
+    children: [
+      {
+        path: 'user',
+        name: 'system-user',
+        component: () => import('@/views/system/user/index.vue'),
+        meta: {
+          title: '用户管理',
+          group: '/manage',
+          keepAlive: true,
+          transition: 'slide-up'
+        }
+      },
+      {
+        path: 'role',
+        name: 'system-role',
+        component: () => import('@/views/system/role/index.vue'),
+        meta: {
+          title: '角色管理',
+          group: '/manage',
+          keepAlive: true,
+          transition: 'slide-up'
+        }
+      },
+      {
+        path: 'menu',
+        name: 'system-menu',
+        component: () => import('@/views/system/menu/index.vue'),
+        meta: {
+          title: '菜单管理',
+          group: '/manage',
+          keepAlive: true,
+          transition: 'slide-up'
+        }
+      }
+    ]
+  },
+  {
     path: '/editableTable',
     component: Layout,
     meta: { title: '可编辑表格', icon: 'key', order: 6, sidebar: true },

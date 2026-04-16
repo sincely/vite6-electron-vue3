@@ -129,7 +129,7 @@
       <el-table-column
         v-if="mergedConfig.useAction"
         label="操作"
-        width="200"
+        width="240"
         align="center"
         fixed="right"
       >
@@ -538,12 +538,7 @@ defineExpose({
 
 .action-group {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
   justify-content: center;
-
-  :deep(.el-button) {
-    margin: 0;
-  }
 }
 </style>

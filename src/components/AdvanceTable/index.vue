@@ -297,7 +297,7 @@ async function getList() {
       finalParams = props.events.formatParams(finalParams) || finalParams
     }
     const requestDelay = Math.max(
-      Number(props.config?.requestDelay ?? 500) || 0,
+      Number(props.config?.requestDelay ?? 1000) || 0,
       0
     )
     const [res] = await Promise.all([

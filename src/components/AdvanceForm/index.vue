@@ -254,7 +254,7 @@ const props = defineProps({
   },
   itemStyle: {
     type: Object,
-    default: () => ({ padding: '4px 4px' })
+    default: () => ({ padding: '2px 2px' })
   }
 })
 
@@ -486,9 +486,3 @@ defineExpose({
   submit: validate
 })
 </script>
-
-<style scoped lang="scss">
-// .el-form {
-//   width: 100%;
-// }
-</style>
