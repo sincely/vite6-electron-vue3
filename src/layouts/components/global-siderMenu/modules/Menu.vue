@@ -40,7 +40,7 @@
             :key="child.id"
             class="sidebar-item sidebar-item-child"
             :class="{ 'sidebar-item-active': isChildActive(child) }"
-            @click="router.push(child.route)"
+            @click="handleClick(child)"
           >
             <span class="sidebar-child-dot"></span>
             <span class="sidebar-label">{{ child.label }}</span>
@@ -68,8 +68,11 @@ const isExpanded = (id) => expandedIds.value.includes(id)
 
 const toggleExpand = (id) => {
   const idx = expandedIds.value.indexOf(id)
-  if (idx >= 0) expandedIds.value.splice(idx, 1)
-  else expandedIds.value.push(id)
+  if (idx >= 0) {
+    expandedIds.value = []
+  } else {
+    expandedIds.value = [id]
+  }
 }
 
 const isParentActive = (item) => {
@@ -80,16 +83,25 @@ const isParentActive = (item) => {
 
 const isChildActive = (child) => child.route === route.path
 
+const handleClick = (child) => {
+  if (child.children?.length && !appStore.sidebarCollapsed) {
+    toggleExpand(child.id)
+  } else {
+    router.push(child.route).catch(() => {})
+  }
+}
+
 watch(
   () => route.path,
   (path) => {
     for (const item of mainItems.value) {
       if (item.children?.some((c) => c.route === path)) {
-        if (!expandedIds.value.includes(item.id)) {
-          expandedIds.value.push(item.id)
-        }
+        expandedIds.value = [item.id]
+        return
       }
     }
+
+    expandedIds.value = []
   },
   { immediate: true }
 )
