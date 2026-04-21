@@ -58,8 +58,10 @@
 
       <!-- 操作按钮 -->
       <el-form-item class="search-actions">
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button @click="resetAll">重置</el-button>
+        <el-button type="primary" :icon="Search" @click="handleSearch">
+          查询
+        </el-button>
+        <el-button :icon="RefreshRight" @click="resetAll">重置</el-button>
         <el-button
           v-if="items.length > 3"
           type="primary"
@@ -81,6 +83,7 @@
 </template>
 
 <script setup>
+import { RefreshRight, Search } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/modules/user'
 
 const props = defineProps({
