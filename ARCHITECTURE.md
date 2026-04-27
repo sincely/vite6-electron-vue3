@@ -379,7 +379,468 @@ npm run build-linux:prod
 
 这些能力不一定是问题，但在继续演进时应明确哪些是“预留接口”，哪些是“正式通道”，避免后续维护者误判。
 
-## 10. 文档信息
+## 10. 外部实战补充（详细内容整理）
 
-- 文档版本：0.0.15
-- 最后更新：2026-03-30
+### 10.1 Electron 最真实痛点（写实吐槽，懂的都懂）
+
+先吐槽两句，不是否定 Electron，而是客观说说它的反人类体验。技术本身没问题，生态也成熟，但对个人开发者、小型项目、内网系统来说，简直是“坐牢式开发”。
+
+1. 环境严重割裂，强行制造问题
+开发环境、绿色免安装版、Windows 安装版，三套环境规则完全不一样：
+   - 开发环境：`npm run dev` 跑得飞起，接口、界面全正常
+   - 绿色版（`win-unpacked`）：解压就能用，无任何异常
+   - 安装版（`NSIS`）：一打包就黑屏、接口失效，毫无过渡，排查无方向
+2. 安全策略脱离实际，刻意折磨开发者
+底层套壳 Chromium，默认开启强沙箱、强 GPU 隔离、强跨域拦截，甚至禁用内网 HTTP 请求。官方明明知道 Windows 安装目录权限限制、内网业务场景极其普遍，却坚决不做默认兼容，所有问题都要开发者手动复制一堆“修复代码”才能解决，毫无开箱即用体验。
+3. 安装版专属坑点扎堆，排查难度拉满
+只要把软件装在系统保护目录（比如 `C:\Program Files`），各种奇葩问题就会找上门：
+   - GPU 权限不足，直接黑屏/白屏
+   - 浏览器安全策略收紧，内网接口跨域、`localhost` 请求被直接拦截
+   - 所有故障都静默失败，无任何报错提示，全靠瞎试、堆配置
+4. 架构天生冲突，底层矛盾难根治
+Chromium 浏览器安全模型 + Node.js 本地权限 + Windows 系统权限管控，三者互相打架，不是简单改几行代码就能根治的，很多问题都是“治标不治本”。
+5. 对比同类框架，全面落后
+Tauri、Flutter、Qt 都是一键打包、安装即用，零额外适配；而 Electron，写代码 1 小时，打包排坑大半天，小型项目、内网工具的使用成本直接拉满。
+
+一句话总结：Electron 技术没问题，但打包体验、Windows 适配、开箱易用性，完全是反人类垃圾设计。
+
+### 10.2 核心致命问题：绿色版正常，安装版黑屏
+
+这是 Electron 项目最常见、最致命的问题，没有之一，也是实践中最容易踩到的大坑。先搞懂两种包体的区别，才能找到问题根源。
+
+1. 两种打包包体核心区别
+   1. 绿色版（`win-unpacked`）
+      - 文件完全解压，`dist` 文件夹可见、可直接访问
+      - 普通路径、自定义协议都能正常读取资源，所以不会黑屏
+      - 适合内部测试，不适合给用户分发（体积大、无安装流程）
+   2. NSIS 安装版
+      - 默认将所有资源打包进 `app.asar` 压缩包（减小体积）
+      - 原生 `fs` 模块、普通路径，无法直接访问 `asar` 内部文件
+      - 之前手写的 `app://` 协议 + 本地 FS 读取逻辑，在纯 `asar` 压缩包下直接失效，导致黑屏/白屏/资源 404
+2. 最终结论（划重点，必记）
+   - 不能删除自定义 `app://` 协议（否则无法适配多环境）
+   - 不能只用 `loadFile` 加载页面（无法兼容 `asar` 压缩）
+   - 要保留 `asar` 压缩（减小安装包体积），必须使用“自定义 `app` 协议 + `asarUnpack` 配置”，二者缺一不可
+
+### 10.3 保留 Asar 压缩 + 不黑屏 必写配置
+
+这部分是核心，直接复制配置和代码，就能解决安装版黑屏问题，无需额外修改。
+
+1. `electron-builder.yml` 核心配置
+重点是 `asar: true` 和 `asarUnpack: dist/**`，其余配置可根据项目调整。
+
+```yaml
+asar: true  # 开启 asar 压缩，减小安装包体积
+asarUnpack:
+  - dist/**  # 解压 dist 前端资源，让自定义协议能正常读取
+# 以下是常规配置，可根据项目调整
+appId: com.site-manager.app
+productName: Site Manager
+copyright: Copyright © 2024
+compression: normal
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/  # 国内镜像，加速下载
+directories:
+  output: release  # 打包产物输出目录
+  buildResources: build
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+win:
+  target:
+    - target: nsis  # 安装版
+      arch: [x64]
+    - target: portable  # 绿色便携版
+      arch: [x64]
+  icon: public/icon.ico
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+```
+
+核心作用：`dist` 前端资源会被自动解压到 `asar` 包外部，自定义协议能正常读取；同时其他资源依然保持压缩，兼顾体积和兼容性。
+
+2. 代码加载固定规则（主进程 `createWindow` 函数）
+严格按照以下规则写，禁止乱改，否则会再次黑屏。
+
+```js
+// 开发环境：加载本地 Vite 服务
+if (isDev) {
+  await mainWindow.loadURL('http://localhost:5175')
+} else {
+  // 生产环境：只允许使用 app://./ 加载，禁止使用 loadFile
+  await mainWindow.loadURL('app://./')
+}
+// 必须保留 setupAppProtocol 自定义协议，不要删除
+setupAppProtocol()
+```
+
+警告：生产环境禁止直接使用 `loadFile` 加载页面，否则会导致 `asar` 压缩下资源无法读取，再次出现黑屏。
+
+### 10.4 打包产物说明与发布规范
+
+打包完成后，`release` 目录会生成多种产物，需要明确每种产物用途和发布规范，避免混乱。
+
+1. 本地打包产物（`release` 目录）
+   - `win-unpacked/`：绿色免安装版，解压即用，适合内部测试与开发调试，不适合用户分发
+   - `xxx Setup 版本号.exe`：正式 NSIS 安装包，给用户下载安装，带安装流程和桌面快捷方式
+   - `latest.yml` / `.blockmap`：自动更新必需文件，缺一不可，不能删除
+2. 服务器必须上传的更新文件（自动更新必备）
+   - `latest.yml`：版本清单，记录当前最新版本、安装包路径、校验信息
+   - `Setup xxx.exe`：完整安装包（和本地打包一致）
+   - `xxx.blockmap`：增量更新文件，减小用户更新时下载体积
+3. 官网下载区规范
+   - 对用户只提供 `Setup` 安装包 `.exe` 下载链接
+   - 无需放绿色版、`yml` 文件、`blockmap` 文件，避免用户混淆
+
+### 10.5 electron-updater 自动更新完整规则
+
+使用 `electron-updater` 实现自动更新，看似简单，但有很多强制规则，踩错一个就会导致更新失效。
+
+1. 强制规则：每次发新版，必须改版本号
+修改 `package.json` 的 `version` 字段，必须是三段式数字格式（比如 `1.0.0`、`1.0.1`），不能是 `1.0`、`1.0.0-beta` 等非标准格式。
+核心逻辑：`electron-updater` 只会对比版本号大小，版本号不升高，永远检测不到新版本，哪怕你修改了代码、重新打包也没用。
+2. 更新触发方式（双模式，推荐都实现）
+   - 自动触发：软件启动后，后台静默检查更新，无需用户操作
+   - 手动触发：前端页面添加“检查更新”按钮，通过 IPC 调用主进程更新方法，满足用户主动更新需求
+3. 标准更新流程（用户无感知，体验最优）
+   1. 软件启动，后台检测新版本
+   2. 检测到新版本，弹窗询问用户“是否下载更新”
+   3. 用户确认后，后台静默下载（不影响用户使用）
+   4. 下载完成后，提示用户“关闭软件以完成更新”
+   5. 用户关闭软件后，自动静默安装，安装完成后自动重启软件
+4. 现有代码状态（划重点）
+当前项目中，自动更新逻辑（更新事件、弹窗、下载、重启安装）都完好可用，无需重写。只要遵循“每次发版改版本号”“服务器上传 3 个文件”这两个规则，即可正常实现自动更新。
+
+### 10.6 日常打包与测试必守规则
+
+很多问题都来自打包、测试不规范。遵循以下规则，可显著减少异常：
+
+- 重新打包前，手动删除 `release` 文件夹，避免旧文件占用、缓存冲突导致打包报错
+- 安装版测试前，必须卸载旧版本，防止旧版本缓存、注册表残留导致异常
+- 关闭窗口逻辑已完善：关闭 -> 前端登出 -> 清空缓存 -> 完全退出，不会残留进程、不会占用文件
+- 使用 `asar` 压缩时，禁止乱改 `loadFile` 路径，固定使用 `app://./` 加载页面
+- 打包后先测试安装版（`Setup.exe`），再测试绿色版，避免上线后出现安装异常
+
+### 10.7 极简速记（面试/复盘专用）
+
+不想记复杂流程时，可记住以下 4 句话：
+
+1. 安装版黑屏 = `asar` 压缩 + 资源读取限制，用“自定义协议 + `asarUnpack` 配置”解决
+2. 要压缩，不要关 `asar`，改配置不改核心加载逻辑
+3. 发更新必改版本号，服务器放 3 个文件（`yml + exe + blockmap`）
+4. 更新靠“前端按钮手动检查 + 开机自动检查”双模式，体验最优
+
+### 10.8 最终总结与适用场景
+
+本方案基于大量踩坑实践，整理出一套「最稳定、最通用、最少坑」的 Electron Windows 客户端标准流程，核心优势如下：
+
+- ✅ 彻底解决安装版黑屏、白屏、资源 404 问题
+- ✅ 保留 asar 压缩，安装包体积最小化
+- ✅ 自动更新完整可用，无需额外开发
+- ✅ 开发 / 绿色版 / 安装版三环境统一，杜绝「开发正常、上线异常」
+- ✅ 配置与代码均可直接复制复用，零重复踩坑
+
+**适用场景**
+所有基于 Vite + Electron 开发的 Windows 客户端，尤其适用于：
+
+- 内网工具
+- 小型桌面应用
+- 个人开发者项目
+
+无需复杂配置，直接套用即可。
+
+> 最后吐槽一句：Electron 坑虽多，摸透规则后依旧能稳定落地。愿这份总结助你少走弯路，早日脱离打包排坑的苦海。
+
+
+### 10.9 Electron 接口请求全解析：从疑问到落地（推荐方案）
+
+#### 10.9.1 核心疑问：Electron 接口请求到底该怎么写
+
+刚开始接触 Electron 开发，最容易困惑的是：Electron 基于 Chromium 内核，为什么还要用 Node.js 处理请求？接口请求到底该写在渲染进程还是主进程？
+
+1. 疑问 1：Electron 不是 Chromium 开源内核运行的吗，怎么是 Node.js
+Electron 不是单一环境，而是「Chromium 渲染进程 + Node.js 主进程」双内核架构，两者并行共存、完全隔离，各自承担不同职责：
+   - 渲染进程（Renderer）：基于 Chromium，负责页面运行（HTML/CSS/JS、React/Vue 等），受浏览器安全限制（例如 CORS）
+   - 主进程（Main）：基于 Node.js，负责窗口、本地文件、系统 API、网络请求等，不受浏览器跨域限制
+
+通俗理解：渲染进程是“内嵌浏览器”，主进程是“后台 Node 服务”，通过 IPC 打通数据交互。
+
+2. 疑问 2：接口请求必须写在主进程吗
+分场景，但 90% 生产场景建议写在主进程，常见两种方案：
+   - 方案 A（推荐，商用规范）
+渲染进程只传参数，不发真实请求；主进程统一发 HTTP/HTTPS，再通过 IPC 回传。
+优势：规避跨域，便于统一 token、加密、日志和错误处理，符合安全规范。
+   - 方案 B（快速开发）
+渲染进程直接用 `axios/fetch`，并关闭 `webSecurity`。
+优势：开发快，写法接近普通前端项目。
+缺点：安全性低，不适合商用和上架场景。
+
+3. 疑问 3：`webSecurity: false` 能解决跨域吗
+能。它是直接关闭 Chromium 同源策略校验。
+但仅适合开发环境或内部工具，生产环境应关闭该做法并改为主进程请求方案。
+
+4. 疑问 4：开发环境可以不走主进程吗
+可以。标准做法是开发/生产分层：
+   - 开发环境：渲染进程直连请求，关闭 `webSecurity`，提升联调效率
+   - 生产环境：主进程请求，开启 `webSecurity`，结合 `app://` 自定义协议
+
+5. 疑问 5：开发环境遇到 `Connection refused` 怎么办
+该问题通常是网络链路问题，不是 Electron 或跨域问题。排查顺序：
+   - 确认后端已启动，监听地址是否为 `0.0.0.0:18020`（非 `127.0.0.1`）
+   - 检查防火墙或端口放行
+   - 浏览器直接访问 `http://192.168.50.164:18020` 验证可达
+   - 若浏览器也失败，优先修复后端或网络
+
+6. 疑问 6：生产环境有必要用 `app://` 自定义协议吗
+非常有必要。直接用 `file://` 常见问题：
+   - 跨平台路径混乱
+   - 资源被 Chromium 策略拦截（字体/图片/CSS 404）
+   - 权限面过宽
+   - 上架审核风险增大
+
+`app://` 可以统一路径、保证资源加载和权限边界，是生产环境标准配置。
+
+7. 疑问 7：表单请求（`URLSearchParams`）怎么传到主进程
+渲染进程不要直接传 `URLSearchParams` 实例（IPC 可能序列化异常）。
+正确做法：渲染进程传普通对象，主进程再转换为表单格式。
+
+#### 10.9.2 全流程落地代码（可直接复制）
+
+结合以上疑问，下面给出一套完整实现，覆盖开发/生产环境适配、表单请求处理和自定义协议配置。
+
+1. 主进程（`main.js`）：请求处理 + 环境适配
+
+```js
+const { app, BrowserWindow, ipcMain, protocol } = require('electron')
+const axios = require('axios')
+const path = require('path')
+const { URL } = require('url')
+
+// 1. 注册 app:// 自定义协议（生产环境用）
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'app',
+    privileges: {
+      standard: true,
+      secure: true,
+      allowServiceWorkers: true,
+      supportFetchAPI: true,
+      corsEnabled: true
+    }
+  }
+])
+
+// 2. 主进程统一请求处理（支持表单请求和 JSON 请求）
+ipcMain.handle('api:request', async (_, options) => {
+  const { method, url, data, isForm = false } = options
+  const baseURL = 'http://floor.primerobotics.nepa'
+
+  try {
+    // 处理 URL：去掉 /api 前缀（根据业务需求调整）
+    const finalURL = `${baseURL}${url.replace('/api/', '/')}`
+
+    // 构建请求配置
+    const requestConfig = {
+      method: method.toLowerCase(),
+      url: finalURL,
+      headers: {}
+    }
+
+    // 表单请求：主进程构建 URLSearchParams
+    if (isForm) {
+      const formData = new URLSearchParams(data)
+      requestConfig.data = formData
+      requestConfig.headers['Content-Type'] =
+        'application/x-www-form-urlencoded'
+    } else {
+      // JSON 请求
+      requestConfig.data = data
+      requestConfig.headers['Content-Type'] = 'application/json'
+    }
+
+    // 发起请求（Node 环境无跨域限制）
+    const response = await axios(requestConfig)
+    return {
+      code: response.status,
+      data: response.data,
+      message: '请求成功'
+    }
+  } catch (error) {
+    console.error('主进程请求失败：', error)
+    return {
+      code: error.response?.status || 500,
+      data: null,
+      message: error.message || '网络异常'
+    }
+  }
+})
+
+// 3. 创建窗口（适配开发/生产环境）
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1000,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, // 安全隔离（必须开启）
+      nodeIntegration: false, // 禁止渲染进程使用 Node.js（必须关闭）
+      webSecurity: !!app.isPackaged // 开发环境关闭跨域，生产环境开启
+    }
+  })
+
+  // 加载页面
+  if (app.isPackaged) {
+    // 生产环境：加载自定义协议页面
+    protocol.registerFileProtocol('app', (request, callback) => {
+      const url = new URL(request.url)
+      const pathname = decodeURIComponent(url.pathname)
+      const filePath = path.join(__dirname, 'dist', pathname)
+      callback({ path: filePath })
+    })
+    win.loadURL('app://./index.html')
+  } else {
+    // 开发环境：加载本地 dev 服务（如 Vite 5173 端口）
+    win.loadURL('http://localhost:5173')
+    win.webContents.openDevTools() // 打开开发者工具
+  }
+}
+
+// 启动应用
+app.whenReady().then(createWindow)
+
+// 跨平台窗口关闭逻辑
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+})
+```
+
+2. 预加载脚本（`preload.js`）：安全暴露 IPC 接口
+
+```js
+const { contextBridge, ipcRenderer } = require('electron')
+
+// 安全暴露 IPC 接口给渲染进程，避免直接暴露 Node.js 能力
+contextBridge.exposeInMainWorld('electronAPI', {
+  request: (options) => ipcRenderer.invoke('api:request', options)
+})
+```
+
+3. 渲染进程 API 封装（`userApi.js`）
+
+```js
+// 渲染进程 API 封装，统一调用主进程 IPC
+export const userApi = {
+  // 登录接口（表单请求，标记 isForm: true）
+  login: (data) => {
+    return window.electronAPI.request({
+      method: 'POST',
+      url: '/api/login',
+      data: data, // 普通对象：{ username, password }
+      isForm: true
+    })
+  },
+
+  // 示例：普通 JSON 请求
+  getUserInfo: (token) => {
+    return window.electronAPI.request({
+      method: 'GET',
+      url: '/api/user/info',
+      data: { token },
+      isForm: false
+    })
+  }
+}
+```
+
+4. 渲染进程页面调用（登录示例）
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { userApi } from '@/api/userApi'
+import { useUserStore } from '@/store/userStore'
+
+const router = useRouter()
+const userStore = useUserStore()
+const loginForm = ref({
+  username: '',
+  password: ''
+})
+
+const handleLogin = async () => {
+  try {
+    // 直接传递普通对象，无需创建 URLSearchParams
+    const res = await userApi.login(loginForm.value)
+
+    if (res.code === 200) {
+      ElMessage.success('登录成功')
+      userStore.setToken(res.data.token)
+      userStore.setUsername(loginForm.value.username)
+      router.push('/')
+    } else {
+      ElMessage.error(res.message || '登录失败')
+    }
+  } catch (err) {
+    ElMessage.error('网络异常，请稍后重试')
+  }
+}
+</script>
+```
+
+5. URL 拼接工具（`buildFullUrl.js`）
+
+```js
+// URL 拼接工具，自动处理 /api 前缀和完整地址
+function buildFullUrl(url) {
+  // 已是完整 HTTP/HTTPS 地址，直接返回
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+
+  // 处理 /api/xxx 路径：去掉 /api 前缀
+  if (url.startsWith('/api/')) {
+    return `http://floor.primerobotics.nepa${url.replace('/api/', '/')}`
+  }
+
+  // 处理 /robot/xxx 路径：正常拼接
+  if (url.startsWith('/robot/')) {
+    return `http://floor.primerobotics.nepa${url}`
+  }
+
+  // 其他路径默认拼接基地址
+  return `http://floor.primerobotics.nepa${url}`
+}
+```
+
+#### 10.9.3 关键避坑要点（必看）
+
+- 跨域问题：跨域是浏览器（渲染进程）限制，Node.js（主进程）无跨域限制；生产环境优先主进程代理请求，避免依赖 `webSecurity: false`
+- `URLSearchParams` 传递：渲染进程不要直接传实例，传普通对象，由主进程转换，避免 IPC 序列化异常
+- 开发/生产区分：开发环境可关闭 `webSecurity` 简化联调；生产环境必须开启并使用 `app://`，避免 `file://` 路径坑
+- `Connection refused`：优先检查后端启动、监听地址和防火墙，通常与 Electron 代码无关
+- 安全规范：开启 `contextIsolation: true`、关闭 `nodeIntegration`，通过 `preload.js` 最小化暴露 IPC 能力
+- URL 拼接：若后端不需要 `/api` 前缀，应在主进程或工具函数统一处理，避免错误路径
+
+#### 10.9.4 行业现状与总结
+
+结合实际开发，接口请求的选型建议如下：
+
+1. 商用/长期项目/需上架：采用“主进程请求 + `app://` 协议 + 安全规范配置”，规避跨域与安全风险
+2. 个人/内部工具/快速开发：采用“渲染进程直接请求 + `webSecurity: false`”，换取开发效率
+3. 核心原则：渲染进程负责交互与参数传递，主进程负责真实请求与系统能力，这是 Electron 的主流工程化模式
+
+
+
+## 11. 文档信息
+
+- 文档版本：0.0.17
+- 最后更新：2026-04-27
