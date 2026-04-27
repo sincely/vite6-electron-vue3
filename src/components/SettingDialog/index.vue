@@ -149,6 +149,31 @@
 
                     <div class="setting-item">
                       <div class="item-info">
+                        <span class="item-label">显示底部状态栏</span>
+                        <span class="item-desc">控制底部状态栏显示/隐藏</span>
+                      </div>
+                      <el-switch v-model="footerVisible" />
+                    </div>
+
+                    <div v-if="footerVisible" class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">底部高度</span>
+                        <span class="item-desc">
+                          设置底部状态栏高度（20 - 80px）
+                        </span>
+                      </div>
+                      <el-input-number
+                        v-model="footerHeight"
+                        :min="20"
+                        :max="80"
+                        :step="1"
+                        :controls="true"
+                        style="width: 140px"
+                      />
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
                         <span class="item-label">页面切换动画</span>
                       </div>
                       <el-switch v-model="appStore.transitionEnabled" />
@@ -384,6 +409,16 @@ const autoLaunch = computed({
 const closeAction = computed({
   get: () => appStore.windowCloseAction,
   set: (val) => appStore.setCloseAction(val)
+})
+
+const footerVisible = computed({
+  get: () => appStore.footerVisible,
+  set: (val) => appStore.setFooterVisible(val)
+})
+
+const footerHeight = computed({
+  get: () => appStore.footerHeight,
+  set: (val) => appStore.setFooterHeight(val)
 })
 
 console.log(visible.value)

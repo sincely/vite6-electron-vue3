@@ -7,6 +7,8 @@ export const useAppStore = defineStore('app', {
     theme: 'light', // 当前主题，默认是亮色主题
     layoutMode: 'left', // 布局模式：left | left-mixed | top | top-mixed
     sidebarCollapsed: false, // 侧边栏是否折叠
+    footerVisible: true, // 是否显示底部状态栏
+    footerHeight: 26, // 底部状态栏高度（px）
     transitionEnabled: true, // 是否启用页面切换动画
     transitionType: 'page', // 页面切换动画类型
     settingsVisible: false, // 设置弹窗是否可见
@@ -280,6 +282,16 @@ export const useAppStore = defineStore('app', {
     // 设置侧边栏折叠状态
     setSidebarCollapsed(val) {
       this.sidebarCollapsed = val
+    },
+    // 设置底部栏显示状态
+    setFooterVisible(val) {
+      this.footerVisible = !!val
+    },
+    // 设置底部栏高度（限制 20~80）
+    setFooterHeight(val) {
+      const height = Number(val)
+      if (!Number.isFinite(height)) return
+      this.footerHeight = Math.min(80, Math.max(20, Math.round(height)))
     },
 
     // 设置loading状态

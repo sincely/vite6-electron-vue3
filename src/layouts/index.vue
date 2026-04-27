@@ -45,7 +45,7 @@
       <GlobalContent v-if="isRouterAlive" />
 
       <!-- 底部状态栏 -->
-      <GlobalFooter />
+      <GlobalFooter v-if="appStore.footerVisible" />
     </div>
   </div>
   <!-- 更新弹框 -->

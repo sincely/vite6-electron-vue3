@@ -1,5 +1,5 @@
 <template>
-  <footer class="global-footer">
+  <footer class="global-footer" :style="{ height: `${footerHeight}px` }">
     <div class="global-footer__left">
       <span class="global-footer__item">
         <SvgIcon icon-class="cpu" width="11px" height="11px" />
@@ -17,9 +17,12 @@
 
 <script setup>
 import { useUpdateStore } from '@/store/modules/version'
+import { useAppStore } from '@/store/modules/app'
 
 const updateStore = useUpdateStore()
+const appStore = useAppStore()
 const currentVersion = computed(() => updateStore.currentVersion)
+const footerHeight = computed(() => appStore.footerHeight || 26)
 </script>
 
 <style lang="scss" scoped>
