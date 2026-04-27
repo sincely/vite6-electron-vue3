@@ -156,6 +156,7 @@ const handleNav = (item) => {
 }
 
 .top-submenu-item {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 10px 16px;
@@ -170,15 +171,16 @@ const handleNav = (item) => {
     margin-bottom: 2px;
   }
 
-  &:hover {
+  &:hover:not(.active) {
     color: var(--color-text-primary);
     background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
-    transform: translateX(4px);
   }
 
-  &.active {
+  &.active,
+  &.active:hover {
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    transform: none;
 
     &::before {
       position: absolute;
