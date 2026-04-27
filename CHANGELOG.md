@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.21](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.20...v0.0.21) (2026-04-27)
+
+### ✨ Features
+
+* 新增用户、角色和菜单管理模块 ([e9bbfb1](https://github.com/sincely/vite6-electron-vue3/commit/e9bbfb1c61f4b9310c4b5c084c9053df854892b1))
+* 添加底部状态栏显示控制与高度设置 ([4b96724](https://github.com/sincely/vite6-electron-vue3/commit/4b96724954f6e0a41115ed5979be91c5ea9d7907))
+* 重构页面切换动画为全局可配置 ([fdf2f65](https://github.com/sincely/vite6-electron-vue3/commit/fdf2f6506e5833f958fb5ecb6049d4f08fd1e5ee))
+
+### 🐞 Bug Fixes
+
+* 修复图表在移动端布局和响应式调整的问题 ([fdb707e](https://github.com/sincely/vite6-electron-vue3/commit/fdb707e9a0ecf00cb9774671108565bc15fab371))
+* 修复子菜单项悬停和激活状态的样式冲突 ([b623989](https://github.com/sincely/vite6-electron-vue3/commit/b62398998d2de8daa29a67b001505258805cc3af))
+* 修复菜单展开状态逻辑和点击行为 ([5b91ec7](https://github.com/sincely/vite6-electron-vue3/commit/5b91ec7e6fbfa01ad659e68c862b5942753c5733))
+* 移除未使用的响应式逻辑并简化布局样式 ([5a7d6d3](https://github.com/sincely/vite6-electron-vue3/commit/5a7d6d38acb241c6ea6d68ce4e57b7d93e4f302a))
+
+### 📝 Documentation
+
+* 更新增量更新验证示例中的下载文件路径 ([e24eb9d](https://github.com/sincely/vite6-electron-vue3/commit/e24eb9de51751bc0541928635d08d3209f6519a5))
+* 补充 Electron 打包、自动更新及接口请求实践文档 ([7a358e6](https://github.com/sincely/vite6-electron-vue3/commit/7a358e65c2aca384851c6a929d349347af8d9be5))
+
+### 🎨 Styles
+
+* 为查询和重置按钮添加图标 ([659c0b3](https://github.com/sincely/vite6-electron-vue3/commit/659c0b3f7ca0a4b1ec7cd697bd02965e2b41120a))
+
+### 🔧 Chores
+
+* 添加推荐的VSCode Vue扩展配置 ([1aafacb](https://github.com/sincely/vite6-electron-vue3/commit/1aafacb15d99224e488defd1ef516164826992e0))
+
+### ♻️ Code Refactoring
+
+* **AdvanceTable:** 移除本地存储并添加请求延迟处理 ([81e56ed](https://github.com/sincely/vite6-electron-vue3/commit/81e56ed7ed3966795d9fb16096c64dd7fd020d35))
+* **update:** 移除热更新功能，仅保留全量更新 ([b4c7f6a](https://github.com/sincely/vite6-electron-vue3/commit/b4c7f6ac1e80564ca2c58f7760c4775b6e04fe5a))
+* 将侧边栏菜单和用户面板拆分为独立组件 ([a3d2e16](https://github.com/sincely/vite6-electron-vue3/commit/a3d2e16f36b805e91281ae5247b5eae15af85c38))
+
+### 🏭 Build System
+
+* 在 asarUnpack 中包含 dist 目录 ([bd5ce39](https://github.com/sincely/vite6-electron-vue3/commit/bd5ce396857be1cac0e5889dc4dae84c8f76a755))
+
 ## [0.0.20](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.19...v0.0.20) (2026-04-13)
 
 ### 🏭 Build System
