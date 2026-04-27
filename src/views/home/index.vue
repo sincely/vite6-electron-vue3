@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard page-enter">
+  <div class="dashboard">
     <!-- 统计卡片行 -->
     <div class="stats-grid">
       <div

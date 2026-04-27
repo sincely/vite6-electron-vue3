@@ -1,5 +1,5 @@
 <template>
-  <div class="log-container page-enter">
+  <div class="log-container">
     <PageHeader
       title="系统日志"
       subtitle="查看系统操作记录和运行状态"

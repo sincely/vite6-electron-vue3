@@ -41,7 +41,6 @@
 
             <div class="content-body">
               <Transition name="fade-slide" mode="out-in">
-                <!-- General Settings -->
                 <div
                   v-if="currentTab === 'general'"
                   key="general"
@@ -146,6 +145,34 @@
                         <span class="item-desc">默认折叠侧边栏菜单</span>
                       </div>
                       <el-switch v-model="appStore.sidebarCollapsed" />
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">页面切换动画</span>
+                      </div>
+                      <el-switch v-model="appStore.transitionEnabled" />
+                    </div>
+
+                    <!-- 页面切换动画类型 -->
+                    <div v-if="appStore.transitionEnabled" class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">页面切换动画类型</span>
+                        <span class="item-desc">
+                          选择页面切换时使用的动画效果
+                        </span>
+                      </div>
+                      <el-select
+                        v-model="appStore.transitionType"
+                        style="width: 140px"
+                      >
+                        <el-option
+                          v-for="item in animates"
+                          :key="item.value"
+                          :label="item.text"
+                          :value="item.value"
+                        />
+                      </el-select>
                     </div>
                   </div>
 
@@ -339,6 +366,7 @@
 </template>
 
 <script setup>
+import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
 import pkg from '../../../package.json'
 

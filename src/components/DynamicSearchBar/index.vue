@@ -186,8 +186,6 @@ const emit = defineEmits(['query', 'reset'])
   padding: 16px 16px 0;
   margin-bottom: 16px;
   background: var(--glass-surface);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-surface-border);
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
 }

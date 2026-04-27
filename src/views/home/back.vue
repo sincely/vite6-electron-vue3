@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard page-enter">
+  <div class="dashboard">
     <section class="hero glass-card">
       <div class="hero-content">
         <h2 class="hero-title">仪表板</h2>

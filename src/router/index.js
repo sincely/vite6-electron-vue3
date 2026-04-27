@@ -45,8 +45,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/home/index.vue'),
         meta: {
           title: '仪表板',
-          keepAlive: true,
-          transition: 'page'
+          keepAlive: true
         }
       }
     ]
@@ -70,8 +69,7 @@ export const asyncRouteTree = [
         meta: {
           title: '404 未找到',
           group: '/exception',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       },
       {
@@ -81,8 +79,7 @@ export const asyncRouteTree = [
         meta: {
           title: '500 服务器错误',
           group: '/exception',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       }
     ]
@@ -96,7 +93,7 @@ export const asyncRouteTree = [
         path: '',
         name: 'editableTable',
         component: () => import('@/views/editableTable/index.vue'),
-        meta: { title: '可编辑表格', keepAlive: true, transition: 'slide-up' }
+        meta: { title: '可编辑表格', keepAlive: true }
       }
     ]
   },
@@ -109,7 +106,7 @@ export const asyncRouteTree = [
         path: '',
         name: 'advanceTable',
         component: () => import('@/views/advanceTable/index.vue'),
-        meta: { title: '高级表格', transition: 'slide-up' }
+        meta: { title: '高级表格' }
       }
     ]
   },
@@ -122,7 +119,7 @@ export const asyncRouteTree = [
         path: '',
         name: 'treeTable',
         component: () => import('@/views/treeTable/index.vue'),
-        meta: { title: '树型表格', transition: 'slide-up' }
+        meta: { title: '树型表格' }
       }
     ]
   },
@@ -135,7 +132,7 @@ export const asyncRouteTree = [
         path: '',
         name: 'form',
         component: () => import('@/views/form/index.vue'),
-        meta: { title: '表单', transition: 'slide-up' }
+        meta: { title: '表单' }
       }
     ]
   }

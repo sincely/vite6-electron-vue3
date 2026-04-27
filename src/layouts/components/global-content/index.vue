@@ -14,8 +14,23 @@
 </template>
 
 <script setup>
+import { animates } from '@/settings/animateSetting'
+import { useAppStore } from '@/store/modules/app'
+
 const route = useRoute()
-const transitionName = computed(() => route.meta?.transition ?? 'page')
+const appStore = useAppStore()
+const animateValueSet = new Set(animates.map((item) => item.value))
+
+const transitionName = computed(() => {
+  if (!appStore.transitionEnabled) return ''
+
+  // 仅使用全局动画设置；历史无效值回退到默认动画
+  if (animateValueSet.has(appStore.transitionType)) {
+    return appStore.transitionType
+  }
+
+  return 'page'
+})
 const isLoading = ref(false)
 
 watch(

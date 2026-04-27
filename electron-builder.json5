@@ -7,7 +7,9 @@
   "appId": "ichengzhou@icloud.com",
   "asar": true,
   "asarUnpack": [
-    "**/node_modules/*"
+    "node_modules/better-sqlite3/**/*",
+    "node_modules/typeorm/**/*",
+    "**/node_modules/app-root-path/**"
   ],
   "productName": "lightning",
   "copyright": "Copyright © 2024 dyy.dongyuanwai",

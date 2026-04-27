@@ -7,6 +7,8 @@ export const useAppStore = defineStore('app', {
     theme: 'light', // 当前主题，默认是亮色主题
     layoutMode: 'left', // 布局模式：left | left-mixed | top | top-mixed
     sidebarCollapsed: false, // 侧边栏是否折叠
+    transitionEnabled: true, // 是否启用页面切换动画
+    transitionType: 'page', // 页面切换动画类型
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
     loadingTargets: [], // 加载中状态的目标元素

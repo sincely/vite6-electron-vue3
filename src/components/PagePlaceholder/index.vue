@@ -1,5 +1,5 @@
 <template>
-  <section class="page-placeholder page-enter glass-card">
+  <section class="page-placeholder glass-card">
     <div class="placeholder-icon">
       <SvgIcon :icon-class="icon" width="400px" height="400px" />
     </div>

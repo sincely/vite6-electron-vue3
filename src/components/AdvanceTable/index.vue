@@ -410,8 +410,6 @@ watch(
   padding: 12px;
   overflow-y: hidden;
   background: var(--glass-surface);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-surface-border);
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
 }
