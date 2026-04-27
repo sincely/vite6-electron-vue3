@@ -10,11 +10,7 @@
     >
       <!-- 显示项 -->
       <template v-for="item in displayedItems" :key="item.prop">
-        <el-form-item
-          v-has-permi="item.permi"
-          :label="item.label"
-          class="search-item"
-        >
+        <el-form-item :label="item.label" class="search-item">
           <!-- input -->
           <el-input
             v-if="item.type === 'input'"
@@ -62,8 +58,10 @@
 
       <!-- 操作按钮 -->
       <el-form-item class="search-actions">
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button @click="resetAll">重置</el-button>
+        <el-button type="primary" :icon="Search" @click="handleSearch">
+          查询
+        </el-button>
+        <el-button :icon="RefreshRight" @click="resetAll">重置</el-button>
         <el-button
           v-if="items.length > 3"
           type="primary"
@@ -85,6 +83,9 @@
 </template>
 
 <script setup>
+import { RefreshRight, Search } from '@element-plus/icons-vue'
+import { useUserStore } from '@/store/modules/user'
+
 const props = defineProps({
   items: {
     type: Array,
@@ -107,6 +108,7 @@ const props = defineProps({
 // 响应式数据
 const localParams = reactive({})
 const isExpanded = ref(false)
+const userStore = useUserStore()
 
 // 计算显示项（折叠逻辑）
 const displayedItems = computed(() => {
@@ -135,7 +137,7 @@ watch(
 )
 
 // 查询
-function handleSearch() {
+const handleSearch = () => {
   if (props.tableRef?.getList) {
     props.tableRef.getList()
   }
@@ -144,7 +146,7 @@ function handleSearch() {
 }
 
 // 重置
-function resetAll() {
+const resetAll = () => {
   // 重置为初始值
   for (const key in localParams) {
     localParams[key] = ''
@@ -154,24 +156,34 @@ function resetAll() {
 }
 
 // 切换展开
-function toggleExpand() {
+const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
 }
 
 // 权限指令（示例）
 const vHasPermi = {
-  mounted(el, binding) {
+  mounted: (el, binding) => {
     const { value } = binding
     if (value && !checkPermission(value)) {
       el.style.display = 'none'
     }
+  },
+  updated: (el, binding) => {
+    const { value } = binding
+    el.style.display = value && !checkPermission(value) ? 'none' : ''
   }
 }
 
-// 模拟权限检查
-function checkPermission(permi) {
-  // 实际项目中从 store 或全局状态获取用户权限
-  const userPermi = ['user:query', 'role:edit'] // 示例
+// 兼容 mock 场景下的超级权限和精确权限
+const checkPermission = (permi) => {
+  const userPermi = userStore.permissions || []
+  const hasAllPermission =
+    userPermi.includes('*:*:*') || userPermi.includes('*') || !userPermi.length
+
+  if (hasAllPermission) {
+    return true
+  }
+
   if (Array.isArray(permi)) {
     return permi.some((p) => userPermi.includes(p))
   }

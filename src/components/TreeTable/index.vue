@@ -129,7 +129,7 @@
       <el-table-column
         v-if="mergedConfig.useAction"
         label="操作"
-        width="200"
+        width="240"
         align="center"
         fixed="right"
       >
@@ -306,7 +306,7 @@ const visibleColumns = computed(() => {
   })
 })
 
-function formatCellValue(column, row, col, index) {
+const formatCellValue = (column, row, col, index) => {
   if (typeof column.formatter !== 'function') return row[column.prop]
   try {
     return column.formatter(row, col, row[column.prop], index)
@@ -316,18 +316,18 @@ function formatCellValue(column, row, col, index) {
   }
 }
 
-function getSafeValue(row, prop) {
+const getSafeValue = (row, prop) => {
   return row?.[prop] ?? ''
 }
 
 // 格式化时间
-function formatDate(value, format = '{y}-{m}-{d}') {
+const formatDate = (value, format = '{y}-{m}-{d}') => {
   if (!value) return ''
   return parseTime(value, format)
 }
 
 // 获取数据
-async function getList() {
+const getList = async () => {
   try {
     loading.value = true
 
@@ -369,18 +369,18 @@ const refresh = () => {
 }
 
 // 重置查询
-function resetQuery() {
+const resetQuery = () => {
   queryParams.pageNum = 1
   getList()
 }
 
 // 强制重绘
-function reload() {
+const reload = () => {
   tableRef.value?.doLayout()
 }
 
 // 排序变更
-function handleSortChange({ prop, order }) {
+const handleSortChange = ({ prop, order }) => {
   if (mergedConfig.value.sort) {
     const sort = order
       ? { prop, order: order === 'ascending' ? 'asc' : 'desc' }
@@ -393,18 +393,18 @@ function handleSortChange({ prop, order }) {
 }
 
 // 多选变更
-function handleSelectionChange(selection) {
+const handleSelectionChange = (selection) => {
   emit('selection-change', selection)
 }
 
 // 分页大小变更
-function handleSizeChange(val) {
+const handleSizeChange = (val) => {
   queryParams.pageSize = val
   getList()
 }
 
 // 链接点击
-function handleLinkClick(column, row) {
+const handleLinkClick = (column, row) => {
   if (props.events?.onLinkClick) {
     props.events.onLinkClick(column, row)
   } else if (column.link?.name) {
@@ -420,17 +420,17 @@ function handleLinkClick(column, row) {
 }
 
 // 行编辑
-function handleEdit(row, index) {
+const handleEdit = (row, index) => {
   emit('edit', row, index)
 }
 
 // 删除行
-function handleDelete(row, index) {
+const handleDelete = (row, index) => {
   emit('delete', row, index)
 }
 
 // 新增子节点
-function handleAdd(row, index) {
+const handleAdd = (row, index) => {
   emit('add', row, index)
 }
 
@@ -536,12 +536,7 @@ defineExpose({
 
 .action-group {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
   justify-content: center;
-
-  :deep(.el-button) {
-    margin: 0;
-  }
 }
 </style>
