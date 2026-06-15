@@ -34,43 +34,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   height: 100%;
   overflow: hidden;
   background: var(--sidebar-surface-bg);
-  backdrop-filter: blur(16px) saturate(1.06);
-  border-right: 1px solid var(--glass-surface-border);
-  border-radius: 0;
+  border-right: 1px solid var(--color-border);
   transition: width $transition;
-
-  &::before {
-    position: absolute;
-    inset: 0 0 auto;
-    height: 120px;
-    pointer-events: none;
-    content: '';
-    background:
-      radial-gradient(
-        circle at 14% 0%,
-        color-mix(in srgb, var(--brand-accent), transparent 82%) 0%,
-        transparent 62%
-      ),
-      radial-gradient(
-        circle at 84% 16%,
-        color-mix(in srgb, var(--brand-accent-alt), transparent 84%) 0%,
-        transparent 58%
-      );
-    opacity: 0.9;
-  }
-
-  &::after {
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 1px;
-    pointer-events: none;
-    content: '';
-    background: linear-gradient(
-      180deg,
-      rgb(255 255 255 / 10%) 0%,
-      rgb(255 255 255 / 2%) 100%
-    );
-  }
 
   &-collapsed {
     width: var(--sidebar-collapsed-width);
@@ -89,7 +54,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     justify-content: center;
     padding: 0;
     margin-inline: 4px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
 
     &:hover {
       transform: none;

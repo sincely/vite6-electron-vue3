@@ -120,15 +120,8 @@ const handleNav = (item) => {
   position: relative;
   z-index: 2;
   flex: 1;
-  padding: 10px 8px;
+  padding: 8px;
   overflow: hidden auto;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    black 16px,
-    black calc(100% - 16px),
-    transparent 100%
-  );
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -147,40 +140,27 @@ const handleNav = (item) => {
 .sidebar-item {
   position: relative;
   display: flex;
-  gap: 11px;
+  gap: 10px;
   align-items: center;
-  height: 46px;
-  padding: 0 14px;
-  margin-bottom: 7px;
+  height: 42px;
+  padding: 0 12px;
+  margin-bottom: 4px;
   color: var(--color-text-secondary);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-bg-card), transparent 38%) 0%,
-    color-mix(in srgb, var(--color-bg-sidebar), transparent 52%) 100%
-  );
-  border: 1px solid
-    color-mix(in srgb, var(--glass-surface-border), transparent 52%);
-  border-radius: 14px;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 6%),
-    0 8px 16px -14px rgb(2 6 23 / 78%);
-  transition: all 0.24s ease;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
 
   &:hover {
     color: var(--color-text-primary);
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 25%);
-    border-color: color-mix(in srgb, var(--brand-accent), transparent 72%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 8%),
-      0 10px 18px -14px color-mix(in srgb, var(--brand-accent), transparent 54%);
-    transform: translate3d(2px, -1px, 0);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
 
     .sidebar-icon-wrap {
-      background: color-mix(in srgb, var(--brand-accent), transparent 88%);
-      border-color: color-mix(in srgb, var(--brand-accent), transparent 76%);
+      background: var(--brand-accent-soft);
     }
 
     .sidebar-icon {
@@ -191,23 +171,13 @@ const handleNav = (item) => {
   &-active {
     font-weight: 600;
     color: var(--color-primary) !important;
-    background: linear-gradient(
-      100deg,
-      color-mix(in srgb, var(--color-primary), transparent 86%) 0%,
-      color-mix(in srgb, var(--brand-accent-alt), transparent 90%) 100%
-    );
-    border-color: color-mix(in srgb, var(--color-primary), transparent 66%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 12%),
-      0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 82%),
-      0 8px 20px -12px color-mix(in srgb, var(--color-primary), transparent 38%);
+    background: var(--brand-accent-soft);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
 
-    .sidebar-icon-wrap {
-      background: color-mix(in srgb, var(--color-primary), transparent 76%);
-      border-color: color-mix(in srgb, var(--color-primary), transparent 66%);
-      box-shadow: 0 0 12px -2px
-        color-mix(in srgb, var(--color-primary), transparent 46%);
-    }
+    // .sidebar-icon-wrap {
+    //   background: color-mix(in srgb, var(--color-primary), transparent 12%);
+    //   box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 60%);
+    // }
 
     .sidebar-icon {
       color: var(--color-primary);
@@ -215,41 +185,30 @@ const handleNav = (item) => {
 
     .sidebar-child-dot {
       background: var(--color-primary);
-      box-shadow:
-        0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 82%),
-        0 0 8px color-mix(in srgb, var(--color-primary), transparent 52%);
     }
 
     &::before {
       position: absolute;
-      inset: 9px auto 9px 4px;
+      inset: 8px auto 8px 0;
       width: 3px;
       content: '';
-      background: linear-gradient(
-        180deg,
-        var(--color-primary) 0%,
-        var(--brand-accent-alt) 100%
-      );
+      background: var(--color-primary);
       border-radius: 4px;
-      box-shadow: 0 0 8px
-        color-mix(in srgb, var(--color-primary), transparent 30%);
     }
   }
 
   &-child {
-    height: 38px;
-    padding-left: 46px;
+    height: 36px;
+    padding-left: 42px;
     margin-bottom: 2px;
     font-size: 13px;
     background: transparent;
     border-color: transparent;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     box-shadow: none;
-    opacity: 0.96;
 
     &:hover {
-      background: color-mix(in srgb, var(--color-bg-hover), transparent 22%);
-      transform: translate3d(0, 0, 0);
+      background: var(--color-bg-hover);
     }
 
     &::before {
@@ -260,7 +219,7 @@ const handleNav = (item) => {
 
 .sidebar-icon {
   color: var(--color-text-muted);
-  transition: color 0.22s;
+  transition: color 0.2s;
 }
 
 .sidebar-icon-wrap {
@@ -268,13 +227,11 @@ const handleNav = (item) => {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: color-mix(in srgb, var(--color-bg-input), transparent 25%);
-  border: 1px solid
-    color-mix(in srgb, var(--glass-surface-border), transparent 30%);
-  border-radius: 10px;
-  transition: all 0.22s ease;
+  width: 30px;
+  height: 30px;
+  background: var(--color-bg-input);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
 }
 
 .sidebar-label {
@@ -293,9 +250,8 @@ const handleNav = (item) => {
   width: 6px;
   height: 6px;
   margin-right: 2px;
-  background: color-mix(in srgb, var(--brand-accent), transparent 15%);
+  background: var(--color-border);
   border-radius: 50%;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-accent), transparent 90%);
 }
 
 .sidebar-chevron {
@@ -312,58 +268,50 @@ const handleNav = (item) => {
 .sidebar-submenu {
   display: grid;
   grid-template-rows: 0fr;
-  margin: 0 6px;
+  margin: 0 4px;
   overflow: hidden;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   transition:
-    grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    margin 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.35s ease,
-    border-color 0.35s ease;
+    grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    margin 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .sidebar-submenu-inner {
   min-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .sidebar-submenu-open {
   position: relative;
   grid-template-rows: 1fr;
   padding: 4px;
-  margin: -2px 6px 6px;
-  background: color-mix(in srgb, var(--glass-surface), transparent 18%);
-  border-color: color-mix(
-    in srgb,
-    var(--glass-surface-border),
-    transparent 36%
-  );
+  margin: -2px 4px 4px;
+  background: var(--color-bg-content);
+  border-color: var(--color-border-light);
 
   .sidebar-submenu-inner {
     opacity: 1;
-    transition-delay: 0.1s;
+    transition-delay: 0.08s;
   }
 
   &::before {
     position: absolute;
-    top: 12px;
-    bottom: 12px;
-    left: 14px;
+    top: 8px;
+    bottom: 8px;
+    left: 12px;
     width: 1px;
     content: '';
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--brand-accent), transparent 40%) 0%,
-      transparent 100%
-    );
+    background: color-mix(in srgb, var(--color-primary), transparent 40%);
     border-radius: 1px;
     opacity: 0;
-    animation: fadeIn 0.3s ease 0.1s forwards;
+    animation: fadeIn 0.25s ease 0.08s forwards;
   }
 }
 

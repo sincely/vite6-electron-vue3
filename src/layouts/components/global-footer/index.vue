@@ -33,9 +33,8 @@ const footerHeight = computed(() => appStore.footerHeight || 26)
   justify-content: space-between;
   height: 26px;
   padding: 0 14px;
-  background: color-mix(in srgb, var(--color-bg-card), transparent 60%);
-  border-top: 1px solid
-    color-mix(in srgb, var(--glass-surface-border), transparent 20%);
+  background: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
 
   &__left,
   &__right {
@@ -53,7 +52,7 @@ const footerHeight = computed(() => appStore.footerHeight || 26)
     letter-spacing: 0.2px;
 
     &--online {
-      color: #22c55e;
+      color: var(--color-success);
     }
   }
 

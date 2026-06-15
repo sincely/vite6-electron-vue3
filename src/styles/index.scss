@@ -7,19 +7,21 @@
 @use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *; // 引入 Element Plus 暗黑模式 CSS 变量
 
 /* =========================
- * 样式说明（UI 层）
- * 1) 主题 Token（已统一放在 themes.scss）：
- *    - --brand-accent / --brand-accent-alt：品牌主色与辅助色
- *    - --app-bg-gradient：应用背景氛围渐变
- *    - --glass-surface / --glass-surface-border：玻璃卡片面与边框
- *    - --sidebar-surface-bg：侧边栏专用背景
- *    - --glass-shadow-soft / --glass-shadow-hover：卡片阴影层级
+ * 样式说明（白蓝主题 - Flat Design）
+ * 1) 主题 Token（themes.scss）：
+ *    - --brand-accent / --brand-accent-alt：品牌蓝 (#2563EB / #3B82F6)
+ *    - --brand-accent-soft：品牌蓝浅色背景 (#EFF6FF)
+ *    - --color-bg-*：白蓝背景色系
+ *    - --color-text-*：高对比度文字色系
+ *    - --color-border-*：极简边框色系
+ *    - --glass-surface / --glass-surface-border：简洁平面与边框
+ *    - --sidebar-surface-bg：侧边栏背景
+ *    - --glass-shadow-soft / --glass-shadow-hover：轻量投影层级
  * 2) 工具类：
- *    - .glass-card：玻璃卡片容器
+ *    - .glass-card：卡片容器
  *    - .page-enter：页面入场动效
  * 3) 动效：
  *    - fade-up：轻量上浮淡入
- *    - orbit：品牌区微动效
  * ========================= */
 
 .glass-card {

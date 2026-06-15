@@ -93,30 +93,28 @@ const handleClick = (item) => {
 </script>
 
 <style lang="scss" scoped>
-$transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
+$transition: 0.2s ease;
 
 .sidebar-footer {
   position: relative;
   z-index: 2;
-  padding: 10px 8px;
+  padding: 8px;
 }
 
 .user-profile {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   padding: 8px;
   cursor: pointer;
-  background: color-mix(in srgb, var(--glass-surface), transparent 22%);
-  border: 1px solid
-    color-mix(in srgb, var(--glass-surface-border), transparent 24%);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
   transition: all $transition;
 
   &:hover {
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 16%);
-    border-color: color-mix(in srgb, var(--brand-accent), transparent 74%);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
   }
 
   .user-avatar {
@@ -124,16 +122,12 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     overflow: hidden;
     background-color: var(--color-bg-input);
-    border: 2px solid
-      color-mix(in srgb, var(--color-bg-sidebar), transparent 16%);
+    border: 2px solid var(--color-border);
     border-radius: 50%;
-    box-shadow:
-      var(--shadow-sm),
-      inset 0 0 0 1px rgb(255 255 255 / 32%);
 
     img {
       width: 100%;
@@ -149,7 +143,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   }
 
   .user-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--color-text-primary);
     text-overflow: ellipsis;
@@ -181,29 +175,28 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 .sidebar-footer-settings {
   position: absolute;
   right: 8px;
-  bottom: 70px;
+  bottom: 66px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 220px;
+  width: 200px;
   padding: 8px;
-  background-color: color-mix(in srgb, var(--glass-surface), transparent 22%);
-  border: 1px solid
-    color-mix(in srgb, var(--glass-surface-border), transparent 24%);
-  border-radius: var(--radius-lg);
+  background-color: var(--glass-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 
   .sidebar-setting-item {
     padding: 8px 12px;
     cursor: pointer;
-    background: color-mix(in srgb, var(--glass-surface), transparent 22%);
-    border: 1px solid
-      color-mix(in srgb, var(--glass-surface-border), transparent 24%);
-    border-radius: 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
     transition: all $transition;
 
     &:hover {
-      background: color-mix(in srgb, var(--color-bg-hover), transparent 16%);
-      border-color: color-mix(in srgb, var(--brand-accent), transparent 74%);
+      background: var(--color-bg-hover);
+      border-color: var(--color-border-light);
     }
   }
 }

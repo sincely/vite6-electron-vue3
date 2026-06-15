@@ -1,73 +1,75 @@
 // =============================================
-// 主题 CSS 变量系统（通过 data-theme 切换）
+// 白蓝主题 CSS 变量系统（通过 data-theme 切换）
+// 设计风格：Flat Design - 干净、现代、专业
+// 主色：#2563EB (Blue-600) | 辅色：#3B82F6 (Blue-500)
 // =============================================
 
-// ---------- Light Theme ----------
+// ---------- Light Theme (白蓝亮色) ----------
 :root,
 html[data-theme='light'] {
-  // 背景色 (Light - 极浅灰蓝)
+  // 背景色 - 以白色为主基调
   --color-bg-window: #fff;
   --color-bg-titlebar: #fff;
   --color-bg-sidebar: #fff;
   --color-bg-sidebar-titlebar: #fff;
-  --color-bg-content: #f4f7fb;
-  --color-bg-hover: #eff6ff; // Blue-50
-  --color-bg-active: #eff6ff; // 侧边栏选中背景
+  --color-bg-content: #f8fafc; // Slate-50，极浅灰蓝，主区域背景
+  --color-bg-hover: #eff6ff; // Blue-50，蓝色微弱悬浮背景
+  --color-bg-active: #dbeafe; // Blue-100，选中/激活背景
   --color-bg-card: #fff;
-  --color-bg-input: #f9fafb;
+  --color-bg-input: #f1f5f9; // Slate-100
   --color-bg-status: #eff6ff;
 
-  // 文字色 (NginxPulse Light - 深黑)
-  --color-text-primary: #111827; // Gray-900
-  --color-text-secondary: #6b7280; // Gray-500
-  --color-text-muted: #9ca3af; // Gray-400
-  --color-text-active: #2563eb; // 选中文字蓝
+  // 文字色 - 高对比度深色系
+  --color-text-primary: #0f172a; // Slate-900
+  --color-text-secondary: #475569; // Slate-600
+  --color-text-muted: #94a3b8; // Slate-400
+  --color-text-active: #2563eb; // Blue-600 选中文字
   --color-text-link: #2563eb;
 
-  // 边框
-  --color-border: #e5e7eb; // Gray-200
-  --color-border-light: #f3f4f6;
+  // 边框 - 极简清爽
+  --color-border: #e2e8f0; // Slate-200
+  --color-border-light: #f1f5f9;
 
-  // 阴影 (柔和投影)
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 8%), 0 2px 4px -1px rgb(0 0 0 / 4%);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 8%), 0 4px 6px -2px rgb(0 0 0 / 4%);
+  // 阴影 - 极轻投影，符合 Flat Design
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 4%);
+  --shadow-md: 0 2px 4px -1px rgb(0 0 0 / 6%);
+  --shadow-lg: 0 4px 6px -1px rgb(0 0 0 / 8%);
 
-  // 圆角 (保持较大的现代圆角)
+  // 圆角
   --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
 
   // 滚动条
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-track: transparent;
 
-  // 状态颜色 ( 风格)
-  --color-primary: #2563eb; // Blue-600 (主色)
-  --color-success: #10b981; // Emerald-500 (增长)
-  --color-danger: #ef4444; // Red-500 (下降)
+  // 状态颜色 - 蓝色系为主
+  --color-primary: #2563eb; // Blue-600
+  --color-success: #10b981; // Emerald-500
+  --color-danger: #ef4444; // Red-500
   --color-warning: #f59e0b; // Amber-500
   --color-info: #0ea5e9; // Sky-500
 
-  // 侧边栏
+  // 侧边栏尺寸
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 72px;
   --titlebar-height: 64px;
 
-  // UI 扩展变量
+  // 品牌扩展变量 - 白蓝清爽风格
   --brand-accent: #2563eb;
   --brand-accent-alt: #3b82f6;
   --brand-accent-soft: #eff6ff;
-  --app-bg-gradient: none; // Light 模式移除复杂渐变，保持清爽
-  --glass-surface: rgb(255 255 255 / 90%);
-  --glass-surface-border: #e4e3e3;
+  --app-bg-gradient: none;
+  --glass-surface: #fff;
+  --glass-surface-border: #e2e8f0;
   --sidebar-surface-bg: #fff;
-  --glass-shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 5%);
-  --glass-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 8%);
+  --glass-shadow-soft: 0 1px 3px rgb(0 0 0 / 5%);
+  --glass-shadow-hover: 0 2px 6px rgb(0 0 0 / 8%);
 }
 
-// ---------- Dark Theme ----------
+// ---------- Dark Theme (深蓝暗色) ----------
 html[data-theme='dark'],
 html.dark {
   // 背景色 ( Dark - 极深蓝黑)

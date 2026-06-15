@@ -101,13 +101,9 @@ const breadcrumb = computed(() => findMenuPath(route.path))
     max-width: 100%;
     padding: 4px;
     overflow: hidden;
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 30%);
-    backdrop-filter: blur(10px);
-    border: 1px solid color-mix(in srgb, var(--color-border), transparent 30%);
+    background: var(--color-bg-hover);
+    border: 1px solid var(--color-border-light);
     border-radius: 999px;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 5%),
-      0 6px 18px -16px rgb(15 23 42 / 28%);
   }
 
   &-sep {
@@ -139,15 +135,9 @@ const breadcrumb = computed(() => findMenuPath(route.path))
 
     &-active {
       font-weight: 600;
-      color: var(--color-text-primary);
-      background: linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--color-primary), transparent 90%) 0%,
-        color-mix(in srgb, var(--brand-accent), transparent 92%) 100%
-      );
-      border-color: color-mix(in srgb, var(--color-primary), transparent 72%);
-      box-shadow: 0 8px 18px -16px
-        color-mix(in srgb, var(--color-primary), transparent 20%);
+      color: var(--color-primary);
+      background: var(--brand-accent-soft);
+      border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
     }
 
     &-link {
@@ -155,8 +145,8 @@ const breadcrumb = computed(() => findMenuPath(route.path))
 
       &:hover {
         color: var(--color-text-primary);
-        background: color-mix(in srgb, var(--color-bg-hover), transparent 5%);
-        border-color: color-mix(in srgb, var(--color-border), transparent 45%);
+        background: var(--color-bg-hover);
+        border-color: var(--color-border-light);
       }
     }
   }

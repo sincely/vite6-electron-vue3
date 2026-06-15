@@ -147,9 +147,8 @@ const close = () => ipcRenderer.send('close-window')
   height: var(--titlebar-height);
   overflow: visible;
   user-select: none;
-  background: color-mix(in srgb, var(--color-bg-titlebar), transparent 12%);
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--color-border), transparent 24%);
+  background: var(--color-bg-titlebar);
+  border-bottom: 1px solid var(--color-border);
   -webkit-app-region: drag;
 
   &__inner {
@@ -194,7 +193,7 @@ const close = () => ipcRenderer.send('close-window')
   height: 34px;
   color: var(--color-text-secondary);
   cursor: pointer;
-  background: color-mix(in srgb, var(--color-bg-hover), transparent 38%);
+  background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
@@ -202,12 +201,8 @@ const close = () => ipcRenderer.send('close-window')
 
   &:hover {
     color: var(--color-text-primary);
-    background-color: color-mix(
-      in srgb,
-      var(--color-bg-hover),
-      transparent 10%
-    );
-    border-color: color-mix(in srgb, var(--color-border), transparent 38%);
+    background-color: var(--color-bg-hover);
+    border-color: var(--color-border-light);
   }
 
   &:active {
@@ -222,19 +217,11 @@ const close = () => ipcRenderer.send('close-window')
     font-size: 12px;
     font-weight: 500;
     color: var(--color-primary);
-    background: linear-gradient(
-      100deg,
-      color-mix(in srgb, var(--color-primary), transparent 88%) 0%,
-      color-mix(in srgb, var(--brand-accent-alt), transparent 90%) 100%
-    );
-    border-color: color-mix(in srgb, var(--color-primary), transparent 64%);
+    background: var(--brand-accent-soft);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
 
     &:hover {
-      background: linear-gradient(
-        100deg,
-        color-mix(in srgb, var(--color-primary), transparent 82%) 0%,
-        color-mix(in srgb, var(--brand-accent-alt), transparent 84%) 100%
-      );
+      background: var(--color-bg-active);
     }
 
     .update-icon {

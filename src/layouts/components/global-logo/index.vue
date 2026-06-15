@@ -54,30 +54,23 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
   &__img {
     flex-shrink: 0;
-    width: 34px;
-    height: 34px;
-    filter: drop-shadow(0 8px 14px rgb(15 23 42 / 22%));
+    width: 42px;
+    height: 42px;
   }
 
   &__name {
     margin-left: 12px;
     overflow: hidden;
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary);
     text-overflow: ellipsis;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.3px;
     white-space: nowrap;
-    background: linear-gradient(
-      135deg,
-      var(--color-text-primary) 0%,
-      var(--brand-accent) 100%
-    );
-    background-clip: text;
     opacity: 1;
     transition:
       opacity $transition,
       width $transition;
-    -webkit-text-fill-color: transparent;
 
     &.is-hidden {
       width: 0;

@@ -168,39 +168,20 @@ const handleUserAction = async (action) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   cursor: pointer;
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 50%;
   outline: none;
-  transition: transform 0.25s ease;
+  transition: all 0.2s ease;
   -webkit-app-region: no-drag;
 
   &:hover {
-    transform: translateY(-1px);
-
-    .header-user-trigger__halo {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  &__halo {
-    position: absolute;
-    inset: 2px;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--color-primary), transparent 68%) 0%,
-      color-mix(in srgb, var(--brand-accent), transparent 72%) 100%
-    );
-    filter: blur(8px);
-    border-radius: 50%;
-    opacity: 0.88;
-    transition: all 0.25s ease;
-    transform: scale(0.92);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
   }
 
   &__avatar,
@@ -210,22 +191,15 @@ const handleUserAction = async (action) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     overflow: hidden;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: #fff;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--brand-accent), transparent 10%) 0%,
-      color-mix(in srgb, var(--color-primary), transparent 20%) 100%
-    );
-    border: 2px solid color-mix(in srgb, #fff, transparent 78%);
+    background: var(--color-primary);
+    border: 2px solid var(--color-border);
     border-radius: 50%;
-    box-shadow:
-      0 10px 22px -14px rgb(15 23 42 / 65%),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
   }
 
   &__avatar {
@@ -234,24 +208,23 @@ const handleUserAction = async (action) => {
 
   &__status {
     position: absolute;
-    right: 3px;
-    bottom: 5px;
+    right: 2px;
+    bottom: 2px;
     z-index: 2;
-    width: 12px;
-    height: 12px;
-    background: #4ade80;
+    width: 10px;
+    height: 10px;
+    background: #10b981;
     border: 2px solid var(--color-bg-titlebar);
     border-radius: 50%;
-    box-shadow: 0 0 0 3px color-mix(in srgb, #4ade80, transparent 78%);
   }
 }
 
 :deep(.header-user-dropdown-popper.el-popper) {
   padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  box-shadow: none;
+  background: var(--glass-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
 }
 
 :deep(.header-user-dropdown-popper .el-popper__arrow) {
@@ -259,16 +232,15 @@ const handleUserAction = async (action) => {
 }
 
 .header-user-menu {
-  width: 230px;
+  width: 220px;
   overflow: hidden;
 
   &__hero {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
-    padding: 14px 14px 13px;
-    border-bottom: 1px solid
-      color-mix(in srgb, var(--color-border), transparent 34%);
+    padding: 12px;
+    border-bottom: 1px solid var(--color-border);
   }
 
   &__avatar-wrap {
@@ -281,22 +253,15 @@ const handleUserAction = async (action) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     overflow: hidden;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     color: #fff;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--brand-accent), transparent 12%) 0%,
-      color-mix(in srgb, var(--color-primary), transparent 18%) 100%
-    );
-    border: 2px solid color-mix(in srgb, #fff, transparent 84%);
+    background: var(--color-primary);
+    border: 2px solid var(--color-border);
     border-radius: 50%;
-    box-shadow:
-      0 16px 32px -18px rgb(15 23 42 / 55%),
-      inset 0 1px 0 rgb(255 255 255 / 28%);
   }
 
   &__avatar {
@@ -305,14 +270,13 @@ const handleUserAction = async (action) => {
 
   &__avatar-status {
     position: absolute;
-    right: 2px;
-    bottom: 2px;
-    width: 14px;
-    height: 14px;
-    background: #4ade80;
-    border: 2px solid color-mix(in srgb, var(--color-bg-card), transparent 4%);
+    right: 1px;
+    bottom: 1px;
+    width: 12px;
+    height: 12px;
+    background: #10b981;
+    border: 2px solid var(--glass-surface);
     border-radius: 50%;
-    box-shadow: 0 0 0 3px color-mix(in srgb, #4ade80, transparent 82%);
   }
 
   &__meta {
@@ -336,14 +300,13 @@ const handleUserAction = async (action) => {
 
   &__badge {
     flex-shrink: 0;
-    padding: 3px 8px;
-    font-size: 11px;
+    padding: 2px 6px;
+    font-size: 10px;
     font-weight: 700;
-    color: #86efac;
-    letter-spacing: 0.04em;
-    background: color-mix(in srgb, #22c55e, transparent 82%);
-    border: 1px solid color-mix(in srgb, #22c55e, transparent 72%);
-    border-radius: 12px;
+    color: var(--color-primary);
+    background: var(--brand-accent-soft);
+    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 40%);
+    border-radius: 8px;
   }
 
   &__email {
@@ -355,11 +318,10 @@ const handleUserAction = async (action) => {
   }
 
   &__group {
-    padding: 8px;
+    padding: 6px;
 
     &--secondary {
-      border-top: 1px solid
-        color-mix(in srgb, var(--color-border), transparent 36%);
+      border-top: 1px solid var(--color-border);
     }
   }
 
@@ -378,8 +340,8 @@ const handleUserAction = async (action) => {
     transition: all 0.2s ease;
 
     &:hover {
-      background: color-mix(in srgb, var(--color-bg-hover), transparent 4%);
-      border-color: color-mix(in srgb, var(--color-border), transparent 42%);
+      background: var(--color-bg-hover);
+      border-color: var(--color-border-light);
     }
 
     &.is-danger {
@@ -403,8 +365,8 @@ const handleUserAction = async (action) => {
     width: 16px;
     height: 16px;
     color: var(--color-text-secondary);
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 18%);
-    border-radius: 8px;
+    background: transparent;
+    border-radius: 6px;
     transition: all 0.2s ease;
   }
 
