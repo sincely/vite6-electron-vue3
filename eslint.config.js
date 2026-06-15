@@ -29,7 +29,9 @@ export default defineFlatConfig([
       '*.woff',
       '*.ttf',
       '*.sh',
-      '*.nsh'
+      '*.nsh',
+      '.qoder',
+      '.trae'
     ]
   },
   {
