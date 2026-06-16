@@ -36,7 +36,8 @@ if (process.contextIsolated) {
    */
   contextBridge.exposeInMainWorld('versions', {
     node: process.versions.node, // Node.js 运行时版本号
-    chrome: process.versions.chrome // Chromium 引擎版本号
+    chrome: process.versions.chrome, // Chromium 引擎版本号
+    appVersion: process.env.npm_package_version || '' // 应用版本号
   })
 
   // 可以暴露其他API

@@ -329,6 +329,11 @@ let onOpenDialog = null
 let onRemoveLoading = null
 
 onMounted(() => {
+  // 初始化当前版本
+  if (!currentVersion.value && window.versions) {
+    updateStore.setCurrentVersion(window.versions.appVersion || '')
+  }
+
   // 标志 loading 是否已经结束
   let loadingFinished = false
 
@@ -365,22 +370,32 @@ onMounted(() => {
     transferredBytes.value = progress?.transferred ?? 0
     totalBytes.value = progress?.total ?? totalBytes.value
     targetDownloadProgress.value = Math.min(progress?.percent ?? 0, 99.2)
+    // 同步更新 store
+    updateStore.setIsUpdating(true)
+    updateStore.setDownloadProgress(targetDownloadProgress.value)
     syncProgressDisplay()
   }
   onDownloaded = (_event, info) => {
     completeDownload(info)
+    // 同步更新 store
+    updateStore.setUpdateDownloaded(true)
+    updateStore.setIsUpdating(false)
   }
   onError = (_, message) => {
     isUpdating.value = false
     downloadSpeed.value = 0
     clearProgressTimer()
     clearCompleteTimer()
+    // 同步更新 store
+    updateStore.setIsUpdating(false)
     console.error('[updater] 下载出错：', message)
   }
   onNotAvailable = () => {
     if (!isUpdating.value) {
       visible.value = false
       resetDownloadState()
+      // 同步更新 store
+      updateStore.resetUpdateState()
     }
   }
   onAvailable = (event) => {

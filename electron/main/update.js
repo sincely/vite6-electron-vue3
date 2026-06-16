@@ -37,7 +37,14 @@ function buildUpdatePayload(info) {
 
 // 发送更新负载到渲染进程
 function sendToRenderer(channel, payload) {
-  mainWindow?.webContents.send(channel, payload)
+  if (
+    mainWindow &&
+    !mainWindow.isDestroyed() &&
+    mainWindow.webContents &&
+    !mainWindow.webContents.isDestroyed()
+  ) {
+    mainWindow.webContents.send(channel, payload)
+  }
 }
 
 // 初始化更新器
