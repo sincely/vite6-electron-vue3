@@ -49,8 +49,8 @@ app.on('before-quit', () => {
 
 // 当所有窗口都被关闭时
 app.on('window-all-closed', () => {
-  // 在 macOS 以外的平台上退出应用
-  if (process.platform !== 'darwin') app.quit()
+  // 在 macOS 以外的平台上退出应用（排除窗口切换场景）
+  if (process.platform !== 'darwin' && !app.isQuiting) app.quit()
 })
 
 // 当应用被激活时

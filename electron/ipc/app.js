@@ -1,6 +1,8 @@
 import {
   createMainWindow,
   closeLoginWindow,
+  closeMainWindow,
+  createLoginWindow,
   createWindow,
   setCloseAction
 } from '../main/windowManager'
@@ -25,6 +27,16 @@ export default [
     handler: (event, data) => {
       closeLoginWindow()
       createMainWindow()
+    }
+  },
+  {
+    channel: 'logout',
+    type: 'on',
+    handler: () => {
+      closeMainWindow()
+      createLoginWindow()
+      // 新窗口已创建，重置退出标记，避免 window-all-closed 触发 app.quit()
+      app.isQuiting = false
     }
   },
   {

@@ -78,14 +78,14 @@ const handleSettingsClick = () => {
   showSettings.value = !showSettings.value
 }
 
-const handleClick = (item) => {
+const handleClick = async (item) => {
   showSettings.value = false
 
   if (item.id === 'settings') {
     appStore.toggleSettings(true)
   } else if (item.id === 'logout') {
-    userStore.logout()
-    router.push('/login').catch(() => {})
+    await userStore.logoutAction()
+    window.ipcRenderer?.send('logout')
   } else {
     router.push(item.route).catch(() => {})
   }

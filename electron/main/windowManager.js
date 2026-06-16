@@ -133,8 +133,11 @@ export function getLoginWindow() {
 
 // 移除窗口事件
 const removeWindowListeners = (win) => {
+  if (!win || win.isDestroyed()) return
   win.removeAllListeners()
-  win.webContents.removeAllListeners()
+  if (win.webContents && !win.webContents.isDestroyed()) {
+    win.webContents.removeAllListeners()
+  }
 }
 
 // 关闭登录窗口
@@ -146,14 +149,29 @@ export function closeLoginWindow() {
   }
 }
 
+// 关闭主窗口
+export function closeMainWindow() {
+  const win = getMainWindow()
+  if (win && !win.isDestroyed()) {
+    // 标记为退出状态，避免 close 事件拦截（最小化到托盘）
+    app.isQuiting = true
+    win.close()
+  }
+}
+
 // 创建登录窗口
 export function createLoginWindow() {
   if (loginWindowId) {
     const win = windows.get(loginWindowId)
-    if (win) {
+    if (win && !win.isDestroyed()) {
       if (win.isMinimized()) win.restore()
       win.focus()
       return win
+    }
+    // 清理无效的窗口引用
+    if (win && win.isDestroyed()) {
+      windows.delete(loginWindowId)
+      loginWindowId = null
     }
   }
 
@@ -197,10 +215,15 @@ export function createLoginWindow() {
 export function createMainWindow() {
   if (mainWindowId) {
     const win = windows.get(mainWindowId)
-    if (win) {
+    if (win && !win.isDestroyed()) {
       if (win.isMinimized()) win.restore()
       win.focus()
       return win
+    }
+    // 清理无效的窗口引用
+    if (win && win.isDestroyed()) {
+      windows.delete(mainWindowId)
+      mainWindowId = null
     }
   }
   // 获取屏幕尺寸
@@ -328,15 +351,20 @@ export function restoreMainWindow() {
   if (mainWindowId) {
     // 恢复主窗口
     const win = windows.get(mainWindowId)
-    if (win) {
+    if (win && !win.isDestroyed()) {
       // 恢复窗口
       if (win.isMinimized()) win.restore()
       win.focus()
       return
     }
+    // 清理无效的窗口引用
+    if (win && win.isDestroyed()) {
+      windows.delete(mainWindowId)
+      mainWindowId = null
+    }
   }
   const loginWin = getLoginWindow()
-  if (loginWin) {
+  if (loginWin && !loginWin.isDestroyed()) {
     if (loginWin.isMinimized()) loginWin.restore()
     // 恢复登录窗口
     loginWin.focus()

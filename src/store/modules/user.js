@@ -59,11 +59,12 @@ export const useUserStore = defineStore('user', {
     async logoutAction() {
       try {
         await logout()
+      } catch {
+        // 即使接口调用失败也继续清理，确保用户能正常退出
+      } finally {
         this.resetUserState()
-        return true
-      } catch (error) {
-        return Promise.reject(error)
       }
+      return true
     },
 
     // 检查用户权限

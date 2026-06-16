@@ -157,7 +157,12 @@ const handleUserAction = async (action) => {
     router.push('/login').catch(() => {})
   } else if (action === 'logout') {
     await userStore.logoutAction().catch(() => {})
-    router.push('/login').catch(() => {})
+    // 通知 Electron 主进程关闭主窗口，打开登录窗口
+    if (window.ipcRenderer) {
+      window.ipcRenderer.send('logout')
+    } else {
+      router.push('/login').catch(() => {})
+    }
   }
 }
 </script>
