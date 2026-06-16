@@ -15,6 +15,7 @@ on:
 
 env:
   NODE_VERSION: '22.20.0'
+  PNPM_VERSION: '9'
 
 jobs:
   prepare-release:
@@ -29,11 +30,14 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - run: npm ci
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
@@ -41,7 +45,7 @@ jobs:
       - name: Bump version and create tag
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-        run: npx release-it ${{ github.event.inputs.version-type }} --ci --no-github.release
+        run: pnpm exec release-it ${{ github.event.inputs.version-type }} --ci --no-github.release
       - name: Export release metadata
         id: release_meta
         run: |
@@ -69,25 +73,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare-release.outputs.tag }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      # - run: npm ci
-      - name: Clean deps (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
-          Remove-Item -Force package-lock.json -ErrorAction SilentlyContinue
-      - name: Clean deps (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          rm -rf node_modules package-lock.json
-      - name: Install dependencies (force reinstall)
-        run: |
-          npm install
-      - run: npm run ${{ matrix.build-script }}
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm run ${{ matrix.build-script }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -105,10 +100,13 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
