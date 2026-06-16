@@ -15,7 +15,8 @@
   "productName": "lightning",
   "copyright": "Copyright © 2024 dyy.dongyuanwai",
   "directories": {
-    "output": "release/${version}"
+    "output": "release/${version}",
+    "buildResources": "resources"
   },
   "removePackageScripts": true,
   "extraResources": [],
@@ -143,13 +144,14 @@
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
-    "signAndEditExecutable": false,
-    "icon": "resources/icons/win/app.ico",
+    "signAndEditExecutable": true,
+    "icon": "icons/win/app.ico",
     "extraResources": [
       {
         "from": "resources/icons/win",
         "to": "icons/win",
         "filter": [
+          "app.ico",
           "tray.ico",
           "tray.png"
         ]
