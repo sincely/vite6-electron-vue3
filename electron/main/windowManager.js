@@ -354,6 +354,7 @@ export function restoreMainWindow() {
     if (win && !win.isDestroyed()) {
       // 恢复窗口
       if (win.isMinimized()) win.restore()
+      win.show()
       win.focus()
       return
     }
@@ -363,10 +364,6 @@ export function restoreMainWindow() {
       mainWindowId = null
     }
   }
-  const loginWin = getLoginWindow()
-  if (loginWin && !loginWin.isDestroyed()) {
-    if (loginWin.isMinimized()) loginWin.restore()
-    // 恢复登录窗口
-    loginWin.focus()
-  }
+  // 主窗口不存在时，创建主窗口
+  createMainWindow()
 }
