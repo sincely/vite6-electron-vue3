@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.22](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.21...v0.0.22) (2026-06-16)
+
+### ✨ Features
+
+* 优化更新逻辑并增强界面体验 ([ef3ec72](https://github.com/sincely/vite6-electron-vue3/commit/ef3ec726ef94541ddfa6dad1f2b1cff36f93138c))
+* 实现主窗口和登录窗口切换及登出流程优化 ([ed4de71](https://github.com/sincely/vite6-electron-vue3/commit/ed4de710a49aa02b546045b42d6b4ba59c6db849))
+* 添加impeccable技能的工具、脚本与参考文档 ([1f9bc27](https://github.com/sincely/vite6-electron-vue3/commit/1f9bc27c6198334046e82eb0aaa4295786c4195b))
+
+### 🐞 Bug Fixes
+
+* 修复.npmrc文件中的空格问题 ([9f65772](https://github.com/sincely/vite6-electron-vue3/commit/9f657724505f66fb790496a8b94f397d18165fc3))
+* 修复窗口恢复时未显示的问题 ([bc66e0d](https://github.com/sincely/vite6-electron-vue3/commit/bc66e0d0d0a8ed7c4ce4e3cc0f5a7c9429ecd6dc))
+* 修正electron-builder配置和资源路径 ([bc59c30](https://github.com/sincely/vite6-electron-vue3/commit/bc59c30c0f33d52ea713ff2a574195573eefc0e8))
+* 解决stylelint不对称依赖 ([4e8b063](https://github.com/sincely/vite6-electron-vue3/commit/4e8b063b63fc0c4f7dd734ab46ad3a80ef6cd86e))
+
+### ⚡ Performance Improvements
+
+* 为开发服务器添加组件预热以提升热更新速度 ([692a8ae](https://github.com/sincely/vite6-electron-vue3/commit/692a8ae69f707c8de224f0e86756d8bb82ede8b4))
+
+### 📝 Documentation
+
+* 添加 ui-to-vue 转换器技能说明文档 ([1e42647](https://github.com/sincely/vite6-electron-vue3/commit/1e42647242a040cab9e8e5c2e7eb375d688524d6))
+
+### 🎨 Styles
+
+* 优化白蓝主题样式与界面配色 ([e947f85](https://github.com/sincely/vite6-electron-vue3/commit/e947f8525d770de00de76948d5a7c605cb74a663))
+
+### 🔧 Chores
+
+* 使用 pnpm 替换 npm 并删除旧的 release 工作流 ([d92fea0](https://github.com/sincely/vite6-electron-vue3/commit/d92fea0c57a30b10a307dfb5175806a4a3a0db04))
+* 初始化算法艺术技能结构和模板文件 ([a61ee97](https://github.com/sincely/vite6-electron-vue3/commit/a61ee979c4159cde11d697a7746900f0a9e8cb5f))
+* 升级构建工具和依赖版本 ([bc2153c](https://github.com/sincely/vite6-electron-vue3/commit/bc2153c03e9b9577cc3f7579972cb4ecc96f9cd8))
+
 ## [0.0.21](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.20...v0.0.21) (2026-04-27)
 
 ### ✨ Features
