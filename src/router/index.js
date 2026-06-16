@@ -129,58 +129,6 @@ export const asyncRouteTree = [
         }
       }
     ]
-  },
-  {
-    path: '/editableTable',
-    component: Layout,
-    meta: { title: '可编辑表格', icon: 'key', order: 6, sidebar: true },
-    children: [
-      {
-        path: '',
-        name: 'editableTable',
-        component: () => import('@/views/editableTable/index.vue'),
-        meta: { title: '可编辑表格', keepAlive: true }
-      }
-    ]
-  },
-  {
-    path: '/advanceTable',
-    component: Layout,
-    meta: { title: '高级表格', icon: 'file-text', order: 7, sidebar: true },
-    children: [
-      {
-        path: '',
-        name: 'advanceTable',
-        component: () => import('@/views/advanceTable/index.vue'),
-        meta: { title: '高级表格' }
-      }
-    ]
-  },
-  {
-    path: '/treeTable',
-    component: Layout,
-    meta: { title: '树型表格', icon: 'file-text', order: 7, sidebar: true },
-    children: [
-      {
-        path: '',
-        name: 'treeTable',
-        component: () => import('@/views/treeTable/index.vue'),
-        meta: { title: '树型表格' }
-      }
-    ]
-  },
-  {
-    path: '/form',
-    component: Layout,
-    meta: { title: '表单', icon: 'file-text', order: 7, sidebar: true },
-    children: [
-      {
-        path: '',
-        name: 'form',
-        component: () => import('@/views/form/index.vue'),
-        meta: { title: '表单' }
-      }
-    ]
   }
 ]
 
