@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
-    "node": ">=20.20.0"
+    "node": ">=22.20.0"
   },
   "description": "A Vite6 Electron Vue3 project",
   "author": "chengzhou",
