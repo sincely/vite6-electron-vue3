@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 
+* chore(deps): 升级 Node.js 版本规范并调整依赖版本 (5180ea5)
+* feat: 初始化 Electron 主进程框架和窗口管理 (393ca7b)
+* feat: 新增前端项目架构分析及图表生成能力 (e8d40ec)
+
 ## [0.0.22](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.21...v0.0.22) (2026-06-16)
 
 ### ✨ Features
