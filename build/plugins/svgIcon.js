@@ -5,7 +5,7 @@ export default function svgIconPlugin() {
   return [
     createSvgIconsPlugin({
       // 配置路径在你的src里的svg存放文件
-      iconDirs: [resolve(process.cwd(), 'src/icons/svg')],
+      iconDirs: [resolve(process.cwd(), 'src/render/icons/svg')],
       // 指定symbolId格式
       symbolId: 'icon-[dir]-[name]',
       /**

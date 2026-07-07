@@ -393,7 +393,7 @@
 <script setup>
 import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
-import pkg from '../../../package.json'
+import pkg from '../../../../package.json'
 
 const appStore = useAppStore()
 const visible = computed({

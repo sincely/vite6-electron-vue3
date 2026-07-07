@@ -24,7 +24,7 @@ export default function createVitePlugins() {
       }
     }),
     Components({
-      dirs: ['src/components'], // 指定组件位置，默认是src/components
+      dirs: ['src/render/components'], // 指定组件位置，默认是src/components
       resolvers: [
         // element-plus主题色配置相关--下面这句importStyle一定要写，不要写个空对象在这儿，否则就会不生效
         ElementPlusResolver({ importStyle: 'sass' })

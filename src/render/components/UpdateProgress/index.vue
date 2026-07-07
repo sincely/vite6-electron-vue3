@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useUpdateStore } from '@/store/modules/version'
 import { ElProgress, ElCard, ElButton } from 'element-plus'
 
@@ -37,7 +36,7 @@ const updateDownloaded = computed(() => updateStore.updateDownloaded)
 
 const installUpdate = () => {
   // 通知主进程安装更新
-  window.ipcRenderer?.send('install-update')
+  ipcRenderer.send('install-update')
 }
 </script>
 

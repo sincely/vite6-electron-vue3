@@ -32,7 +32,10 @@ export default defineConfig(({ mode, command }) => {
       port: 3200, // 指定服务器端口
       proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined,
       warmup: {
-        clientFiles: ['./src/components/**/*.vue', './src/views/**/*.vue']
+        clientFiles: [
+          './src/render/components/**/*.vue',
+          './src/render/views/**/*.vue'
+        ]
       }
     },
     build: {
@@ -133,14 +136,14 @@ export default defineConfig(({ mode, command }) => {
     },
     resolve: {
       alias: {
-        '@': resolve(__dirname, './src'),
-        '@/styles': resolve(__dirname, 'src/styles'),
-        '@/router': resolve(__dirname, 'src/router'),
-        '@/views': resolve(__dirname, 'src/views'),
-        '@/components': resolve(__dirname, 'src/components'),
-        '@/utils': resolve(__dirname, 'src/utils'),
-        '@/assets': resolve(__dirname, 'src/assets'),
-        '@/icons': resolve(__dirname, 'src/icons')
+        '@': resolve(__dirname, './src/render'),
+        '@/styles': resolve(__dirname, 'src/render/styles'),
+        '@/router': resolve(__dirname, 'src/render/router'),
+        '@/views': resolve(__dirname, 'src/render/views'),
+        '@/components': resolve(__dirname, 'src/render/components'),
+        '@/utils': resolve(__dirname, 'src/render/utils'),
+        '@/assets': resolve(__dirname, 'src/render/assets'),
+        '@/icons': resolve(__dirname, 'src/render/icons')
       },
       // 导入时想要省略的扩展名列表
       // 不建议使用.vue 影响IDE和类型支持
@@ -165,7 +168,7 @@ export default defineConfig(({ mode, command }) => {
       electron({
         main: {
           // Shortcut of `build.lib.entry`
-          entry: 'electron/main/index.js',
+          entry: 'src/main/index.js',
           onstart({ startup }) {
             if (process.env.VSCODE_DEBUG) {
               console.log('[startup] Electron App')
@@ -213,7 +216,7 @@ export default defineConfig(({ mode, command }) => {
         preload: {
           // Shortcut of `build.rollupOptions.input`.
           // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
-          input: 'electron/preload/index.mjs',
+          input: 'src/preload/index.mjs',
           vite: {
             build: {
               sourcemap: sourcemap ? 'inline' : undefined, // #332
