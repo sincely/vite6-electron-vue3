@@ -53,7 +53,7 @@
 
 文件位置：
 
-- [index.mjs](file:///d:/project/vite6-electron-vue3/electron/preload/index.mjs)
+- [index.mjs](../electron/preload/index.mjs)
 
 ### 2.3 渲染进程
 
@@ -65,37 +65,74 @@
 
 入口文件：
 
-- [main.js](file:///d:/project/vite6-electron-vue3/src/main.js)
+- [main.js](../src/render/index.js)
 
 ## 3. 目录结构
 
 ```text
+├── .agent/                        # AI 代理技能配置
+├── .github/                       # GitHub 配置
+│   ├── ISSUE_TEMPLATE/            # Issue 模板
+│   ├── prompts/                   # AI 提示词
+│   └── workflows/                 # GitHub Actions 发布工作流
+├── .husky/                        # Git 钩子（commit-msg、pre-commit）
+├── .qoder/                        # Qoder 技能配置
+├── .trae/                         # Trae 技能配置
+├── .vscode/                       # VS Code 工作区配置
 ├── build/                         # Vite 构建插件、代理与工具方法
-├── electron/
+│   ├── config/                    # 构建配置
+│   ├── plugins/                   # 自定义 Vite 插件
+│   └── utils/                     # 构建工具方法（含体积分析）
+├── docs/                          # 技术文档（ARCHITECTURE.md 等）
+├── electron/                      # Electron 源码（开发目录，与 src 同步）
 │   ├── config/                    # Electron 运行配置
 │   ├── ipc/                       # IPC 频道定义与注册
+│   ├── loading/                   # 窗口加载动画
 │   ├── main/                      # 主进程核心逻辑
 │   └── preload/                   # 预加载脚本
+├── licenses/                      # 许可证文件
 ├── mock/                          # 开发/构建阶段模拟数据
+│   └── modules/                   # 模拟数据模块
 ├── public/                        # 公开静态资源
 ├── resources/                     # 应用图标与打包资源
-├── src/
-│   ├── api/                       # 请求封装入口
-│   ├── assets/                    # 图片与静态素材
-│   ├── components/                # 通用业务组件
-│   ├── config/                    # 前端运行时配置
-│   ├── core/                      # 跨页面核心能力，例如更新桥接
-│   ├── hooks/                     # 组合式函数
-│   ├── icons/                     # SVG 图标资源
-│   ├── layouts/                   # 桌面主布局
-│   ├── plugins/                   # 前端插件注册，例如图标与 ECharts
-│   ├── router/                    # 路由配置
-│   ├── settings/                  # 主题与设计配置
-│   ├── store/                     # Pinia 状态管理
-│   ├── styles/                    # 全局样式与主题样式
-│   ├── utils/                     # 通用工具
-│   └── views/                     # 页面级视图
-├── .github/workflows/             # GitHub Actions 发布工作流
+│   └── icons/                     # 平台图标（linux/ mac/ win）
+├── scripts/                       # 工程脚本（图标生成、体积分析、发布等）
+├── src/                           # 源码根目录
+│   ├── main/                      # 主进程源码（对应 electron/main）
+│   │   ├── config/                # 主进程配置
+│   │   ├── ipc/                   # IPC 处理
+│   │   ├── loading/               # 加载动画逻辑
+│   │   ├── index.js               # 主进程入口
+│   │   ├── log.js                 # 日志管理
+│   │   ├── menu.js                # 应用菜单
+│   │   ├── notification.js        # 通知管理
+│   │   ├── tray.js                # 系统托盘
+│   │   ├── update.js              # 自动更新
+│   │   └── windowManager.js       # 窗口管理
+│   ├── preload/                   # 预加载脚本（对应 electron/preload）
+│   │   └── index.mjs              # Preload 入口
+│   ├── render/                    # 渲染进程（Vue 前端）
+│   │   ├── api/                   # 请求封装入口
+│   │   ├── assets/                # 图片与静态素材
+│   │   ├── components/            # 通用业务组件
+│   │   ├── config/                # 前端运行时配置
+│   │   ├── core/                  # 跨页面核心能力，例如更新桥接
+│   │   ├── directives/            # 自定义指令
+│   │   ├── enums/                 # 枚举定义
+│   │   ├── hooks/                 # 组合式函数
+│   │   ├── icons/                 # SVG 图标资源
+│   │   ├── layouts/               # 桌面主布局
+│   │   ├── plugins/               # 前端插件注册，例如图标与 ECharts
+│   │   ├── router/                # 路由配置
+│   │   ├── settings/              # 主题与设计配置
+│   │   ├── store/                 # Pinia 状态管理
+│   │   ├── styles/                # 全局样式与主题样式
+│   │   ├── utils/                 # 通用工具
+│   │   ├── views/                 # 页面级视图
+│   │   ├── App.vue                # 根组件
+│   │   ├── index.js               # 渲染进程入口
+│   │   └── permission.js          # 路由权限
+│   └── shared/                    # 主进程与渲染进程共享代码
 ├── electron-builder.json5         # Electron 打包配置
 ├── vite.config.js                 # Vite 配置
 └── package.json                   # 脚本、依赖、版本信息
@@ -167,26 +204,190 @@
 release/${version}
 ```
 
-### 5.3 发布流程
+### 5.3 构建体积优化
 
-当前推荐发布工作流为：
+项目通过多维度优化策略，实现 **15-35%** 的打包体积缩减。
 
-- [public.yml](file:///d:/project/vite6-electron-vue3/.github/workflows/public.yml)
+#### 5.3.1 优化手段
 
-该流程采用三阶段发布：
+| 优化项 | 配置位置 | 说明 |
+|--------|---------|------|
+| 文件排除 | `electron-builder.json5` | 排除 `.git/**`、`.gitignore`、`.npmignore`、`.tif/.tiff`、sourcemap、文档、类型定义文件等 |
+| Terser 压缩 | `vite.config.js` | `passes: 3`、`reduce_funcs: true`、`mangle.toplevel: true`、移除注释 |
+| Tree-shaking | `vite.config.js` | `moduleSideEffects: false` 启用激进死代码移除 |
+| 代码分割 | `vite.config.js` | 按库拆包：`vue-vendor`、`element-plus`、`echarts`、`qrcode`、`gsap`、`utils-vendor` 等 |
+| 资源优化 | `vite.config.js` | `cssCodeSplit: true`、4KB 以下内联、`compact: true`、按类型分类输出到 `images/`、`fonts/`、`css/` |
+| ASAR 解包 | `electron-builder.json5` | 仅解包 `sharp` 和 `@img` 等必要库 |
 
-1. `prepare-release`：先通过 `release-it` 提升版本并打 tag
-2. `build`：在多平台矩阵中按新 tag 构建产物
-3. `release`：汇总产物并创建 GitHub Release
+#### 5.3.2 体积分析工具
 
-这样可以保证：
+新增 `scripts/analyze-build-size.js` 与 `build/utils/sizeAnalyzer.js`，构建后自动输出：
 
-- `package.json` 版本
-- Git tag 版本
-- `release/${version}` 目录
-- 安装包文件名中的版本号
+- Web 应用包体积及最大的 10 个文件
+- Electron 进程包体积及最大的 5 个文件
+- 总体积统计
 
-完全一致。
+使用方式：
+
+```bash
+npm run build-mac:prod   # 构建后自动分析
+npm run analyze:size     # 单独分析当前构建
+```
+
+#### 5.3.3 进一步优化建议
+
+- **短期**：按需加载 Element Plus 组件、动态导入 ECharts、检查未使用依赖
+- **中期**：替换重型依赖（如 `lodash-es` → 原生 JS）、图片压缩/转 WebP、字体子集化
+- **长期**：更细粒度的路由级代码分割、Service Worker 缓存、CDN 加载第三方库
+
+### 5.4 发布流程
+
+当前项目的「发布」和「自动更新资源同步」是两条相关但独立的链路：
+
+```text
+开发者提交代码
+  │
+  ├─► GitHub Actions 手动触发 Public 工作流
+  │     ├─ prepare-release：release-it 提升版本并打 tag
+  │     ├─ build：按新 tag 构建 Win / macOS / Linux 包
+  │     └─ release：创建 GitHub Release 并上传安装包
+  │
+  └─► 额外同步 auto-update 服务器
+        ├─ 上传 latest*.yml / 安装包 / blockmap
+        └─ 供 electron-updater 在线检查更新
+```
+
+- GitHub Release 负责「发版记录」和「附件下载」
+- 更新服务器负责「客户端自动更新」
+- 当前 `public.yml` 不会自动把更新元数据同步到 `VITE_UPDATE_URL`
+
+#### 5.4.1 关键文件
+
+| 文件 | 说明 |
+|------|------|
+| `.github/workflows/public.yml` | 当前主发布工作流 |
+| `.github/workflows/release.yml` | 旧工作流，仍保留但不建议作为主流程 |
+| `.release-it.json` | 版本提升、tag、changelog、GitHub Release 规则 |
+| `electron-builder.json5` | 安装包输出、产物命名、publish 配置 |
+| `electron/main/update.js` | 主进程自动更新逻辑 |
+| `src/store/modules/version.js` | 版本状态存储 |
+| `src/components/UpdateDialog/index.vue` | 更新弹窗 UI 和交互 |
+| `src/core/update.js` | 渲染层更新事件桥接 |
+
+#### 5.4.2 工作流三阶段
+
+1. **prepare-release**：`npm ci` → 配置 Git 用户 → 执行 `release-it` → 自动更新 `package.json` 版本号 → 创建 commit 与 tag
+2. **build**：checkout 到新 tag → 多平台打包（macOS / Windows / Linux）→ 上传构建产物
+3. **release**：下载三端构建产物 → 合并到统一 `release/` 目录 → 创建 GitHub Release → 上传安装包附件
+
+GitHub Release 上传的文件类型：`*.dmg`、`*.zip`、`*.exe`、`*.AppImage`。
+
+注意：当前工作流不会自动把 `latest.yml`、`*.blockmap` 传到 GitHub Release，也不会自动推送到 `VITE_UPDATE_URL` 更新服务器。
+
+#### 5.4.3 本地构建命令
+
+```bash
+# 仅构建前端
+npm run build:dev / build:test / build:prod
+
+# 构建桌面安装包（三平台 × 三环境）
+npm run build-win:prod / build-mac:prod / build-linux:prod
+```
+
+执行顺序：`npm run clean` → `vite build --mode <env>` → `electron-builder --win/--mac/--linux`
+
+#### 5.4.4 产物输出规则
+
+- 输出目录：`release/${version}`
+- Windows 目标：NSIS（`*-Setup.exe` + `*.blockmap` + `latest.yml`）
+- macOS 目标：`dmg`、`zip`（含平台更新元数据）
+- Linux 目标：`AppImage`
+
+#### 5.4.5 release-it 职责
+
+当前 `.release-it.json` 负责：版本号提升 → 生成/更新 `CHANGELOG.md` → 创建 git commit → 创建 git tag → push 提交与 tag → 创建 GitHub Release。发布前会自动执行 `npm run lint:check` 校验代码规范。
+
+#### 5.4.6 推荐发布步骤
+
+**方案 A（推荐，走 GitHub Actions）**：
+
+1. 确保代码已合并并提交
+2. 本地先执行 `npm install && npm run lint:check && npm run build:prod`
+3. 打开 GitHub Actions，手动触发 `Public`，选择 `patch / minor / major / alpha / beta`
+4. 等待 GitHub Release 构建完成
+5. 手动把 `release/<version>/` 中的 auto-update 文件同步到更新服务器
+
+**方案 B（本地手动发版）**：
+
+```bash
+npm run release:patch
+npm run build-win:prod
+```
+然后手动上传安装包和 `latest*.yml` + `*.blockmap` 到更新服务器。
+
+### 5.5 自动更新服务
+
+#### 5.5.1 配置
+
+- 主进程入口：`electron/main/update.js`
+- provider 为 `generic`，更新地址来自 `process.env.VITE_UPDATE_URL`
+- 生产环境地址定义在 `.env.production`：`VITE_UPDATE_URL='http://10.10.24.52:8089/electron-update'`
+- 渲染层加载完成后自动执行 `checkForUpdates()`
+- 默认 `autoDownload = false`，必须用户手动确认后才下载
+
+#### 5.5.2 更新服务器部署
+
+推荐目录结构：
+
+```text
+/electron-update/
+  ├── latest.yml          # Windows 版本清单
+  ├── latest-mac.yml      # macOS 版本清单
+  ├── *.exe               # Windows 安装包
+  ├── *.blockmap          # 增量更新文件
+  ├── *.dmg               # macOS 安装包
+  ├── *.zip               # macOS 压缩包
+  └── *.AppImage          # Linux 安装包
+```
+
+推荐上传顺序：先上传安装包 → 再上传 `*.blockmap` → 最后上传 `latest*.yml`（避免元数据先更新但安装包未同步导致下载失败）。
+
+Nginx 示例：
+
+```nginx
+server {
+    listen 8089;
+    server_name your-server-ip;
+    location /electron-update/ {
+        root /var/www/;
+        autoindex off;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Access-Control-Allow-Origin *;
+    }
+}
+```
+
+#### 5.5.3 开发环境调试
+
+主进程已启用 `autoUpdater.forceDevUpdateConfig = process.env.NODE_ENV === 'development'`，开发环境可通过 `dev-app-update.yml` 调试更新。开发模式还有两层本地模拟：`src/main.js` 主动派发模拟 `update:available`，`UpdateDialog` 在 DEV 模式下执行 `startMockDownload()`。
+
+#### 5.5.4 版本状态与更新弹窗
+
+版本状态存储于 `src/store/modules/version.js`，仅包含两个字段：
+
+| 字段 | 持久化 | 说明 |
+|------|--------|------|
+| `currentVersion` | 是 | 当前应用版本 |
+| `latestVersion` | 是 | 最近一次检测到的最新版本 |
+
+下载进度、是否已下载、弹窗显示状态保存在 `UpdateDialog` 组件内部。当前不展示 `releaseNotes`、更新日志列表。
+
+#### 5.5.5 常见问题
+
+- **GitHub Release 有新版本但客户端没检测到**：客户端只认 `VITE_UPDATE_URL` 指向的更新服务器元数据，不直接读取 GitHub Release
+- **发现新版本后下载失败**：`latest*.yml` 已更新但安装包未上传完成，或更新服务器路径不一致，或缺少 `blockmap`
+- **版本号不一致**：当前 `public.yml` 已调整为先 `release-it` 再构建，版本号应与 tag、目录、文件名一致
+- **开发环境直接看到更新弹窗**：DEV 模式有模拟逻辑，不代表真实更新可用
 
 ## 6. 进程间通信总览
 
@@ -842,5 +1043,11 @@ function buildFullUrl(url) {
 
 ## 11. 文档信息
 
-- 文档版本：0.0.17
-- 最后更新：2026-04-27
+- 文档版本：0.0.19
+- 最后更新：2026-07-13
+- 变更内容：
+  - 新增 5.3 构建体积优化章节（整合 OPTIMIZATION.md / OPTIMIZATION_SUMMARY.md / CHANGES.md / BUILD_SIZE_QUICK_GUIDE.md）
+  - 扩充 5.4 发布流程，整合 RELEASE.md（发布架构、工作流三阶段、本地构建命令、产物输出、release-it 职责、推荐发布步骤）
+  - 新增 5.5 自动更新服务章节（服务器部署、开发调试、版本状态、常见问题）
+  - 新增 11. 架构图生成规范章节（整合 rules.md，含分层架构图、模块依赖拓扑图、功能链路图等 10 类图表规范）
+  - 重构 3. 目录结构，与实际项目严格对齐
