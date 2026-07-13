@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.0.23](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.22...v0.0.23) (2026-07-13)
+
+### ✨ Features
+
+* 初始化 Electron 主进程框架和窗口管理 ([393ca7b](https://github.com/sincely/vite6-electron-vue3/commit/393ca7b783019d9ab100e170da7815e62ecbf557))
+* 新增前端项目架构分析及图表生成能力 ([e8d40ec](https://github.com/sincely/vite6-electron-vue3/commit/e8d40ecb549a040f2197e3452385ddef04238a1a))
+
+### 📝 Documentation
+
+* 重构架构文档，新增构建优化与发布流程 ([13a44ef](https://github.com/sincely/vite6-electron-vue3/commit/13a44effade4b04ed4e499fa9db826168a4967ad))
+
+### 🔧 Chores
+
+* **deps:** 升级 Node.js 版本规范并调整依赖版本 ([5180ea5](https://github.com/sincely/vite6-electron-vue3/commit/5180ea54b4c208b343198edc5cfbf7081ecb1ee7))
+* v0.0.22 ([633552b](https://github.com/sincely/vite6-electron-vue3/commit/633552ba6c64c9a08db13a1cb0d187d2a8b9f977))
+
 * chore(deps): 升级 Node.js 版本规范并调整依赖版本 (5180ea5)
 * feat: 初始化 Electron 主进程框架和窗口管理 (393ca7b)
 * feat: 新增前端项目架构分析及图表生成能力 (e8d40ec)
