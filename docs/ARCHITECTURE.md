@@ -6,7 +6,7 @@
 
 项目当前核心技术栈如下：
 
-- 核心框架：Electron 28.3.3
+- 核心框架：Electron 42.2.0
 - 前端框架：Vue 3.5.30
 - 构建工具：Vite 6.4.1
 - 路由管理：Vue Router 4.5.1
@@ -14,8 +14,8 @@
 - UI 组件库：Element Plus 2.11.9
 - 图表能力：ECharts 5.4.3
 - 动画能力：GSAP 3.14.2
-- 网络请求：Axios 1.7.3
-- 自动更新：electron-updater 6.3.9
+- 网络请求：Axios 1.8.4
+- 自动更新：electron-updater 6.6.2
 - 代码规范：ESLint、Prettier、Stylelint、Husky、lint-staged
 - 发布管理：release-it、GitHub Actions、electron-builder
 
