@@ -1043,11 +1043,13 @@ function buildFullUrl(url) {
 
 ## 11. 文档信息
 
-- 文档版本：0.0.19
+- 文档版本：0.0.20
 - 最后更新：2026-07-13
 - 变更内容：
+  - 升级 Electron 28.3.3 → 42.2.0、electron-builder 24.13.3 → 25.1.8、electron-updater 6.3.9 → 6.6.2
+  - 修复 Electron 42+ 主题切换闪烁：使用 CSS transition 代替 View Transition API（src/render/store/modules/app.js）
+  - 同步更新技术栈版本号（Electron 42.2.0、Axios 1.8.4、electron-updater 6.6.2）
   - 新增 5.3 构建体积优化章节（整合 OPTIMIZATION.md / OPTIMIZATION_SUMMARY.md / CHANGES.md / BUILD_SIZE_QUICK_GUIDE.md）
   - 扩充 5.4 发布流程，整合 RELEASE.md（发布架构、工作流三阶段、本地构建命令、产物输出、release-it 职责、推荐发布步骤）
   - 新增 5.5 自动更新服务章节（服务器部署、开发调试、版本状态、常见问题）
-  - 新增 11. 架构图生成规范章节（整合 rules.md，含分层架构图、模块依赖拓扑图、功能链路图等 10 类图表规范）
   - 重构 3. 目录结构，与实际项目严格对齐
