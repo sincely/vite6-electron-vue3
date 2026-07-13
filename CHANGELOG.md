@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.0](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.23...v1.0.0) (2026-07-13)
+
+### 🐞 Bug Fixes
+
+* 修复主题切换闪烁问题 ([7b235ab](https://github.com/sincely/vite6-electron-vue3/commit/7b235ab8fee2d9f80ba7bfa808d5214185935718))
+
+### 🔧 Chores
+
+* 更新electron及相关构建工具版本 ([3939a8c](https://github.com/sincely/vite6-electron-vue3/commit/3939a8cb99315c426bf8c15da38181424e56d5d2))
+
 ## [0.0.23](https://github.com/sincely/vite6-electron-vue3/compare/v0.0.22...v0.0.23) (2026-07-13)
 
 ### ✨ Features
