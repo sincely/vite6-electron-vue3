@@ -3,11 +3,11 @@
     <!-- 装饰性光斑 -->
     <div
       class="decorative-orb decorative-orb--primary"
-      style=" top: -60px; right: 10%;width: 200px; height: 200px"
+      style="top: -60px; right: 10%; width: 200px; height: 200px"
     />
     <div
       class="decorative-orb decorative-orb--violet"
-      style=" bottom: 20%; left: -40px;width: 160px; height: 160px"
+      style="bottom: 20%; left: -40px; width: 160px; height: 160px"
     />
 
     <section class="hero glass-card">

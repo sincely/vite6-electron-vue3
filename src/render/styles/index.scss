@@ -149,7 +149,6 @@
   color: transparent;
   background: var(--gradient-primary);
   background-clip: text;
-  background-clip: text;
   background-size: 200% 200%;
   animation: gradient-shift 4s ease infinite;
 }
@@ -158,13 +157,11 @@
   color: transparent;
   background: var(--gradient-violet);
   background-clip: text;
-  background-clip: text;
 }
 
 .gradient-text-warm {
   color: transparent;
   background: var(--gradient-warm);
-  background-clip: text;
   background-clip: text;
 }
 
