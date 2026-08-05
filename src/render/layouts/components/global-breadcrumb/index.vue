@@ -70,11 +70,11 @@ const breadcrumb = computed(() => findMenuPath(route.path))
 
 <style lang="scss" scoped>
 .nav-bar {
-  margin: 12px 14px 0;
+  margin: 12px 26px 0;
 
   :deep(.card-container) {
     padding: 12px 16px;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
   }
 
   &-content {

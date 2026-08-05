@@ -17,8 +17,8 @@
   flex-direction: column;
   padding: 12px 24px;
   background: var(--color-bg-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   transition: all 0.3s ease;
 }
 
