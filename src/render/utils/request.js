@@ -181,12 +181,13 @@ service.interceptors.response.use(
 
     // 处理401未授权
     if (error.response?.status === 401) {
-      userStore.logout()
-      // router.push('/login')
+      userStore.resetUserState()
       showToast({
         message: '登录已过期，请重新登录',
         type: 'warning'
       })
+      // 通知主进程关闭主窗口并打开登录窗口
+      window.ipcRenderer?.send('logout')
       return Promise.reject(error)
     }
 
