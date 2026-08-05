@@ -38,3 +38,4 @@ artifacts/*
 # Editor directories and files
 .vscode
 .trae
+.zcode

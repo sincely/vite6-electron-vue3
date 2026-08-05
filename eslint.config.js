@@ -22,6 +22,7 @@ export default defineFlatConfig([
       '.trae/**',
       '.husky/**',
       '.github/**',
+      '.zcode/**',
       'package-lock.json',
       'stats.html',
       'yarn.lock',
