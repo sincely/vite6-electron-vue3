@@ -54,18 +54,18 @@ const actionList = ref([
     route: '/about',
     icon: 'about'
   },
-  {
-    id: 'feedback',
-    label: '反馈',
-    route: '/feedback',
-    icon: 'feedback'
-  },
-  {
-    id: 'contact',
-    label: '联系我们',
-    route: '/contact',
-    icon: 'contact'
-  },
+  // {
+  //   id: 'feedback',
+  //   label: '反馈',
+  //   route: '/feedback',
+  //   icon: 'feedback'
+  // },
+  // {
+  //   id: 'contact',
+  //   label: '联系我们',
+  //   route: '/contact',
+  //   icon: 'contact'
+  // },
   {
     id: 'logout',
     label: '退出登录',
@@ -78,14 +78,25 @@ const handleSettingsClick = () => {
   showSettings.value = !showSettings.value
 }
 
-const handleClick = (item) => {
+const handleClick = async (item) => {
   showSettings.value = false
 
   if (item.id === 'settings') {
     appStore.toggleSettings(true)
   } else if (item.id === 'logout') {
-    userStore.logout()
-    router.push('/login').catch(() => {})
+    debugger
+    try {
+      await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+        confirmButtonText: '退出',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      await userStore.logoutAction().catch(() => {})
+      // 通知主进程关闭主窗口并打开登录窗口
+      window.ipcRenderer?.send('logout')
+    } catch {
+      // 用户取消退出
+    }
   } else {
     router.push(item.route).catch(() => {})
   }

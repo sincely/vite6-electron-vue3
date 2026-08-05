@@ -1,6 +1,8 @@
 import {
   createMainWindow,
   closeLoginWindow,
+  closeMainWindow,
+  createLoginWindow,
   createWindow,
   setCloseAction
 } from '../windowManager'
@@ -25,6 +27,14 @@ export default [
     handler: (event, data) => {
       closeLoginWindow()
       createMainWindow()
+    }
+  },
+  {
+    channel: 'logout',
+    type: 'on',
+    handler: () => {
+      closeMainWindow()
+      createLoginWindow()
     }
   },
   {

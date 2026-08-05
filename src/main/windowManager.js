@@ -83,6 +83,7 @@ const setupWindow = (win) => {
   win.webContents.on(
     'did-fail-load',
     (_event, errorCode, errorDescription, validatedURL) => {
+      if (win.isDestroyed()) return
       logger.error(
         `页面加载失败: ${errorDescription} (${errorCode}) at ${validatedURL}`
       )
@@ -90,10 +91,13 @@ const setupWindow = (win) => {
   )
 
   win.webContents.on('render-process-gone', (_event, details) => {
+    if (win.isDestroyed()) return
     logger.error(`渲染进程崩溃: ${details.reason} (${details.exitCode})`)
   })
 
-  win.once('ready-to-show', () => win.show())
+  win.once('ready-to-show', () => {
+    if (!win.isDestroyed()) win.show()
+  })
 }
 
 /**
@@ -141,7 +145,17 @@ const removeWindowListeners = (win) => {
 export function closeLoginWindow() {
   const win = getLoginWindow()
   if (win && !win.isDestroyed()) {
-    removeWindowListeners(win)
+    // 不调用 removeWindowListeners，保留 closed 事件处理以清理 loginWindowId
+    win.close()
+  }
+}
+
+// 关闭主窗口（退出登录时使用）
+export function closeMainWindow() {
+  const win = getMainWindow()
+  if (win && !win.isDestroyed()) {
+    // 标记为退出登录，绕过 close 事件中的最小化拦截
+    win._isLoggingOut = true
     win.close()
   }
 }
@@ -150,11 +164,13 @@ export function closeLoginWindow() {
 export function createLoginWindow() {
   if (loginWindowId) {
     const win = windows.get(loginWindowId)
-    if (win) {
+    if (win && !win.isDestroyed()) {
       if (win.isMinimized()) win.restore()
       win.focus()
       return win
     }
+    // 窗口已销毁，清理残留引用
+    loginWindowId = null
   }
 
   const win = new BrowserWindow({
@@ -185,7 +201,6 @@ export function createLoginWindow() {
   setupWindow(win)
 
   win.on('closed', () => {
-    removeWindowListeners(win)
     windows.delete(windowId)
     if (windowId === loginWindowId) loginWindowId = null
   })
@@ -197,11 +212,13 @@ export function createLoginWindow() {
 export function createMainWindow() {
   if (mainWindowId) {
     const win = windows.get(mainWindowId)
-    if (win) {
+    if (win && !win.isDestroyed()) {
       if (win.isMinimized()) win.restore()
       win.focus()
       return win
     }
+    // 窗口已销毁，清理残留引用
+    mainWindowId = null
   }
   // 获取屏幕尺寸
   const { width: screenWidth, height: screenHeight } =
@@ -260,6 +277,9 @@ export function createMainWindow() {
 
   // 点击关闭按钮时默认最小化到托盘，避免直接退出应用
   win.on('close', (event) => {
+    // 退出登录时允许关闭
+    if (win._isLoggingOut) return
+
     if (app.isQuiting) return
 
     if (getCloseAction() === 'quit') {
