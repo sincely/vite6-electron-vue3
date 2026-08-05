@@ -1,26 +1,20 @@
 <template>
   <header class="title-bar" :class="{ 'is-top-mode': isTopMenu }">
     <div class="title-bar__inner">
-      <!-- 侧边栏折叠切换 -->
+      <!-- 侧边栏折叠 / 子菜单栏切换 -->
       <button
-        v-if="!isTopMenu"
+        v-if="showSidebarToggle"
         class="icon-btn sidebar-toggle"
-        :title="appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'"
-        @click="appStore.toggleSidebar()"
+        :title="toggleButtonTitle"
+        @click="handleToggleClick"
       >
-        <SvgIcon
-          :icon-class="
-            appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'
-          "
-          width="20px"
-          height="20px"
-        />
+        <SvgIcon :icon-class="toggleIcon" width="20px" height="20px" />
       </button>
 
-      <!-- Logo 区域 (仅顶部菜单模式显示) -->
+      <!-- Logo 区域 (顶部菜单模式显示) -->
       <GlobalLogo v-if="isTopMenu" class="top-mode-logo" />
 
-      <!-- 顶部菜单 (仅顶部菜单模式显示) -->
+      <!-- 顶部菜单 (顶部菜单模式显示) -->
       <GlobalTopMenu v-if="isTopMenu" />
 
       <!-- 中间操作区 -->
@@ -73,6 +67,15 @@
             height="16px"
           />
         </button>
+        <!-- 混合模式下的设置按钮（left-mixed 时 UserPanel 被隐藏，提供直接入口） -->
+        <button
+          v-if="isMixedMode"
+          class="icon-btn"
+          title="设置"
+          @click="appStore.toggleSettings(true)"
+        >
+          <SvgIcon icon-class="settings" width="18px" height="18px" />
+        </button>
         <!-- 顶部模式下的用户信息和设置 -->
         <UserDropdown v-if="isTopMenu" />
         <!-- 窗口控制 -->
@@ -106,6 +109,7 @@ import { isWindows } from '@/utils/platform'
 import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
+import NotificationPanel from '@/components/NotificationPanel/index.vue'
 import { computed, ref } from 'vue'
 
 const appStore = useAppStore()
@@ -132,6 +136,41 @@ const isTopMenu = computed(
 )
 const isDark = computed(() => appStore.isDark)
 
+// 是否显示侧边栏切换按钮：
+// - left / left-mixed: 显示（控制侧边栏折叠 / 子菜单栏显隐）
+// - top-mixed: 显示（控制子菜单栏显隐）
+// - top: 不显示
+const showSidebarToggle = computed(
+  () => appStore.layoutMode !== 'top' && appStore.layoutMode !== 'top-mixed'
+)
+
+const isMixedMode = computed(
+  () =>
+    appStore.layoutMode === 'left-mixed' || appStore.layoutMode === 'top-mixed'
+)
+
+const toggleButtonTitle = computed(() => {
+  if (isMixedMode.value) {
+    return appStore.mixedSubmenuVisible ? '隐藏子菜单' : '显示子菜单'
+  }
+  return appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'
+})
+
+const toggleIcon = computed(() => {
+  if (isMixedMode.value) {
+    return appStore.mixedSubmenuVisible ? 'panel-left-close' : 'panel-left-open'
+  }
+  return appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'
+})
+
+const handleToggleClick = () => {
+  if (isMixedMode.value) {
+    appStore.toggleMixedSubmenu()
+  } else {
+    appStore.toggleSidebar()
+  }
+}
+
 const minimize = () => ipcRenderer.send('minimize-window')
 const maximize = () => ipcRenderer.send('maximize-window')
 const close = () => ipcRenderer.send('close-window')
@@ -147,8 +186,9 @@ const close = () => ipcRenderer.send('close-window')
   height: var(--titlebar-height);
   overflow: visible;
   user-select: none;
-  background: var(--color-bg-titlebar);
-  border-bottom: 1px solid var(--color-border);
+  background-color: var(--titlebar-menu-bg, var(--color-bg-titlebar));
+  background-image: var(--titlebar-menu-bg-gradient, none);
+  border-bottom: 1px solid var(--titlebar-menu-border, var(--color-border));
   -webkit-app-region: drag;
 
   &__inner {
@@ -196,7 +236,7 @@ const close = () => ipcRenderer.send('close-window')
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   -webkit-app-region: no-drag;
 
   &:hover {
@@ -207,6 +247,7 @@ const close = () => ipcRenderer.send('close-window')
 
   &:active {
     background-color: var(--color-bg-active);
+    transform: scale(0.94);
   }
 
   &.update-btn {
@@ -222,6 +263,7 @@ const close = () => ipcRenderer.send('close-window')
 
     &:hover {
       background: var(--color-bg-active);
+      box-shadow: var(--shadow-glow-primary);
     }
 
     .update-icon {
@@ -256,8 +298,11 @@ const close = () => ipcRenderer.send('close-window')
   color: #fff;
   text-align: center;
   pointer-events: none;
-  background: var(--color-danger);
+  background: linear-gradient(135deg, var(--color-rose), var(--color-danger));
   border-radius: 999px;
+  box-shadow: 0 2px 8px -2px
+    color-mix(in srgb, var(--color-danger), transparent 50%);
   transform: translate(40%, -40%);
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 </style>

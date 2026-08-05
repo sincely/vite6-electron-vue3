@@ -49,11 +49,17 @@ defineProps({
 .header-icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary), transparent 88%);
+  width: 42px;
+  height: 42px;
+  color: #fff;
+  background: var(--gradient-primary);
   border-radius: 12px;
+  box-shadow: var(--shadow-glow-primary);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    transform: scale(1.08) rotate(-3deg);
+  }
 }
 
 .header-info {

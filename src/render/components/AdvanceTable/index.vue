@@ -415,6 +415,7 @@ watch(
   background: var(--glass-surface);
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
+  animation: fade-up 0.4s cubic-bezier(0.2, 0.75, 0.2, 1) both;
 }
 
 .table-toolbar {
@@ -444,6 +445,12 @@ watch(
       height: 18px;
       color: var(--el-text-color-regular);
       cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      &:hover {
+        color: var(--color-primary);
+        transform: scale(1.15);
+      }
 
       &.is-spinning {
         pointer-events: none;
@@ -471,6 +478,7 @@ watch(
 .no-data img {
   width: 120px;
   opacity: 0.6;
+  animation: float-bounce 3s ease-in-out infinite;
 }
 
 .pagination-container {

@@ -6,11 +6,15 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     theme: 'light', // 当前主题，默认是亮色主题
     layoutMode: 'left', // 布局模式：left | left-mixed | top | top-mixed
+    menuStyle: 'white', // 菜单风格：white | black
+    mixedSubmenuVisible: true, // 混合模式下子菜单栏是否显示
     sidebarCollapsed: false, // 侧边栏是否折叠
     footerVisible: true, // 是否显示底部状态栏
     footerHeight: 26, // 底部状态栏高度（px）
     transitionEnabled: true, // 是否启用页面切换动画
     transitionType: 'page', // 页面切换动画类型
+    contentWidth: 'full', // 内容容器宽度模式：full（铺满）| fixed（定宽）
+    contentWidthValue: 1200, // 定宽模式下的具体宽度值（px）
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
     loadingTargets: [], // 加载中状态的目标元素
@@ -35,6 +39,16 @@ export const useAppStore = defineStore('app', {
   actions: {
     setLayoutMode(mode) {
       this.layoutMode = mode
+    },
+    setMenuStyle(style) {
+      this.menuStyle = style
+      document.documentElement.setAttribute('data-menu-style', style)
+    },
+    toggleMixedSubmenu() {
+      this.mixedSubmenuVisible = !this.mixedSubmenuVisible
+    },
+    setMixedSubmenuVisible(val) {
+      this.mixedSubmenuVisible = val
     },
     // 切换设置弹窗可见性
     toggleSettings(visible) {
@@ -148,6 +162,7 @@ export const useAppStore = defineStore('app', {
     initTheme() {
       this.setTheme(this.theme)
       this.initThemeColors()
+      this.setMenuStyle(this.menuStyle)
     },
     // 初始化主题颜色
     initThemeColors() {
@@ -205,6 +220,18 @@ export const useAppStore = defineStore('app', {
       const height = Number(val)
       if (!Number.isFinite(height)) return
       this.footerHeight = Math.min(80, Math.max(20, Math.round(height)))
+    },
+
+    // 设置内容容器宽度模式：full | fixed
+    setContentWidth(mode) {
+      this.contentWidth = mode === 'fixed' ? 'fixed' : 'full'
+    },
+
+    // 设置定宽模式下的具体宽度值
+    setContentWidthValue(val) {
+      const width = Number(val)
+      if (!Number.isFinite(width)) return
+      this.contentWidthValue = Math.min(1920, Math.max(800, Math.round(width)))
     },
 
     // 设置loading状态

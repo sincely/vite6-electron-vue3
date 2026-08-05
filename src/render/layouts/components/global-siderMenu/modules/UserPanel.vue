@@ -123,11 +123,6 @@ $transition: 0.2s ease;
   border-radius: var(--radius-md);
   transition: all $transition;
 
-  &:hover {
-    background: var(--color-bg-hover);
-    border-color: var(--color-border-light);
-  }
-
   .user-avatar {
     display: flex;
     flex-shrink: 0;

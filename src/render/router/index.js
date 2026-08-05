@@ -129,6 +129,31 @@ export const asyncRouteTree = [
         }
       }
     ]
+  },
+  //  高级表格演示
+  {
+    path: '/components',
+    component: Layout,
+    redirect: '/components/table',
+    meta: {
+      title: '组件演示',
+      icon: 'dashboard',
+      order: 5,
+      sidebar: true
+    },
+    children: [
+      {
+        path: 'table',
+        name: 'advance-table-demo',
+        component: () => import('@/views/advanceTable/index.vue'),
+        meta: {
+          title: '高级表格',
+          group: '/components',
+          keepAlive: true,
+          transition: 'slide-up'
+        }
+      }
+    ]
   }
 ]
 

@@ -6,7 +6,9 @@
     <img src="@/assets/bar/icon.png" class="logo-block__img" alt="logo" />
     <span
       class="logo-block__name"
-      :class="{ 'is-hidden': appStore.sidebarCollapsed && !isTopMenu }"
+      :class="{
+        'is-hidden': (appStore.sidebarCollapsed || isLeftMixed) && !isTopMenu
+      }"
     >
       AI Desktop
     </span>
@@ -22,6 +24,7 @@ const appStore = useAppStore()
 const isTopMenu = computed(
   () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
 )
+const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
 </script>
 
 <style lang="scss" scoped>
@@ -63,7 +66,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     overflow: hidden;
     font-size: 16px;
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--menu-text, var(--color-primary));
     text-overflow: ellipsis;
     letter-spacing: 0.3px;
     white-space: nowrap;

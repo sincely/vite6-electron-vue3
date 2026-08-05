@@ -67,6 +67,67 @@ html[data-theme='light'] {
   --sidebar-surface-bg: #fff;
   --glass-shadow-soft: 0 1px 3px rgb(0 0 0 / 5%);
   --glass-shadow-hover: 0 2px 6px rgb(0 0 0 / 8%);
+
+  // ---------- 活力扩展色板 ----------
+  // 多彩辅助色
+  --color-violet: #7c3aed;
+  --color-violet-light: #a78bfa;
+  --color-violet-soft: #f5f3ff;
+  --color-teal: #0d9488;
+  --color-teal-light: #5eead4;
+  --color-teal-soft: #f0fdfa;
+  --color-rose: #e11d48;
+  --color-rose-light: #fb7185;
+  --color-rose-soft: #fff1f2;
+  --color-amber: #d97706;
+  --color-amber-light: #fbbf24;
+  --color-amber-soft: #fffbeb;
+  --color-indigo: #4f46e5;
+  --color-indigo-light: #818cf8;
+  --color-indigo-soft: #eef2ff;
+  --color-cyan: #06b6d4;
+  --color-cyan-light: #67e8f9;
+  --color-cyan-soft: #ecfeff;
+  --color-pink: #ec4899;
+  --color-pink-light: #f9a8d4;
+  --color-pink-soft: #fdf2f8;
+
+  // 预设渐变色
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+  --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  --gradient-cool: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --gradient-rose: linear-gradient(135deg, #ec4899 0%, #e11d48 100%);
+  --gradient-violet: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  --gradient-mesh:
+    radial-gradient(at 20% 80%, rgb(124 58 237 / 6%) 0%, transparent 50%),
+    radial-gradient(at 80% 20%, rgb(6 182 212 / 6%) 0%, transparent 50%),
+    radial-gradient(at 50% 50%, rgb(37 99 235 / 4%) 0%, transparent 60%);
+
+  // 彩色辉光阴影
+  --shadow-glow-primary: 0 4px 14px -3px rgb(37 99 235 / 35%);
+  --shadow-glow-success: 0 4px 14px -3px rgb(16 185 129 / 35%);
+  --shadow-glow-violet: 0 4px 14px -3px rgb(124 58 237 / 35%);
+  --shadow-glow-rose: 0 4px 14px -3px rgb(225 29 72 / 35%);
+  --shadow-glow-amber: 0 4px 14px -3px rgb(217 119 6 / 35%);
+
+  // 渐变背景
+  --color-bg-gradient: linear-gradient(
+    135deg,
+    #eff6ff 0%,
+    #f5f3ff 50%,
+    #ecfeff 100%
+  );
+
+  // 菜单风格变量 - 默认
+  --menu-bg: var(--color-bg-sidebar);
+  --menu-bg-gradient: none;
+  --menu-text: var(--color-text-primary);
+  --menu-text-secondary: var(--color-text-secondary);
+  --menu-icon: var(--color-text-muted);
+  --menu-hover-bg: var(--color-bg-hover);
+  --menu-active-bg: var(--color-bg-active);
+  --menu-border: var(--color-border);
 }
 
 // ---------- Dark Theme (深蓝暗色) ----------
@@ -133,4 +194,136 @@ html.dark {
   --sidebar-surface-bg: #111318;
   --glass-shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 40%);
   --glass-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 50%);
+
+  // ---------- 活力扩展色板 (深色模式 - 更亮更饱和) ----------
+  --color-violet: #a78bfa;
+  --color-violet-light: #c4b5fd;
+  --color-violet-soft: rgb(124 58 237 / 15%);
+  --color-teal: #2dd4bf;
+  --color-teal-light: #5eead4;
+  --color-teal-soft: rgb(13 148 136 / 15%);
+  --color-rose: #fb7185;
+  --color-rose-light: #fda4af;
+  --color-rose-soft: rgb(225 29 72 / 15%);
+  --color-amber: #fbbf24;
+  --color-amber-light: #fcd34d;
+  --color-amber-soft: rgb(217 119 6 / 15%);
+  --color-indigo: #818cf8;
+  --color-indigo-light: #a5b4fc;
+  --color-indigo-soft: rgb(79 70 229 / 15%);
+  --color-cyan: #22d3ee;
+  --color-cyan-light: #67e8f9;
+  --color-cyan-soft: rgb(6 182 212 / 15%);
+  --color-pink: #f472b6;
+  --color-pink-light: #f9a8d4;
+  --color-pink-soft: rgb(236 72 153 / 15%);
+
+  // 预设渐变色 (深色模式)
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #a78bfa 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #2dd4bf 100%);
+  --gradient-warm: linear-gradient(135deg, #fbbf24 0%, #fb7185 100%);
+  --gradient-cool: linear-gradient(135deg, #22d3ee 0%, #60a5fa 100%);
+  --gradient-rose: linear-gradient(135deg, #f472b6 0%, #fb7185 100%);
+  --gradient-violet: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+  --gradient-mesh:
+    radial-gradient(at 20% 80%, rgb(124 58 237 / 10%) 0%, transparent 50%),
+    radial-gradient(at 80% 20%, rgb(6 182 212 / 10%) 0%, transparent 50%),
+    radial-gradient(at 50% 50%, rgb(59 130 246 / 8%) 0%, transparent 60%);
+
+  // 彩色辉光阴影 (深色模式更柔和)
+  --shadow-glow-primary: 0 4px 14px -3px rgb(59 130 246 / 40%);
+  --shadow-glow-success: 0 4px 14px -3px rgb(16 185 129 / 40%);
+  --shadow-glow-violet: 0 4px 14px -3px rgb(167 139 250 / 40%);
+  --shadow-glow-rose: 0 4px 14px -3px rgb(251 113 133 / 40%);
+  --shadow-glow-amber: 0 4px 14px -3px rgb(251 191 36 / 40%);
+
+  // 渐变背景
+  --color-bg-gradient: linear-gradient(
+    135deg,
+    rgb(31 41 55 / 50%) 0%,
+    rgb(30 27 75 / 30%) 50%,
+    rgb(22 78 99 / 30%) 100%
+  );
+
+  // 菜单风格变量 - 默认（深色主题）
+  --menu-bg: var(--color-bg-sidebar);
+  --menu-bg-gradient: none;
+  --menu-text: var(--color-text-primary);
+  --menu-text-secondary: var(--color-text-secondary);
+  --menu-icon: var(--color-text-muted);
+  --menu-hover-bg: var(--color-bg-hover);
+  --menu-active-bg: var(--color-bg-active);
+  --menu-border: var(--color-border);
+}
+
+// =============================================
+// 菜单风格变体 - 通过 data-menu-style 属性切换
+// 支持：white（白色）| black（黑色）
+// =============================================
+
+// 白色菜单风格（默认）
+html[data-menu-style='white'] {
+  --menu-bg: #fff;
+  --menu-bg-gradient: none;
+  --menu-text: var(--color-text-primary);
+  --menu-text-secondary: var(--color-text-secondary);
+  --menu-icon: var(--color-text-muted);
+  --menu-hover-bg: var(--color-bg-hover);
+  --menu-active-bg: var(--color-bg-active);
+  --menu-border: var(--color-border);
+  --menu-active-indicator: var(--color-primary);
+  --menu-active-text: var(--color-primary);
+
+  // 子菜单背景
+  --menu-submenu-bg: var(--color-bg-content);
+  --menu-submenu-border: var(--color-border-light);
+
+  // 顶部菜单栏
+  --titlebar-menu-bg: #fff;
+  --titlebar-menu-bg-gradient: none;
+  --titlebar-menu-border: var(--color-border);
+}
+
+// 黑色菜单风格
+html[data-menu-style='black'] {
+  --menu-bg: #1a1a1a;
+  --menu-bg-gradient: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
+  --menu-text: #f5f5f5;
+  --menu-text-secondary: #a0a0a0;
+  --menu-icon: #808080;
+  --menu-hover-bg: #2a2a2a;
+  --menu-active-bg: #333;
+  --menu-border: #2a2a2a;
+  --menu-active-indicator: var(--color-primary);
+  --menu-active-text: #fff;
+
+  // 子菜单背景 - 比主背景稍亮
+  --menu-submenu-bg: #242424;
+  --menu-submenu-border: #333;
+
+  // 顶部菜单栏
+  --titlebar-menu-bg: #1a1a1a;
+  --titlebar-menu-bg-gradient: linear-gradient(
+    180deg,
+    #1f1f1f 0%,
+    #141414 100%
+  );
+  --titlebar-menu-border: #2a2a2a;
+}
+
+// 默认风格使用主题默认值
+html[data-menu-style='default'] {
+  --menu-bg-gradient: none;
+  --menu-active-indicator: var(--color-primary);
+  --menu-active-text: var(--color-primary);
+}
+
+// 顶部菜单栏风格变量（用于 top/top-mixed 模式）
+:root,
+html[data-theme='light'],
+html[data-theme='dark'],
+html.dark {
+  --titlebar-menu-bg: var(--color-bg-titlebar);
+  --titlebar-menu-bg-gradient: none;
+  --titlebar-menu-border: var(--color-border);
 }

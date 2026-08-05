@@ -15,8 +15,8 @@
       />
       <span>{{ item.label }}</span>
 
-      <!-- 二级菜单 Dropdown -->
-      <div v-if="item.children?.length" class="top-submenu">
+      <!-- 二级菜单 Dropdown (仅非混合模式显示) -->
+      <div v-if="item.children?.length && !isTopMixed" class="top-submenu">
         <div
           v-for="child in item.children"
           :key="child.id"
@@ -32,11 +32,16 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAppStore } from '@/store/modules/app'
 import { menuItems } from '@/config/menu'
+
 const route = useRoute()
 const router = useRouter()
+const appStore = useAppStore()
 
+const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
 const mainItems = menuItems.filter((item) => !item.footer)
 
 const isParentActive = (item) => {
@@ -48,7 +53,14 @@ const isParentActive = (item) => {
 const isChildActive = (child) => child.route === route.path
 
 const handleNav = (item) => {
-  if (!item.children?.length) {
+  if (isTopMixed.value) {
+    // top-mixed 模式：点击一级菜单导航到其路由（或第一个子项），子菜单由 MixedSubmenu 组件显示
+    if (item.children?.length) {
+      router.push(item.children[0].route).catch(() => {})
+    } else {
+      router.push(item.route).catch(() => {})
+    }
+  } else if (!item.children?.length) {
     router.push(item.route).catch(() => {})
   }
 }
@@ -73,13 +85,13 @@ const handleNav = (item) => {
   padding: 0 16px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: var(--menu-text-secondary, var(--color-text-secondary));
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   .menu-icon {
-    color: var(--color-text-muted);
+    color: var(--menu-icon, var(--color-text-muted));
     transition: color 0.2s ease;
   }
 
@@ -90,7 +102,7 @@ const handleNav = (item) => {
     width: 0;
     height: 3px;
     content: '';
-    background: var(--color-primary);
+    background: var(--menu-active-indicator, var(--color-primary));
     border-radius: 3px 3px 0 0;
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -98,11 +110,14 @@ const handleNav = (item) => {
   }
 
   &:hover {
-    color: var(--color-text-primary);
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 40%);
+    color: var(--menu-text, var(--color-text-primary));
+    background: var(
+      --menu-hover-bg,
+      color-mix(in srgb, var(--color-bg-hover), transparent 40%)
+    );
 
     .menu-icon {
-      color: var(--color-primary);
+      color: var(--menu-active-text, var(--color-primary));
     }
 
     .top-submenu {
@@ -112,11 +127,14 @@ const handleNav = (item) => {
   }
 
   &.active {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    color: var(--menu-active-text, var(--color-primary));
+    background: var(
+      --menu-active-bg,
+      color-mix(in srgb, var(--color-primary), transparent 90%)
+    );
 
     .menu-icon {
-      color: var(--color-primary);
+      color: var(--menu-active-text, var(--color-primary));
     }
 
     &::after {

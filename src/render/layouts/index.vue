@@ -6,9 +6,17 @@
       { 'is-fullscreen': isFullscreen }
     ]"
   >
-    <!-- 侧边栏 -->
+    <!-- 侧边栏 (left / left-mixed) -->
     <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
       <GlobalSiderMenu />
+    </div>
+
+    <!-- 子菜单栏 (left-mixed 模式，位于侧边栏右侧) -->
+    <div
+      v-if="isLeftMixed && appStore.mixedSubmenuVisible && !isFullscreen"
+      class="layout-submenu"
+    >
+      <MixedSubmenu :parent-item="activeParentItem" />
     </div>
 
     <!-- 右侧主区域 -->
@@ -20,32 +28,46 @@
         </template>
       </GlobalHeader>
 
-      <!-- 面包屑导航（含搜索插槽） -->
-      <GlobalBreadcrumb>
-        <template #extra>
-          <SvgIcon
-            icon-class="refresh"
-            width="18px"
-            height="18px"
-            class="icon-btn"
-            @click="reload"
-          />
+      <!-- 内容主体区域（可能包含子菜单栏） -->
+      <div class="layout-body">
+        <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧) -->
+        <div
+          v-if="isTopMixed && appStore.mixedSubmenuVisible && !isFullscreen"
+          class="layout-submenu"
+        >
+          <MixedSubmenu :parent-item="activeParentItem" />
+        </div>
 
-          <SvgIcon
-            class="icon-btn"
-            :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
-            width="18px"
-            height="18px"
-            @click="handleFullscreenChange"
-          />
-        </template>
-      </GlobalBreadcrumb>
+        <!-- 内容列 -->
+        <div class="layout-body-content">
+          <!-- 面包屑导航（含搜索插槽） -->
+          <GlobalBreadcrumb>
+            <template #extra>
+              <SvgIcon
+                icon-class="refresh"
+                width="18px"
+                height="18px"
+                class="icon-btn"
+                @click="reload"
+              />
 
-      <!-- 页面内容（路由视图 + 过渡 + 加载） -->
-      <GlobalContent v-if="isRouterAlive" />
+              <SvgIcon
+                class="icon-btn"
+                :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
+                width="18px"
+                height="18px"
+                @click="handleFullscreenChange"
+              />
+            </template>
+          </GlobalBreadcrumb>
 
-      <!-- 底部状态栏 -->
-      <GlobalFooter v-if="appStore.footerVisible" />
+          <!-- 页面内容（路由视图 + 过渡 + 加载） -->
+          <GlobalContent v-if="isRouterAlive" />
+
+          <!-- 底部状态栏 -->
+          <GlobalFooter v-if="appStore.footerVisible" />
+        </div>
+      </div>
     </div>
   </div>
   <!-- 更新弹框 -->
@@ -59,13 +81,23 @@ import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
+import MixedSubmenu from './components/global-siderMenu/modules/MixedSubmenu.vue'
 import { useAppStore } from '@/store/modules/app'
+import { findTopLevelParent } from '@/config/menu'
 import { computed, ref, nextTick, provide, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 
 const appStore = useAppStore()
+const route = useRoute()
+
 const isTopMenu = computed(
   () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
 )
+const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
+const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
+
+// 根据当前路由计算激活的一级菜单项
+const activeParentItem = computed(() => findTopLevelParent(route.path))
 
 // 全屏状态管理
 const isFullscreen = ref(false)
@@ -112,6 +144,12 @@ provide('reload', reload)
     z-index: 3;
   }
 
+  .layout-submenu {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
   .layout-main {
     display: flex;
     flex: 1;
@@ -125,6 +163,22 @@ provide('reload', reload)
       margin-right: 8px;
       cursor: pointer;
     }
+  }
+
+  .layout-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .layout-body-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
   }
 
   .fullscreen-exit-float {

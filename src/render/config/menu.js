@@ -52,3 +52,16 @@ export function findMenuPath(routePath) {
   }
   return []
 }
+
+/**
+ * 根据当前路由路径查找对应的一级菜单项
+ * @param {string} routePath  当前 route.path
+ * @returns {{ id, label, icon?, route, children? } | undefined}
+ */
+export function findTopLevelParent(routePath) {
+  for (const item of menuItems) {
+    if (item.route === routePath) return item
+    if (item.children?.some((c) => c.route === routePath)) return item
+  }
+  return undefined
+}

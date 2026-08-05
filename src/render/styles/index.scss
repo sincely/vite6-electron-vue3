@@ -27,8 +27,9 @@
 .glass-card {
   background: var(--glass-surface);
   backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-surface-border);
-  box-shadow: var(--glass-shadow-soft);
+
+  // border: 1px solid var(--glass-surface-border);
+  // box-shadow: var(--glass-shadow-soft);
 }
 
 .page-enter {
@@ -54,6 +55,289 @@
 
   100% {
     transform: translate3d(0, -8px, 0) rotate(4deg);
+  }
+}
+
+/* ---------- 活泼动画 ---------- */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 0.8;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-3deg);
+  }
+
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  70% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---------- 活力工具类 ---------- */
+
+// 渐变文字
+.gradient-text {
+  color: transparent;
+  background: var(--gradient-primary);
+  background-clip: text;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+.gradient-text-violet {
+  color: transparent;
+  background: var(--gradient-violet);
+  background-clip: text;
+  background-clip: text;
+}
+
+.gradient-text-warm {
+  color: transparent;
+  background: var(--gradient-warm);
+  background-clip: text;
+  background-clip: text;
+}
+
+// 辉光阴影
+.glow-primary {
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.glow-success {
+  box-shadow: var(--shadow-glow-success);
+}
+
+.glow-violet {
+  box-shadow: var(--shadow-glow-violet);
+}
+
+.glow-rose {
+  box-shadow: var(--shadow-glow-rose);
+}
+
+.glow-amber {
+  box-shadow: var(--shadow-glow-amber);
+}
+
+// 渐变背景卡片
+.gradient-bg {
+  background: var(--color-bg-gradient);
+}
+
+// 微光效果
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 30%) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+// 弹入动画
+.pop-in {
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+// 浮动动画
+.float-bounce {
+  animation: float-bounce 3s ease-in-out infinite;
+}
+
+// 摇摆动画
+.wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+// 脉冲环
+.pulse-ring {
+  position: relative;
+
+  &::after {
+    position: absolute;
+    inset: -4px;
+    content: '';
+    border: 2px solid currentcolor;
+    border-radius: inherit;
+    opacity: 0;
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+}
+
+// 装饰性渐变光斑
+.decorative-orb {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(60px);
+  border-radius: 50%;
+}
+
+.decorative-orb--primary {
+  background: color-mix(in srgb, var(--color-primary), transparent 80%);
+}
+
+.decorative-orb--violet {
+  background: color-mix(in srgb, var(--color-violet), transparent 80%);
+}
+
+.decorative-orb--teal {
+  background: color-mix(in srgb, var(--color-teal), transparent 80%);
+}
+
+// 彩色徽章样式
+.badge-vibrant {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &--violet {
+    color: var(--color-violet);
+    background: var(--color-violet-soft);
+  }
+
+  &--teal {
+    color: var(--color-teal);
+    background: var(--color-teal-soft);
+  }
+
+  &--rose {
+    color: var(--color-rose);
+    background: var(--color-rose-soft);
+  }
+
+  &--amber {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+  }
+
+  &--indigo {
+    color: var(--color-indigo);
+    background: var(--color-indigo-soft);
+  }
+
+  &--cyan {
+    color: var(--color-cyan);
+    background: var(--color-cyan-soft);
+  }
+
+  &--pink {
+    color: var(--color-pink);
+    background: var(--color-pink-soft);
+  }
+}
+
+// 渐变边框卡片
+.gradient-border {
+  position: relative;
+  background: var(--glass-surface);
+  border-radius: var(--radius-lg);
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    pointer-events: none;
+    content: '';
+    background: var(--gradient-primary);
+    border-radius: inherit;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+}
+
+// 多彩悬浮效果
+.hover-colorful {
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-glow-primary);
+    transform: translateY(-3px);
   }
 }
 

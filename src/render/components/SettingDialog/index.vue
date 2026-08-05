@@ -199,6 +199,34 @@
                         />
                       </el-select>
                     </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">容器宽度</span>
+                        <span class="item-desc">设置内容区域的宽度模式</span>
+                      </div>
+                      <el-select v-model="contentWidth" style="width: 140px">
+                        <el-option label="铺满" value="full" />
+                        <el-option label="定宽" value="fixed" />
+                      </el-select>
+                    </div>
+
+                    <div v-if="contentWidth === 'fixed'" class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">定宽宽度</span>
+                        <span class="item-desc">
+                          设置内容区域的固定宽度（800 - 1920px）
+                        </span>
+                      </div>
+                      <el-input-number
+                        v-model="contentWidthValue"
+                        :min="800"
+                        :max="1920"
+                        :step="20"
+                        :controls="true"
+                        style="width: 140px"
+                      />
+                    </div>
                   </div>
 
                   <!-- 布局模式 -->
@@ -222,7 +250,7 @@
                       </div>
 
                       <!-- 左侧菜单混合模式 -->
-                      <!-- <div
+                      <div
                         class="layout-card"
                         :class="{
                           active: appStore.layoutMode === 'left-mixed'
@@ -238,7 +266,7 @@
                           </div>
                         </div>
                         <span class="layout-label">左侧菜单混合模式</span>
-                      </div> -->
+                      </div>
 
                       <!-- 顶部菜单模式 -->
                       <div
@@ -256,7 +284,7 @@
                       </div>
 
                       <!-- 顶部菜单混合模式 -->
-                      <!-- <div
+                      <div
                         class="layout-card"
                         :class="{ active: appStore.layoutMode === 'top-mixed' }"
                         @click="appStore.setLayoutMode('top-mixed')"
@@ -269,7 +297,39 @@
                           </div>
                         </div>
                         <span class="layout-label">顶部菜单混合模式</span>
-                      </div> -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 菜单风格 -->
+                  <div class="setting-section">
+                    <h3 class="section-title">菜单风格</h3>
+                    <div class="menu-style-options">
+                      <!-- 白色风格 -->
+                      <div
+                        class="menu-style-card"
+                        :class="{ active: appStore.menuStyle === 'white' }"
+                        @click="appStore.setMenuStyle('white')"
+                      >
+                        <div class="menu-style-preview white">
+                          <div class="preview-sidebar"></div>
+                          <div class="preview-content"></div>
+                        </div>
+                        <span class="menu-style-label">白色</span>
+                      </div>
+
+                      <!-- 黑色风格 -->
+                      <div
+                        class="menu-style-card"
+                        :class="{ active: appStore.menuStyle === 'black' }"
+                        @click="appStore.setMenuStyle('black')"
+                      >
+                        <div class="menu-style-preview black">
+                          <div class="preview-sidebar"></div>
+                          <div class="preview-content"></div>
+                        </div>
+                        <span class="menu-style-label">黑色</span>
+                      </div>
                     </div>
                   </div>
                   <!-- 主题颜色 -->
@@ -419,6 +479,16 @@ const footerVisible = computed({
 const footerHeight = computed({
   get: () => appStore.footerHeight,
   set: (val) => appStore.setFooterHeight(val)
+})
+
+const contentWidth = computed({
+  get: () => appStore.contentWidth,
+  set: (val) => appStore.setContentWidth(val)
+})
+
+const contentWidthValue = computed({
+  get: () => appStore.contentWidthValue,
+  set: (val) => appStore.setContentWidthValue(val)
 })
 
 console.log(visible.value)
@@ -751,6 +821,88 @@ const handleClose = () => {
   // 居中显示
   justify-items: center;
   padding: 8px 0;
+}
+
+/* Menu Style Cards */
+.menu-style-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 300px;
+  padding: 8px 0;
+}
+
+.menu-style-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+
+  .menu-style-preview {
+    position: relative;
+    display: flex;
+    height: 80px;
+    padding: 6px;
+    overflow: hidden;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    transition: all 0.2s;
+
+    .preview-sidebar {
+      width: 28px;
+      margin-right: 4px;
+      border-radius: 4px;
+    }
+
+    .preview-content {
+      flex: 1;
+      background: var(--color-bg-content);
+      border-radius: 4px;
+    }
+
+    // 白色风格 - 纯白侧边栏
+    &.white {
+      background: var(--color-bg-window);
+
+      .preview-sidebar {
+        background: #fff;
+        border: 1px solid var(--color-border);
+      }
+    }
+
+    // 黑色风格 - 深色侧边栏
+    &.black {
+      background: var(--color-bg-window);
+
+      .preview-sidebar {
+        background: #1a1a1a;
+      }
+    }
+  }
+
+  .menu-style-label {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
+
+  &:hover .menu-style-preview {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    .menu-style-preview {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-primary), transparent 80%);
+    }
+
+    .menu-style-label {
+      font-weight: 500;
+      color: var(--color-primary);
+    }
+  }
 }
 
 .layout-card {

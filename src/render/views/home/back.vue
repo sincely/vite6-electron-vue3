@@ -1,5 +1,15 @@
 <template>
   <div class="dashboard">
+    <!-- 装饰性光斑 -->
+    <div
+      class="decorative-orb decorative-orb--primary"
+      style=" top: -60px; right: 10%;width: 200px; height: 200px"
+    />
+    <div
+      class="decorative-orb decorative-orb--violet"
+      style=" bottom: 20%; left: -40px;width: 160px; height: 160px"
+    />
+
     <section class="hero glass-card">
       <div class="hero-content">
         <h2 class="hero-title">仪表板</h2>
@@ -8,20 +18,39 @@
         </p>
       </div>
       <div class="hero-tags">
-        <span class="hero-tag">在线 8 节点</span>
-        <span class="hero-tag">延迟 42ms</span>
-        <span class="hero-tag">错误率 0.1%</span>
+        <span class="hero-tag hero-tag--success">
+          <span class="tag-dot" style="background: var(--color-success)" />
+          在线 8 节点
+        </span>
+        <span class="hero-tag hero-tag--info">
+          <span class="tag-dot" style="background: var(--color-cyan)" />
+          延迟 42ms
+        </span>
+        <span class="hero-tag hero-tag--warning">
+          <span class="tag-dot" style="background: var(--color-success)" />
+          错误率 0.1%
+        </span>
       </div>
     </section>
 
     <section class="stats-grid">
       <article
-        v-for="stat in stats"
+        v-for="(stat, index) in stats"
         :key="stat.label"
-        class="stat-card glass-card"
+        class="stat-card glass-card hover-colorful"
+        :style="{
+          '--stat-color': stat.color,
+          animationDelay: `${index * 0.08}s`
+        }"
       >
         <div class="stat-card-header">
-          <div class="stat-card-icon-bg" :style="{ color: stat.color }">
+          <div
+            class="stat-card-icon-bg"
+            :style="{
+              background: `linear-gradient(135deg, ${stat.color}, ${stat.colorEnd || stat.color})`,
+              color: '#fff'
+            }"
+          >
             <i :class="['stat-card-icon', stat.icon]" />
           </div>
           <span class="stat-card-label">{{ stat.label }}</span>
@@ -37,7 +66,7 @@
           <span
             :style="{
               width: stat.line,
-              background: `linear-gradient(90deg, ${stat.color}, transparent)`
+              background: `linear-gradient(90deg, ${stat.color}, ${stat.colorEnd || stat.color}88, transparent)`
             }"
           />
         </div>
@@ -105,6 +134,7 @@ const stats = [
     value: '2',
     sub: '+0 就绪',
     color: '#f97316',
+    colorEnd: '#fb923c',
     line: '84%'
   },
   {
@@ -113,6 +143,7 @@ const stats = [
     value: '1,024',
     sub: '+12% 较昨日',
     color: '#10b981',
+    colorEnd: '#34d399',
     line: '72%'
   },
   {
@@ -120,7 +151,8 @@ const stats = [
     icon: 'i-lucide-coins',
     value: '8.5k',
     sub: '已消耗',
-    color: '#0ea5e9',
+    color: '#7c3aed',
+    colorEnd: '#a78bfa',
     line: '66%'
   },
   {
@@ -128,15 +160,28 @@ const stats = [
     icon: 'i-lucide-check-circle',
     value: '99.9%',
     sub: '0 失败',
-    color: '#eab308',
+    color: '#06b6d4',
+    colorEnd: '#22d3ee',
     line: '92%'
   }
 ]
 
 const activities = [
-  { title: 'Provider-1 同步完成', time: '2 分钟前', color: '#10b981' },
-  { title: '自动更新检查已执行', time: '7 分钟前', color: '#0ea5e9' },
-  { title: '代理配置变更已发布', time: '20 分钟前', color: '#f97316' }
+  {
+    title: 'Provider-1 同步完成',
+    time: '2 分钟前',
+    color: 'var(--color-success)'
+  },
+  {
+    title: '自动更新检查已执行',
+    time: '7 分钟前',
+    color: 'var(--color-cyan)'
+  },
+  {
+    title: '代理配置变更已发布',
+    time: '20 分钟前',
+    color: 'var(--color-violet)'
+  }
 ]
 
 const copyEndpoint = async () => {
@@ -147,11 +192,13 @@ const copyEndpoint = async () => {
 
 <style lang="scss" scoped>
 .dashboard {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 14px;
   min-height: 100%;
   padding: 2px;
+  overflow: hidden;
 }
 
 .hero {
@@ -185,6 +232,7 @@ const copyEndpoint = async () => {
 
 .hero-tag {
   display: inline-flex;
+  gap: 6px;
   align-items: center;
   height: 30px;
   padding: 0 12px;
@@ -194,6 +242,19 @@ const copyEndpoint = async () => {
   background: color-mix(in srgb, var(--color-bg-input), transparent 18%);
   border: 1px solid color-mix(in srgb, var(--color-border), transparent 35%);
   border-radius: 999px;
+  transition: all 0.25s ease;
+
+  .tag-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px color-mix(in srgb, currentcolor, transparent 80%);
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
 }
 
 .stats-grid {
@@ -206,12 +267,18 @@ const copyEndpoint = async () => {
   padding: 16px;
   border-radius: var(--radius-lg);
   transition:
-    transform 0.25s ease,
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.25s ease;
+  animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   &:hover {
-    box-shadow: var(--glass-shadow-hover);
-    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 8px 20px -4px
+      color-mix(
+        in srgb,
+        var(--stat-color, var(--color-primary)),
+        transparent 60%
+      );
+    transform: translate3d(0, -4px, 0);
   }
 
   &-header {
@@ -224,11 +291,15 @@ const copyEndpoint = async () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: color-mix(in srgb, currentcolor, transparent 84%);
-    border: 1px solid color-mix(in srgb, currentcolor, transparent 70%);
-    border-radius: 11px;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    .stat-card:hover & {
+      transform: scale(1.1) rotate(-5deg);
+    }
   }
 
   &-icon {
@@ -371,6 +442,7 @@ const copyEndpoint = async () => {
   height: 9px;
   border-radius: 50%;
   box-shadow: 0 0 0 3px color-mix(in srgb, currentcolor, transparent 80%);
+  animation: pulse-ring 3s ease-in-out infinite;
 }
 
 .activity-title {

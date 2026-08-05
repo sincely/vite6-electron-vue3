@@ -1,15 +1,21 @@
 <template>
   <div class="global-content">
-    <router-view v-slot="{ Component, route }">
-      <transition :name="transitionName" mode="out-in">
-        <!-- keepAlive 页面 -->
-        <keep-alive v-if="route.meta?.keepAlive" :max="10">
-          <component :is="Component" :key="route.name ?? route.path" />
-        </keep-alive>
-        <!-- 非 keepAlive 页面 -->
-        <component :is="Component" v-else :key="route.path" />
-      </transition>
-    </router-view>
+    <div
+      class="global-content-inner"
+      :class="{ 'is-fixed-width': appStore.contentWidth === 'fixed' }"
+      :style="contentStyle"
+    >
+      <router-view v-slot="{ Component, route }">
+        <transition :name="transitionName" mode="out-in">
+          <!-- keepAlive 页面 -->
+          <keep-alive v-if="route.meta?.keepAlive" :max="10">
+            <component :is="Component" :key="route.name ?? route.path" />
+          </keep-alive>
+          <!-- 非 keepAlive 页面 -->
+          <component :is="Component" v-else :key="route.path" />
+        </transition>
+      </router-view>
+    </div>
   </div>
 </template>
 
@@ -30,6 +36,15 @@ const transitionName = computed(() => {
   }
 
   return 'page'
+})
+
+const contentStyle = computed(() => {
+  if (appStore.contentWidth === 'fixed') {
+    return {
+      '--content-fixed-width': `${appStore.contentWidthValue}px`
+    }
+  }
+  return {}
 })
 const isLoading = ref(false)
 
@@ -60,6 +75,25 @@ watch(
   &::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb);
     border-radius: 4px;
+  }
+}
+
+.global-content-inner {
+  min-height: 100%;
+  transition:
+    max-width 0.3s ease,
+    padding 0.3s ease,
+    background-color 0.3s ease;
+
+  &.is-fixed-width {
+    max-width: var(--content-fixed-width, 1200px);
+    padding: 16px 24px;
+    margin-right: auto;
+    margin-left: auto;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
   }
 }
 </style>

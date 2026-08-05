@@ -4,7 +4,7 @@
       <a
         class="sidebar-item"
         :class="{ 'sidebar-item-active': isParentActive(item) }"
-        :title="appStore.sidebarCollapsed ? item.label : ''"
+        :title="isCollapsed ? item.label : ''"
         @click="handleNav(item)"
       >
         <div class="sidebar-icon-wrap">
@@ -15,9 +15,9 @@
             height="18px"
           />
         </div>
-        <span class="sidebar-label">{{ item.label }}</span>
+        <span v-if="!isCollapsed" class="sidebar-label">{{ item.label }}</span>
         <SvgIcon
-          v-if="item.children?.length && !appStore.sidebarCollapsed"
+          v-if="item.children?.length && !isCollapsed"
           icon-class="chevron-right"
           class="sidebar-chevron"
           :class="{ 'sidebar-chevron-open': isExpanded(item.id) }"
@@ -30,8 +30,7 @@
         v-if="item.children?.length"
         class="sidebar-submenu"
         :class="{
-          'sidebar-submenu-open':
-            !appStore.sidebarCollapsed && isExpanded(item.id)
+          'sidebar-submenu-open': !isCollapsed && isExpanded(item.id)
         }"
       >
         <div class="sidebar-submenu-inner">
@@ -64,6 +63,11 @@ const route = useRoute()
 const mainItems = computed(() => menuItems.filter((item) => !item.footer))
 const expandedIds = ref([])
 
+const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
+const isCollapsed = computed(
+  () => appStore.sidebarCollapsed || isLeftMixed.value
+)
+
 const isExpanded = (id) => expandedIds.value.includes(id)
 
 const toggleExpand = (id) => {
@@ -78,13 +82,13 @@ const toggleExpand = (id) => {
 const isParentActive = (item) => {
   const selfMatch = item.route === route.path
   const childMatch = item.children?.some((c) => c.route === route.path) ?? false
-  return appStore.sidebarCollapsed ? selfMatch || childMatch : selfMatch
+  return isCollapsed.value ? selfMatch || childMatch : selfMatch
 }
 
 const isChildActive = (child) => child.route === route.path
 
 const handleClick = (child) => {
-  if (child.children?.length && !appStore.sidebarCollapsed) {
+  if (child.children?.length && !isCollapsed.value) {
     toggleExpand(child.id)
   } else {
     router.push(child.route).catch(() => {})
@@ -107,7 +111,14 @@ watch(
 )
 
 const handleNav = (item) => {
-  if (item.children?.length && !appStore.sidebarCollapsed) {
+  if (isLeftMixed.value) {
+    // left-mixed 模式：点击一级菜单导航到其路由（或第一个子项）
+    if (item.children?.length) {
+      router.push(item.children[0].route).catch(() => {})
+    } else {
+      router.push(item.route).catch(() => {})
+    }
+  } else if (item.children?.length && !isCollapsed.value) {
     toggleExpand(item.id)
   } else {
     router.push(item.route).catch(() => {})
@@ -152,16 +163,12 @@ const handleNav = (item) => {
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   &:hover {
     color: var(--color-text-primary);
     background: var(--color-bg-hover);
     border-color: var(--color-border-light);
-
-    .sidebar-icon-wrap {
-      background: var(--brand-accent-soft);
-    }
 
     .sidebar-icon {
       color: var(--brand-accent);
@@ -170,21 +177,20 @@ const handleNav = (item) => {
 
   &-active {
     font-weight: 600;
-    color: var(--color-primary) !important;
-    background: var(--brand-accent-soft);
-    border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
-
-    // .sidebar-icon-wrap {
-    //   background: color-mix(in srgb, var(--color-primary), transparent 12%);
-    //   box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary), transparent 60%);
-    // }
+    color: var(--menu-active-text, var(--color-primary)) !important;
+    background: var(--menu-active-bg, var(--brand-accent-soft));
+    border-color: color-mix(
+      in srgb,
+      var(--menu-active-indicator, var(--color-primary)),
+      transparent 40%
+    );
 
     .sidebar-icon {
-      color: var(--color-primary);
+      color: var(--menu-active-text, var(--color-primary));
     }
 
     .sidebar-child-dot {
-      background: var(--color-primary);
+      background: var(--menu-active-indicator, var(--color-primary));
     }
 
     &::before {
@@ -192,7 +198,10 @@ const handleNav = (item) => {
       inset: 8px auto 8px 0;
       width: 3px;
       content: '';
-      background: var(--color-primary);
+      background: var(
+        --menu-active-indicator,
+        linear-gradient(180deg, var(--color-primary), var(--color-violet))
+      );
       border-radius: 4px;
     }
   }
@@ -209,6 +218,11 @@ const handleNav = (item) => {
 
     &:hover {
       background: var(--color-bg-hover);
+
+      .sidebar-child-dot {
+        background: var(--color-primary);
+        transform: scale(1.4);
+      }
     }
 
     &::before {
@@ -219,7 +233,7 @@ const handleNav = (item) => {
 
 .sidebar-icon {
   color: var(--color-text-muted);
-  transition: color 0.2s;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .sidebar-icon-wrap {
@@ -229,9 +243,6 @@ const handleNav = (item) => {
   justify-content: center;
   width: 30px;
   height: 30px;
-  background: var(--color-bg-input);
-  border-radius: var(--radius-sm);
-  transition: all 0.2s ease;
 }
 
 .sidebar-label {
@@ -252,6 +263,7 @@ const handleNav = (item) => {
   margin-right: 2px;
   background: var(--color-border);
   border-radius: 50%;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .sidebar-chevron {
@@ -293,8 +305,8 @@ const handleNav = (item) => {
   grid-template-rows: 1fr;
   padding: 4px;
   margin: -2px 4px 4px;
-  background: var(--color-bg-content);
-  border-color: var(--color-border-light);
+  background: var(--menu-submenu-bg, var(--color-bg-content));
+  border-color: var(--menu-submenu-border, var(--color-border-light));
 
   .sidebar-submenu-inner {
     opacity: 1;
