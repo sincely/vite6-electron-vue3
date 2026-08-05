@@ -43,9 +43,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   width: var(--sidebar-width);
   height: 100%;
   overflow: hidden;
-  background-color: var(--menu-bg, var(--sidebar-surface-bg));
-  background-image: var(--menu-bg-gradient, none);
-  border-right: 1px solid var(--menu-border, var(--color-border));
+  background: var(--sidebar-surface-bg);
+  border-right: 1px solid var(--color-border);
   transition: width $transition;
 
   &-collapsed {
@@ -91,25 +90,25 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
   // 深色/品牌色风格下的文字颜色调整
   :deep(.sidebar-item) {
-    color: var(--menu-text-secondary, var(--color-text-secondary));
+    color: var(--color-text-secondary);
 
     &:hover {
-      color: var(--menu-text, var(--color-text-primary));
-      background: var(--menu-hover-bg, var(--color-bg-hover));
+      color: var(--color-text-primary);
+      background: var(--color-bg-hover);
     }
   }
 
   :deep(.sidebar-item-active) {
     color: var(--color-primary) !important;
-    background: var(--menu-active-bg, var(--brand-accent-soft));
+    background: var(--brand-accent-soft);
   }
 
   :deep(.sidebar-icon) {
-    color: var(--menu-icon, var(--color-text-muted));
+    color: var(--color-text-muted);
   }
 
   :deep(.sidebar-label) {
-    color: var(--menu-text-secondary, var(--color-text-secondary));
+    color: var(--color-text-secondary);
   }
 }
 </style>

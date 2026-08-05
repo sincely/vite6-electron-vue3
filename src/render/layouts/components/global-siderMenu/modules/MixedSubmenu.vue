@@ -43,9 +43,8 @@ const handleClick = (child) => {
   width: 180px;
   height: 100%;
   overflow: hidden;
-  background-color: var(--menu-bg, var(--sidebar-surface-bg));
-  background-image: var(--menu-bg-gradient, none);
-  border-right: 1px solid var(--menu-border, var(--color-border));
+  background: var(--sidebar-surface-bg);
+  border-right: 1px solid var(--color-border);
 }
 
 .mixed-submenu-header {
@@ -94,7 +93,7 @@ const handleClick = (child) => {
   margin-bottom: 2px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--menu-text-secondary, var(--color-text-secondary));
+  color: var(--color-text-secondary);
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
@@ -102,22 +101,18 @@ const handleClick = (child) => {
   transition: all 0.2s ease;
 
   &:hover {
-    color: var(--menu-text, var(--color-text-primary));
-    background: var(--menu-hover-bg, var(--color-bg-hover));
-    border-color: var(--menu-border, var(--color-border-light));
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
   }
 
   &-active {
-    color: var(--menu-active-text, var(--color-primary)) !important;
-    background: var(--menu-active-bg, var(--brand-accent-soft));
-    border-color: color-mix(
-      in srgb,
-      var(--menu-active-indicator, var(--color-primary)),
-      transparent 40%
-    );
+    color: var(--color-primary) !important;
+    background: var(--brand-accent-soft);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
 
     .mixed-submenu-dot {
-      background: var(--menu-active-indicator, var(--color-primary));
+      background: var(--color-primary);
     }
 
     &::before {
@@ -125,7 +120,7 @@ const handleClick = (child) => {
       inset: 8px auto 8px 0;
       width: 3px;
       content: '';
-      background: var(--menu-active-indicator, var(--color-primary));
+      background: var(--color-primary);
       border-radius: 4px;
     }
   }
@@ -135,7 +130,7 @@ const handleClick = (child) => {
   display: inline-block;
   width: 6px;
   height: 6px;
-  background: var(--menu-icon, var(--color-border));
+  background: var(--color-border);
   border-radius: 50%;
 }
 

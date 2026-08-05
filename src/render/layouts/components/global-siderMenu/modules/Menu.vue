@@ -177,20 +177,16 @@ const handleNav = (item) => {
 
   &-active {
     font-weight: 600;
-    color: var(--menu-active-text, var(--color-primary)) !important;
-    background: var(--menu-active-bg, var(--brand-accent-soft));
-    border-color: color-mix(
-      in srgb,
-      var(--menu-active-indicator, var(--color-primary)),
-      transparent 40%
-    );
+    color: var(--color-primary) !important;
+    background: var(--brand-accent-soft);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
 
     .sidebar-icon {
-      color: var(--menu-active-text, var(--color-primary));
+      color: var(--color-primary);
     }
 
     .sidebar-child-dot {
-      background: var(--menu-active-indicator, var(--color-primary));
+      background: var(--color-primary);
     }
 
     &::before {
@@ -198,9 +194,10 @@ const handleNav = (item) => {
       inset: 8px auto 8px 0;
       width: 3px;
       content: '';
-      background: var(
-        --menu-active-indicator,
-        linear-gradient(180deg, var(--color-primary), var(--color-violet))
+      background: linear-gradient(
+        180deg,
+        var(--color-primary),
+        var(--color-violet)
       );
       border-radius: 4px;
     }
@@ -305,8 +302,8 @@ const handleNav = (item) => {
   grid-template-rows: 1fr;
   padding: 4px;
   margin: -2px 4px 4px;
-  background: var(--menu-submenu-bg, var(--color-bg-content));
-  border-color: var(--menu-submenu-border, var(--color-border-light));
+  background: var(--color-bg-content);
+  border-color: var(--color-border-light);
 
   .sidebar-submenu-inner {
     opacity: 1;

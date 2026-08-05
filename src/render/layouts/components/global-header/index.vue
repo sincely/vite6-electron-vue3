@@ -186,9 +186,8 @@ const close = () => ipcRenderer.send('close-window')
   height: var(--titlebar-height);
   overflow: visible;
   user-select: none;
-  background-color: var(--titlebar-menu-bg, var(--color-bg-titlebar));
-  background-image: var(--titlebar-menu-bg-gradient, none);
-  border-bottom: 1px solid var(--titlebar-menu-border, var(--color-border));
+  background: var(--color-bg-titlebar);
+  border-bottom: 1px solid var(--color-border);
   -webkit-app-region: drag;
 
   &__inner {

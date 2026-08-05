@@ -85,13 +85,13 @@ const handleNav = (item) => {
   padding: 0 16px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--menu-text-secondary, var(--color-text-secondary));
+  color: var(--color-text-secondary);
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   .menu-icon {
-    color: var(--menu-icon, var(--color-text-muted));
+    color: var(--color-text-muted);
     transition: color 0.2s ease;
   }
 
@@ -102,7 +102,7 @@ const handleNav = (item) => {
     width: 0;
     height: 3px;
     content: '';
-    background: var(--menu-active-indicator, var(--color-primary));
+    background: var(--color-primary);
     border-radius: 3px 3px 0 0;
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -110,14 +110,11 @@ const handleNav = (item) => {
   }
 
   &:hover {
-    color: var(--menu-text, var(--color-text-primary));
-    background: var(
-      --menu-hover-bg,
-      color-mix(in srgb, var(--color-bg-hover), transparent 40%)
-    );
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-bg-hover), transparent 40%);
 
     .menu-icon {
-      color: var(--menu-active-text, var(--color-primary));
+      color: var(--color-primary);
     }
 
     .top-submenu {
@@ -127,14 +124,11 @@ const handleNav = (item) => {
   }
 
   &.active {
-    color: var(--menu-active-text, var(--color-primary));
-    background: var(
-      --menu-active-bg,
-      color-mix(in srgb, var(--color-primary), transparent 90%)
-    );
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 90%);
 
     .menu-icon {
-      color: var(--menu-active-text, var(--color-primary));
+      color: var(--color-primary);
     }
 
     &::after {

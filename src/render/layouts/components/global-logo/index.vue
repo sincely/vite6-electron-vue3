@@ -66,7 +66,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     overflow: hidden;
     font-size: 16px;
     font-weight: 700;
-    color: var(--menu-text, var(--color-primary));
+    color: var(--color-primary);
     text-overflow: ellipsis;
     letter-spacing: 0.3px;
     white-space: nowrap;

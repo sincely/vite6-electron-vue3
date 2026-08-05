@@ -6,7 +6,6 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     theme: 'light', // 当前主题，默认是亮色主题
     layoutMode: 'left', // 布局模式：left | left-mixed | top | top-mixed
-    menuStyle: 'white', // 菜单风格：white | black
     mixedSubmenuVisible: true, // 混合模式下子菜单栏是否显示
     sidebarCollapsed: false, // 侧边栏是否折叠
     footerVisible: true, // 是否显示底部状态栏
@@ -39,10 +38,6 @@ export const useAppStore = defineStore('app', {
   actions: {
     setLayoutMode(mode) {
       this.layoutMode = mode
-    },
-    setMenuStyle(style) {
-      this.menuStyle = style
-      document.documentElement.setAttribute('data-menu-style', style)
     },
     toggleMixedSubmenu() {
       this.mixedSubmenuVisible = !this.mixedSubmenuVisible
@@ -162,7 +157,6 @@ export const useAppStore = defineStore('app', {
     initTheme() {
       this.setTheme(this.theme)
       this.initThemeColors()
-      this.setMenuStyle(this.menuStyle)
     },
     // 初始化主题颜色
     initThemeColors() {

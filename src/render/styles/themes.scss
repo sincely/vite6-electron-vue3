@@ -118,16 +118,6 @@ html[data-theme='light'] {
     #f5f3ff 50%,
     #ecfeff 100%
   );
-
-  // 菜单风格变量 - 默认
-  --menu-bg: var(--color-bg-sidebar);
-  --menu-bg-gradient: none;
-  --menu-text: var(--color-text-primary);
-  --menu-text-secondary: var(--color-text-secondary);
-  --menu-icon: var(--color-text-muted);
-  --menu-hover-bg: var(--color-bg-hover);
-  --menu-active-bg: var(--color-bg-active);
-  --menu-border: var(--color-border);
 }
 
 // ---------- Dark Theme (深蓝暗色) ----------
@@ -244,86 +234,4 @@ html.dark {
     rgb(30 27 75 / 30%) 50%,
     rgb(22 78 99 / 30%) 100%
   );
-
-  // 菜单风格变量 - 默认（深色主题）
-  --menu-bg: var(--color-bg-sidebar);
-  --menu-bg-gradient: none;
-  --menu-text: var(--color-text-primary);
-  --menu-text-secondary: var(--color-text-secondary);
-  --menu-icon: var(--color-text-muted);
-  --menu-hover-bg: var(--color-bg-hover);
-  --menu-active-bg: var(--color-bg-active);
-  --menu-border: var(--color-border);
-}
-
-// =============================================
-// 菜单风格变体 - 通过 data-menu-style 属性切换
-// 支持：white（白色）| black（黑色）
-// =============================================
-
-// 白色菜单风格（默认）
-html[data-menu-style='white'] {
-  --menu-bg: #fff;
-  --menu-bg-gradient: none;
-  --menu-text: var(--color-text-primary);
-  --menu-text-secondary: var(--color-text-secondary);
-  --menu-icon: var(--color-text-muted);
-  --menu-hover-bg: var(--color-bg-hover);
-  --menu-active-bg: var(--color-bg-active);
-  --menu-border: var(--color-border);
-  --menu-active-indicator: var(--color-primary);
-  --menu-active-text: var(--color-primary);
-
-  // 子菜单背景
-  --menu-submenu-bg: var(--color-bg-content);
-  --menu-submenu-border: var(--color-border-light);
-
-  // 顶部菜单栏
-  --titlebar-menu-bg: #fff;
-  --titlebar-menu-bg-gradient: none;
-  --titlebar-menu-border: var(--color-border);
-}
-
-// 黑色菜单风格
-html[data-menu-style='black'] {
-  --menu-bg: #1a1a1a;
-  --menu-bg-gradient: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
-  --menu-text: #f5f5f5;
-  --menu-text-secondary: #a0a0a0;
-  --menu-icon: #808080;
-  --menu-hover-bg: #2a2a2a;
-  --menu-active-bg: #333;
-  --menu-border: #2a2a2a;
-  --menu-active-indicator: var(--color-primary);
-  --menu-active-text: #fff;
-
-  // 子菜单背景 - 比主背景稍亮
-  --menu-submenu-bg: #242424;
-  --menu-submenu-border: #333;
-
-  // 顶部菜单栏
-  --titlebar-menu-bg: #1a1a1a;
-  --titlebar-menu-bg-gradient: linear-gradient(
-    180deg,
-    #1f1f1f 0%,
-    #141414 100%
-  );
-  --titlebar-menu-border: #2a2a2a;
-}
-
-// 默认风格使用主题默认值
-html[data-menu-style='default'] {
-  --menu-bg-gradient: none;
-  --menu-active-indicator: var(--color-primary);
-  --menu-active-text: var(--color-primary);
-}
-
-// 顶部菜单栏风格变量（用于 top/top-mixed 模式）
-:root,
-html[data-theme='light'],
-html[data-theme='dark'],
-html.dark {
-  --titlebar-menu-bg: var(--color-bg-titlebar);
-  --titlebar-menu-bg-gradient: none;
-  --titlebar-menu-border: var(--color-border);
 }

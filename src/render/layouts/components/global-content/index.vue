@@ -6,13 +6,15 @@
       :style="contentStyle"
     >
       <router-view v-slot="{ Component, route }">
-        <transition :name="transitionName" mode="out-in">
-          <!-- keepAlive 页面 -->
-          <keep-alive v-if="route.meta?.keepAlive" :max="10">
+        <!-- keepAlive 页面：keep-alive 在外层，transition 在内层 -->
+        <keep-alive v-if="route.meta?.keepAlive" :max="10">
+          <transition :name="transitionName" mode="out-in">
             <component :is="Component" :key="route.name ?? route.path" />
-          </keep-alive>
-          <!-- 非 keepAlive 页面 -->
-          <component :is="Component" v-else :key="route.path" />
+          </transition>
+        </keep-alive>
+        <!-- 非 keepAlive 页面 -->
+        <transition v-else :name="transitionName" mode="out-in">
+          <component :is="Component" :key="route.path" />
         </transition>
       </router-view>
     </div>
