@@ -81,6 +81,106 @@
                   </div>
                 </div>
 
+                <!-- Profile / Personal Info -->
+                <div
+                  v-else-if="currentTab === 'profile'"
+                  key="profile"
+                  class="tab-pane"
+                >
+                  <!-- Avatar Section -->
+                  <div class="profile-avatar-section">
+                    <div class="avatar-container">
+                      <div class="avatar-wrapper">
+                        <img
+                          v-if="userAvatar && !avatarLoadFailed"
+                          :src="userAvatar"
+                          :alt="displayName"
+                          class="profile-avatar-img"
+                          @error="avatarLoadFailed = true"
+                        />
+                        <span v-else class="profile-avatar-fallback">
+                          {{ userInitial }}
+                        </span>
+                        <div class="avatar-overlay">
+                          <el-upload
+                            :show-file-list="false"
+                            accept="image/*"
+                            :before-upload="handleAvatarUpload"
+                          >
+                            <button class="avatar-edit-btn" type="button">
+                              <SvgIcon icon-class="edit" />
+                              <span>更换头像</span>
+                            </button>
+                          </el-upload>
+                        </div>
+                      </div>
+                      <span class="avatar-status-dot"></span>
+                    </div>
+                    <div class="avatar-meta">
+                      <h3 class="avatar-name">{{ displayName }}</h3>
+                      <span class="avatar-badge">{{ userRole }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Info Cards -->
+                  <div class="setting-section">
+                    <h3 class="section-title">基本信息</h3>
+                    <div class="profile-info-list">
+                      <div class="profile-info-item">
+                        <div class="info-icon">
+                          <SvgIcon icon-class="user" />
+                        </div>
+                        <div class="info-content">
+                          <span class="info-label">姓名</span>
+                          <span class="info-value">{{ displayName }}</span>
+                        </div>
+                        <SvgIcon
+                          icon-class="chevron-right"
+                          class="info-arrow"
+                        />
+                      </div>
+                      <div class="profile-info-item">
+                        <div class="info-icon">
+                          <SvgIcon icon-class="phone" />
+                        </div>
+                        <div class="info-content">
+                          <span class="info-label">手机号</span>
+                          <span class="info-value">{{ userPhone }}</span>
+                        </div>
+                        <SvgIcon
+                          icon-class="chevron-right"
+                          class="info-arrow"
+                        />
+                      </div>
+                      <div class="profile-info-item">
+                        <div class="info-icon">
+                          <SvgIcon icon-class="email" />
+                        </div>
+                        <div class="info-content">
+                          <span class="info-label">邮箱</span>
+                          <span class="info-value">{{ userEmail }}</span>
+                        </div>
+                        <SvgIcon
+                          icon-class="chevron-right"
+                          class="info-arrow"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Logout -->
+                  <div class="setting-section">
+                    <button
+                      class="logout-btn"
+                      type="button"
+                      @click="handleLogout"
+                    >
+                      <SvgIcon icon-class="exitscreen" />
+                      <span>退出登录</span>
+                    </button>
+                  </div>
+                </div>
+
                 <!-- Appearance Settings -->
                 <div
                   v-else-if="currentTab === 'appearance'"
@@ -422,9 +522,13 @@
 <script setup>
 import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
+import { useUserStore } from '@/store/modules/user'
+import { useRouter } from 'vue-router'
 import pkg from '../../../../package.json'
 
 const appStore = useAppStore()
+const userStore = useUserStore()
+const router = useRouter()
 const visible = computed({
   get: () => appStore.settingsVisible,
   set: (val) => appStore.toggleSettings(val)
@@ -466,6 +570,7 @@ const appVersion = pkg.version
 
 const tabs = [
   { id: 'general', label: '常规设置', icon: 'settings' },
+  { id: 'profile', label: '个人资料', icon: 'user' },
   { id: 'appearance', label: '外观显示', icon: 'appearance' },
   { id: 'about', label: '关于软件', icon: 'info' }
 ]
@@ -488,6 +593,49 @@ const form = ref({
   silentLaunch: false,
   closeAction: 'minimize'
 })
+
+// Profile tab data
+const displayName = computed(
+  () =>
+    userStore.userInfo?.nickname ||
+    userStore.userInfo?.name ||
+    userStore.userInfo?.username ||
+    'Admin'
+)
+
+const userAvatar = computed(() => userStore.userInfo?.avatar || '')
+const userPhone = computed(
+  () => userStore.userInfo?.phone || userStore.userInfo?.mobile || '138****8888'
+)
+const userEmail = computed(
+  () => userStore.userInfo?.email || 'admin@lightning.app'
+)
+const userRole = computed(() =>
+  userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'ADMIN'
+)
+
+const avatarLoadFailed = ref(false)
+const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
+
+const handleAvatarUpload = (file) => {
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    // 更新用户头像
+    if (userStore.userInfo) {
+      userStore.setUserInfo({
+        ...userStore.userInfo,
+        avatar: e.target.result
+      })
+    }
+  }
+  reader.readAsDataURL(file.raw || file)
+  return false // 阻止自动上传
+}
+
+const handleLogout = async () => {
+  await userStore.logoutAction().catch(() => {})
+  window.ipcRenderer?.send('logout')
+}
 
 const handleClose = () => {
   visible.value = false
@@ -954,6 +1102,223 @@ const handleClose = () => {
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;
+}
+
+/* Profile Page */
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 32px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.avatar-container {
+  position: relative;
+  margin-bottom: 16px;
+
+  .avatar-status-dot {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    z-index: 2;
+    width: 14px;
+    height: 14px;
+    background: #10b981;
+    border: 3px solid var(--color-bg-window);
+    border-radius: 50%;
+  }
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  border: 3px solid var(--color-border);
+  border-radius: 50%;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: var(--color-primary);
+
+    .avatar-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--brand-accent)
+  );
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 50%);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.avatar-edit-btn {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+  background: rgb(255 255 255 / 20%);
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: 20px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgb(255 255 255 / 30%);
+  }
+}
+
+.avatar-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.avatar-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.avatar-badge {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--brand-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 40%);
+  border-radius: 10px;
+}
+
+.profile-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-info-item {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: var(--color-bg-card);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+
+    .info-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .info-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    color: var(--color-primary);
+    background: var(--brand-accent-soft);
+    border-radius: 10px;
+
+    :deep(.svg-icon) {
+      font-size: 18px;
+    }
+  }
+
+  .info-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .info-label {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  .info-value {
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info-arrow {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: all 0.2s;
+    transform: translateX(-4px);
+  }
+}
+
+.logout-btn {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-danger);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-danger), transparent 70%);
+  border-radius: 12px;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #fff;
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    box-shadow: var(--shadow-glow-rose);
+  }
 }
 
 /* Transitions */

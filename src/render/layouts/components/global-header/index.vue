@@ -31,12 +31,12 @@
           @click="showUpdateDialog"
         >
           <SvgIcon
-            icon-class="download"
+            icon-class="update"
             class="update-icon"
             width="16px"
             height="16px"
           />
-          <span>{{ latestVersion }}</span>
+          <span>更新</span>
         </button>
 
         <!-- 通知铃铛 -->

@@ -1,7 +1,12 @@
 import { Menu, app, shell, dialog, BrowserWindow } from 'electron'
-import pkg from 'electron-updater'
 
-const { autoUpdater } = pkg
+// 通知渲染进程打开检查更新弹窗（与顶栏按钮走同一流程）
+const notifyCheckUpdate = () => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win && !win.isDestroyed()) {
+    win.webContents.send('menu-check-update')
+  }
+}
 
 // 创建菜单栏的函数
 const createMenu = () => {
@@ -18,23 +23,7 @@ const createMenu = () => {
               { type: 'separator' },
               {
                 label: '检查更新',
-                click: async () => {
-                  const mainWindow = BrowserWindow.getAllWindows()[0]
-                  try {
-                    dialog.showMessageBox(mainWindow, {
-                      type: 'info',
-                      title: '检查更新',
-                      message: '正在检查更新...',
-                      buttons: []
-                    })
-                    await autoUpdater.checkForUpdates()
-                  } catch (error) {
-                    dialog.showErrorBox(
-                      '检查更新失败',
-                      error.message || '无法连接到更新服务器'
-                    )
-                  }
-                }
+                click: notifyCheckUpdate
               },
               { type: 'separator' },
               { role: 'services', label: '服务' },
@@ -143,23 +132,7 @@ const createMenu = () => {
         {
           label: '检查更新',
           accelerator: 'CmdOrCtrl+U',
-          click: async () => {
-            const mainWindow = BrowserWindow.getAllWindows()[0]
-            try {
-              dialog.showMessageBox(mainWindow, {
-                type: 'info',
-                title: '检查更新',
-                message: '正在检查更新...',
-                buttons: []
-              })
-              await autoUpdater.checkForUpdates()
-            } catch (error) {
-              dialog.showErrorBox(
-                '检查更新失败',
-                error.message || '无法连接到更新服务器'
-              )
-            }
-          }
+          click: notifyCheckUpdate
         },
         { type: 'separator' },
         {
