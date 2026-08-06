@@ -798,6 +798,7 @@ const handleLogout = async () => {
 // ─── About Tab: Update Check ──────────────────────────────────────────
 const updateCheckState = ref('idle') // idle | checking | up-to-date | available | error
 const latestVersionDisplay = ref('')
+const lastCheckTime = ref('')
 
 const updateCheckTitle = computed(() => {
   switch (updateCheckState.value) {
@@ -821,7 +822,7 @@ const updateCheckSubtitle = computed(() => {
     case 'available':
       return '新版本已发布，点击立即更新'
     case 'up-to-date':
-      return '当前版本已是最新，无需更新'
+      return `已经是最新版本 v${appVersion}${lastCheckTime.value ? `，上次检查：${lastCheckTime.value}` : ''}`
     case 'error':
       return '网络连接异常，请稍后再试'
     default:
@@ -876,9 +877,14 @@ onMounted(() => {
     }
   }
 
-  onAboutUpdateNotAvailable = () => {
+  onAboutUpdateNotAvailable = (_event, info) => {
     if (updateCheckState.value === 'checking') {
       updateCheckState.value = 'up-to-date'
+      const now = new Date()
+      lastCheckTime.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+      if (info?.version) {
+        latestVersionDisplay.value = info.version
+      }
     }
   }
 

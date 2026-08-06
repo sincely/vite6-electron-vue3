@@ -1,4 +1,55 @@
-import { Menu, app, shell } from 'electron'
+import { Menu, app, shell, dialog, BrowserWindow } from 'electron'
+import os from 'os'
+
+// 计算相对时间（如 "2 个月前"）
+const getRelativeTime = (dateStr) => {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now - date
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  const diffHour = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHour / 24)
+  const diffMonth = Math.floor(diffDay / 30)
+  const diffYear = Math.floor(diffDay / 365)
+
+  if (diffYear > 0) return `${diffYear} 年前`
+  if (diffMonth > 0) return `${diffMonth} 个月前`
+  if (diffDay > 0) return `${diffDay} 天前`
+  if (diffHour > 0) return `${diffHour} 小时前`
+  if (diffMin > 0) return `${diffMin} 分钟前`
+  return '刚刚'
+}
+
+// 显示关于对话框
+const showAboutDialog = () => {
+  const mainWindow = BrowserWindow.getAllWindows()[0]
+  const commitHash =
+    typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown'
+  const buildDate =
+    typeof __BUILD_DATE__ !== 'undefined'
+      ? __BUILD_DATE__
+      : new Date().toISOString()
+  const osInfo = `${os.type()} ${os.arch()} ${os.release()}`
+
+  const detail = [
+    `版本: ${app.getVersion()}`,
+    `提交: ${commitHash}`,
+    `日期: ${buildDate} (${getRelativeTime(buildDate)})`,
+    `Electron: ${process.versions.electron}`,
+    `Chromium: ${process.versions.chrome}`,
+    `Node.js: ${process.versions.node}`,
+    `V8: ${process.versions.v8}`,
+    `OS: ${osInfo}`
+  ].join('\n')
+
+  dialog.showMessageBox(mainWindow, {
+    type: 'info',
+    title: '关于',
+    message: `${app.name}`,
+    detail
+  })
+}
 
 // 创建菜单栏的函数
 const createMenu = () => {
@@ -11,7 +62,7 @@ const createMenu = () => {
           {
             label: app.name,
             submenu: [
-              { role: 'about', label: '关于' },
+              { label: '关于', click: showAboutDialog },
               { role: 'checkForUpdates', label: '检查更新' },
               { type: 'separator' },
               { role: 'services', label: '服务' },
@@ -119,15 +170,7 @@ const createMenu = () => {
         { type: 'separator' },
         {
           label: '关于',
-          click: () => {
-            const { dialog } = require('electron')
-            dialog.showMessageBox({
-              type: 'info',
-              title: '关于',
-              message: `${app.name} v${app.getVersion()}`,
-              detail: '一个基于 Vite 6 + Electron + Vue 3 的桌面应用'
-            })
-          }
+          click: showAboutDialog
         }
       ]
     }

@@ -1,10 +1,27 @@
 import { defineConfig, loadEnv } from 'vite'
 import { resolve } from 'path'
+import { execSync } from 'child_process'
 import createVitePlugins from './build/plugins'
 import { proxyServer } from './build/config/proxy'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
 import fs from 'fs'
+
+// 构建时获取 git 提交哈希和构建日期
+const getGitCommitHash = () => {
+  try {
+    return execSync('git rev-parse HEAD').toString().trim()
+  } catch {
+    return 'unknown'
+  }
+}
+
+const getBuildDate = () => {
+  return new Date().toISOString()
+}
+
+const __COMMIT_HASH__ = JSON.stringify(getGitCommitHash())
+const __BUILD_DATE__ = JSON.stringify(getBuildDate())
 
 export default defineConfig(({ mode, command }) => {
   const viteEnv = loadEnv(mode, process.cwd())
@@ -181,7 +198,9 @@ export default defineConfig(({ mode, command }) => {
               // 将 .env 文件中的 VITE_* 变量注入主进程（Node.js 不读取 VITE_ 前缀变量）
               'process.env.VITE_UPDATE_URL': JSON.stringify(
                 viteEnv.VITE_UPDATE_URL
-              )
+              ),
+              __COMMIT_HASH__,
+              __BUILD_DATE__
             },
             build: {
               sourcemap,
