@@ -2,6 +2,7 @@ import { app, BrowserWindow, nativeImage, nativeTheme } from 'electron'
 import path from 'node:path'
 import initIpc from './ipc'
 import initTray from './tray'
+import createMenu from './menu'
 
 import { createLoginWindow, restoreMainWindow } from './windowManager'
 import './config'
@@ -31,6 +32,8 @@ app.whenReady().then(() => {
     app.dock.setIcon(nativeImage.createFromPath(devIcon))
   }
 
+  // 创建自定义菜单
+  createMenu()
   // 创建登录窗口
   createLoginWindow()
   // 延迟500ms，初始化非核心功能
