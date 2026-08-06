@@ -91,7 +91,7 @@ const handleNav = (item) => {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   .menu-icon {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     transition: color 0.2s ease;
   }
 

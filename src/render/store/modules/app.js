@@ -107,8 +107,13 @@ export const useAppStore = defineStore('app', {
       this.setTheme(nextTheme)
     },
     // 切换主题时添加过渡动画
-    toggleThemeWithTransition() {
-      this.toggleTheme()
+    // 支持直接指定目标主题（如 'light' / 'dark'），否则回退到三态循环
+    toggleThemeWithTransition(_event, targetTheme) {
+      if (targetTheme && (targetTheme === 'light' || targetTheme === 'dark')) {
+        this.setTheme(targetTheme)
+      } else {
+        this.toggleTheme()
+      }
     },
     // 设置主题
     setTheme(theme) {

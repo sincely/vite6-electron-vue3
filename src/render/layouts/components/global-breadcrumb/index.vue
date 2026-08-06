@@ -109,7 +109,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
   &-sep {
     flex-shrink: 0;
     color: var(--color-text-muted);
-    opacity: 0.45;
+    opacity: 0.65;
   }
 
   &-crumb {
@@ -159,8 +159,7 @@ const breadcrumb = computed(() => findMenuPath(route.path))
 
   &-icon {
     flex-shrink: 0;
-    color: var(--color-text-secondary);
-    opacity: 0.9;
+    color: var(--color-text-primary);
   }
 
   &-extra {

@@ -207,7 +207,7 @@ const headerActions = ref([
     place-items: center;
     width: 28px;
     height: 28px;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     cursor: pointer;
     background: transparent;
     border: none;

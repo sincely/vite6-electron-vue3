@@ -230,7 +230,7 @@ const close = () => ipcRenderer.send('close-window')
   justify-content: center;
   width: 34px;
   height: 34px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   cursor: pointer;
   background: transparent;
   border: 1px solid transparent;

@@ -161,7 +161,13 @@ provide('reload', reload)
 
     .icon-btn {
       margin-right: 8px;
+      color: var(--color-text-secondary);
       cursor: pointer;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--color-text-primary);
+      }
     }
   }
 

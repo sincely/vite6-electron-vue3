@@ -127,7 +127,7 @@ const closeWindow = () => {
     align-items: center;
     justify-content: center;
     padding: 5px;
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
     cursor: pointer;
     background: none;
     border: none;

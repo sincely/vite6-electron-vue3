@@ -19,15 +19,15 @@ defineProps({
   },
   visibilityHeight: {
     type: Number,
-    default: 20
+    default: 180
   },
   right: {
     type: Number,
-    default: 40
+    default: 30
   },
   bottom: {
     type: Number,
-    default: 40
+    default: 50
   }
 })
 </script>

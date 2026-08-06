@@ -229,7 +229,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
   color: var(--color-text-muted);
 
   &__icon {
-    opacity: 0.4;
+    opacity: 0.6;
   }
 
   p {

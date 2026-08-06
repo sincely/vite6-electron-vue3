@@ -19,11 +19,13 @@
       </router-view>
     </div>
   </div>
+  <BackTop />
 </template>
 
 <script setup>
 import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
+import BackTop from '@/components/BackTop/index.vue'
 
 const route = useRoute()
 const appStore = useAppStore()

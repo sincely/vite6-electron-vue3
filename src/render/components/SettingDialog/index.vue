@@ -24,10 +24,6 @@
                 <span>{{ tab.label }}</span>
               </div>
             </div>
-
-            <div class="sidebar-footer">
-              <span class="version-text">v{{ appVersion }}</span>
-            </div>
           </div>
 
           <!-- Content -->
@@ -1510,8 +1506,7 @@ const handleClose = () => {
 
   &__arrow {
     flex-shrink: 0;
-    color: var(--color-text-muted);
-    opacity: 0.5;
+    color: var(--color-text-secondary);
   }
 
   &--current &__value {

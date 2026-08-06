@@ -96,13 +96,13 @@ const platformLabel = computed(() => {
     gap: 4px;
     align-items: center;
     font-size: 11px;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     letter-spacing: 0.2px;
     white-space: nowrap;
 
     &--brand {
       font-weight: 500;
-      color: var(--color-text-secondary);
+      color: var(--color-text-primary);
     }
 
     &--online {

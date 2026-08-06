@@ -461,15 +461,15 @@ onMounted(() => {
   let loadingFinished = false
 
   // 如果 loading 已经结束，检查是否需要显示更新弹窗
-  // const checkAndShowDialog = () => {
-  //   if (
-  //     loadingFinished &&
-  //     latestVersion.value &&
-  //     latestVersion.value !== currentVersion.value
-  //   ) {
-  //     visible.value = true
-  //   }
-  // }
+  const checkAndShowDialog = () => {
+    if (
+      loadingFinished &&
+      latestVersion.value &&
+      latestVersion.value !== currentVersion.value
+    ) {
+      visible.value = true
+    }
+  }
 
   /**
    * 监听 loading 结束消息
@@ -721,7 +721,7 @@ onUnmounted(() => {
   justify-content: center;
   width: 28px;
   height: 28px;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -765,8 +765,7 @@ onUnmounted(() => {
 }
 
 .version-arrow {
-  color: var(--color-text-muted);
-  opacity: 0.6;
+  color: var(--color-text-secondary);
 }
 
 // 更新说明

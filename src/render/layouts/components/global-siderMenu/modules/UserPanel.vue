@@ -164,7 +164,7 @@ $transition: 0.2s ease;
   }
 
   .user-settings-icon {
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
   }
 
   &.is-collapsed {

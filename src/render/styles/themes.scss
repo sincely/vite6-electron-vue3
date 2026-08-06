@@ -22,7 +22,7 @@ html[data-theme='light'] {
   // 文字色 - 高对比度深色系
   --color-text-primary: #0f172a; // Slate-900
   --color-text-secondary: #475569; // Slate-600
-  --color-text-muted: #94a3b8; // Slate-400
+  --color-text-muted: #64748b; // Slate-500（加深，避免图标/辅助文字过浅）
   --color-text-active: #2563eb; // Blue-600 选中文字
   --color-text-link: #2563eb;
 

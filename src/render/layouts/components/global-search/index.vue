@@ -140,7 +140,7 @@ const goFirst = () => {
 
   &__icon {
     flex-shrink: 0;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     transition: color 0.2s;
 
     .is-active & {
@@ -169,7 +169,7 @@ const goFirst = () => {
     justify-content: center;
     width: 16px;
     height: 16px;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     cursor: pointer;
     background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
     border: none;

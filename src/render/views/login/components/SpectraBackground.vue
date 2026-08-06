@@ -659,21 +659,9 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(
-      circle at 82% 24%,
-      rgb(151 45 235 / 86%),
-      transparent 31%
-    ),
-    radial-gradient(
-      circle at 72% 72%,
-      rgb(18 221 242 / 82%),
-      transparent 36%
-    ),
-    radial-gradient(
-      circle at 61% 50%,
-      rgb(31 90 255 / 72%),
-      transparent 45%
-    ),
+    radial-gradient(circle at 82% 24%, rgb(151 45 235 / 86%), transparent 31%),
+    radial-gradient(circle at 72% 72%, rgb(18 221 242 / 82%), transparent 36%),
+    radial-gradient(circle at 61% 50%, rgb(31 90 255 / 72%), transparent 45%),
     #fff;
 }
 </style>

@@ -443,7 +443,7 @@ watch(
     .toolbar-icon {
       width: 18px;
       height: 18px;
-      color: var(--el-text-color-regular);
+      color: var(--color-text-secondary);
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 

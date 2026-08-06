@@ -229,7 +229,7 @@ const handleNav = (item) => {
 }
 
 .sidebar-icon {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -266,7 +266,7 @@ const handleNav = (item) => {
 .sidebar-chevron {
   flex-shrink: 0;
   margin-left: auto;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   transition: transform 0.2s;
 
   &-open {
