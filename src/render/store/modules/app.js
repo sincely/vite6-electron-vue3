@@ -2,6 +2,12 @@ import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import { updateElementPlusTheme } from '@/utils/color'
 
+// 系统主题监听的内部引用。
+// 注意：不能挂在 store 上（this._xxx），否则会成为 store 的可枚举属性，
+// 值为 null 时会导致 storeToRefs() 抛错（Cannot read properties of null (reading 'effect')）
+let systemThemeListener = null
+let systemThemeMediaQuery = null
+
 export const useAppStore = defineStore('app', {
   state: () => ({
     theme: 'light', // 当前主题，默认是亮色主题
@@ -117,8 +123,8 @@ export const useAppStore = defineStore('app', {
         effectiveTheme = isSystemDark ? 'dark' : 'light'
 
         // 监听系统主题变化
-        if (!this._systemThemeListener) {
-          this._systemThemeListener = (e) => {
+        if (!systemThemeListener) {
+          systemThemeListener = (e) => {
             if (this.theme === 'auto') {
               const newTheme = e.matches ? 'dark' : 'light'
               document.documentElement.setAttribute('data-theme', newTheme)
@@ -130,19 +136,19 @@ export const useAppStore = defineStore('app', {
             }
           }
           const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-          mediaQuery.addEventListener('change', this._systemThemeListener)
+          mediaQuery.addEventListener('change', systemThemeListener)
           // 保存 mediaQuery 引用以便后续移除监听
-          this._systemThemeMediaQuery = mediaQuery
+          systemThemeMediaQuery = mediaQuery
         }
       } else {
         // 移除监听器
-        if (this._systemThemeListener && this._systemThemeMediaQuery) {
-          this._systemThemeMediaQuery.removeEventListener(
+        if (systemThemeListener && systemThemeMediaQuery) {
+          systemThemeMediaQuery.removeEventListener(
             'change',
-            this._systemThemeListener
+            systemThemeListener
           )
-          this._systemThemeListener = null
-          this._systemThemeMediaQuery = null
+          systemThemeListener = null
+          systemThemeMediaQuery = null
         }
       }
 
