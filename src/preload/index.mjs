@@ -42,7 +42,8 @@ if (process.contextIsolated) {
 
   // 可以暴露其他API
   contextBridge.exposeInMainWorld('process', {
-    platform: process.platform
+    platform: process.platform,
+    arch: process.arch
   })
   /**
    * 向渲染进程暴露自定义的 electron API

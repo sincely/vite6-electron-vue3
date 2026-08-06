@@ -5,7 +5,7 @@
       <!-- visible 控制弹窗显隐，点击遮罩层触发 handleLater（下载中时不关闭） -->
       <div v-if="visible" class="update-overlay" @click.self="handleLater">
         <!-- dialogRef 用于拖拽定位，:style="style" 接收 useDraggable 计算的位置 -->
-        <div ref="dialogRef" class="update-dialog" :style="style">
+        <div class="update-dialog">
           <!-- 顶部装饰光晕，纯视觉效果，aria-hidden 对屏幕阅读器隐藏 -->
           <div class="update-dialog__glow" aria-hidden="true" />
 
@@ -179,16 +179,6 @@ import { useUpdateStore } from '@/store/modules/version'
 import { formatFileSize } from '@/utils/common'
 
 const updateStore = useUpdateStore()
-
-// ─── 弹窗定位：支持拖拽移动 ────────────────────────────────────────────
-const dialogRef = ref(null)
-const { style } = useDraggable(dialogRef, {
-  initialValue: {
-    x: window.innerWidth / 2 - 200, // 居中：视口宽度一半减去弹窗宽度一半(440/2)
-    y: window.innerHeight / 2 - 200 // 居中：视口高度一半减去预估弹窗高度一半
-  },
-  containerElement: document.body
-})
 
 // ─── 弹窗与版本状态 ────────────────────────────────────────────────────
 const visible = ref(false) // 弹窗是否可见
@@ -623,9 +613,6 @@ onUnmounted(() => {
 }
 
 .update-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 440px;
   overflow: hidden;
   background: var(--glass-surface);
@@ -656,7 +643,6 @@ onUnmounted(() => {
     gap: 14px;
     align-items: flex-start;
     padding: 24px 24px 0;
-    cursor: move;
   }
 
   &__title-group {

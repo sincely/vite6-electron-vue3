@@ -20,7 +20,7 @@
                 :class="{ active: currentTab === tab.id }"
                 @click="currentTab = tab.id"
               >
-                <SvgIcon :icon-class="tab.icon" class="menu-icon" />
+                <!-- <SvgIcon :icon-class="tab.icon" class="menu-icon" /> -->
                 <span>{{ tab.label }}</span>
               </div>
             </div>
@@ -481,32 +481,192 @@
                   key="about"
                   class="tab-pane"
                 >
-                  <div class="about-header">
-                    <img
-                      src="@/assets/bar/icon.png"
-                      class="app-logo"
-                      alt="Logo"
-                    />
-                    <h3 class="app-name">Lightning</h3>
-                    <p class="app-version">Version {{ appVersion }}</p>
+                  <!-- Hero Section -->
+                  <div class="about-hero">
+                    <div class="about-hero__glow" aria-hidden="true" />
+                    <div class="about-hero__logo">
+                      <img
+                        src="@/assets/bar/icon.png"
+                        class="about-hero__logo-img"
+                        alt="Logo"
+                      />
+                    </div>
+                    <div class="about-hero__info">
+                      <h3 class="about-hero__name">Lightning</h3>
+                      <p class="about-hero__desc">高效、智能的桌面工作台</p>
+                    </div>
+                    <div class="about-hero__version">
+                      <span class="version-badge">
+                        <span class="version-badge__dot"></span>
+                        v{{ appVersion }}
+                      </span>
+                    </div>
                   </div>
 
-                  <div class="about-links">
-                    <a
-                      href="https://github.com/your-repo"
-                      target="_blank"
-                      class="link-item"
-                    >
-                      <SvgIcon icon-class="github" />
-                      <span>GitHub 仓库</span>
-                    </a>
-                    <a href="#" class="link-item">
-                      <SvgIcon icon-class="document" />
-                      <span>使用文档</span>
-                    </a>
+                  <!-- Update Section -->
+                  <div class="about-update">
+                    <div class="about-update__card">
+                      <div class="about-update__header">
+                        <div class="about-update__icon">
+                          <SvgIcon
+                            v-if="updateCheckState === 'checking'"
+                            icon-class="loading"
+                            class="is-spinning"
+                          />
+                          <SvgIcon
+                            v-else-if="updateCheckState === 'available'"
+                            icon-class="rocket"
+                          />
+                          <SvgIcon
+                            v-else-if="updateCheckState === 'up-to-date'"
+                            icon-class="success"
+                          />
+                          <SvgIcon
+                            v-else-if="updateCheckState === 'error'"
+                            icon-class="warning"
+                          />
+                          <SvgIcon v-else icon-class="update" />
+                        </div>
+                        <div class="about-update__text">
+                          <span class="about-update__title">
+                            {{ updateCheckTitle }}
+                          </span>
+                          <span class="about-update__subtitle">
+                            {{ updateCheckSubtitle }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        v-if="
+                          updateCheckState === 'available' &&
+                          latestVersionDisplay
+                        "
+                        class="about-update__versions"
+                      >
+                        <div class="ver-pill ver-pill--current">
+                          <span class="ver-pill__label">当前</span>
+                          <span class="ver-pill__value">v{{ appVersion }}</span>
+                        </div>
+                        <SvgIcon
+                          icon-class="arrow-right"
+                          class="ver-pill__arrow"
+                        />
+                        <div class="ver-pill ver-pill--latest">
+                          <span class="ver-pill__label">最新</span>
+                          <span class="ver-pill__value">
+                            v{{ latestVersionDisplay }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="about-update__action">
+                        <button
+                          v-if="updateCheckState === 'available'"
+                          class="update-action-btn update-action-btn--primary"
+                          @click="handleStartUpdate"
+                        >
+                          <SvgIcon icon-class="download" />
+                          <span>立即更新</span>
+                        </button>
+                        <button
+                          v-else
+                          class="update-action-btn"
+                          :class="{
+                            'update-action-btn--loading':
+                              updateCheckState === 'checking'
+                          }"
+                          :disabled="updateCheckState === 'checking'"
+                          @click="handleCheckUpdate"
+                        >
+                          <SvgIcon
+                            v-if="updateCheckState === 'checking'"
+                            icon-class="loading"
+                            class="is-spinning"
+                          />
+                          <SvgIcon v-else icon-class="update" />
+                          <span>{{ updateCheckBtnText }}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="copyright">
+                  <!-- System Info -->
+                  <div class="setting-section">
+                    <h3 class="section-title">系统信息</h3>
+                    <div class="about-info-grid">
+                      <div class="about-info-item">
+                        <span class="about-info-item__label">Electron</span>
+                        <span class="about-info-item__value">
+                          {{ systemInfo.electron }}
+                        </span>
+                      </div>
+                      <div class="about-info-item">
+                        <span class="about-info-item__label">Chromium</span>
+                        <span class="about-info-item__value">
+                          {{ systemInfo.chrome }}
+                        </span>
+                      </div>
+                      <div class="about-info-item">
+                        <span class="about-info-item__label">Node.js</span>
+                        <span class="about-info-item__value">
+                          {{ systemInfo.node }}
+                        </span>
+                      </div>
+                      <div class="about-info-item">
+                        <span class="about-info-item__label">系统平台</span>
+                        <span class="about-info-item__value">
+                          {{ systemInfo.platform }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Links -->
+                  <!-- <div class="setting-section">
+                    <h3 class="section-title">相关链接</h3>
+                    <div class="about-links-list">
+                      <a
+                        href="https://github.com/sincely/vite6-electron-vue3"
+                        target="_blank"
+                        class="about-link-item"
+                      >
+                        <div class="about-link-item__icon">
+                          <SvgIcon icon-class="github" />
+                        </div>
+                        <div class="about-link-item__content">
+                          <span class="about-link-item__title">
+                            GitHub 仓库
+                          </span>
+                          <span class="about-link-item__desc">
+                            查看源码、提交反馈
+                          </span>
+                        </div>
+                        <SvgIcon
+                          icon-class="chevron-right"
+                          class="about-link-item__arrow"
+                        />
+                      </a>
+                      <a href="#" class="about-link-item">
+                        <div class="about-link-item__icon">
+                          <SvgIcon icon-class="document" />
+                        </div>
+                        <div class="about-link-item__content">
+                          <span class="about-link-item__title">使用文档</span>
+                          <span class="about-link-item__desc">
+                            查看功能说明与使用指南
+                          </span>
+                        </div>
+                        <SvgIcon
+                          icon-class="chevron-right"
+                          class="about-link-item__arrow"
+                        />
+                      </a>
+                    </div>
+                  </div> -->
+
+                  <!-- Copyright -->
+                  <div class="about-copyright">
                     Copyright © 2024 Lightning Team. All rights reserved.
                   </div>
                 </div>
@@ -523,11 +683,13 @@
 import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
+import { useUpdateStore } from '@/store/modules/version'
 import { useRouter } from 'vue-router'
 import pkg from '../../../../package.json'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
+const updateStore = useUpdateStore()
 const router = useRouter()
 const visible = computed({
   get: () => appStore.settingsVisible,
@@ -636,6 +798,110 @@ const handleLogout = async () => {
   await userStore.logoutAction().catch(() => {})
   window.ipcRenderer?.send('logout')
 }
+
+// ─── About Tab: Update Check ──────────────────────────────────────────
+const updateCheckState = ref('idle') // idle | checking | up-to-date | available | error
+const latestVersionDisplay = ref('')
+
+const updateCheckTitle = computed(() => {
+  switch (updateCheckState.value) {
+    case 'checking':
+      return '正在检查更新...'
+    case 'available':
+      return '发现新版本'
+    case 'up-to-date':
+      return '已是最新版本'
+    case 'error':
+      return '检查更新失败'
+    default:
+      return '软件更新'
+  }
+})
+
+const updateCheckSubtitle = computed(() => {
+  switch (updateCheckState.value) {
+    case 'checking':
+      return '正在连接更新服务器'
+    case 'available':
+      return '新版本已发布，点击立即更新'
+    case 'up-to-date':
+      return '当前版本已是最新，无需更新'
+    case 'error':
+      return '网络连接异常，请稍后再试'
+    default:
+      return '点击检查是否有新版本可用'
+  }
+})
+
+const updateCheckBtnText = computed(() => {
+  switch (updateCheckState.value) {
+    case 'checking':
+      return '检查中...'
+    case 'up-to-date':
+      return '已是最新'
+    case 'error':
+      return '重新检查'
+    default:
+      return '检查更新'
+  }
+})
+
+const handleCheckUpdate = () => {
+  updateCheckState.value = 'checking'
+  ipcRenderer.send('check-for-updates')
+}
+
+const handleStartUpdate = () => {
+  // Trigger the UpdateDialog to show
+  window.dispatchEvent(new Event('update:open-dialog'))
+}
+
+// System info (exposed via preload contextBridge)
+const systemInfo = reactive({
+  electron: window.versions?.electron || 'N/A',
+  chrome: window.versions?.chrome || 'N/A',
+  node: window.versions?.node || 'N/A',
+  platform: `${window.process?.platform || 'unknown'} ${window.process?.arch || ''}`
+})
+
+// Listen for update events in the About tab
+let onAboutUpdateAvailable = null
+let onAboutUpdateNotAvailable = null
+let onAboutUpdateError = null
+
+onMounted(() => {
+  onAboutUpdateAvailable = (_event, info) => {
+    if (updateCheckState.value === 'checking') {
+      updateCheckState.value = 'available'
+      latestVersionDisplay.value = info?.version || ''
+      if (info?.version) {
+        updateStore.setLatestVersion(info.version)
+      }
+    }
+  }
+
+  onAboutUpdateNotAvailable = () => {
+    if (updateCheckState.value === 'checking') {
+      updateCheckState.value = 'up-to-date'
+    }
+  }
+
+  onAboutUpdateError = () => {
+    if (updateCheckState.value === 'checking') {
+      updateCheckState.value = 'error'
+    }
+  }
+
+  ipcRenderer.on('update-available', onAboutUpdateAvailable)
+  ipcRenderer.on('update-not-available', onAboutUpdateNotAvailable)
+  ipcRenderer.on('update-error', onAboutUpdateError)
+})
+
+onUnmounted(() => {
+  ipcRenderer.off('update-available', onAboutUpdateAvailable)
+  ipcRenderer.off('update-not-available', onAboutUpdateNotAvailable)
+  ipcRenderer.off('update-error', onAboutUpdateError)
+})
 
 const handleClose = () => {
   visible.value = false
@@ -1042,66 +1308,397 @@ const handleClose = () => {
 }
 
 /* About Page */
-.about-header {
+.about-hero {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 32px;
+  padding: 32px 24px 28px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary), transparent 92%) 0%,
+    color-mix(in srgb, var(--brand-accent), transparent 90%) 50%,
+    color-mix(in srgb, var(--color-primary), transparent 95%) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 80%);
+  border-radius: 16px;
 
-  .app-logo {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 16px;
+  &__glow {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    pointer-events: none;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-primary), transparent 70%) 0%,
+      transparent 70%
+    );
+    border-radius: 999px;
   }
 
-  .app-name {
-    margin-bottom: 4px;
-    font-size: 24px;
+  &__logo {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 16px;
+    background: var(--color-bg-window);
+    border: 2px solid color-mix(in srgb, var(--color-primary), transparent 60%);
+    border-radius: 20px;
+    box-shadow:
+      0 8px 24px -6px color-mix(in srgb, var(--color-primary), transparent 70%),
+      0 0 0 4px color-mix(in srgb, var(--color-primary), transparent 92%);
+
+    &-img {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__info {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  &__name {
+    margin: 0 0 4px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--color-text-primary);
+    letter-spacing: 0.3px;
   }
 
-  .app-version {
-    padding: 2px 8px;
-    font-size: 14px;
+  &__desc {
+    margin: 0;
+    font-size: 13px;
     color: var(--color-text-secondary);
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
+  }
+
+  &__version {
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
   }
 }
 
-.about-links {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-bottom: 48px;
+.version-badge {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-bg-window);
+  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 60%);
+  border-radius: 20px;
 
-  .link-item {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    padding: 8px 16px;
-    font-size: 14px;
-    color: var(--color-text-primary);
-    text-decoration: none;
+  &__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-success);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--color-success);
+  }
+}
+
+/* Update Card */
+.about-update {
+  margin-bottom: 24px;
+
+  &__card {
+    padding: 18px 20px;
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
-    transition: all 0.2s;
+    border-radius: 14px;
+    transition: border-color 0.2s;
 
     &:hover {
-      color: var(--color-primary);
-      border-color: var(--color-primary);
-      transform: translateY(-1px);
+      border-color: var(--color-border-hover);
+    }
+  }
+
+  &__header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  &__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 88%);
+    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 70%);
+    border-radius: 12px;
+
+    :deep(.svg-icon) {
+      font-size: 20px;
+    }
+
+    :deep(.is-spinning) {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  &__versions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    margin: 14px 0;
+    background: color-mix(in srgb, var(--color-bg-hover), transparent 30%);
+    border: 1px solid var(--color-border-light);
+    border-radius: 10px;
+  }
+
+  &__action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+}
+
+.ver-pill {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+
+  &__label {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  &__value {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    opacity: 0.5;
+  }
+
+  &--current &__value {
+    color: var(--color-text-secondary);
+  }
+
+  &--latest &__value {
+    color: var(--color-primary);
+  }
+}
+
+.update-action-btn {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  background: var(--color-bg-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &--primary {
+    color: #fff;
+    background: linear-gradient(
+      100deg,
+      var(--color-primary) 0%,
+      var(--brand-accent-alt) 100%
+    );
+    border-color: transparent;
+    box-shadow: 0 4px 12px -4px
+      color-mix(in srgb, var(--color-primary), transparent 40%);
+
+    &:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 6px 16px -4px
+        color-mix(in srgb, var(--color-primary), transparent 30%);
+    }
+  }
+
+  &--loading {
+    :deep(.is-spinning) {
+      animation: spin 1s linear infinite;
     }
   }
 }
 
-.copyright {
+/* About Info Grid */
+.about-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.about-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--color-bg-card);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: var(--color-border);
+  }
+
+  &__label {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  &__value {
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-primary);
+  }
+}
+
+/* About Links */
+.about-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.about-link-item {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--color-bg-card);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+
+    .about-link-item__arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  &__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    color: var(--color-primary);
+    background: var(--brand-accent-soft);
+    border-radius: 10px;
+
+    :deep(.svg-icon) {
+      font-size: 18px;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: all 0.2s;
+    transform: translateX(-4px);
+  }
+}
+
+.about-copyright {
+  padding-top: 16px;
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;
+  border-top: 1px solid var(--color-border-light);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Profile Page */
