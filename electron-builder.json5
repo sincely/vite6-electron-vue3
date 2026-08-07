@@ -144,7 +144,8 @@
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
-    "signAndEditExecutable": true,
+    // 代码签名
+    "signAndEditExecutable": false,
     "icon": "icons/win/app.ico",
     "extraResources": [
       {
