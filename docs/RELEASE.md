@@ -413,24 +413,126 @@ checkForUpdates() 执行顺序：
 
 ---
 
-## 十、开发环境调试
+## 十、开发环境调试与更新模拟
 
-### 使用 dev-app-update.yml
+### 核心原理（先看这个）
 
-开发环境启用 `forceDevUpdateConfig`，会读取项目根目录的 `dev-app-update.yml`：
+开发环境启用 `autoUpdater.forceDevUpdateConfig = true`，electron-updater 会改用项目根目录的 `dev-app-update.yml` 作为发布源配置（生产用打包生成的 `app-update.yml`）。
 
-```yaml
-version: 1.0.2        # 必须高于 package.json 当前版本，否则永远"已是最新"
-provider: generic
-url: http://10.10.24.52:8089/electron-update/
+**版本比较的规则**：
+
+```text
+服务器 latest.yml 的 version  vs  本地 app.getVersion()（package.json）
 ```
 
-注意：`version` 是本地模拟的"服务器版本"，用于触发更新检测；实际下载仍从 `url` 拉取。
+- `dev-app-update.yml` 里的 `version` 字段**不参与比较**，只提供 `provider` / `url` / `updaterCacheDirName`
+- 想让开发环境检测到新版本，**必须让 `url` 指向的服务器 `latest.yml` 版本高于本地版本**
+- 因此默认指向内网服务器（`latest.yml` 是 0.0.22，低于本地 1.0.1）时永远显示"已是最新"，属正常现象
 
-### 本地模拟下载
+### 方式一：纯 UI 模拟（开箱即用，无需服务器）
 
-- DEV 模式下 `UpdateDialog` 点击"立即更新"会走 `startMockDownload()` 模拟进度条，不需要真实服务器
-- 设置页更新卡片、强制升级、灰度徽标等交互均可通过修改 `update-config.json` 验证
+`npm run dev` 后：
+
+1. 启动 1.5 秒，`src/render/index.js` 自动派发 `update:available` 事件 → 弹出"发现新版本"
+2. 点击"立即更新" → `UpdateDialog` 走 `startMockDownload()`，模拟下载进度条（随机速度、后期降速）
+3. 进度到 100% → 显示"立即重启安装"
+
+局限性：
+
+- 只模拟下载阶段，不经过主进程门控、不拉取远端配置
+- `src/render/index.js` 的 mock 版本号是 `0.1.0`（低于当前 1.0.1），弹窗会显示成"降级"（v1.0.1 → v0.1.0），仅用于演示 UI 流程
+
+### 方式二：本地静态服务器模拟完整链路（推荐）
+
+与生产行为一致，能真实测试门控 / 远程配置 / 自动下载 / 强制升级 / 灰度。
+
+**1. 建 mock 更新目录**
+
+```text
+D:\project\vite6-electron-vue3\mock-update\
+  ├── latest.yml          ← 版本写高，触发更新
+  ├── mock-app.exe        ← 任意假文件（可复制 release/ 下的 exe）
+  └── update-config.json  ← 远端配置
+```
+
+**2. 生成 `latest.yml`**
+
+```bash
+node -e "const fs=require('fs'),c=require('crypto');const b=fs.readFileSync('mock-update/mock-app.exe');console.log('sha512: '+c.createHash('sha512').update(b).digest('base64'));console.log('size: '+b.length)"
+```
+
+把输出的 sha512 / size 填入（`sha512` 必须准确，electron-updater 下载后会校验）：
+
+```yaml
+# mock-update/latest.yml
+version: 1.0.2
+files:
+  - url: mock-app.exe
+    sha512: <上面输出的base64>
+    size: <上面输出的字节数>
+path: mock-app.exe
+sha512: <同上>
+releaseDate: '2026-08-07T00:00:00.000Z'
+```
+
+**3. 创建 `update-config.json`**
+
+```json
+{
+  "schemaVersion": 1,
+  "eligible": true,
+  "disabledClientVersions": [],
+  "autoDownload": true,
+  "checkOnFocus": true,
+  "minCheckIntervalMinutes": 30
+}
+```
+
+**4. 起本地静态服务器**
+
+```bash
+npx http-server mock-update -p 8080 -c-1
+```
+
+（`-c-1` 禁用缓存，保证每次读到最新配置）
+
+**5. 把两个地址指向本地**
+
+`dev-app-update.yml`：
+
+```yaml
+provider: generic
+url: http://localhost:8080/
+```
+
+`.env.development` 的 `VITE_UPDATE_URL` 改为 `http://localhost:8080`（它决定 `update-config.json` 的拉取地址）。
+
+> ⚠️ 两个地址必须指向同一目录：`update-config.json` 从 `VITE_UPDATE_URL` 拉，`latest.yml` 从 `dev-app-update.yml` 的 `url` 拉。
+
+**6. 启动验证**
+
+```bash
+npm run dev
+```
+
+完整链路真实运行：主进程拉 `update-config.json` → `checkForUpdates()` → 读 `latest.yml`（1.0.2 > 1.0.1）→ 发现新版本 → 按 `autoDownload` 自动下载 → 下载完成弹"立即重启安装"。
+
+**可验证的场景矩阵**：
+
+| 修改 `update-config.json` | 预期行为 |
+| --- | --- |
+| `"eligible": false` | 无任何弹窗/检查（日志："远端配置禁止更新"） |
+| `"disabledClientVersions": ["1.0.1"]` | 强制升级弹窗，"稍后"和关闭按钮消失 |
+| `"autoDownload": false` | 弹窗显示"立即更新"按钮，点击后才下载 |
+| `latest.yml` 加 `stagingPercentage: 20` | 命中灰度弹窗显示"灰度发布 20%"徽标，未命中无反应 |
+
+### 方式三：只测远程配置
+
+把 `VITE_UPDATE_URL` 指向一个只含 `update-config.json` 的目录，主进程会拉取并输出日志：
+
+```text
+[update-config] 远端配置已更新 { eligible: false, ... }
+```
 
 ---
 
@@ -457,8 +559,8 @@ url: http://10.10.24.52:8089/electron-update/
 
 DEV 模式有两种情况：
 
-- `dev-app-update.yml` 的 `version` 高于当前版本 → 真实检查触发
-- 点击"立即更新"走本地 mock 下载流程（不真实下载）
+- `dev-app-update.yml` 的 `url` 指向的服务器 `latest.yml` 版本高于本地版本 → 真实检查触发（详见"开发环境调试与更新模拟"）
+- 未触发真实检查时，启动 1.5 秒后 `src/render/index.js` 派发 mock 的 `update:available` 事件，点击"立即更新"走本地 mock 下载流程（不真实下载）
 
 ### 5. 服务器 `latest.yml` 低于客户端版本怎么办？
 
