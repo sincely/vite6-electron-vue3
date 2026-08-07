@@ -10,11 +10,6 @@ import logger from './log'
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
 const indexHtml = path.join(renderer_dist, 'index.html') // index.html 的绝对路径
-
-console.log('__dirname:', __dirname)
-console.log('preload:', preload)
-console.log('indexHtml:', indexHtml)
-
 /**
  * 按平台返回 BrowserWindow 图标路径
  * - macOS  : 应用图标由 .icns bundle 决定，传 undefined 即可
