@@ -518,7 +518,10 @@
                             icon-class="success"
                           />
                           <SvgIcon
-                            v-else-if="updateCheckState === 'error'"
+                            v-else-if="
+                              updateCheckState === 'error' ||
+                              updateCheckState === 'force'
+                            "
                             icon-class="warning"
                           />
                           <SvgIcon v-else icon-class="update" />
@@ -558,7 +561,10 @@
 
                       <div class="about-update__action">
                         <button
-                          v-if="updateCheckState === 'available'"
+                          v-if="
+                            updateCheckState === 'available' ||
+                            updateCheckState === 'force'
+                          "
                           class="update-action-btn update-action-btn--primary"
                           @click="handleStartUpdate"
                         >
@@ -796,7 +802,7 @@ const handleLogout = async () => {
 }
 
 // ─── About Tab: Update Check ──────────────────────────────────────────
-const updateCheckState = ref('idle') // idle | checking | up-to-date | available | error
+const updateCheckState = ref('idle') // idle | checking | up-to-date | available | error | paused | force
 const latestVersionDisplay = ref('')
 const lastCheckTime = ref('')
 
@@ -810,6 +816,10 @@ const updateCheckTitle = computed(() => {
       return '已是最新版本'
     case 'error':
       return '检查更新失败'
+    case 'paused':
+      return '更新已暂停'
+    case 'force':
+      return '需要强制升级'
     default:
       return '软件更新'
   }
@@ -825,6 +835,10 @@ const updateCheckSubtitle = computed(() => {
       return `已经是最新版本 v${appVersion}${lastCheckTime.value ? `，上次检查：${lastCheckTime.value}` : ''}`
     case 'error':
       return '网络连接异常，请稍后再试'
+    case 'paused':
+      return '更新通道暂未开放，请稍后再试'
+    case 'force':
+      return '当前版本已停止支持，请立即升级'
     default:
       return '点击检查是否有新版本可用'
   }
@@ -838,6 +852,8 @@ const updateCheckBtnText = computed(() => {
       return '已是最新'
     case 'error':
       return '重新检查'
+    case 'force':
+      return '立即升级'
     default:
       return '检查更新'
   }
@@ -865,6 +881,8 @@ const systemInfo = reactive({
 let onAboutUpdateAvailable = null
 let onAboutUpdateNotAvailable = null
 let onAboutUpdateError = null
+let onAboutUpdateConfig = null
+let onAboutUpdateForce = null
 
 onMounted(() => {
   onAboutUpdateAvailable = (_event, info) => {
@@ -894,15 +912,32 @@ onMounted(() => {
     }
   }
 
+  // 远端配置变化：eligible=false 时更新卡片显示"更新已暂停"
+  onAboutUpdateConfig = (event) => {
+    const config = event.detail || {}
+    if (typeof config.eligible === 'boolean' && !config.eligible) {
+      updateCheckState.value = 'paused'
+    }
+  }
+
+  // 强制升级信号：当前版本被禁用，更新卡片显示"需要强制升级"
+  onAboutUpdateForce = () => {
+    updateCheckState.value = 'force'
+  }
+
   ipcRenderer.on('update-available', onAboutUpdateAvailable)
   ipcRenderer.on('update-not-available', onAboutUpdateNotAvailable)
   ipcRenderer.on('update-error', onAboutUpdateError)
+  window.addEventListener('update:config', onAboutUpdateConfig)
+  window.addEventListener('update:force', onAboutUpdateForce)
 })
 
 onUnmounted(() => {
   ipcRenderer.off('update-available', onAboutUpdateAvailable)
   ipcRenderer.off('update-not-available', onAboutUpdateNotAvailable)
   ipcRenderer.off('update-error', onAboutUpdateError)
+  window.removeEventListener('update:config', onAboutUpdateConfig)
+  window.removeEventListener('update:force', onAboutUpdateForce)
 })
 
 const handleClose = () => {

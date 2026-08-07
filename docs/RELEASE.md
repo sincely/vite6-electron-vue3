@@ -493,3 +493,40 @@ npm run build-win:prod
 - store 没有单独保存 `releaseNotes`
 - `UpdateDialog` 没有渲染更新说明区块
 - 当前发布链路没有生成可供弹窗直接渲染的更新说明字段
+
+## 七、远端更新配置（update-config.json）
+
+客户端启动时会从更新服务器拉取 `update-config.json`（位于 `VITE_UPDATE_URL` 根目录，与 `latest.yml` 同级），用于远程控制更新策略。**发布新版本时必须保证该文件存在且字段合法**，否则客户端使用内置兜底配置（不影响现有更新流程）。
+
+### 配置文件示例
+
+```json
+{
+  "schemaVersion": 1,
+  "eligible": true,
+  "disabledClientVersions": [],
+  "autoDownload": true,
+  "checkOnFocus": true,
+  "minCheckIntervalMinutes": 30
+}
+```
+
+### 字段说明
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `schemaVersion` | number | 1 | 配置结构版本，便于后续兼容 |
+| `eligible` | boolean | true | 更新资格总开关。`false` 时客户端**完全跳过更新检查**，可随时远程暂停发布 |
+| `disabledClientVersions` | string[] | `[]` | 禁用版本列表。命中则推送强制升级弹窗（不可跳过/关闭），支持精确（`"1.0.1"`）与前缀（`"1.0"` 命中 1.0.x 系列） |
+| `autoDownload` | boolean | false | 是否自动下载。`true` 时发现新版本自动开始下载（对齐 QoderWork），`false` 时用户点击"立即更新"后才下载 |
+| `checkOnFocus` | boolean | true | 窗口聚焦时是否自动检查更新 |
+| `minCheckIntervalMinutes` | number | 30 | 聚焦触发的最小检查间隔（分钟），防止频繁请求 |
+
+### 更新时机
+
+- 客户端启动时拉取一次，之后每 10 分钟轮询一次
+- 配置变化会实时推送到渲染层（设置页"关于软件"的更新卡片会同步显示"更新已暂停"等状态）
+
+### 灰度分批（stagingPercentage）
+
+客户端无需任何配置。发布方在 `latest.yml` 中写入 `stagingPercentage` 字段（如 `stagingPercentage: 20` 表示 20% 灰度），electron-updater 会按客户端缓存 ID 自动计算命中，未命中的客户端收不到 `update-available`。命中后弹窗会显示"灰度发布 x%"徽标。

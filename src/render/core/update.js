@@ -72,6 +72,22 @@ export function useUpdater() {
     window.dispatchEvent(new CustomEvent('update:error', { detail: message }))
   }
 
+  /**
+   * 远端更新配置变化（eligible/禁用版本/autoDownload）
+   * 由主进程 update-config 频道推送 → 转换为 update:config 事件
+   */
+  const onUpdateConfig = (_event, config) => {
+    window.dispatchEvent(new CustomEvent('update:config', { detail: config }))
+  }
+
+  /**
+   * 强制升级信号（当前版本被远端禁用）
+   * 由主进程 force-update 频道推送 → 转换为 update:force 事件
+   */
+  const onForceUpdate = (_event, payload) => {
+    window.dispatchEvent(new CustomEvent('update:force', { detail: payload }))
+  }
+
   // ─── 菜单手动触发检查更新 ─────────────────────────────────────────────
 
   /**
@@ -94,6 +110,9 @@ export function useUpdater() {
     ipcRenderer.on('download-progress', onDownloadProgress)
     ipcRenderer.on('update-downloaded', onUpdateDownloaded)
     ipcRenderer.on('update-error', onUpdateError)
+    // 注册远端配置与强制升级监听
+    ipcRenderer.on('update-config', onUpdateConfig)
+    ipcRenderer.on('force-update', onForceUpdate)
     // 注册菜单手动检查更新监听
     ipcRenderer.on('menu-check-update', onMenuCheckUpdate)
   })
@@ -105,6 +124,9 @@ export function useUpdater() {
     ipcRenderer.off('download-progress', onDownloadProgress)
     ipcRenderer.off('update-downloaded', onUpdateDownloaded)
     ipcRenderer.off('update-error', onUpdateError)
+    // 清理远端配置与强制升级监听
+    ipcRenderer.off('update-config', onUpdateConfig)
+    ipcRenderer.off('force-update', onForceUpdate)
     // 清理菜单检查更新监听
     ipcRenderer.off('menu-check-update', onMenuCheckUpdate)
   })

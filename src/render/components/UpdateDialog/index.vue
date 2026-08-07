@@ -20,14 +20,20 @@
               />
             </div>
             <div class="update-dialog__title-group">
-              <h3 class="update-dialog__title">发现新版本</h3>
+              <h3 class="update-dialog__title">
+                {{ isForce ? '当前版本已停止支持' : '发现新版本' }}
+              </h3>
               <p class="update-dialog__subtitle">
-                新版本已就绪，立即更新体验最新功能
+                {{
+                  isForce
+                    ? '请升级到最新版本以继续使用'
+                    : '新版本已就绪，立即更新体验最新功能'
+                }}
               </p>
             </div>
-            <!-- 仅初始态和下载完成态显示关闭按钮 -->
+            <!-- 仅初始态和下载完成态显示关闭按钮（强制升级时隐藏，防止跳过） -->
             <button
-              v-if="!isUpdating"
+              v-if="!isUpdating && !isForce"
               class="update-close-btn"
               title="稍后提醒"
               @click="handleLater"
@@ -49,6 +55,11 @@
               <span class="version-label">最新版本</span>
               <span class="version-num">v{{ latestVersion || '—' }}</span>
             </div>
+          </div>
+          <!-- 灰度发布徽标：stagingPercentage 存在时展示分批比例 -->
+          <div v-if="rolloutPercent > 0" class="update-dialog__rollout">
+            <SvgIcon icon-class="shield-check" width="12px" height="12px" />
+            灰度发布 {{ rolloutPercent }}%
           </div>
           <!-- 状态 1：下载中视图 -->
           <template v-if="isUpdating">
@@ -101,9 +112,13 @@
                 重启应用后将自动完成安装，建议立即重启
               </p>
             </div>
-            <!-- 操作按钮：稍后重启 / 立即重启安装 -->
+            <!-- 操作按钮：稍后重启 / 立即重启安装（强制升级时隐藏稍后按钮） -->
             <div class="update-dialog__actions">
-              <button class="update-btn update-btn--later" @click="handleLater">
+              <button
+                v-if="!isForce"
+                class="update-btn update-btn--later"
+                @click="handleLater"
+              >
                 稍后重启
               </button>
               <button
@@ -118,9 +133,13 @@
 
           <!-- 状态 3：初始态 / 发现更新视图 -->
           <template v-else>
-            <!-- 操作按钮：稍后更新 / 立即更新 -->
+            <!-- 操作按钮：稍后更新 / 立即更新（强制升级时隐藏稍后按钮） -->
             <div class="update-dialog__actions">
-              <button class="update-btn update-btn--later" @click="handleLater">
+              <button
+                v-if="!isForce"
+                class="update-btn update-btn--later"
+                @click="handleLater"
+              >
                 稍后更新
               </button>
               <button
@@ -128,7 +147,7 @@
                 @click="handleConfirm"
               >
                 <SvgIcon icon-class="download" width="15px" height="15px" />
-                立即更新
+                {{ isForce ? '立即升级' : '立即更新' }}
               </button>
             </div>
           </template>
@@ -184,6 +203,13 @@ const updateStore = useUpdateStore()
 const visible = ref(false) // 弹窗是否可见
 const latestVersion = computed(() => updateStore.latestVersion) // 最新版本号（从 Store 读取）
 const currentVersion = computed(() => updateStore.currentVersion) // 当前版本号（从 Store 读取）
+
+// ─── 强制升级模式与灰度发布状态 ────────────────────────────────────────
+// 强制升级：当前版本被远端禁用，弹窗不可跳过、不可关闭
+const isForce = computed(() => updateStore.forceUpdate)
+// 灰度发布信息（来自 update-available payload 的 stagingPercentage）
+const rolloutInfo = ref(null)
+const rolloutPercent = computed(() => rolloutInfo.value?.stagingPercentage ?? 0)
 
 // ─── 下载状态机 ────────────────────────────────────────────────────────
 // 三种状态由 isUpdating 和 updateDownloaded 组合表达：
@@ -438,10 +464,11 @@ const handleInstall = () => {
 
 /**
  * 点击"稍后更新"/"稍后重启"或关闭按钮
- * 下载进行中时禁止关闭，防止中断下载
+ * 下载进行中或强制升级时禁止关闭，防止中断下载/跳过强制升级
  */
 const handleLater = () => {
   if (isUpdating.value) return // 下载中不允许关闭
+  if (isForce.value) return // 强制升级不允许跳过
   visible.value = false
 }
 
@@ -452,6 +479,8 @@ let onError = null
 let onNotAvailable = null
 let onAvailable = null
 let onOpenDialog = null
+let onConfig = null
+let onForce = null
 let onRemoveLoading = null
 
 // ─── 组件挂载：注册所有事件监听 ────────────────────────────────────────
@@ -544,14 +573,21 @@ onMounted(() => {
 
   /**
    * CustomEvent：发现新版本（由 useUpdater hook 派发）
-   * 流程：更新 Store 版本号 → 重置下载状态 → 检查是否可弹窗
+   * 流程：更新 Store 版本号 → 记录灰度信息 → 重置下载状态 → 检查是否可弹窗
+   * 自动下载模式（远端配置 autoDownload=true）：直接进入下载态（主进程已开始下载）
    */
   onAvailable = (event) => {
     const info = event.detail || {}
     if (info.version) {
       updateStore.setLatestVersion(info.version)
     }
+    rolloutInfo.value = info // 记录灰度信息（stagingPercentage / rolloutMode）
     resetDownloadState()
+    if (updateStore.autoDownload) {
+      visible.value = true
+      isUpdating.value = true
+      return
+    }
     checkAndShowDialog()
   }
 
@@ -572,6 +608,34 @@ onMounted(() => {
     ipcRenderer.send('check-for-updates') // 通知主进程检查更新
   }
 
+  /**
+   * CustomEvent：远端更新配置变化（由 useUpdater hook 转发 update-config）
+   * 同步 eligible（更新资格开关）与 autoDownload（自动下载策略）到 Store
+   */
+  onConfig = (event) => {
+    const config = event.detail || {}
+    if (typeof config.eligible === 'boolean') {
+      updateStore.setUpdateEligible(config.eligible)
+    }
+    if (typeof config.autoDownload === 'boolean') {
+      updateStore.setAutoDownload(config.autoDownload)
+    }
+  }
+
+  /**
+   * CustomEvent：强制升级信号（当前版本被远端禁用，由 useUpdater hook 转发 force-update）
+   * 立即弹窗且不可跳过，用户只能升级到最新版本
+   */
+  onForce = (event) => {
+    const payload = event.detail || {}
+    if (payload?.currentVersion) {
+      updateStore.setCurrentVersion(payload.currentVersion)
+    }
+    updateStore.setForceUpdate(true)
+    resetDownloadState()
+    visible.value = true
+  }
+
   // 注册 IPC 事件监听（直接来自主进程）
   ipcRenderer.on('download-progress', onProgress)
   ipcRenderer.on('update-downloaded', onDownloaded)
@@ -580,6 +644,8 @@ onMounted(() => {
   // 注册 CustomEvent 监听（由 useUpdater hook 转发）
   window.addEventListener('update:available', onAvailable)
   window.addEventListener('update:open-dialog', onOpenDialog)
+  window.addEventListener('update:config', onConfig)
+  window.addEventListener('update:force', onForce)
 })
 
 // ─── 组件卸载：清理所有监听和定时器 ───────────────────────────────────
@@ -595,6 +661,8 @@ onUnmounted(() => {
   // 移除 CustomEvent 监听
   window.removeEventListener('update:available', onAvailable)
   window.removeEventListener('update:open-dialog', onOpenDialog)
+  window.removeEventListener('update:config', onConfig)
+  window.removeEventListener('update:force', onForce)
   // 移除 loading 消息监听
   window.removeEventListener('message', onRemoveLoading)
 })
@@ -766,6 +834,23 @@ onUnmounted(() => {
 
 .version-arrow {
   color: var(--color-text-secondary);
+}
+
+// 灰度发布徽标
+.update-dialog__rollout {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 3px 10px;
+  margin: 10px auto 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--brand-accent-alt);
+  background: color-mix(in srgb, var(--brand-accent-alt), transparent 88%);
+  border: 1px solid color-mix(in srgb, var(--brand-accent-alt), transparent 70%);
+  border-radius: 999px;
 }
 
 // 更新说明
