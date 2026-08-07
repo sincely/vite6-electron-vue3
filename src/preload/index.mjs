@@ -53,6 +53,14 @@ if (process.contextIsolated) {
   contextBridge.exposeInMainWorld('electron', {
     setTitle: (title) => ipcRenderer.send('set-title', title)
   })
+
+  /**
+   * 向渲染进程暴露系统信息 API
+   * 调用 window.systemInfo.getSystemInfo() 获取系统运行环境信息
+   */
+  contextBridge.exposeInMainWorld('systemInfo', {
+    getSystemInfo: () => ipcRenderer.invoke('get-system-info')
+  })
 } else {
   window.api = api
 }

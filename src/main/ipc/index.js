@@ -3,13 +3,15 @@ import appIpc from './app'
 import updateIpc from './update'
 import winControlIpc from './win-control'
 import notificationIpc from './notification'
+import systemInfoIpc from './systemInfo'
 // 注册所有 IPC 频道
 export default function initIpc() {
   const ipcList = [
     ...appIpc,
     ...updateIpc,
     ...winControlIpc,
-    ...notificationIpc
+    ...notificationIpc,
+    ...systemInfoIpc
   ]
 
   ipcList.forEach((ipc) => {

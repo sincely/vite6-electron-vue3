@@ -5,6 +5,7 @@ import initTray from './tray'
 import createMenu from './menu'
 
 import { createLoginWindow, restoreMainWindow } from './windowManager'
+import { logSystemInfo } from './systemInfo'
 import './config'
 
 // 禁用安全警告
@@ -22,6 +23,9 @@ if (!app.requestSingleInstanceLock()) {
 }
 // 当Electron完成初始化并准备好创建浏览器窗口时
 app.whenReady().then(() => {
+  // 记录系统运行环境信息
+  logSystemInfo()
+
   // 开发模式下：Dock 图标使用 resources/icon.png
   if (!app.isPackaged && process.platform === 'darwin' && app.dock) {
     const devIcon = path.join(
