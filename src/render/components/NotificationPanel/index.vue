@@ -7,8 +7,13 @@
       @click.stop
     >
       <!-- 头部 -->
-      <div class="notif-panel__header">
-        <span class="notif-panel__title">消息通知</span>
+      <div class="notif-panel__header" :class="{ 'is-scrolled': isScrolled }">
+        <div class="notif-panel__title-wrap">
+          <span class="notif-panel__title">消息通知</span>
+          <span v-if="store.hasUnread" class="notif-panel__badge">
+            {{ store.unreadCount > 99 ? '99+' : store.unreadCount }} 条未读
+          </span>
+        </div>
         <div class="notif-panel__header-actions">
           <button
             v-if="store.hasUnread"
@@ -32,25 +37,34 @@
       </div>
 
       <!-- 列表 -->
-      <div class="notif-panel__body">
+      <div
+        ref="bodyRef"
+        class="notif-panel__body"
+        @scroll.passive="onBodyScroll"
+      >
         <!-- 空状态 -->
         <div v-if="!store.list.length" class="notif-empty">
-          <SvgIcon
-            icon-class="bell-off"
-            width="28px"
-            height="28px"
-            class="notif-empty__icon"
-          />
-          <p>暂无通知</p>
+          <div class="notif-empty__badge">
+            <SvgIcon icon-class="bell-off" width="24px" height="24px" />
+          </div>
+          <p class="notif-empty__title">暂无通知</p>
+          <p class="notif-empty__desc">有新消息时会第一时间在这里提醒你</p>
         </div>
 
         <!-- 通知条目 -->
-        <TransitionGroup v-else name="notif-item" tag="div" class="notif-list">
+        <TransitionGroup
+          v-else
+          name="notif-item"
+          tag="div"
+          class="notif-list"
+          appear
+        >
           <div
-            v-for="item in store.list"
+            v-for="(item, index) in store.list"
             :key="item.id"
             class="notif-item"
             :class="{ 'notif-item--unread': !item.read }"
+            :style="{ '--stagger': Math.min(index, 8) }"
             @click="store.markRead(item.id)"
           >
             <!-- 类型图标 -->
@@ -100,6 +114,13 @@ const props = defineProps({
 
 const store = useNotificationStore()
 const panelRef = ref(null)
+const bodyRef = ref(null)
+/** 列表是否已滚动（用于头部投影） */
+const isScrolled = ref(false)
+
+const onBodyScroll = (e) => {
+  isScrolled.value = e.target.scrollTop > 2
+}
 
 const typeIcon = (type) => {
   const map = {
@@ -140,28 +161,53 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
 </script>
 
 <style lang="scss" scoped>
+// 类型 → 主题色映射（celebrate/announce/exception 主题变量未定义时使用回退色）
+$notif-types: (
+  info: var(--color-info),
+  success: var(--color-success),
+  warning: var(--color-warning),
+  error: var(--color-danger),
+  celebrate: var(--color-celebrate, #fd9816),
+  announce: var(--color-announce, #ff506d),
+  exception: var(--color-exception, #ff725a)
+);
+
 .notif-panel {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 10px);
   right: 0;
   z-index: 2000;
   display: flex;
   flex-direction: column;
-  width: 340px;
+  width: 360px;
   max-height: 480px;
   overflow: hidden;
   background: var(--glass-surface);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-surface-border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  box-shadow:
+    0 16px 40px -12px rgb(15 23 42 / 16%),
+    var(--shadow-lg);
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px 12px;
+    padding: 14px 12px 12px 16px;
     border-bottom: 1px solid var(--color-border-light);
+    transition: box-shadow 0.2s ease;
+
+    &.is-scrolled {
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &__title-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
   }
 
   &__title {
@@ -171,8 +217,21 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
     letter-spacing: 0.2px;
   }
 
+  // 未读数量徽标
+  &__badge {
+    flex-shrink: 0;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border-radius: 999px;
+  }
+
   &__header-actions {
     display: flex;
+    flex-shrink: 0;
     gap: 4px;
     align-items: center;
   }
@@ -197,24 +256,29 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
   display: inline-flex;
   gap: 4px;
   align-items: center;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
+  border-radius: 999px;
+  transition: all 0.2s ease;
 
   &:hover {
-    color: var(--color-text-primary);
-    background: var(--color-bg-hover);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 92%);
   }
 
   &--danger:hover {
     color: var(--color-danger);
     background: color-mix(in srgb, var(--color-danger), transparent 90%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-primary), transparent 50%);
+    outline-offset: 1px;
   }
 }
 
@@ -222,47 +286,74 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
 .notif-empty {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   align-items: center;
   justify-content: center;
-  padding: 40px 0;
-  color: var(--color-text-muted);
+  padding: 48px 24px;
 
-  &__icon {
-    opacity: 0.6;
+  &__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 12px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 92%);
+    border-radius: 50%;
   }
 
-  p {
+  &__title {
     margin: 0;
     font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__desc {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
   }
 }
 
 // 通知列表
 .notif-list {
-  padding: 6px 0;
+  position: relative;
+  padding: 8px;
 }
 
 // 条目
 .notif-item {
   position: relative;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: flex-start;
-  padding: 10px 14px;
+  padding: 12px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 30%);
+    background: var(--color-bg-hover);
 
     .notif-item__remove {
       opacity: 1;
+      transform: translateX(0);
     }
   }
 
+  // 未读：主色微染底色 + 标题加重
   &--unread {
-    background: color-mix(in srgb, var(--color-primary), transparent 94%);
+    // background: color-mix(in srgb, var(--color-primary), transparent 94%);
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    }
+
+    .notif-item__title {
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
   }
 
   &__icon {
@@ -270,70 +361,16 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     margin-top: 1px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
 
-    &--info {
-      color: var(--color-info);
-      background: color-mix(in srgb, var(--color-info), transparent 86%);
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-info), transparent 90%);
-    }
-
-    &--success {
-      color: var(--color-success);
-      background: color-mix(in srgb, var(--color-success), transparent 86%);
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-success), transparent 90%);
-    }
-
-    &--warning {
-      color: var(--color-warning);
-      background: color-mix(in srgb, var(--color-warning), transparent 86%);
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-warning), transparent 90%);
-    }
-
-    &--error {
-      color: var(--color-danger);
-      background: color-mix(in srgb, var(--color-danger), transparent 86%);
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-danger), transparent 90%);
-    }
-
-    &--celebrate {
-      color: var(--color-celebrate, #fd9816);
-      background: color-mix(
-        in srgb,
-        var(--color-celebrate, #fd9816),
-        transparent 86%
-      );
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-celebrate, #fd9816), transparent 90%);
-    }
-
-    &--announce {
-      color: var(--color-announce, #ff506d);
-      background: color-mix(
-        in srgb,
-        var(--color-announce, #ff506d),
-        transparent 86%
-      );
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-announce, #ff506d), transparent 90%);
-    }
-
-    &--exception {
-      color: var(--color-exception, #ff725a);
-      background: color-mix(
-        in srgb,
-        var(--color-exception, #ff725a),
-        transparent 86%
-      );
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-exception, #ff725a), transparent 90%);
+    @each $name, $color in $notif-types {
+      &--#{$name} {
+        color: #{$color};
+        background: color-mix(in srgb, #{$color}, transparent 88%);
+      }
     }
   }
 
@@ -345,38 +382,54 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
   &__title {
     overflow: hidden;
     font-size: 13px;
-    font-weight: 600;
-    color: var(--color-text-primary);
+    font-weight: 500;
+    color: var(--color-text-secondary);
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: color 0.2s ease;
   }
 
   &__body {
     display: -webkit-box;
-    margin-top: 2px;
+    margin-top: 3px;
     overflow: hidden;
     font-size: 12px;
     line-height: 1.5;
     color: var(--color-text-secondary);
-    line-clamp: 2;
-
-    // box-orient: vertical;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
   &__time {
-    margin-top: 4px;
+    margin-top: 5px;
     font-size: 11px;
     color: var(--color-text-muted);
   }
 
+  // 未读圆点：主色 + 呼吸光环
   &__dot {
-    position: absolute;
-    top: 12px;
-    right: 32px;
-    width: 6px;
-    height: 6px;
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
     background: var(--color-primary);
-    border-radius: 999px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--color-primary), transparent 84%);
+    animation: notif-dot-pulse 2.2s ease-in-out infinite;
+  }
+
+  @keyframes notif-dot-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-primary), transparent 84%);
+    }
+
+    50% {
+      box-shadow: 0 0 0 6px
+        color-mix(in srgb, var(--color-primary), transparent 92%);
+    }
   }
 
   &__remove {
@@ -384,27 +437,36 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    margin-top: 4px;
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
     color: var(--color-text-muted);
     cursor: pointer;
     background: transparent;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     opacity: 0;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
+    transform: translateX(4px);
 
     &:hover {
       color: var(--color-danger);
       background: color-mix(in srgb, var(--color-danger), transparent 88%);
+    }
+
+    &:focus-visible {
+      outline: 2px solid
+        color-mix(in srgb, var(--color-primary), transparent 50%);
+      outline-offset: 1px;
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }
 
 // 面板动画
 .notif-panel-enter-active {
-  transition: all 0.22s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transition: all 0.26s cubic-bezier(0.34, 1.35, 0.64, 1);
 }
 
 .notif-panel-leave-active {
@@ -414,27 +476,39 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
 .notif-panel-enter-from,
 .notif-panel-leave-to {
   opacity: 0;
-  transform: translateY(-6px) scale(0.97);
+  transform: translateY(-8px) scale(0.96);
 }
 
-// 列表项动画
+// 列表项动画（入场按 --stagger 交错延迟）
 .notif-item-enter-active {
-  transition: all 0.2s ease;
+  transition: all 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--stagger, 0) * 28ms);
 }
 
 .notif-item-leave-active {
   position: absolute;
-  width: 100%;
+  width: calc(100% - 16px);
   transition: all 0.18s ease;
 }
 
 .notif-item-enter-from {
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateX(-12px);
 }
 
 .notif-item-leave-to {
   opacity: 0;
-  transform: translateX(10px);
+  transform: translateX(12px);
+}
+
+// 减少动态偏好：关闭呼吸与交错动画
+@media (prefers-reduced-motion: reduce) {
+  .notif-item__dot {
+    animation: none;
+  }
+
+  .notif-item-enter-active {
+    transition-delay: 0ms;
+  }
 }
 </style>

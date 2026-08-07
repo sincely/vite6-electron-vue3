@@ -508,7 +508,7 @@ onMounted(() => {
   onRemoveLoading = (event) => {
     if (event.data?.payload === 'loadingFinished') {
       loadingFinished = true
-      checkAndShowDialog()
+      // checkAndShowDialog()
     }
   }
   window.addEventListener('message', onRemoveLoading)
@@ -518,9 +518,9 @@ onMounted(() => {
   setTimeout(() => {
     if (!loadingFinished) {
       loadingFinished = true
-      checkAndShowDialog()
+      // checkAndShowDialog()
     }
-  }, 5000)
+  }, 4500)
 
   /**
    * IPC 事件：下载进度更新
@@ -556,7 +556,6 @@ onMounted(() => {
     downloadSpeed.value = 0
     clearProgressTimer()
     clearCompleteTimer()
-    console.error('[updater] 下载出错：', message)
   }
 
   /**
@@ -588,7 +587,7 @@ onMounted(() => {
       isUpdating.value = true
       return
     }
-    checkAndShowDialog()
+    // checkAndShowDialog()
   }
 
   /**
