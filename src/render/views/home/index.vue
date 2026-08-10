@@ -566,8 +566,14 @@ watch(
 }
 
 @media (width <= 900px) {
+  // chart-row 是 flex 容器，需用 flex-direction 堆叠（grid-template-columns 无效）
   .chart-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  // 纵向堆叠时 flex-basis 作用于高度，需重置固定 425px 的 basis，铺满整行
+  .chart-card--narrow {
+    flex: 0 0 auto;
   }
 }
 

@@ -46,9 +46,23 @@ watch(
   { deep: true }
 )
 
+// =============================================
+// 尺寸监听
+// 侧边栏折叠/展开时窗口尺寸不变，window.resize 不会触发，
+// 只有图表容器宽度变化，因此用 ResizeObserver 监听容器尺寸。
+// rAF 合并同一帧内的多次触发，避免侧边栏过渡动画期间频繁 resize。
+// =============================================
+let resizeObserver = null
+let resizeRafId = null
+
 onMounted(() => {
   init()
-  window.addEventListener('resize', resizeChart)
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(scheduleResize)
+    resizeObserver.observe(chartRef.value)
+  }
+  // window resize 作为兜底
+  window.addEventListener('resize', scheduleResize)
 })
 
 // 原来写的是 onBeforeMount（组件挂载前触发，此时 chart.value 必然为 null，永远不会清理）
@@ -58,7 +72,15 @@ onBeforeUnmount(() => {
     chart.value.dispose()
     chart.value = null
   }
-  window.removeEventListener('resize', resizeChart)
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
+  if (resizeRafId != null) {
+    cancelAnimationFrame(resizeRafId)
+    resizeRafId = null
+  }
+  window.removeEventListener('resize', scheduleResize)
 })
 
 /**
@@ -97,6 +119,15 @@ function init() {
     resizeChart()
     emit('init', chart.value)
   }, 100)
+}
+
+// 同一帧内多次触发（ResizeObserver + window resize）只执行一次 resize
+function scheduleResize() {
+  if (resizeRafId != null) return
+  resizeRafId = requestAnimationFrame(() => {
+    resizeRafId = null
+    resizeChart()
+  })
 }
 
 function resizeChart() {
