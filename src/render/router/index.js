@@ -1,4 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import NProgress from '@/config/nprogress'
+import { useUserStore } from '@/store/modules/user'
 
 /**
  * 固定路由 - 无需权限，始终加载
@@ -10,6 +12,12 @@ export const constantRoutes = [
     name: 'login',
     component: () => import('@/views/login/index.vue'),
     meta: { title: '登录', noLayout: true }
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/views/login/forgot-password.vue'),
+    meta: { title: '找回密码', noLayout: true }
   }
 ]
 
@@ -45,7 +53,8 @@ export const asyncRouteTree = [
         component: () => import('@/views/home/index.vue'),
         meta: {
           title: '仪表板',
-          keepAlive: true
+          keepAlive: true,
+          affix: true
         }
       }
     ]
@@ -197,3 +206,48 @@ const router = createRouter({
 })
 
 export default router
+
+// // ─── 路由守卫 ──────────────────────────────────────────────
+// const whiteList = ['/login']
+
+// router.beforeEach(async (to, from, next) => {
+//   NProgress.start()
+
+//   // 设置页面标题
+//   const title = to.meta?.title
+//   document.title = title ? `${title} - Lightning` : 'Lightning'
+
+//   const userStore = useUserStore()
+//   const hasToken = !!userStore.token
+
+//   if (hasToken) {
+//     // 已登录，访问登录页则重定向到仪表板
+//     if (to.path === '/login') {
+//       next({ path: '/desktop' })
+//       return
+//     }
+//     // 有 token 但无用户信息，尝试获取
+//     if (!userStore.userInfo) {
+//       try {
+//         await userStore.getUserInfoAction()
+//         next()
+//       } catch {
+//         userStore.resetUserState()
+//         next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
+//       }
+//       return
+//     }
+//     next()
+//   } else {
+//     // 未登录，白名单内直接放行，否则重定向到登录页
+//     if (whiteList.includes(to.path)) {
+//       next()
+//     } else {
+//       next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
+//     }
+//   }
+// })
+
+// router.afterEach(() => {
+//   NProgress.done()
+// })

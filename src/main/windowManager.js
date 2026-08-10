@@ -112,9 +112,9 @@ const loadHash = (win, hash) => {
     win.loadFile(indexHtml, hash ? { hash } : {})
   }
 
-  // 监听键盘事件，F12 打开开发者工具
+  // 监听键盘事件，F12 打开开发者工具（仅开发模式）
   win.webContents.on('before-input-event', (_event, input) => {
-    if (input.key === 'F12') {
+    if (input.key === 'F12' && !app.isPackaged) {
       win?.webContents.toggleDevTools()
     }
   })

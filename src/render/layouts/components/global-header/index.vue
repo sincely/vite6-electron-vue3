@@ -24,6 +24,9 @@
 
       <!-- 右侧操作区 -->
       <div class="title-bar__actions">
+        <!-- 右侧插槽（搜索等） -->
+        <slot name="right" />
+
         <!-- 更新提示 -->
         <button
           v-if="updateAvailable"

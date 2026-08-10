@@ -39,7 +39,7 @@
 
       <div class="form-options">
         <el-checkbox v-model="rememberMe" size="small">记住我</el-checkbox>
-        <span class="forgot-password">忘记密码</span>
+        <span class="forgot-password" @click="goForgotPassword">忘记密码</span>
       </div>
 
       <el-form-item class="submit-item">
@@ -57,7 +57,11 @@
 
 <script setup>
 import { Iphone, Lock } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/modules/user'
 
+const router = useRouter()
+const userStore = useUserStore()
 const ruleFormRef = ref()
 const showPassword = ref(false)
 const loading = ref(false)
@@ -94,6 +98,14 @@ const submitForm = async (formEl) => {
       loading.value = true
       // 模拟登录请求
       setTimeout(() => {
+        // 设置 mock token 和用户信息，供路由守卫校验
+        userStore.setToken('mock-token')
+        userStore.setUserInfo({
+          username: 'admin',
+          nickname: '管理员',
+          roles: ['admin']
+        })
+        userStore.setRoles(['admin'])
         window.ipcRenderer?.send('toMain')
         loading.value = false
       }, 800)
@@ -106,6 +118,10 @@ const submitForm = async (formEl) => {
 const isInput = computed(() => {
   return ruleForm.phone && ruleForm.password
 })
+
+const goForgotPassword = () => {
+  router.push('/forgot-password')
+}
 </script>
 
 <style lang="scss" scoped>

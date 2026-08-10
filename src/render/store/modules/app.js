@@ -16,6 +16,8 @@ export const useAppStore = defineStore('app', {
     sidebarCollapsed: false, // 侧边栏是否折叠
     footerVisible: true, // 是否显示底部状态栏
     footerHeight: 26, // 底部状态栏高度（px）
+    tagsView: true, // 是否显示多标签导航
+    tagsViewStyle: 'card', // 多标签导航风格：card（卡片）| google（谷歌）
     transitionEnabled: true, // 是否启用页面切换动画
     transitionType: 'page', // 页面切换动画类型
     contentWidth: 'full', // 内容容器宽度模式：full（铺满）| fixed（定宽）
@@ -219,6 +221,14 @@ export const useAppStore = defineStore('app', {
     // 设置底部栏显示状态
     setFooterVisible(val) {
       this.footerVisible = !!val
+    },
+    // 设置多标签导航显示状态
+    setTagsView(val) {
+      this.tagsView = !!val
+    },
+    // 设置多标签导航风格：card | google
+    setTagsViewStyle(style) {
+      this.tagsViewStyle = style === 'google' ? 'google' : 'card'
     },
     // 设置底部栏高度（限制 20~80）
     setFooterHeight(val) {

@@ -251,6 +251,25 @@
                       <el-switch v-model="footerVisible" />
                     </div>
 
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">多标签导航</span>
+                        <span class="item-desc">显示/隐藏页面标签栏</span>
+                      </div>
+                      <el-switch v-model="tagsVisible" />
+                    </div>
+
+                    <div v-if="tagsVisible" class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">标签栏风格</span>
+                        <span class="item-desc">选择多标签导航的视觉风格</span>
+                      </div>
+                      <el-select v-model="tagsViewStyle" style="width: 140px">
+                        <el-option label="卡片风格" value="card" />
+                        <el-option label="谷歌风格" value="google" />
+                      </el-select>
+                    </div>
+
                     <div v-if="footerVisible" class="setting-item">
                       <div class="item-info">
                         <span class="item-label">底部高度</span>
@@ -711,6 +730,16 @@ const closeAction = computed({
 const footerVisible = computed({
   get: () => appStore.footerVisible,
   set: (val) => appStore.setFooterVisible(val)
+})
+
+const tagsVisible = computed({
+  get: () => appStore.tagsView,
+  set: (val) => appStore.setTagsView(val)
+})
+
+const tagsViewStyle = computed({
+  get: () => appStore.tagsViewStyle,
+  set: (val) => appStore.setTagsViewStyle(val)
 })
 
 const footerHeight = computed({

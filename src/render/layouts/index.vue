@@ -23,7 +23,7 @@
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
       <GlobalHeader v-show="!isFullscreen">
-        <template #center>
+        <template #right>
           <GlobalSearch v-if="!isTopMenu" />
         </template>
       </GlobalHeader>
@@ -41,7 +41,7 @@
         <!-- 内容列 -->
         <div class="layout-body-content">
           <!-- 面包屑导航（含搜索插槽） -->
-          <GlobalBreadcrumb>
+          <!-- <GlobalBreadcrumb>
             <template #extra>
               <SvgIcon
                 icon-class="refresh"
@@ -59,7 +59,10 @@
                 @click="handleFullscreenChange"
               />
             </template>
-          </GlobalBreadcrumb>
+          </GlobalBreadcrumb> -->
+
+          <!-- 多标签导航（全屏时仍保留，供导航和还原） -->
+          <GlobalTagsView v-if="appStore.tagsView" />
 
           <!-- 页面内容（路由视图 + 过渡 + 加载） -->
           <GlobalContent v-if="isRouterAlive" />
@@ -81,6 +84,7 @@ import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
+import GlobalTagsView from './components/global-tagsView/index.vue'
 import MixedSubmenu from './components/global-siderMenu/modules/MixedSubmenu.vue'
 import { useAppStore } from '@/store/modules/app'
 import { findTopLevelParent } from '@/config/menu'
@@ -124,8 +128,10 @@ const reload = () => {
   })
 }
 
-// 向后代组件暴露刷新方法（可选，若子页面也需要触发刷新）
+// 向后代组件暴露刷新方法和全屏切换
 provide('reload', reload)
+provide('toggleFullscreen', handleFullscreenChange)
+provide('isFullscreen', isFullscreen)
 </script>
 
 <style lang="scss" scoped>

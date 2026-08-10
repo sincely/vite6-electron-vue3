@@ -60,6 +60,8 @@
     "@commitlint/config-conventional": "18.6.1",
     "@element-plus/icons-vue": "2.3.2",
     "@eslint/js": "8.57.0",
+    "@iconify/json": "^2.2.513",
+    "@iconify/vue": "^5.0.1",
     "@release-it/conventional-changelog": "10.0.4",
     "@vitejs/plugin-vue": "5.2.3",
     "@vueuse/core": "14.2.1",
