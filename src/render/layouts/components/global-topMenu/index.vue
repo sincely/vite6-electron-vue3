@@ -12,39 +12,44 @@
       </button>
     </transition>
 
-    <nav ref="menuNavRef" class="top-menu" @scroll="updateScrollState">
+    <nav ref="menuNavRef" class="top-menu">
       <div
-        v-for="item in mainItems"
-        :key="item.id"
-        class="top-menu-item"
-        :class="{ active: isParentActive(item) }"
-        @click="handleNav(item)"
+        class="top-menu-inner"
+        :style="{ transform: `translateX(-${scrollLeft}px)` }"
       >
-        <SvgIcon
-          :icon-class="item.icon"
-          class="menu-icon"
-          width="16px"
-          height="16px"
-        />
-        <span>{{ item.label }}</span>
+        <div
+          v-for="item in mainItems"
+          :key="item.id"
+          class="top-menu-item"
+          :class="{ active: isParentActive(item) }"
+          @click="handleNav(item)"
+        >
+          <SvgIcon
+            :icon-class="item.icon"
+            class="menu-icon"
+            width="16px"
+            height="16px"
+          />
+          <span>{{ item.label }}</span>
 
-        <!-- 二级菜单 Dropdown (仅非混合模式显示) -->
-        <div v-if="item.children?.length && !isTopMixed" class="top-submenu">
-          <div
-            v-for="child in item.children"
-            :key="child.id"
-            class="top-submenu-item"
-            :class="{ active: isChildActive(child) }"
-            @click.stop="router.push(child.route)"
-          >
-            <Icon
-              v-if="child.icon"
-              :icon="`lucide:${child.icon}`"
-              class="top-submenu-icon"
-              width="14px"
-              height="14px"
-            />
-            <span>{{ child.label }}</span>
+          <!-- 二级菜单 Dropdown (仅非混合模式显示) -->
+          <div v-if="item.children?.length && !isTopMixed" class="top-submenu">
+            <div
+              v-for="child in item.children"
+              :key="child.id"
+              class="top-submenu-item"
+              :class="{ active: isChildActive(child) }"
+              @click.stop="router.push(child.route)"
+            >
+              <Icon
+                v-if="child.icon"
+                :icon="`lucide:${child.icon}`"
+                class="top-submenu-icon"
+                width="14px"
+                height="14px"
+              />
+              <span>{{ child.label }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -94,13 +99,17 @@ const handleNav = (item) => {
     } else {
       router.push(item.route).catch(() => {})
     }
-  } else if (!item.children?.length) {
+  } else if (item.children?.length) {
+    // top 模式：有子菜单的项，点击导航到第一个子项路由
+    router.push(item.children[0].route).catch(() => {})
+  } else {
     router.push(item.route).catch(() => {})
   }
 }
 
-// ─── 横向滚动溢出控制 ──────────────────────────────────────────
+// ─── 横向滚动溢出控制（transform 方式，避免 overflow 裁剪下拉菜单） ───
 const menuNavRef = ref(null)
+const scrollLeft = ref(0)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 const SCROLL_STEP = 200 // 每次点击箭头滚动的像素距离
@@ -108,14 +117,35 @@ const SCROLL_STEP = 200 // 每次点击箭头滚动的像素距离
 const updateScrollState = () => {
   const el = menuNavRef.value
   if (!el) return
-  canScrollLeft.value = el.scrollLeft > 4
-  canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 4
+  const inner = el.querySelector('.top-menu-inner')
+  if (!inner) return
+
+  const containerWidth = el.clientWidth
+  const contentWidth = inner.scrollWidth
+  const maxScroll = Math.max(0, contentWidth - containerWidth)
+
+  // 裁剪 scrollLeft 到有效范围
+  if (scrollLeft.value > maxScroll) {
+    scrollLeft.value = maxScroll
+  }
+
+  canScrollLeft.value = scrollLeft.value > 4
+  canScrollRight.value = scrollLeft.value < maxScroll - 4
 }
 
 const scrollByDir = (dir) => {
   const el = menuNavRef.value
   if (!el) return
-  el.scrollBy({ left: dir * SCROLL_STEP, behavior: 'smooth' })
+  const inner = el.querySelector('.top-menu-inner')
+  if (!inner) return
+
+  const containerWidth = el.clientWidth
+  const contentWidth = inner.scrollWidth
+  const maxScroll = Math.max(0, contentWidth - containerWidth)
+
+  const newLeft = scrollLeft.value + dir * SCROLL_STEP
+  scrollLeft.value = Math.max(0, Math.min(newLeft, maxScroll))
+  nextTick(updateScrollState)
 }
 
 let resizeObserver = null
@@ -152,23 +182,26 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   max-width: 100%;
   height: 100%;
   margin-left: 24px;
-  -webkit-app-region: drag;
+  -webkit-app-region: no-drag;
 }
 
 .top-menu {
   display: flex;
   flex: 1;
-  gap: 8px;
-  align-items: center;
   min-width: 0;
   height: 100%;
-  overflow-x: auto;
-  scrollbar-width: none; // Firefox
-  -webkit-app-region: drag;
+  overflow: visible;
+  overflow-x: clip; // 裁剪横向溢出，但不创建滚动容器（避免 overflow-y 被强制变为 auto）
+  -webkit-app-region: no-drag;
+}
 
-  &::-webkit-scrollbar {
-    display: none; // Chrome / Edge / Electron
-  }
+.top-menu-inner {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 100%;
+  white-space: nowrap;
+  will-change: transform;
 }
 
 .top-menu-item {
