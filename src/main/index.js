@@ -38,13 +38,10 @@ app.whenReady().then(() => {
   createMenu()
   // 创建登录窗口
   createLoginWindow()
-  // 延迟500ms，初始化非核心功能
-  setTimeout(() => {
-    // 注册 IPC 事件
-    initIpc()
-    // 创建托盘图标
-    initTray()
-  }, 500)
+  // 注册 IPC 事件
+  initIpc()
+  // 创建托盘图标
+  initTray()
 })
 
 // 当应用准备退出时
