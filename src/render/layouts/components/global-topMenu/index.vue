@@ -186,6 +186,7 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-app-region: no-drag;
 
   .menu-icon {
     color: var(--color-text-secondary);
@@ -276,6 +277,7 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   cursor: pointer;
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
+  -webkit-app-region: no-drag;
 
   &:not(:last-child) {
     margin-bottom: 2px;

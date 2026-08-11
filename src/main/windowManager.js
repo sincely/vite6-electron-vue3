@@ -6,6 +6,7 @@ import { VITE_DEV_SERVER_URL, renderer_dist } from './config'
 import { initUpdater } from './update' // 更新器
 import createNotification from './notification' // 创建通知
 import logger from './log'
+import { bindMaximizeListener } from './ipc/win-control' // 窗口最大化状态监听
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
@@ -269,6 +270,8 @@ export function createMainWindow() {
   loadHash(win, 'desktop')
   // 设置窗口事件
   setupWindow(win)
+  // 监听窗口最大化状态变化，推送给渲染进程
+  bindMaximizeListener(win)
 
   // 点击关闭按钮时默认最小化到托盘，避免直接退出应用
   win.on('close', (event) => {

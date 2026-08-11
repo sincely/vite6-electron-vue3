@@ -88,9 +88,17 @@
               <SvgIcon icon-class="minus" width="16px" height="16px" />
             </button>
           </el-tooltip>
-          <el-tooltip content="最大化" placement="bottom" :show-after="200">
+          <el-tooltip
+            :content="isMaximized ? '向下还原' : '最大化'"
+            placement="bottom"
+            :show-after="200"
+          >
             <button class="icon-btn" @click="maximize">
-              <SvgIcon icon-class="plus" width="16px" height="16px" />
+              <SvgIcon
+                :icon-class="isMaximized ? 'mini' : 'max'"
+                width="16px"
+                height="16px"
+              />
             </button>
           </el-tooltip>
           <el-tooltip content="关闭" placement="bottom" :show-after="200">
@@ -105,6 +113,7 @@
 </template>
 
 <script setup>
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
@@ -113,7 +122,6 @@ import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
 import NotificationPanel from '@/components/NotificationPanel/index.vue'
-import { computed, ref } from 'vue'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
@@ -177,6 +185,27 @@ const handleToggleClick = () => {
 const minimize = () => ipcRenderer.send('minimize-window')
 const maximize = () => ipcRenderer.send('maximize-window')
 const close = () => ipcRenderer.send('close-window')
+
+// 窗口最大化状态跟踪
+const isMaximized = ref(false)
+
+const onMaximizeChange = (_event, maximized) => {
+  isMaximized.value = maximized
+}
+
+onMounted(async () => {
+  // 初始化时查询当前最大化状态
+  try {
+    isMaximized.value = await ipcRenderer.invoke('get-window-maximized')
+  } catch {
+    // 登录窗口无此 handler，忽略
+  }
+  ipcRenderer.on('window-maximize-change', onMaximizeChange)
+})
+
+onBeforeUnmount(() => {
+  ipcRenderer.off('window-maximize-change', onMaximizeChange)
+})
 </script>
 
 <style lang="scss" scoped>
