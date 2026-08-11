@@ -84,7 +84,6 @@ const handleClick = async (item) => {
   if (item.id === 'settings') {
     appStore.toggleSettings(true)
   } else if (item.id === 'logout') {
-    debugger
     try {
       await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
         confirmButtonText: '退出',
