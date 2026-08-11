@@ -65,7 +65,7 @@
               />
               刷新当前
             </el-dropdown-item>
-            <el-dropdown-item command="closeLeft">
+            <el-dropdown-item command="closeLeft" :disabled="!canCloseLeft">
               <Icon
                 icon="lucide:panel-left-close"
                 width="14"
@@ -74,7 +74,7 @@
               />
               关闭左侧
             </el-dropdown-item>
-            <el-dropdown-item command="closeRight">
+            <el-dropdown-item command="closeRight" :disabled="!canCloseRight">
               <Icon
                 icon="lucide:panel-right-close"
                 width="14"
@@ -83,7 +83,7 @@
               />
               关闭右侧
             </el-dropdown-item>
-            <el-dropdown-item command="closeOthers">
+            <el-dropdown-item command="closeOthers" :disabled="!canCloseOthers">
               <Icon
                 icon="lucide:list-x"
                 width="14"
@@ -92,7 +92,7 @@
               />
               关闭其他
             </el-dropdown-item>
-            <el-dropdown-item command="closeAll">
+            <el-dropdown-item command="closeAll" :disabled="!canCloseAll">
               <Icon
                 icon="lucide:square-x"
                 width="14"
@@ -147,7 +147,11 @@
             {{ contextMenuTag?.affix ? '取消固定' : '固定' }}
           </div>
           <div class="ctx-separator" />
-          <div class="ctx-item" @click="handleCtxCloseLeft">
+          <div
+            class="ctx-item"
+            :class="{ 'is-disabled': !canCtxCloseLeft }"
+            @click="handleCtxCloseLeft"
+          >
             <Icon
               icon="lucide:panel-left-close"
               width="14"
@@ -156,7 +160,11 @@
             />
             关闭左侧
           </div>
-          <div class="ctx-item" @click="handleCtxCloseRight">
+          <div
+            class="ctx-item"
+            :class="{ 'is-disabled': !canCtxCloseRight }"
+            @click="handleCtxCloseRight"
+          >
             <Icon
               icon="lucide:panel-right-close"
               width="14"
@@ -165,7 +173,11 @@
             />
             关闭右侧
           </div>
-          <div class="ctx-item" @click="handleCtxCloseOthers">
+          <div
+            class="ctx-item"
+            :class="{ 'is-disabled': !canCtxCloseOthers }"
+            @click="handleCtxCloseOthers"
+          >
             <Icon
               icon="lucide:list-x"
               width="14"
@@ -174,7 +186,11 @@
             />
             关闭其他
           </div>
-          <div class="ctx-item" @click="handleCtxCloseAll">
+          <div
+            class="ctx-item"
+            :class="{ 'is-disabled': !canCtxCloseAll }"
+            @click="handleCtxCloseAll"
+          >
             <Icon
               icon="lucide:square-x"
               width="14"
@@ -270,6 +286,33 @@ const currentTag = () => ({
   affix: !!route.meta?.affix
 })
 
+// ─── 关闭操作可用性检测 ──────────────────────────────────
+// 固定（affix）标签受保护，不会被批量关闭操作移除，因此各关闭项需依据
+// “是否存在可关闭的非固定标签”来动态启用/禁用，避免无意义的空操作。
+const closableCountOnLeft = (tag) => {
+  const views = tagsViewStore.visitedViews
+  const idx = views.findIndex((v) => v.path === tag?.path)
+  if (idx <= 0) return 0
+  return views.slice(0, idx).filter((v) => !v.affix).length
+}
+const closableCountOnRight = (tag) => {
+  const views = tagsViewStore.visitedViews
+  const idx = views.findIndex((v) => v.path === tag?.path)
+  if (idx === -1 || idx === views.length - 1) return 0
+  return views.slice(idx + 1).filter((v) => !v.affix).length
+}
+const closableCountOthers = (tag) =>
+  tagsViewStore.visitedViews.filter((v) => v.path !== tag?.path && !v.affix)
+    .length
+const closableCountAll = () =>
+  tagsViewStore.visitedViews.filter((v) => !v.affix).length
+
+// 下拉菜单：基于当前激活路由对应的标签进行检测
+const canCloseLeft = computed(() => closableCountOnLeft(currentTag()) > 0)
+const canCloseRight = computed(() => closableCountOnRight(currentTag()) > 0)
+const canCloseOthers = computed(() => closableCountOthers(currentTag()) > 0)
+const canCloseAll = computed(() => closableCountAll() > 0)
+
 const handleCommand = (command) => {
   const tag = currentTag()
   switch (command) {
@@ -303,6 +346,18 @@ const contextMenuX = ref(0)
 const contextMenuY = ref(0)
 const contextMenuTag = ref(null)
 
+// 右键菜单：基于右键目标标签进行检测
+const canCtxCloseLeft = computed(
+  () => closableCountOnLeft(contextMenuTag.value) > 0
+)
+const canCtxCloseRight = computed(
+  () => closableCountOnRight(contextMenuTag.value) > 0
+)
+const canCtxCloseOthers = computed(
+  () => closableCountOthers(contextMenuTag.value) > 0
+)
+const canCtxCloseAll = computed(() => closableCountAll() > 0)
+
 const handleContextMenu = (event, tag) => {
   contextMenuTag.value = tag
   contextMenuX.value = event.clientX
@@ -332,6 +387,7 @@ const handleCtxTogglePin = () => {
 }
 
 const handleCtxCloseLeft = () => {
+  if (!canCtxCloseLeft.value) return
   const tag = contextMenuTag.value
   closeContextMenu()
   if (tag) {
@@ -343,6 +399,7 @@ const handleCtxCloseLeft = () => {
 }
 
 const handleCtxCloseRight = () => {
+  if (!canCtxCloseRight.value) return
   const tag = contextMenuTag.value
   closeContextMenu()
   if (tag) {
@@ -354,6 +411,7 @@ const handleCtxCloseRight = () => {
 }
 
 const handleCtxCloseOthers = () => {
+  if (!canCtxCloseOthers.value) return
   const tag = contextMenuTag.value
   closeContextMenu()
   if (tag) {
@@ -365,6 +423,7 @@ const handleCtxCloseOthers = () => {
 }
 
 const handleCtxCloseAll = () => {
+  if (!canCtxCloseAll.value) return
   closeContextMenu()
   tagsViewStore.removeAllViews()
   router.push('/desktop')
@@ -642,6 +701,16 @@ watch(
 
     &:hover {
       background: var(--color-bg-hover);
+    }
+
+    &.is-disabled {
+      color: var(--color-text-muted);
+      cursor: not-allowed;
+      opacity: 0.4;
+
+      &:hover {
+        background: transparent;
+      }
     }
   }
 
