@@ -7,8 +7,10 @@ import createMenu from './menu'
 import { createLoginWindow, restoreMainWindow } from './windowManager'
 import './config'
 
-// 禁用安全警告
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
+// 开发模式下禁用安全警告，生产环境保留以暴露潜在安全问题
+if (!app.isPackaged) {
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
+}
 
 // 应用是否正在退出
 app.isQuiting = false

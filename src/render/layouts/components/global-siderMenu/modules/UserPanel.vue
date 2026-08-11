@@ -89,7 +89,8 @@ const handleClick = async (item) => {
       await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
         confirmButtonText: '退出',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        customClass: 'modal-message-box'
       })
       await userStore.logoutAction().catch(() => {})
       // 通知主进程关闭主窗口并打开登录窗口

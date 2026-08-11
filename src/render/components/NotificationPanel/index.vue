@@ -148,16 +148,18 @@ const formatTime = (ts) => {
   })
 }
 
-// 点击外部关闭（捕获阶段，能穿透 @click.stop）
+// 点击外部关闭（冒泡阶段，配合面板自身的 @click.stop 阻止内部点击冒泡）
 const onClickOutside = (e) => {
-  // 点击触发按钮时，交由按钮自身的 togglePanel 逻辑处理，此处忽略
-  if (props.anchorRef?.value && props.anchorRef.value.contains(e.target)) return
-  if (panelRef.value && !panelRef.value.contains(e.target)) {
-    store.setPanelVisible(false)
-  }
+  // 面板未显示时不处理
+  if (!store.panelVisible) return
+  // 点击触发按钮时，交由按钮自身的 togglePanel 逻辑处理
+  if (props.anchorRef?.contains(e.target)) return
+  // 点击面板内部时，由面板 @click.stop 阻止冒泡，不会走到这里
+  if (panelRef.value?.contains(e.target)) return
+  store.setPanelVisible(false)
 }
-onMounted(() => document.addEventListener('click', onClickOutside, true))
-onUnmounted(() => document.removeEventListener('click', onClickOutside, true))
+onMounted(() => document.addEventListener('click', onClickOutside))
+onUnmounted(() => document.removeEventListener('click', onClickOutside))
 </script>
 
 <style lang="scss" scoped>

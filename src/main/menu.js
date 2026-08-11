@@ -141,7 +141,16 @@ const createMenu = () => {
           label: '强制重新加载',
           accelerator: 'CmdOrCtrl+Shift+R'
         },
-        { role: 'toggleDevTools', label: '切换开发者工具', accelerator: 'F12' },
+        // 开发模式下才显示开发者工具菜单项
+        ...(!app.isPackaged
+          ? [
+              {
+                role: 'toggleDevTools',
+                label: '切换开发者工具',
+                accelerator: 'F12'
+              }
+            ]
+          : []),
         { type: 'separator' },
         { role: 'resetZoom', label: '重置缩放', accelerator: 'CmdOrCtrl+0' },
         { role: 'zoomIn', label: '放大', accelerator: 'CmdOrCtrl+Plus' },
