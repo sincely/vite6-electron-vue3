@@ -124,6 +124,22 @@ const toggleWindow = () => {
   }
 }
 
+/**
+ * 通知渲染进程打开检查更新弹窗（与菜单栏"检查更新"走同一流程）
+ * 主进程发送 menu-check-update → useUpdater 转为 update:open-dialog → UpdateDialog 弹窗
+ */
+const notifyCheckUpdate = () => {
+  const win = getActiveWindow()
+  if (!win || win.isDestroyed()) return
+  // 确保窗口可见，以便用户看到更新弹窗
+  if (!win.isVisible()) {
+    if (win.isMinimized()) win.restore()
+    win.show()
+    win.focus()
+  }
+  win.webContents.send('menu-check-update')
+}
+
 const rebuildTrayMenu = () => {
   if (!tray) return
   const win = getActiveWindow()
@@ -137,6 +153,11 @@ const rebuildTrayMenu = () => {
     {
       label: '打开主界面',
       click: () => restoreMainWindow()
+    },
+    { type: 'separator' },
+    {
+      label: '检查更新',
+      click: () => notifyCheckUpdate()
     },
     { type: 'separator' },
     {
