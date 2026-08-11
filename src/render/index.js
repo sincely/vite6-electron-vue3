@@ -56,7 +56,11 @@ async function setupApp() {
 
     // 监听主进程发送的通知 → 推入通知中心
     ipcRenderer.on('show-notification', (event, options) => {
-      console.log('直接提示登录成功，模拟通知:', options)
+      notifStore.push({
+        title: options.title || '通知',
+        body: options.body || '',
+        type: options.type || 'info'
+      })
     })
 
     // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）

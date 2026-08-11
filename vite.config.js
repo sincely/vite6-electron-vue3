@@ -154,6 +154,7 @@ export default defineConfig(({ mode, command }) => {
     resolve: {
       alias: {
         '@': resolve(__dirname, './src/render'),
+        '@shared': resolve(__dirname, './src/shared'),
         '@/styles': resolve(__dirname, 'src/render/styles'),
         '@/router': resolve(__dirname, 'src/render/router'),
         '@/views': resolve(__dirname, 'src/render/views'),

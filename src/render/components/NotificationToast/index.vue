@@ -100,10 +100,23 @@ store.$onAction(({ name, after }) => {
   }
 })
 
+// 监听自定义 notification-toast 事件（来自 shared/notification.js 降级方案）
+const toastEventHandler = (e) => {
+  const { title, body, type, id } = e.detail || {}
+  show({
+    id: id || Date.now(),
+    title: title || '通知',
+    body: body || '',
+    type: type || 'info'
+  })
+}
+window.addEventListener('notification-toast', toastEventHandler)
+
 // 卸载时清除所有定时器
 onUnmounted(() => {
   timers.forEach((t) => clearTimeout(t))
   timers.clear()
+  window.removeEventListener('notification-toast', toastEventHandler)
 })
 </script>
 

@@ -167,6 +167,18 @@ export const asyncRouteTree = [
           keepAlive: true,
           transition: 'slide-up'
         }
+      },
+      {
+        path: 'notification-demo',
+        name: 'notification-demo',
+        component: () => import('@/views/notification-demo/index.vue'),
+        meta: {
+          title: '通知演示',
+          icon: 'bell',
+          group: '/components',
+          keepAlive: true,
+          transition: 'slide-up'
+        }
       }
     ]
   }

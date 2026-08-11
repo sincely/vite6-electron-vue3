@@ -61,6 +61,135 @@ if (process.contextIsolated) {
   contextBridge.exposeInMainWorld('systemInfo', {
     getSystemInfo: () => ipcRenderer.invoke('get-system-info')
   })
+
+  /**
+   * 向渲染进程暴露通知 API
+   * 调用 window.$notification.show(options) 显示原生通知
+   *
+   * @example
+   * window.$notification.show({
+   *   title: '新消息',
+   *   body: '您有 3 条未读消息',
+   *   onClick: () => { console.log('点击了通知') }
+   * })
+   *
+   * @example
+   * // macOS 带操作按钮
+   * window.$notification.show({
+   *   title: '提醒',
+   *   body: '会议即将开始',
+   *   actions: [{ type: 'button', text: '查看' }],
+   *   onAction: (index) => { console.log('点击了按钮', index) }
+   * })
+   */
+  contextBridge.exposeInMainWorld('$notification', {
+    /**
+     * 显示原生通知
+     * @param {Object} options - 通知配置
+     * @param {string}  options.title           - 标题
+     * @param {string}  options.body            - 正文
+     * @param {string}  options.subtitle        - 副标题（macOS）
+     * @param {boolean} options.silent          - 是否静默
+     * @param {string}  options.urgency         - 紧急程度 'normal'|'critical'|'low'
+     * @param {string}  options.timeoutType     - 超时类型 'default'|'never'
+     * @param {boolean} options.hasReply        - 是否允许内联回复（macOS）
+     * @param {string}  options.closeButtonText - 关闭按钮文字（macOS）
+     * @param {Array}   options.actions         - 操作按钮（macOS）
+     * @param {Function} options.onClick        - 点击回调
+     * @param {Function} options.onClose        - 关闭回调
+     * @param {Function} options.onAction       - 操作按钮回调（macOS）
+     * @param {Function} options.onReply        - 内联回复回调（macOS）
+     * @returns {Promise<Object>} 通知句柄
+     */
+    show: async (options = {}) => {
+      const notifId = `notif_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+      // 发送 IPC 请求
+      const result = await ipcRenderer.invoke('show-native-notification', {
+        id: notifId,
+        title: options.title || '',
+        body: options.body || '',
+        subtitle: options.subtitle || '',
+        silent: !!options.silent,
+        urgency: options.urgency || 'normal',
+        timeoutType: options.timeoutType || 'default',
+        hasReply: !!options.hasReply,
+        closeButtonText: options.closeButtonText || '关闭',
+        icon: options.icon || null,
+        sound: options.sound || null,
+        actions: options.actions || [],
+        toastXml: options.toastXml || null
+      })
+
+      // 注册事件回调（通过 IPC 事件监听）
+      if (options.onClick) {
+        const handler = (_event, id) => {
+          if (id === notifId) {
+            options.onClick()
+            ipcRenderer.off('native-notification-clicked', handler)
+          }
+        }
+        ipcRenderer.on('native-notification-clicked', handler)
+      }
+
+      if (options.onClose) {
+        const handler = (_event, id) => {
+          if (id === notifId) {
+            options.onClose()
+            ipcRenderer.off('native-notification-closed', handler)
+          }
+        }
+        ipcRenderer.on('native-notification-closed', handler)
+      }
+
+      if (options.onAction) {
+        const handler = (_event, id, actionIndex) => {
+          if (id === notifId) {
+            options.onAction(actionIndex)
+          }
+        }
+        ipcRenderer.on('native-notification-action', handler)
+      }
+
+      if (options.onReply) {
+        const handler = (_event, id, reply) => {
+          if (id === notifId) {
+            options.onReply(reply)
+          }
+        }
+        ipcRenderer.on('native-notification-reply', handler)
+      }
+
+      if (options.onShow) {
+        const handler = (_event, id) => {
+          if (id === notifId) {
+            options.onShow()
+            ipcRenderer.off('native-notification-show', handler)
+          }
+        }
+        ipcRenderer.on('native-notification-show', handler)
+      }
+
+      if (options.onFailed) {
+        const handler = (_event, id, error) => {
+          if (id === notifId) {
+            options.onFailed(error)
+            ipcRenderer.off('native-notification-failed', handler)
+          }
+        }
+        ipcRenderer.on('native-notification-failed', handler)
+      }
+
+      return {
+        id: notifId,
+        success: result?.success ?? false,
+        /** 关闭通知 */
+        close: () => {
+          ipcRenderer.send('close-native-notification', notifId)
+        }
+      }
+    }
+  })
 } else {
   window.api = api
 }
