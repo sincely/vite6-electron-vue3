@@ -152,7 +152,7 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   max-width: 100%;
   height: 100%;
   margin-left: 24px;
-  -webkit-app-region: no-drag;
+  -webkit-app-region: drag;
 }
 
 .top-menu {
@@ -164,6 +164,7 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   height: 100%;
   overflow-x: auto;
   scrollbar-width: none; // Firefox
+  -webkit-app-region: drag;
 
   &::-webkit-scrollbar {
     display: none; // Chrome / Edge / Electron
@@ -332,6 +333,7 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
+  -webkit-app-region: no-drag;
 
   &:hover {
     color: var(--color-primary);

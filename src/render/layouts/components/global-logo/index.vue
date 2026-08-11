@@ -48,7 +48,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     height: 100%;
     padding: 0;
     padding: 0 16px;
-    -webkit-app-region: no-drag;
+    -webkit-app-region: drag;
 
     &.is-mac {
       height: 100%;
