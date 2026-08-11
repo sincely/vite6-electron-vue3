@@ -21,7 +21,7 @@ export const useAppStore = defineStore('app', {
     transitionEnabled: true, // 是否启用页面切换动画
     transitionType: 'page', // 页面切换动画类型
     contentWidth: 'full', // 内容容器宽度模式：full（铺满）| fixed（定宽）
-    contentWidthValue: 1200, // 定宽模式下的具体宽度值（px）
+    contentWidthValue: 1600, // 定宽模式下的具体宽度值（px）
     settingsVisible: false, // 设置弹窗是否可见
     loading: false, // 是否显示加载中状态
     loadingTargets: [], // 加载中状态的目标元素
