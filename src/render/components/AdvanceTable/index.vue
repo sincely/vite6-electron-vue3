@@ -410,9 +410,10 @@ watch(
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 12px;
+  padding: 16px 20px;
   overflow-y: hidden;
   background: var(--glass-surface);
+  border: 1px solid var(--glass-surface-border);
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
   animation: fade-up 0.4s cubic-bezier(0.2, 0.75, 0.2, 1) both;
@@ -422,7 +423,9 @@ watch(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-light);
 
   .toolbar-left {
     display: flex;
@@ -432,7 +435,7 @@ watch(
 
   .toolbar-right {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
 
     .table-size-trigger {
@@ -471,7 +474,7 @@ watch(
 }
 
 .no-data {
-  padding: 40px 0;
+  padding: 48px 0;
   text-align: center;
 }
 
@@ -481,10 +484,16 @@ watch(
   animation: float-bounce 3s ease-in-out infinite;
 }
 
+.no-data p {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
 .pagination-container {
   display: flex;
   justify-content: flex-end;
-  padding: 12px 0;
+  padding: 12px 0 4px;
   margin-top: auto;
 }
 
@@ -492,5 +501,72 @@ watch(
   display: inline-flex;
   gap: 6px;
   align-items: center;
+}
+
+// ---------- Element Plus 表格深度美化 ----------
+:deep(.el-table) {
+  --el-table-border-color: var(--color-border-light);
+  --el-table-header-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: var(--color-bg-hover);
+  --el-table-current-row-bg-color: var(--color-bg-active);
+  --el-table-header-text-color: var(--color-text-secondary);
+  --el-table-text-color: var(--color-text-primary);
+  --el-fill-color-lighter: var(--color-bg-hover);
+
+  overflow: hidden;
+  border-radius: 10px;
+
+  // 表头：微弱底色 + 更重字重，营造层次
+  .el-table__header-wrapper {
+    .el-table__cell {
+      padding: 10px 0;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--color-bg-content);
+    }
+
+    th.el-table__cell {
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
+  // 斑马纹行使用极浅底色
+  .el-table__body tr.el-table__row--striped td.el-table__cell {
+    background: var(--color-bg-content);
+  }
+
+  // 行 hover 柔和过渡
+  .el-table__body tr {
+    transition: background-color 0.2s ease;
+
+    &:hover > td.el-table__cell {
+      background: var(--color-bg-hover) !important;
+    }
+  }
+
+  // 单元格统一内边距与字号
+  .el-table__cell {
+    padding: 10px 0;
+    font-size: 13px;
+  }
+
+  // 底部边框收敛
+  .el-table__inner-wrapper::before,
+  .el-table__border-left-patch {
+    background-color: var(--color-border-light);
+  }
+
+  // 固定列阴影更柔和
+  .el-table-fixed-column--right::after,
+  .el-table-fixed-column--left::after {
+    box-shadow: -4px 0 8px -4px rgb(0 0 0 / 8%);
+  }
+}
+
+// 工具栏按钮统一美化
+:deep(.el-button) {
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 </style>

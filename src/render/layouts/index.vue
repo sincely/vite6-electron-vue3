@@ -41,7 +41,7 @@
         <!-- 内容列 -->
         <div class="layout-body-content">
           <!-- 面包屑导航（含搜索插槽） -->
-          <GlobalBreadcrumb>
+          <!-- <GlobalBreadcrumb>
             <template #extra>
               <SvgIcon
                 icon-class="refresh"
@@ -59,7 +59,7 @@
                 @click="handleFullscreenChange"
               />
             </template>
-          </GlobalBreadcrumb>
+          </GlobalBreadcrumb> -->
 
           <!-- 页面内容（路由视图 + 过渡 + 加载） -->
           <GlobalContent v-if="isRouterAlive" />

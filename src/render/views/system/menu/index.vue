@@ -22,46 +22,51 @@
       @selection-change="handleSelectionChange"
     >
       <template #toolbar>
-        <el-button type="primary" @click="handleCreateRoot">
-          <SvgIcon icon-class="plus" width="14px" height="14px" />
-          <span>新增</span>
-        </el-button>
-        <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-          批量删除
-        </el-button>
+        <div class="toolbar-buttons">
+          <el-button type="primary" @click="handleCreateRoot">
+            <SvgIcon icon-class="plus" width="14px" height="14px" />
+            <span>新增菜单</span>
+          </el-button>
+          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
+            批量删除
+          </el-button>
+        </div>
       </template>
 
       <template #icon="{ row }">
         <div class="icon-cell">
-          <SvgIcon
-            v-if="row.icon"
-            :icon-class="row.icon"
-            width="16px"
-            height="16px"
-          />
+          <div v-if="row.icon" class="icon-box">
+            <SvgIcon :icon-class="row.icon" width="16px" height="16px" />
+          </div>
+          <span v-else class="text-muted">-</span>
         </div>
       </template>
 
       <template #visible="{ row }">
-        <el-tag :type="row.visible === '1' ? 'success' : 'info'" effect="light">
+        <span
+          class="status-badge"
+          :class="row.visible === '1' ? 'is-active' : 'is-hidden'"
+        >
+          <span class="status-dot" />
           {{ row.visible === '1' ? '显示' : '隐藏' }}
-        </el-tag>
+        </span>
       </template>
 
       <template #action="{ row }">
         <div class="action-group">
           <el-button
             v-if="row.menuType !== 'BUTTON'"
-            type="primary"
+            link
+            type="success"
             size="small"
             @click="handleCreateChild(row)"
           >
             新增子菜单
           </el-button>
-          <el-button type="primary" size="small" @click="handleEdit(row)">
+          <el-button link type="primary" size="small" @click="handleEdit(row)">
             编辑
           </el-button>
-          <el-button type="danger" size="small" @click="handleDelete(row)">
+          <el-button link type="danger" size="small" @click="handleDelete(row)">
             删除
           </el-button>
         </div>
@@ -470,15 +475,78 @@ onMounted(() => {
   padding: 4px;
 }
 
-.icon-cell {
+.toolbar-buttons {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+// 菜单图标单元格
+.icon-cell {
+  display: flex;
+  align-items: center;
   justify-content: center;
+
+  .icon-box {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+    background: var(--color-bg-active);
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.08);
+    }
+  }
+}
+
+// 状态徽标：圆点 + 文字
+.status-badge {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.is-active {
+    color: var(--color-success);
+    background: var(--color-teal-soft);
+
+    .status-dot {
+      background: var(--color-success);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-success), transparent 75%);
+    }
+  }
+
+  &.is-hidden {
+    color: var(--color-text-muted);
+    background: var(--color-bg-content);
+
+    .status-dot {
+      background: var(--color-text-muted);
+    }
+  }
 }
 
 .action-group {
   display: flex;
+  gap: 4px;
   align-items: center;
   justify-content: center;
 }

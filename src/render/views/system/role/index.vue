@@ -22,34 +22,46 @@
       @selection-change="handleSelectionChange"
     >
       <template #toolbar>
-        <el-button type="primary" @click="handleCreate">
-          <SvgIcon icon-class="plus" width="14px" height="14px" />
-          <span>新增</span>
-        </el-button>
-        <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-          批量删除
-        </el-button>
+        <div class="toolbar-buttons">
+          <el-button type="primary" @click="handleCreate">
+            <SvgIcon icon-class="plus" width="14px" height="14px" />
+            <span>新增角色</span>
+          </el-button>
+          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
+            批量删除
+          </el-button>
+        </div>
+      </template>
+
+      <template #roleName="{ row }">
+        <div class="role-name-cell">
+          <span class="role-icon-box">
+            <SvgIcon icon-class="shield-check" width="14px" height="14px" />
+          </span>
+          <span class="role-name-text">{{ row.roleName }}</span>
+        </div>
+      </template>
+
+      <template #roleCode="{ row }">
+        <code class="code-chip">{{ row.roleCode }}</code>
       </template>
 
       <template #status="{ row }">
-        <el-tag
-          :type="row.status === '1' ? 'success' : 'warning'"
-          effect="light"
+        <span
+          class="status-badge"
+          :class="row.status === '1' ? 'is-active' : 'is-disabled'"
         >
+          <span class="status-dot" />
           {{ row.status === '1' ? '启用' : '禁用' }}
-        </el-tag>
-      </template>
-
-      <template #permissions="{ row }">
-        <span>{{ row.permissions?.length || 0 }} 个权限</span>
+        </span>
       </template>
 
       <template #action="{ row }">
         <div class="action-group">
-          <el-button type="primary" size="small" @click="handleEdit(row)">
+          <el-button link type="primary" size="small" @click="handleEdit(row)">
             编辑
           </el-button>
-          <el-button type="danger" size="small" @click="handleDelete(row)">
+          <el-button link type="danger" size="small" @click="handleDelete(row)">
             删除
           </el-button>
         </div>
@@ -126,16 +138,17 @@ const columns = [
   {
     prop: 'roleName',
     label: '角色名称',
-    align: 'center',
-    minWidth: 160,
+    align: 'left',
+    minWidth: 180,
+    slot: 'roleName',
     showOverflowTooltip: true
   },
   {
     prop: 'roleCode',
     label: '角色编码',
-    minWidth: 150,
-    align: 'center',
-    showOverflowTooltip: true
+    minWidth: 160,
+    align: 'left',
+    slot: 'roleCode'
   },
   {
     prop: 'remark',
@@ -335,6 +348,84 @@ const handleBatchDelete = () => {
   gap: 16px;
   height: 100%;
   padding: 4px;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+// 角色名称单元格：图标 + 文字
+.role-name-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .role-icon-box {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    color: var(--color-indigo);
+    background: var(--color-indigo-soft);
+    border-radius: 8px;
+  }
+
+  .role-name-text {
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+}
+
+// 角色编码：等宽代码标签
+.code-chip {
+  padding: 2px 10px;
+  font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  color: var(--color-violet);
+  background: var(--color-violet-soft);
+  border-radius: 6px;
+}
+
+// 状态徽标：圆点 + 文字
+.status-badge {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.is-active {
+    color: var(--color-success);
+    background: var(--color-teal-soft);
+
+    .status-dot {
+      background: var(--color-success);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-success), transparent 75%);
+    }
+  }
+
+  &.is-disabled {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+
+    .status-dot {
+      background: var(--color-amber);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-amber), transparent 75%);
+    }
+  }
 }
 
 .action-group {

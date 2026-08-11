@@ -22,43 +22,67 @@
       @selection-change="handleSelectionChange"
     >
       <template #toolbar>
-        <el-button type="primary" @click="handleCreate">
-          <SvgIcon icon-class="plus" width="14px" height="14px" />
-          <span>新增</span>
-        </el-button>
-        <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-          批量删除
-        </el-button>
+        <div class="toolbar-buttons">
+          <el-button type="primary" @click="handleCreate">
+            <SvgIcon icon-class="plus" width="14px" height="14px" />
+            <span>新增用户</span>
+          </el-button>
+          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
+            批量删除
+          </el-button>
+        </div>
       </template>
 
       <template #gender="{ row }">
         <el-tag
           :type="row.gender === '男' ? 'primary' : 'danger'"
           effect="light"
+          round
+          size="small"
         >
           {{ row.gender }}
         </el-tag>
       </template>
 
       <template #roles="{ row }">
-        <span>{{ row.roleNames?.join('、') || '-' }}</span>
+        <div class="role-cell">
+          <el-tag
+            v-for="role in (row.roleNames || []).slice(0, 2)"
+            :key="role"
+            size="small"
+            effect="plain"
+            round
+          >
+            {{ role }}
+          </el-tag>
+          <el-tooltip
+            v-if="(row.roleNames || []).length > 2"
+            :content="(row.roleNames || []).slice(2).join('、')"
+          >
+            <el-tag size="small" type="info" effect="plain" round>
+              +{{ (row.roleNames || []).length - 2 }}
+            </el-tag>
+          </el-tooltip>
+          <span v-if="!row.roleNames?.length" class="text-muted">-</span>
+        </div>
       </template>
 
       <template #status="{ row }">
-        <el-tag
-          :type="row.status === '1' ? 'success' : 'warning'"
-          effect="light"
+        <span
+          class="status-badge"
+          :class="row.status === '1' ? 'is-active' : 'is-disabled'"
         >
+          <span class="status-dot" />
           {{ row.status === '1' ? '启用' : '禁用' }}
-        </el-tag>
+        </span>
       </template>
 
       <template #action="{ row }">
         <div class="action-group">
-          <el-button type="primary" size="small" @click="handleEdit(row)">
+          <el-button link type="primary" size="small" @click="handleEdit(row)">
             编辑
           </el-button>
-          <el-button type="danger" size="small" @click="handleDelete(row)">
+          <el-button link type="danger" size="small" @click="handleDelete(row)">
             删除
           </el-button>
         </div>
@@ -409,6 +433,62 @@ onMounted(() => {
   gap: 16px;
   height: 100%;
   padding: 4px;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.role-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+// 状态徽标：圆点 + 文字
+.status-badge {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.is-active {
+    color: var(--color-success);
+    background: var(--color-teal-soft);
+
+    .status-dot {
+      background: var(--color-success);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-success), transparent 75%);
+    }
+  }
+
+  &.is-disabled {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+
+    .status-dot {
+      background: var(--color-amber);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-amber), transparent 75%);
+    }
+  }
 }
 
 .action-group {
