@@ -1,45 +1,71 @@
 <template>
-  <nav class="top-menu">
-    <div
-      v-for="item in mainItems"
-      :key="item.id"
-      class="top-menu-item"
-      :class="{ active: isParentActive(item) }"
-      @click="handleNav(item)"
-    >
-      <SvgIcon
-        :icon-class="item.icon"
-        class="menu-icon"
-        width="16px"
-        height="16px"
-      />
-      <span>{{ item.label }}</span>
+  <div class="top-menu-container">
+    <!-- 左滚动箭头 -->
+    <transition name="scroll-arrow">
+      <button
+        v-show="canScrollLeft"
+        class="scroll-arrow scroll-arrow-left"
+        title="向左滚动"
+        @click="scrollByDir(-1)"
+      >
+        <Icon icon="lucide:chevron-left" width="16px" height="16px" />
+      </button>
+    </transition>
 
-      <!-- 二级菜单 Dropdown (仅非混合模式显示) -->
-      <div v-if="item.children?.length && !isTopMixed" class="top-submenu">
-        <div
-          v-for="child in item.children"
-          :key="child.id"
-          class="top-submenu-item"
-          :class="{ active: isChildActive(child) }"
-          @click.stop="router.push(child.route)"
-        >
-          <Icon
-            v-if="child.icon"
-            :icon="`lucide:${child.icon}`"
-            class="top-submenu-icon"
-            width="14px"
-            height="14px"
-          />
-          <span>{{ child.label }}</span>
+    <nav ref="menuNavRef" class="top-menu" @scroll="updateScrollState">
+      <div
+        v-for="item in mainItems"
+        :key="item.id"
+        class="top-menu-item"
+        :class="{ active: isParentActive(item) }"
+        @click="handleNav(item)"
+      >
+        <SvgIcon
+          :icon-class="item.icon"
+          class="menu-icon"
+          width="16px"
+          height="16px"
+        />
+        <span>{{ item.label }}</span>
+
+        <!-- 二级菜单 Dropdown (仅非混合模式显示) -->
+        <div v-if="item.children?.length && !isTopMixed" class="top-submenu">
+          <div
+            v-for="child in item.children"
+            :key="child.id"
+            class="top-submenu-item"
+            :class="{ active: isChildActive(child) }"
+            @click.stop="router.push(child.route)"
+          >
+            <Icon
+              v-if="child.icon"
+              :icon="`lucide:${child.icon}`"
+              class="top-submenu-icon"
+              width="14px"
+              height="14px"
+            />
+            <span>{{ child.label }}</span>
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+
+    <!-- 右滚动箭头 -->
+    <transition name="scroll-arrow">
+      <button
+        v-show="canScrollRight"
+        class="scroll-arrow scroll-arrow-right"
+        title="向右滚动"
+        @click="scrollByDir(1)"
+      >
+        <Icon icon="lucide:chevron-right" width="16px" height="16px" />
+      </button>
+    </transition>
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
@@ -72,21 +98,82 @@ const handleNav = (item) => {
     router.push(item.route).catch(() => {})
   }
 }
+
+// ─── 横向滚动溢出控制 ──────────────────────────────────────────
+const menuNavRef = ref(null)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+const SCROLL_STEP = 200 // 每次点击箭头滚动的像素距离
+
+const updateScrollState = () => {
+  const el = menuNavRef.value
+  if (!el) return
+  canScrollLeft.value = el.scrollLeft > 4
+  canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 4
+}
+
+const scrollByDir = (dir) => {
+  const el = menuNavRef.value
+  if (!el) return
+  el.scrollBy({ left: dir * SCROLL_STEP, behavior: 'smooth' })
+}
+
+let resizeObserver = null
+
+onMounted(() => {
+  nextTick(updateScrollState)
+  if (menuNavRef.value && typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(updateScrollState)
+    resizeObserver.observe(menuNavRef.value)
+  }
+  window.addEventListener('resize', updateScrollState)
+})
+
+onBeforeUnmount(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
+  window.removeEventListener('resize', updateScrollState)
+})
+
+// 菜单项或布局变化时重新检测溢出
+watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
 </script>
 
 <style lang="scss" scoped>
-.top-menu {
+.top-menu-container {
+  position: relative;
   display: flex;
-  gap: 8px;
+  flex: 1;
+  gap: 6px;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
   height: 100%;
   margin-left: 24px;
   -webkit-app-region: no-drag;
 }
 
+.top-menu {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-width: none; // Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome / Edge / Electron
+  }
+}
+
 .top-menu-item {
   position: relative;
   display: flex;
+  flex-shrink: 0;
   gap: 8px;
   align-items: center;
   height: 38px;
@@ -94,6 +181,7 @@ const handleNav = (item) => {
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-secondary);
+  white-space: nowrap;
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -227,5 +315,46 @@ const handleNav = (item) => {
   flex-shrink: 0;
   color: var(--color-text-secondary);
   transition: color 0.2s ease;
+}
+
+// ─── 滚动箭头按钮 ──────────────────────────────────────────
+.scroll-arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+// 箭头淡入淡出
+.scroll-arrow-enter-active,
+.scroll-arrow-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.scroll-arrow-enter-from,
+.scroll-arrow-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
 }
 </style>
