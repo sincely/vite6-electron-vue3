@@ -41,7 +41,14 @@
             :class="{ 'sidebar-item-active': isChildActive(child) }"
             @click="handleClick(child)"
           >
-            <span class="sidebar-child-dot"></span>
+            <Icon
+              v-if="child.icon"
+              :icon="`lucide:${child.icon}`"
+              class="sidebar-child-icon"
+              width="14px"
+              height="14px"
+            />
+            <span v-else class="sidebar-child-dot"></span>
             <span class="sidebar-label">{{ child.label }}</span>
           </a>
         </div>
@@ -53,6 +60,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { menuItems } from '@/config/menu'
 
@@ -189,6 +197,10 @@ const handleNav = (item) => {
       background: var(--color-primary);
     }
 
+    .sidebar-child-icon {
+      color: var(--color-primary);
+    }
+
     &::before {
       position: absolute;
       inset: 8px auto 8px 0;
@@ -219,6 +231,10 @@ const handleNav = (item) => {
       .sidebar-child-dot {
         background: var(--color-primary);
         transform: scale(1.4);
+      }
+
+      .sidebar-child-icon {
+        color: var(--color-primary);
       }
     }
 
@@ -263,6 +279,12 @@ const handleNav = (item) => {
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.sidebar-child-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: color 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .sidebar-chevron {
   flex-shrink: 0;
   margin-left: auto;
@@ -302,25 +324,13 @@ const handleNav = (item) => {
   grid-template-rows: 1fr;
   padding: 4px;
   margin: -2px 4px 4px;
-  background: var(--color-bg-content);
-  border-color: var(--color-border-light);
+
+  // background: var(--sidebar-surface-bg);
+  // border-color: var(--color-border-light);
 
   .sidebar-submenu-inner {
     opacity: 1;
     transition-delay: 0.08s;
-  }
-
-  &::before {
-    position: absolute;
-    top: 8px;
-    bottom: 8px;
-    left: 12px;
-    width: 1px;
-    content: '';
-    background: color-mix(in srgb, var(--color-primary), transparent 40%);
-    border-radius: 1px;
-    opacity: 0;
-    animation: fadeIn 0.25s ease 0.08s forwards;
   }
 }
 

@@ -8,7 +8,14 @@
         :class="{ 'mixed-submenu-item-active': isChildActive(child) }"
         @click="handleClick(child)"
       >
-        <span class="mixed-submenu-dot"></span>
+        <Icon
+          v-if="child.icon"
+          :icon="`lucide:${child.icon}`"
+          class="mixed-submenu-icon"
+          width="14px"
+          height="14px"
+        />
+        <span v-else class="mixed-submenu-dot"></span>
         <span class="mixed-submenu-label">{{ child.label }}</span>
       </a>
     </nav>
@@ -17,6 +24,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import { Icon } from '@iconify/vue'
 
 const props = defineProps({
   parentItem: {
@@ -104,6 +112,14 @@ const handleClick = (child) => {
     color: var(--color-text-primary);
     background: var(--color-bg-hover);
     border-color: var(--color-border-light);
+
+    .mixed-submenu-dot {
+      background: var(--color-primary);
+    }
+
+    .mixed-submenu-icon {
+      color: var(--color-primary);
+    }
   }
 
   &-active {
@@ -113,6 +129,10 @@ const handleClick = (child) => {
 
     .mixed-submenu-dot {
       background: var(--color-primary);
+    }
+
+    .mixed-submenu-icon {
+      color: var(--color-primary);
     }
 
     &::before {
@@ -132,6 +152,12 @@ const handleClick = (child) => {
   height: 6px;
   background: var(--color-border);
   border-radius: 50%;
+}
+
+.mixed-submenu-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
 }
 
 .mixed-submenu-label {

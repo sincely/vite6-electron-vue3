@@ -24,7 +24,14 @@
           :class="{ active: isChildActive(child) }"
           @click.stop="router.push(child.route)"
         >
-          {{ child.label }}
+          <Icon
+            v-if="child.icon"
+            :icon="`lucide:${child.icon}`"
+            class="top-submenu-icon"
+            width="14px"
+            height="14px"
+          />
+          <span>{{ child.label }}</span>
         </div>
       </div>
     </div>
@@ -34,6 +41,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { menuItems } from '@/config/menu'
 
@@ -170,6 +178,7 @@ const handleNav = (item) => {
 .top-submenu-item {
   position: relative;
   display: flex;
+  gap: 8px;
   align-items: center;
   padding: 10px 16px;
   font-size: 13px;
@@ -186,6 +195,10 @@ const handleNav = (item) => {
   &:hover:not(.active) {
     color: var(--color-text-primary);
     background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
+
+    .top-submenu-icon {
+      color: var(--color-primary);
+    }
   }
 
   &.active,
@@ -193,6 +206,10 @@ const handleNav = (item) => {
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary), transparent 90%);
     transform: none;
+
+    .top-submenu-icon {
+      color: var(--color-primary);
+    }
 
     &::before {
       position: absolute;
@@ -204,5 +221,11 @@ const handleNav = (item) => {
       border-radius: 2px;
     }
   }
+}
+
+.top-submenu-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
 }
 </style>

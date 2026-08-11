@@ -77,6 +77,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/exception/404/index.vue'),
         meta: {
           title: '404 未找到',
+          icon: 'file-x',
           group: '/exception',
           keepAlive: true
         }
@@ -87,6 +88,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/exception/500/index.vue'),
         meta: {
           title: '500 服务器错误',
+          icon: 'server-crash',
           group: '/exception',
           keepAlive: true
         }
@@ -110,6 +112,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/system/user/index.vue'),
         meta: {
           title: '用户管理',
+          icon: 'users',
           group: '/manage',
           keepAlive: true,
           transition: 'slide-up'
@@ -121,6 +124,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/system/role/index.vue'),
         meta: {
           title: '角色管理',
+          icon: 'shield-check',
           group: '/manage',
           keepAlive: true,
           transition: 'slide-up'
@@ -132,6 +136,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/system/menu/index.vue'),
         meta: {
           title: '菜单管理',
+          icon: 'list-tree',
           group: '/manage',
           keepAlive: true,
           transition: 'slide-up'
@@ -157,6 +162,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/advanceTable/index.vue'),
         meta: {
           title: '高级表格',
+          icon: 'table-2',
           group: '/components',
           keepAlive: true,
           transition: 'slide-up'
