@@ -24,7 +24,7 @@
       <!-- 标题栏 / 窗口控制 -->
       <GlobalHeader v-show="!isFullscreen">
         <template #right>
-          <GlobalSearch v-if="!isTopMenu" />
+          <GlobalSearch />
         </template>
       </GlobalHeader>
 
