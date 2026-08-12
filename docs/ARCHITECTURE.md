@@ -65,7 +65,7 @@
 
 入口文件：
 
-- [main.js](../src/render/index.js)
+- [main.js](../src/render/main.js)
 
 ## 3. 目录结构
 
