@@ -4,8 +4,13 @@ import initIpc from './ipc'
 import initTray from './tray'
 import createMenu from './menu'
 import { registerSchemes, setupProtocol } from './protocol'
-
-import { createLoginWindow, restoreMainWindow } from './windowManager'
+import store from './store'
+import {
+  setCloseAction,
+  createLoginWindow,
+  restoreMainWindow
+} from './windowManager'
+import logger from './log'
 import './config'
 
 // 开发模式下禁用安全警告，生产环境保留以暴露潜在安全问题
@@ -38,6 +43,24 @@ app.whenReady().then(() => {
       'app.png'
     )
     app.dock.setIcon(nativeImage.createFromPath(devIcon))
+  }
+
+  // 从持久化存储中恢复应用设置
+  try {
+    const savedCloseAction = store.get('appSettings.closeAction', 'minimize')
+    setCloseAction(savedCloseAction)
+    logger.info(`[App] 恢复 closeAction: ${savedCloseAction}`)
+
+    const savedAutoLaunch = store.get('appSettings.autoLaunch', false)
+    if (process.platform === 'darwin' || process.platform === 'win32') {
+      app.setLoginItemSettings({
+        openAtLogin: !!savedAutoLaunch,
+        openAsHidden: false
+      })
+      logger.info(`[App] 恢复 autoLaunch: ${savedAutoLaunch}`)
+    }
+  } catch (err) {
+    logger.warn('[App] 恢复应用设置失败:', err.message)
   }
 
   // 创建自定义菜单

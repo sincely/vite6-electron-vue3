@@ -7,6 +7,7 @@ import {
   setCloseAction
 } from '../windowManager'
 import { app } from 'electron'
+import store from '../store'
 
 export default [
   {
@@ -47,6 +48,8 @@ export default [
           openAtLogin: enable,
           openAsHidden: false
         })
+        // 持久化到 store
+        store.set('appSettings.autoLaunch', enable)
       }
     }
   },
@@ -65,6 +68,8 @@ export default [
     type: 'on',
     handler: (event, action) => {
       setCloseAction(action)
+      // 持久化到 store
+      store.set('appSettings.closeAction', action)
     }
   },
   {

@@ -1,5 +1,6 @@
 import { Menu, app, shell, dialog, BrowserWindow } from 'electron'
 import os from 'os'
+import logger from './log'
 
 // 通知渲染进程打开检查更新弹窗（与顶栏按钮走同一流程）
 const notifyCheckUpdate = () => {
@@ -94,23 +95,23 @@ const createMenu = () => {
         {
           label: '打开',
           accelerator: 'CmdOrCtrl+O',
-          click: () => console.log('打开文件')
+          click: () => logger.info('打开文件')
         },
         {
           label: '保存',
           accelerator: 'CmdOrCtrl+S',
-          click: () => console.log('保存文件')
+          click: () => logger.info('保存文件')
         },
         {
           label: '另存为',
           accelerator: 'CmdOrCtrl+Shift+S',
-          click: () => console.log('另存为')
+          click: () => logger.info('另存为')
         },
         { type: 'separator' },
         {
           label: '打印',
           accelerator: 'CmdOrCtrl+P',
-          click: () => console.log('打印')
+          click: () => logger.info('打印')
         },
         { type: 'separator' },
         isMac

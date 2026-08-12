@@ -1,5 +1,6 @@
 import { Notification } from 'electron'
 import { getMainWindow } from '../windowManager'
+import logger from '../log'
 
 /**
  * 辅助函数：向渲染进程发送 toast 通知
@@ -119,7 +120,7 @@ export default [
 
         return { success: true, id: notifId }
       } catch (err) {
-        console.error('[Notification IPC] 创建原生通知失败:', err)
+        logger.error('[Notification IPC] 创建原生通知失败:', err)
         return { success: false, id: notifId, error: err.message }
       }
     }

@@ -2,7 +2,9 @@ import logger from 'electron-log/main'
 import { app } from 'electron'
 import path from 'path'
 
-logger.initialize()
+// 初始化 electron-log，启用 preload IPC 通道
+// 允许渲染进程通过 electron-log/renderer 将日志转发到主进程
+logger.initialize({ preload: true })
 
 // 获取应用的安装目录路径
 const installPath = path.dirname(app.getPath('exe'))

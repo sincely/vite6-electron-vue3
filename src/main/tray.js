@@ -6,6 +6,7 @@ import {
   getLoginWindow,
   restoreMainWindow
 } from './windowManager'
+import logger from './log'
 
 let tray = null
 
@@ -46,7 +47,7 @@ const createTrayIcon = () => {
   // ── 开发模式：直接使用 resources/app.png ──────────────────────────
   if (!app.isPackaged && process.platform === 'darwin') {
     const devIcon = getDevIconPath()
-    console.log(`[Tray] Using dev icon: ${devIcon}`)
+    logger.info(`[Tray] Using dev icon: ${devIcon}`)
     if (fs.existsSync(devIcon)) {
       return nativeImage.createFromPath(devIcon).resize({
         width: 22,

@@ -71,6 +71,11 @@ export const useAppStore = defineStore('app', {
           console.error('设置开机自启失败:', error)
         }
       }
+
+      // 同步到 electron-store 持久化
+      if (window.store) {
+        window.store.set('appSettings.autoLaunch', newValue).catch(() => {})
+      }
     },
     setCloseAction(action) {
       const value = action === 'quit' ? 'quit' : 'minimize'
@@ -78,16 +83,45 @@ export const useAppStore = defineStore('app', {
       if (window.ipcRenderer) {
         window.ipcRenderer.send('set-close-action', value)
       }
+
+      // 同步到 electron-store 持久化
+      if (window.store) {
+        window.store.set('appSettings.closeAction', value).catch(() => {})
+      }
     },
     syncDesktopSettings() {
       if (window.ipcRenderer) {
         window.ipcRenderer.send('set-auto-launch', this.autoLaunch)
         window.ipcRenderer.send('set-close-action', this.closeAction)
       }
+
+      // 批量同步到 electron-store
+      if (window.store) {
+        window.store
+          .set('appSettings.autoLaunch', this.autoLaunch)
+          .catch(() => {})
+        window.store
+          .set('appSettings.closeAction', this.closeAction)
+          .catch(() => {})
+      }
     },
     async initDesktopSettings() {
       if (!window.ipcRenderer) return
       try {
+        // 优先从 electron-store 读取持久化设置
+        if (window.store) {
+          const storeSettings = await window.store.get('appSettings')
+          if (storeSettings) {
+            if (storeSettings.closeAction !== undefined) {
+              this.closeAction = storeSettings.closeAction
+            }
+            if (storeSettings.autoLaunch !== undefined) {
+              this.autoLaunch = !!storeSettings.autoLaunch
+            }
+          }
+        }
+
+        // 从主进程获取 autoLaunch 状态（以系统实际值为准）
         const autoLaunch = await window.ipcRenderer.invoke('get-auto-launch')
         this.autoLaunch = !!autoLaunch
       } catch (error) {

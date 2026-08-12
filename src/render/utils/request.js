@@ -1,352 +1,61 @@
-// import 'nprogress/nprogress.css'
-
-import axios from 'axios'
-import md5 from 'md5'
-// import NProgress from 'nprogress'
-
-import { useAppStore } from '@/store/modules/app'
-import { useUserStore } from '@/store/modules/user'
-import { showToast } from '@/utils/toast'
-// https://juejin.cn/post/7481117237729280000#heading-20
-// 设置取消请求的 token
-const { CancelToken } = axios
-const pendingRequests = new Map() // 用于存储请求队列
-
-// 是否使用 Mock 模式（渲染进程直接请求，由 vite-plugin-mock 拦截）
-const useMock = import.meta.env.VITE_USE_MOCK === 'true'
-
-// 生成请求 MD5 值的函数
-const generateRequestKey = (config) => {
-  const { method, url, params, data } = config
-  // 使用时间戳确保每次请求 key 唯一 如果单位时间内防止重复请求的话时间条件和逻辑修改一下
-  const timestamp = Date.now()
-  const requestKey = `${method}:${url}:${JSON.stringify(params)}:${JSON.stringify(data)}:${timestamp}`
-  return md5(requestKey)
-}
-
-// 添加请求到队列
-const addRequestToQueue = (config) => {
-  if (config.cancelRequest === false) return
-
-  const requestKey = generateRequestKey(config)
-  config.cancelToken = new CancelToken((cancel) => {
-    // 如果请求队列中没有该请求，则添加
-    if (!pendingRequests.has(requestKey)) {
-      pendingRequests.set(requestKey, cancel)
-    }
-  })
-}
-
-// 移除队列中的请求
-const removePendingRequest = (config) => {
-  if (config.cancelRequest === false) return
-
-  const requestKey = generateRequestKey(config)
-  // 如果请求队列中有该请求，则取消
-  if (pendingRequests.has(requestKey)) {
-    const cancel = pendingRequests.get(requestKey)
-    cancel(requestKey)
-    pendingRequests.delete(requestKey)
-  }
-}
-
-// 清空请求队列（用于页面切换时取消请求）
-export const clearRequestQueue = () => {
-  pendingRequests.forEach((cancel, key) => {
-    cancel(key)
-  })
-  pendingRequests.clear()
-}
-
-// 根据环境变量设置基础URL（仅 Mock 模式使用）
-const baseURL =
-  process.env.NODE_ENV === 'production'
-    ? import.meta.env.VITE_API_BASE_URL
-    : 'http://localhost:3200'
-
-// 创建 axios 实例（仅 Mock 模式下用于渲染进程直接请求）
-const service = axios.create({
-  baseURL, // 根据环境变量设置基础URL
-  timeout: 5000 // 超时时间
-})
-
-/**
- * 通过 IPC 调用主进程发起 HTTP 请求
- * 真实 API 请求走此路径，由主进程统一发起，规避跨域
- */
-const requestViaIpc = async (config) => {
-  const userStore = useUserStore()
-  const result = await window.httpRequest.request({
-    url: config.url,
-    method: config.method || 'get',
-    params: config.params,
-    data: config.data,
-    headers: config.headers || {},
-    token: userStore.token || '',
-    responseType: config.responseType,
-    timeout: config.timeout
-  })
-  return result
-}
-
-/**
- * 处理主进程返回的响应结果
- * 统一处理业务逻辑错误、401 和超时等场景
- */
-const handleIpcResponse = (result, config) => {
-  if (result.success) {
-    const data = result.data
-
-    // 处理二进制数据
-    if (
-      config.responseType === 'blob' ||
-      config.responseType === 'arraybuffer'
-    ) {
-      return data
-    }
-
-    const { code, result: resData, message } = data
-
-    // 业务逻辑错误
-    if (code !== 0 && code !== 200) {
-      if (config.showErrorMessage !== false) {
-        showToast({
-          message: message || '请求失败',
-          type: 'error'
-        })
-      }
-      return Promise.reject(new Error(message || '请求失败'))
-    }
-
-    return resData
-  } else {
-    // 请求失败
-    const error = result.error || {}
-
-    // 处理 401 未授权
-    if (error.status === 401) {
-      const userStore = useUserStore()
-      userStore.resetUserState()
-      showToast({
-        message: '登录已过期，请重新登录',
-        type: 'warning'
-      })
-      window.ipcRenderer?.send('logout')
-      return Promise.reject(new Error('登录已过期'))
-    }
-
-    // 处理超时
-    if (error.type === 'timeout') {
-      showToast({
-        message: error.message || '请求超时，请稍后重试',
-        type: 'error'
-      })
-      return Promise.reject(new Error(error.message))
-    }
-
-    // 处理其他错误
-    if (config.showErrorMessage !== false) {
-      showToast({
-        message: error.message || '请求失败',
-        type: 'error'
-      })
-    }
-    return Promise.reject(new Error(error.message || '请求失败'))
-  }
-}
-
-// 请求拦截器（仅 Mock 模式下生效）
-service.interceptors.request.use(
-  (config) => {
-    const appStore = useAppStore()
-    const userStore = useUserStore()
-    // 显示全局loading
-    if (config.showLoading !== false) {
-      appStore.setLoading(true)
-    }
-
-    // 显示局部loading
-    if (config.loadingTarget) {
-      appStore.addLoadingTarget(config.loadingTarget)
-    }
-
-    // 启动进度条
-    // NProgress.start()
-    // 添加请求到队列，防止重复请求
-    removePendingRequest(config)
-    addRequestToQueue(config)
-    // 添加token
-    const { token } = userStore
-    if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`
-      }
-    }
-
-    return config
-  },
-  (error) => {
-    // 关闭进度条
-    // NProgress.done()
-    return Promise.reject(error)
-  }
-)
-
-// 响应拦截器（仅 Mock 模式下生效）
-service.interceptors.response.use(
-  (response) => {
-    const appStore = useAppStore()
-    const { config } = response
-
-    // 请求完成后移除请求
-    removePendingRequest(config)
-
-    // 关闭loading
-    if (config.showLoading !== false) {
-      appStore.setLoading(false)
-    }
-
-    // 关闭局部loading
-    if (config.loadingTarget) {
-      appStore.removeLoadingTarget(config.loadingTarget)
-    }
-
-    // 处理二进制数据
-    if (
-      response.request.responseType === 'blob' ||
-      response.request.responseType === 'arraybuffer'
-    ) {
-      return response.data
-    }
-
-    const { code, result, message } = response.data
-
-    // 业务逻辑错误
-    if (code !== 0 && code !== 200) {
-      if (config.showErrorMessage !== false) {
-        showToast({
-          message: message || '请求失败',
-          type: 'error'
-        })
-      }
-      return Promise.reject(new Error(message || '请求失败'))
-    }
-
-    // 缓存数据
-    // if (config.cache) {
-    //   const cacheKey = config.cacheKey || generateRequestKey(config)
-    //   const cacheTime = config.cacheTime || 60 * 5 // 默认缓存5分钟
-    //   const cacheData = {
-    //     data,
-    //     expire: Date.now() + cacheTime * 1000
-    //   }
-    //   localStorage.setItem(`http_cache_${cacheKey}`, JSON.stringify(cacheData))
-    // }
-    return result
-  },
-  (error) => {
-    // 关闭进度条
-    // NProgress.done()
-    const appStore = useAppStore()
-    const userStore = useUserStore()
-
-    // 关闭所有loading
-    appStore.setLoading(false)
-    appStore.clearLoadingTargets()
-
-    // 取消请求不报错
-    if (axios.isCancel(error)) {
-      return Promise.reject(error)
-    }
-
-    const config = error.config || {}
-
-    // 请求完成后移除请求
-    if (config) {
-      removePendingRequest(config)
-    }
-
-    // 处理401未授权
-    if (error.response?.status === 401) {
-      userStore.resetUserState()
-      showToast({
-        message: '登录已过期，请重新登录',
-        type: 'warning'
-      })
-      // 通知主进程关闭主窗口并打开登录窗口
-      window.ipcRenderer?.send('logout')
-      return Promise.reject(error)
-    }
-
-    // 处理超时
-    if (error.message.includes('timeout')) {
-      showToast({
-        message: '请求超时，请稍后重试',
-        type: 'error'
-      })
-      return Promise.reject(new Error('请求超时，请稍后重试'))
-    }
-
-    // 处理其他错误
-    if (config.showErrorMessage !== false) {
-      showToast({
-        message: error.message || '请求失败',
-        type: 'error'
-      })
-    }
-    return Promise.reject(error)
-  }
-)
-
 /**
  * 统一请求入口
- * - Mock 模式 (VITE_USE_MOCK=true)：渲染进程 axios → vite-plugin-mock 拦截
- * - 真实模式 (VITE_USE_MOCK≠true)：通过 IPC → 主进程 axios → 真实后端
+ *
+ * 根据 VITE_USE_MOCK 环境变量自动选择请求通道：
+ *   - Mock 模式 (true)  → 渲染进程 axios → vite-plugin-mock 拦截
+ *   - 真实模式 (false)  → IPC → 主进程 axios → 后端 API
+ *
+ * 两种模式对外接口完全一致，API 层无需关心底层差异。
+ *
+ * @example
+ * import request from '@/utils/request'
+ *
+ * // GET
+ * request({ url: '/user/info', method: 'get' })
+ *
+ * // POST
+ * request({ url: '/login', method: 'post', data: { username, password } })
+ *
+ * // 自定义配置
+ * request({
+ *   url: '/export',
+ *   method: 'get',
+ *   responseType: 'blob',
+ *   showLoading: false,       // 关闭全局 loading
+ *   showErrorMessage: false,  // 关闭自动错误提示
+ *   loadingTarget: 'table',   // 局部 loading 标识
+ * })
  */
-const request = async (config) => {
-  const appStore = useAppStore()
+import mockService from './request/axiosService'
+import { ipcRequest } from './request/ipcService'
+import { clearAllRequests } from './request/cancel'
 
+// 是否使用 Mock 模式
+const useMock = import.meta.env.VITE_USE_MOCK === 'true'
+
+/**
+ * 统一请求函数
+ *
+ * @param {Object} config - 请求配置
+ * @param {string} config.url - 请求路径
+ * @param {string} [config.method='get'] - 请求方法
+ * @param {Object} [config.params] - URL 查询参数
+ * @param {Object} [config.data] - 请求体
+ * @param {Object} [config.headers] - 自定义请求头
+ * @param {string} [config.responseType] - 响应类型（blob / arraybuffer）
+ * @param {number} [config.timeout] - 超时时间（ms）
+ * @param {boolean} [config.showLoading=true] - 是否显示全局 loading
+ * @param {string}  [config.loadingTarget] - 局部 loading 标识
+ * @param {boolean} [config.showErrorMessage=true] - 是否自动弹出错误提示
+ * @param {boolean} [config.cancelRequest=true] - 是否启用请求去重取消
+ * @returns {Promise<*>} 业务数据
+ */
+function request(config) {
   if (useMock) {
-    // Mock 模式：使用渲染进程 axios，由 vite-plugin-mock 拦截
-    return service(config)
+    return mockService(config)
   }
-
-  // 真实 API 模式：通过 IPC 调用主进程
-  const appConfig = { ...config }
-
-  // 显示全局loading
-  if (appConfig.showLoading !== false) {
-    appStore.setLoading(true)
-  }
-
-  // 显示局部loading
-  if (appConfig.loadingTarget) {
-    appStore.addLoadingTarget(appConfig.loadingTarget)
-  }
-
-  try {
-    const result = await requestViaIpc(appConfig)
-
-    // 关闭loading
-    if (appConfig.showLoading !== false) {
-      appStore.setLoading(false)
-    }
-
-    // 关闭局部loading
-    if (appConfig.loadingTarget) {
-      appStore.removeLoadingTarget(appConfig.loadingTarget)
-    }
-
-    return handleIpcResponse(result, appConfig)
-  } catch (error) {
-    // 关闭所有loading
-    appStore.setLoading(false)
-    appStore.clearLoadingTargets()
-
-    // handleIpcResponse 中已经 reject 并 showToast，这里直接抛出
-    throw error
-  }
+  return ipcRequest(config)
 }
 
+export { clearAllRequests }
 export default request
