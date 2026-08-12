@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.2](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.1...v1.0.2) (2026-08-12)
+
+### ✨ Features
+
+* 为菜单项和子菜单项添加图标支持，优化用户界面 ([5892350](https://github.com/sincely/vite6-electron-vue3/commit/5892350a98b36bfb2e6e62526bc66a09689ce085))
+* 优化表格组件样式，增加状态徽标和工具栏按钮美化 ([f449181](https://github.com/sincely/vite6-electron-vue3/commit/f449181c7950baae5a319854ac2aba9ee980c916))
+* 优化顶部菜单组件，增加横向滚动支持，改善用户交互体验 ([eb243c5](https://github.com/sincely/vite6-electron-vue3/commit/eb243c5fe0c209174883a0dc8767fe3d3a2cd39d))
+* 增加notification ([394f85a](https://github.com/sincely/vite6-electron-vue3/commit/394f85a3ecc6ef2b44e4307013d2166769aecacd))
+* 增加标签关闭操作的可用性检测，动态禁用无效选项 ([e935da7](https://github.com/sincely/vite6-electron-vue3/commit/e935da7fb266fcd5e8e6ffbd90c8bcee95c4214d))
+* 实现与 QoderWork 对齐的更新系统，新增远端配置支持与强制升级逻辑 ([e401a37](https://github.com/sincely/vite6-electron-vue3/commit/e401a370c5780eb38409de1b6de09bb2ce0ef7d8))
+* 更新定宽模式下的具体宽度值至1600px，优化内容显示 ([5bb1165](https://github.com/sincely/vite6-electron-vue3/commit/5bb1165ce08cb8e1b7675a6feaa1944c17e2e503))
+* 更新菜单和logo组件的拖拽区域设置，优化用户交互体验 ([eed62f5](https://github.com/sincely/vite6-electron-vue3/commit/eed62f5dc1f14ff2d25e78effe990a887bcdd170))
+* 更新通知面板和更新对话框，增加未读通知徽标和模拟通知功能 ([590611d](https://github.com/sincely/vite6-electron-vue3/commit/590611db43be8a0ede12290af0333bd5bd158267))
+* 添加 ResizeObserver 以优化图表尺寸监听，修复组件销毁时的资源释放问题 ([04fc3c0](https://github.com/sincely/vite6-electron-vue3/commit/04fc3c060f9556ac57cf74e10130667fba05a292))
+* 添加.zcode到.prettierignore文件 ([722c527](https://github.com/sincely/vite6-electron-vue3/commit/722c5272b329ac14bbc58c2a81621a82bbf18c50))
+* 添加archity技能 ([f498e37](https://github.com/sincely/vite6-electron-vue3/commit/f498e37473c7d887b6b03856d76324ab03bc3b95))
+* 添加关于对话框和相对时间计算，优化更新检查功能 ([a12dc23](https://github.com/sincely/vite6-electron-vue3/commit/a12dc2350a89f3038e8513019f47bc41f2c15a91))
+* 添加左右滚动箭头至顶部菜单，优化用户导航体验 ([6fcfae6](https://github.com/sincely/vite6-electron-vue3/commit/6fcfae6567776316f4a7972070a2579cbda1fd1f))
+* 添加检查更新功能至托盘菜单，确保用户能及时看到更新提示 ([f8a6c7c](https://github.com/sincely/vite6-electron-vue3/commit/f8a6c7c0b6aaceb8cdb695fe914561b82ff7d9e9))
+* 添加登录和密码找回功能 ([f38d5c7](https://github.com/sincely/vite6-electron-vue3/commit/f38d5c78570009214a3207bc61f278069adc34e6))
+* 添加窗口最大化状态监听功能，优化用户界面交互体验；新增最大化和最小化图标 ([0012a5d](https://github.com/sincely/vite6-electron-vue3/commit/0012a5d85b4cc26f56961c8eb35056ddfe8f4855))
+* 添加系统信息 API，记录系统运行环境信息 ([7877a89](https://github.com/sincely/vite6-electron-vue3/commit/7877a898ab1a9f6e9ff5e50ef93c13809d331548))
+* 移除调试代码，优化用户登出流程 ([5e37c45](https://github.com/sincely/vite6-electron-vue3/commit/5e37c4548f6ee05a6f1514e4a794067270f4ee01))
+* 移除非核心功能的延迟初始化，优化应用启动速度 ([61acbb4](https://github.com/sincely/vite6-electron-vue3/commit/61acbb47a792832e0576effbf17366b97c379061))
+* 移除顶部菜单条件，始终显示搜索组件 ([57f2c97](https://github.com/sincely/vite6-electron-vue3/commit/57f2c973a2117f155d39e021635b16451eff671d))
+* 简化jsconfig.json格式，优化路径配置 ([1d95c05](https://github.com/sincely/vite6-electron-vue3/commit/1d95c055a5a28913b4e61f0608afe1d1cd5b8c81))
+
+### 🐞 Bug Fixes
+
+* 修正jsconfig.json错误 ([6d90a53](https://github.com/sincely/vite6-electron-vue3/commit/6d90a53575f50de5449da200f2b2ce5bec1bccbb))
+* 修正主题样式中的边框颜色和侧边栏背景色 ([f391982](https://github.com/sincely/vite6-electron-vue3/commit/f391982ed7c76a77156bd63cab482c462509f4eb))
+* 去除无用的日志 ([678efbc](https://github.com/sincely/vite6-electron-vue3/commit/678efbc2bd56f4aa366b5ea2fe184c5c10389cbc))
+* 添加自定义类到退出登录确认框以改善样式 ([694796c](https://github.com/sincely/vite6-electron-vue3/commit/694796cda661a93d36953b7991d7d4ed5163384c))
+* 禁用 Windows 可执行文件的代码签名 ([9775a0f](https://github.com/sincely/vite6-electron-vue3/commit/9775a0f75b6935c9fc1b3f634bd46761523e7cc2))
+
+### 📝 Documentation
+
+* 更新发布与自动更新指南，简化内容并调整结构 ([7fecf93](https://github.com/sincely/vite6-electron-vue3/commit/7fecf93200b05a319463ca5fbe400116dce3c20f))
+* 更新开发环境调试与更新模拟部分，增加核心原理和模拟方式说明 ([82c80da](https://github.com/sincely/vite6-electron-vue3/commit/82c80dabb7fa4c7584ae00cc772510e947867a1c))
+
+### 🔧 Chores
+
+* 将 electron-builder 及相关依赖更新至 25.1.8 ([6ed6702](https://github.com/sincely/vite6-electron-vue3/commit/6ed670216522ed539cef5b1469cfe4791956e636))
+* 更新 Vite 版本至 6.4.3，调整 pnpm-lock.yaml 中的依赖项 ([bc3b74a](https://github.com/sincely/vite6-electron-vue3/commit/bc3b74a96ea240ce9d4416f2cfa42e8a4b164594))
+
+### ♻️ Code Refactoring
+
+* 移除主进程无用文件 ([ac2e8f3](https://github.com/sincely/vite6-electron-vue3/commit/ac2e8f3985048517e2033ac073bdbf658f02552f))
+* 移除更新通道解析和负载构建逻辑，简化更新处理 ([8e634ee](https://github.com/sincely/vite6-electron-vue3/commit/8e634eeca4af9f10fe82fbc099b228e59642588a))
+
 ## [1.0.1](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.0...v1.0.1) (2026-08-06)
 
 ### ✨ Features
