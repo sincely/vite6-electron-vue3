@@ -35,5 +35,6 @@ artifacts/*
 # Editor directories and files
 .vscode
 .trae
+.zcode
 
 electron-builder.json
