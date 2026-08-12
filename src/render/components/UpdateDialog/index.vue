@@ -684,7 +684,8 @@ onUnmounted(() => {
   overflow: hidden;
   background: var(--glass-surface);
   backdrop-filter: blur(5px);
-  border: 1px solid var(--glass-surface-border);
+
+  // border: 1px solid var(--glass-surface-border);
   border-radius: var(--radius-xl);
   box-shadow:
     var(--glass-shadow-soft),

@@ -991,7 +991,8 @@ const handleClose = () => {
   height: 600px;
   overflow: hidden;
   background: var(--color-bg-window);
-  border: 1px solid var(--color-border);
+
+  // border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow:
     0 20px 25px -5px rgb(0 0 0 / 10%),

@@ -73,42 +73,44 @@ const updateActiveTab = (tab) => {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: var(--color-bg-window);
-  background-image: var(--app-bg-gradient);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary), transparent 92%) 0%,
+    color-mix(in srgb, var(--brand-accent), transparent 90%) 50%,
+    color-mix(in srgb, var(--color-primary), transparent 95%) 100%
+  );
 
-  // 装饰性背景光斑
+  // about-hero 风格的装饰光斑
   &::before {
     position: absolute;
-    top: -20%;
-    left: -10%;
-    width: 600px;
-    height: 600px;
+    top: -80px;
+    right: -80px;
+    width: 360px;
+    height: 360px;
+    pointer-events: none;
     content: '';
     background: radial-gradient(
       circle,
-      var(--brand-accent-soft) 0%,
+      color-mix(in srgb, var(--color-primary), transparent 70%) 0%,
       transparent 70%
     );
-    filter: blur(80px);
-    opacity: 0.6;
-    animation: float 10s ease-in-out infinite alternate;
+    border-radius: 999px;
   }
 
   &::after {
     position: absolute;
-    right: -10%;
-    bottom: -20%;
-    width: 500px;
-    height: 500px;
+    bottom: -100px;
+    left: -60px;
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
     content: '';
     background: radial-gradient(
       circle,
-      color-mix(in srgb, var(--color-success), transparent 85%) 0%,
+      color-mix(in srgb, var(--brand-accent), transparent 75%) 0%,
       transparent 70%
     );
-    filter: blur(60px);
-    opacity: 0.5;
-    animation: float 12s ease-in-out infinite alternate-reverse;
+    border-radius: 999px;
   }
 }
 
