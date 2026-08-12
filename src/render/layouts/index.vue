@@ -40,27 +40,6 @@
 
         <!-- 内容列 -->
         <div class="layout-body-content">
-          <!-- 面包屑导航（含搜索插槽） -->
-          <!-- <GlobalBreadcrumb>
-            <template #extra>
-              <SvgIcon
-                icon-class="refresh"
-                width="18px"
-                height="18px"
-                class="icon-btn"
-                @click="reload"
-              />
-
-              <SvgIcon
-                class="icon-btn"
-                :icon-class="isFullscreen ? 'exitscreen' : 'fullscreen'"
-                width="18px"
-                height="18px"
-                @click="handleFullscreenChange"
-              />
-            </template>
-          </GlobalBreadcrumb> -->
-
           <!-- 多标签导航（全屏时仍保留，供导航和还原） -->
           <GlobalTagsView v-if="appStore.tagsView" />
 
@@ -80,7 +59,6 @@
 <script setup>
 import GlobalSiderMenu from './components/global-siderMenu/index.vue'
 import GlobalHeader from './components/global-header/index.vue'
-import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
