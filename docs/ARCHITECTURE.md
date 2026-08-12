@@ -106,6 +106,7 @@
 │   │   ├── log.js                 # 日志管理
 │   │   ├── menu.js                # 应用菜单
 │   │   ├── notification.js        # 通知管理
+│   │   ├── protocol.js            # 自定义协议 app:// 注册
 │   │   ├── tray.js                # 系统托盘
 │   │   ├── update.js              # 自动更新
 │   │   └── windowManager.js       # 窗口管理
@@ -522,7 +523,171 @@ server {
 
 通知中心状态由 Pinia 中的 `notification` store 负责维护。
 
-### 7.4 桌面设置
+### 7.4 自定义协议 (app://)
+
+#### 7.4.1 为什么需要自定义协议
+
+生产环境如果直接使用 `file://` 加载页面，会面临以下问题：
+
+| 问题 | 说明 |
+|------|------|
+| 跨平台路径混乱 | Windows 与 macOS/Linux 路径格式不同，`file:///C:/...` vs `file:///Users/...` |
+| Chromium 安全策略拦截 | `file://` 下字体、图片、CSS 等资源可能被 CORS 策略拦截导致 404 |
+| 权限过宽 | 渲染进程可意外访问系统任意文件 |
+| 上架审核风险 | Microsoft Store / Mac App Store 审核会将 `file://` 视为安全风险 |
+
+自定义 `app://` 协议可统一路径、保证资源正常加载、收敛权限边界，是生产环境上架应用商店的标准配置。
+
+#### 7.4.2 实现架构
+
+协议注册分为两步，严格遵循 Electron 的时序要求：
+
+```text
+┌────────────────────────────────────────────────────────────────┐
+│  app 启动                                                       │
+│    ↓                                                            │
+│  registerSchemes()           ← ⚠️ 必须在 app.whenReady() 之前   │
+│    ↓                                                            │
+│  app.whenReady()                                               │
+│    ↓                                                            │
+│  setupProtocol()             ← ⚠️ 必须在 app.whenReady() 之后   │
+│    ↓                                                            │
+│  createLoginWindow()                                           │
+│    ↓                                                            │
+│  loadHash() 判断环境                                              │
+│    ├─ VITE_DEV_SERVER_URL 有值 → loadURL(devServer#/hash)       │
+│    └─ VITE_DEV_SERVER_URL 为空 → loadURL('app://renderer/...')  │
+└────────────────────────────────────────────────────────────────┘
+```
+
+#### 7.4.3 关键文件
+
+| 文件 | 职责 |
+|------|------|
+| `src/main/protocol.js` | 协议注册模块，导出 `registerSchemes()` 和 `setupProtocol()` |
+| `src/main/index.js` | 主进程入口，按正确时序调用协议注册 |
+| `src/main/windowManager.js` | `loadHash()` 函数根据环境选择加载方式 |
+| `.env.production` / `.env.test` | `VITE_BASE_URL = '/'`，配合 `app://` 使用绝对路径 |
+| `.env.development` | `VITE_BASE_URL = './'`，开发环境不受影响 |
+
+#### 7.4.4 协议注册详解
+
+`src/main/protocol.js` 核心逻辑：
+
+```js
+// ① 注册特权方案（app.whenReady 之前）
+protocol.registerSchemesAsPrivileged([{
+  scheme: 'app',
+  privileges: {
+    standard: true,       // 遵循标准 URL 规范（支持 //host/path）
+    secure: true,         // 被视为安全来源（等同于 https://）
+    supportFetchAPI: true, // 支持 fetch API
+    corsEnabled: false    // 同源请求，无需 CORS
+  }
+}])
+
+// ② 注册协议处理器（app.whenReady 之后）
+protocol.handle('app', (request) => {
+  const { pathname } = new URL(request.url)
+  return net.fetch('file://' + path.join(renderer_dist, pathname))
+})
+```
+
+**特权参数说明：**
+
+| 参数 | 值 | 作用 |
+|------|----|------|
+| `standard` | `true` | URL 解析遵循标准规则，`app://renderer/js/xxx.js` 能正确解析 pathname |
+| `secure` | `true` | 页面被视为安全来源，Service Worker、Cookie 等 API 可正常使用 |
+| `supportFetchAPI` | `true` | 允许在 `app://` 页面中使用 `fetch()` 加载资源 |
+| `corsEnabled` | `false` | 协议内部同源请求，无需跨域校验 |
+
+#### 7.4.5 环境判断机制
+
+开发与生产环境的区分仅依赖一个环境变量：`VITE_DEV_SERVER_URL`。
+
+该变量由 `vite-plugin-electron` 在开发模式下自动注入到 `process.env`，值为 Vite 开发服务器地址（如 `http://localhost:3200`）。生产环境打包后该变量不存在，值为 `undefined`。
+
+```text
+┌─ 开发环境 ──────────────────────────────────────────────┐
+│                                                          │
+│  vite-plugin-electron 自动注入：                           │
+│  process.env.VITE_DEV_SERVER_URL = 'http://localhost:3200'│
+│       ↓                                                  │
+│  loadHash() 判断: VITE_DEV_SERVER_URL 有值 → true         │
+│       ↓                                                  │
+│  win.loadURL('http://localhost:3200#/login')              │
+│       ↓                                                  │
+│  Vite 开发服务器返回页面，HMR 热更新正常工作                  │
+│                                                          │
+│  ⚠️ app:// 协议虽然注册了，但没有页面通过它加载               │
+└──────────────────────────────────────────────────────────┘
+
+┌─ 生产环境 ──────────────────────────────────────────────┐
+│                                                          │
+│  process.env.VITE_DEV_SERVER_URL = undefined              │
+│       ↓                                                  │
+│  loadHash() 判断: VITE_DEV_SERVER_URL 为空 → false        │
+│       ↓                                                  │
+│  win.loadURL('app://renderer/index.html#/login')          │
+│       ↓                                                  │
+│  protocol.handle('app', ...) 拦截请求                     │
+│       ↓                                                  │
+│  pathname = '/index.html'                                 │
+│  net.fetch('file://' + renderer_dist + '/index.html')     │
+│       ↓                                                  │
+│  asar 内的 dist/index.html 被加载                          │
+│                                                          │
+│  HTML 中引用 /js/vendor-xxx.js                             │
+│       ↓                                                  │
+│  浏览器解析为 app://renderer/js/vendor-xxx.js               │
+│       ↓                                                  │
+│  protocol.handle 映射到 file://.../dist/js/vendor-xxx.js  │
+└──────────────────────────────────────────────────────────┘
+```
+
+#### 7.4.6 资源路径配置
+
+Vite 构建的 `base` 配置直接影响产物中资源引用路径，需与环境匹配：
+
+| 环境 | `.env.*` 配置 | 产物中的路径 | 说明 |
+|------|-------------|------------|------|
+| 开发 | `VITE_BASE_URL = './'` | 相对路径 | 走 Vite 开发服务器，无影响 |
+| 测试 | `VITE_BASE_URL = '/'` | `/js/xxx.js` | 配合 `app://` 绝对路径 |
+| 生产 | `VITE_BASE_URL = '/'` | `/js/xxx.js` | 配合 `app://` 绝对路径 |
+
+生产/测试环境构建后，HTML 中的资源引用形如：
+
+```html
+<script src="/js/index-xxx.js"></script>
+<link href="/css/index-xxx.css" rel="stylesheet">
+```
+
+在 `app://renderer/index.html` 上下文中，`/js/index-xxx.js` 被解析为 `app://renderer/js/index-xxx.js`，再由协议处理器映射到本地文件系统的 `dist/js/index-xxx.js`。
+
+#### 7.4.7 与 asar 的配合
+
+当前 `electron-builder.json5` 配置了 `asar: true` 并将 `dist/*` 加入 `asarUnpack`：
+
+```json5
+"asar": true,
+"asarUnpack": [
+  "dist/*",   // 前端资源解压到 asar 外部，确保协议处理器可通过文件系统读取
+  // ...
+]
+```
+
+`asarUnpack` 保证 `dist/` 目录在打包后是真实的文件系统路径，`protocol.handle` 中的 `net.fetch('file://...')` 才能正常读取。
+
+#### 7.4.8 注意事项
+
+1. **`registerSchemes` 必须在 `app.whenReady()` 之前调用**，否则 Electron 会忽略注册
+2. **`setupProtocol` 必须在 `app.whenReady()` 之后调用**，否则 `protocol.handle` API 不可用
+3. **`asarUnpack: dist/*` 不可删除**，否则 `dist/` 被压入 asar 包内，`file://` 无法直接读取
+4. **开发环境无需任何改动**，`app://` 协议虽已注册但无页面通过它加载
+5. **`windowsModal.js` 中的 `createModalWindow`** 使用 `loadURL(options.url)` 加载外部 URL，不受自定义协议影响
+
+### 7.5 桌面设置
 
 桌面设置主要聚焦：
 
@@ -1043,13 +1208,11 @@ function buildFullUrl(url) {
 
 ## 11. 文档信息
 
-- 文档版本：0.0.20
-- 最后更新：2026-07-13
+- 文档版本：0.0.21
+- 最后更新：2026-08-12
 - 变更内容：
-  - 升级 Electron 28.3.3 → 42.2.0、electron-builder 24.13.3 → 25.1.8、electron-updater 6.3.9 → 6.6.2
-  - 修复 Electron 42+ 主题切换闪烁：使用 CSS transition 代替 View Transition API（src/render/store/modules/app.js）
-  - 同步更新技术栈版本号（Electron 42.2.0、Axios 1.8.4、electron-updater 6.6.2）
-  - 新增 5.3 构建体积优化章节（整合 OPTIMIZATION.md / OPTIMIZATION_SUMMARY.md / CHANGES.md / BUILD_SIZE_QUICK_GUIDE.md）
-  - 扩充 5.4 发布流程，整合 RELEASE.md（发布架构、工作流三阶段、本地构建命令、产物输出、release-it 职责、推荐发布步骤）
-  - 新增 5.5 自动更新服务章节（服务器部署、开发调试、版本状态、常见问题）
-  - 重构 3. 目录结构，与实际项目严格对齐
+  - 新增 7.4 自定义协议 (app://) 章节，覆盖协议注册、环境判断、资源路径、asar 配合等完整架构
+  - 新增 `src/main/protocol.js` 模块，统一管理 app:// 协议注册与处理
+  - 生产环境从 `loadFile` 迁移至 `loadURL('app://renderer/...')`，满足应用商店上架安全审核要求
+  - 更新目录结构，补充 `protocol.js`
+  - 同步 `.env.production` / `.env.test` 的 `VITE_BASE_URL` 为 `'/'`

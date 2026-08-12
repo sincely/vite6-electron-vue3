@@ -63,6 +63,15 @@ if (process.contextIsolated) {
   })
 
   /**
+   * 向渲染进程暴露 HTTP 请求 API
+   * 调用 window.httpRequest.request(config) 通过主进程发起真实 HTTP 请求
+   * 彻底规避跨域问题，统一由主进程管理 token、日志和请求拦截
+   */
+  contextBridge.exposeInMainWorld('httpRequest', {
+    request: (config) => ipcRenderer.invoke('http-request', config)
+  })
+
+  /**
    * 向渲染进程暴露通知 API
    * 调用 window.$notification.show(options) 显示原生通知
    *

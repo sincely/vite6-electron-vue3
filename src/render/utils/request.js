@@ -12,6 +12,9 @@ import { showToast } from '@/utils/toast'
 const { CancelToken } = axios
 const pendingRequests = new Map() // 用于存储请求队列
 
+// 是否使用 Mock 模式（渲染进程直接请求，由 vite-plugin-mock 拦截）
+const useMock = import.meta.env.VITE_USE_MOCK === 'true'
+
 // 生成请求 MD5 值的函数
 const generateRequestKey = (config) => {
   const { method, url, params, data } = config
@@ -55,19 +58,104 @@ export const clearRequestQueue = () => {
   pendingRequests.clear()
 }
 
-// 根据环境变量设置基础URL
+// 根据环境变量设置基础URL（仅 Mock 模式使用）
 const baseURL =
   process.env.NODE_ENV === 'production'
     ? import.meta.env.VITE_API_BASE_URL
     : 'http://localhost:3200'
 
-// 创建 axios 实例
+// 创建 axios 实例（仅 Mock 模式下用于渲染进程直接请求）
 const service = axios.create({
   baseURL, // 根据环境变量设置基础URL
   timeout: 5000 // 超时时间
 })
 
-// 请求拦截器
+/**
+ * 通过 IPC 调用主进程发起 HTTP 请求
+ * 真实 API 请求走此路径，由主进程统一发起，规避跨域
+ */
+const requestViaIpc = async (config) => {
+  const userStore = useUserStore()
+  const result = await window.httpRequest.request({
+    url: config.url,
+    method: config.method || 'get',
+    params: config.params,
+    data: config.data,
+    headers: config.headers || {},
+    token: userStore.token || '',
+    responseType: config.responseType,
+    timeout: config.timeout
+  })
+  return result
+}
+
+/**
+ * 处理主进程返回的响应结果
+ * 统一处理业务逻辑错误、401 和超时等场景
+ */
+const handleIpcResponse = (result, config) => {
+  if (result.success) {
+    const data = result.data
+
+    // 处理二进制数据
+    if (
+      config.responseType === 'blob' ||
+      config.responseType === 'arraybuffer'
+    ) {
+      return data
+    }
+
+    const { code, result: resData, message } = data
+
+    // 业务逻辑错误
+    if (code !== 0 && code !== 200) {
+      if (config.showErrorMessage !== false) {
+        showToast({
+          message: message || '请求失败',
+          type: 'error'
+        })
+      }
+      return Promise.reject(new Error(message || '请求失败'))
+    }
+
+    return resData
+  } else {
+    // 请求失败
+    const error = result.error || {}
+
+    // 处理 401 未授权
+    if (error.status === 401) {
+      const userStore = useUserStore()
+      userStore.resetUserState()
+      showToast({
+        message: '登录已过期，请重新登录',
+        type: 'warning'
+      })
+      window.ipcRenderer?.send('logout')
+      return Promise.reject(new Error('登录已过期'))
+    }
+
+    // 处理超时
+    if (error.type === 'timeout') {
+      showToast({
+        message: error.message || '请求超时，请稍后重试',
+        type: 'error'
+      })
+      return Promise.reject(new Error(error.message))
+    }
+
+    // 处理其他错误
+    if (config.showErrorMessage !== false) {
+      showToast({
+        message: error.message || '请求失败',
+        type: 'error'
+      })
+    }
+    return Promise.reject(new Error(error.message || '请求失败'))
+  }
+}
+
+// 请求拦截器（仅 Mock 模式下生效）
 service.interceptors.request.use(
   (config) => {
     const appStore = useAppStore()
@@ -105,7 +193,7 @@ service.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+// 响应拦截器（仅 Mock 模式下生效）
 service.interceptors.response.use(
   (response) => {
     const appStore = useAppStore()
@@ -211,4 +299,54 @@ service.interceptors.response.use(
   }
 )
 
-export default service
+/**
+ * 统一请求入口
+ * - Mock 模式 (VITE_USE_MOCK=true)：渲染进程 axios → vite-plugin-mock 拦截
+ * - 真实模式 (VITE_USE_MOCK≠true)：通过 IPC → 主进程 axios → 真实后端
+ */
+const request = async (config) => {
+  const appStore = useAppStore()
+
+  if (useMock) {
+    // Mock 模式：使用渲染进程 axios，由 vite-plugin-mock 拦截
+    return service(config)
+  }
+
+  // 真实 API 模式：通过 IPC 调用主进程
+  const appConfig = { ...config }
+
+  // 显示全局loading
+  if (appConfig.showLoading !== false) {
+    appStore.setLoading(true)
+  }
+
+  // 显示局部loading
+  if (appConfig.loadingTarget) {
+    appStore.addLoadingTarget(appConfig.loadingTarget)
+  }
+
+  try {
+    const result = await requestViaIpc(appConfig)
+
+    // 关闭loading
+    if (appConfig.showLoading !== false) {
+      appStore.setLoading(false)
+    }
+
+    // 关闭局部loading
+    if (appConfig.loadingTarget) {
+      appStore.removeLoadingTarget(appConfig.loadingTarget)
+    }
+
+    return handleIpcResponse(result, appConfig)
+  } catch (error) {
+    // 关闭所有loading
+    appStore.setLoading(false)
+    appStore.clearLoadingTargets()
+
+    // handleIpcResponse 中已经 reject 并 showToast，这里直接抛出
+    throw error
+  }
+}
+
+export default request

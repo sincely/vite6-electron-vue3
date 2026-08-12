@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
 import appIpc from './app'
+import httpIpc from './http'
 import updateIpc from './update'
 import winControlIpc from './win-control'
 import notificationIpc from './notification'
@@ -8,6 +9,7 @@ import systemInfoIpc from './systemInfo'
 export default function initIpc() {
   const ipcList = [
     ...appIpc,
+    ...httpIpc,
     ...updateIpc,
     ...winControlIpc,
     ...notificationIpc,
