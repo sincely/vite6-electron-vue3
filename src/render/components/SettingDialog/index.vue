@@ -501,7 +501,7 @@
                     <div class="about-hero__glow" aria-hidden="true" />
                     <div class="about-hero__logo">
                       <img
-                        src="@/assets/bar/icon.png"
+                        src="@/assets/bar/app.png"
                         class="about-hero__logo-img"
                         alt="Logo"
                       />

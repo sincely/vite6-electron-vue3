@@ -1,6 +1,6 @@
 /**
  * 多平台图标生成脚本
- * 从 resources/icon.png（建议 1024×1024）按平台分目录生成所有图标
+ * 从 resources/app.png（建议 1024×1024）按平台分目录生成所有图标
  *
  * ╔══════════════════════════════════════════════════════════════════════╗
  * ║              macOS .icns 标准规范（Apple iconutil 规范）              ║
@@ -28,7 +28,7 @@
  * ──────────────────────────────────────────────────────────────────────
  * 输出结构：
  *   resources/
- *     icon.png                 ← 源文件（1024×1024）
+ *     app.png                 ← 源文件（1024×1024）
  *     icons/
  *       mac/
  *         app.icns             ← macOS 应用图标（含上表全部 10 个尺寸）
@@ -39,8 +39,7 @@
  *         tray.ico             ← Windows 托盘 ICO（16px）
  *         tray.png             ← Windows 托盘 PNG（降级备用）
  *       linux/
- *         app/                 ← 多分辨率目录（electron-builder 自动选最优尺寸）
- *           16.png  32.png  48.png  64.png  128.png  256.png  512.png  1024.png
+ *         16.png  32.png  48.png  64.png  128.png  180.png  256.png  512.png  1024.png
  *         tray.png             ← Linux 托盘图标（22×22）
  *
  * 使用:
@@ -59,7 +58,7 @@ const { default: pngToIco } = require('png-to-ico')
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
-const SOURCE = path.join(ROOT, 'resources/icon.png')
+const SOURCE = path.join(ROOT, 'resources/app.png')
 
 // 各平台图标输出目录
 const MAC_DIR = path.join(ROOT, 'resources/icons/mac')
@@ -97,7 +96,7 @@ const run = async () => {
   if (!fs.existsSync(SOURCE)) {
     console.error(`\n❌  源文件未找到: ${SOURCE}`)
     console.error(
-      '    请将 1024×1024 PNG 放到 resources/icon.png 后重新运行。\n'
+      '    请将 1024×1024 PNG 放到 resources/app.png 后重新运行。\n'
     )
     process.exit(1)
   }
@@ -202,9 +201,7 @@ const run = async () => {
   console.log('  输出目录:')
   console.log('    resources/icons/mac/     → macOS 图标（app.icns + 托盘）')
   console.log('    resources/icons/win/     → Windows 图标（app.ico + 托盘）')
-  console.log(
-    '    resources/icons/linux/   → Linux 图标（多分辨率 app/ + 托盘）\n'
-  )
+  console.log('    resources/icons/linux/   → Linux 图标（多分辨率 + 托盘）\n')
 }
 
 run()

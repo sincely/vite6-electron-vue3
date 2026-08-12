@@ -5,7 +5,7 @@ import fs from 'node:fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
-const dest = path.join(ROOT, 'resources/icon.png')
+const dest = path.join(ROOT, 'resources/app.png')
 
 const size = 1024
 

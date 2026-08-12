@@ -25,13 +25,13 @@ const getIconsRoot = () =>
  * macOS  → icons/mac/tray@2x.png（灰度模板图像，系统自动适配深色/浅色）
  * Windows→ icons/win/tray.ico 或 tray.png（16×16）
  * Linux  → icons/linux/tray.png（22×22）
- * 降级   → icons/<platform>/app/<size>.png 动态缩放
+ * 降级   → icons/<platform>/<size>.png 动态缩放
  */
 /**
- * 开发模式下 icon.png 所在的绝对路径（resources/icon.png）
+ * 开发模式下 app.png 所在的绝对路径（resources/app.png）
  */
 const getDevIconPath = () =>
-  path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'icon.png')
+  path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'app.png')
 
 const createTrayIcon = () => {
   const iconsRoot = getIconsRoot()
@@ -43,7 +43,7 @@ const createTrayIcon = () => {
     return null
   }
 
-  // ── 开发模式：直接使用 resources/icon.png ──────────────────────────
+  // ── 开发模式：直接使用 resources/app.png ──────────────────────────
   if (!app.isPackaged && process.platform === 'darwin') {
     const devIcon = getDevIconPath()
     console.log(`[Tray] Using dev icon: ${devIcon}`)
@@ -78,7 +78,7 @@ const createTrayIcon = () => {
     if (iconPath) return nativeImage.createFromPath(iconPath)
   }
 
-  // ── 降级：从各平台 app 目录中选取合适尺寸 ──
+  // ── 降级：从各平台目录中选取合适尺寸 ──
   const fallbackSize =
     process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
   const platformDir =
@@ -88,9 +88,9 @@ const createTrayIcon = () => {
         ? 'linux'
         : 'win'
   const fallback = tryLoad(
-    path.join(iconsRoot, platformDir, 'app', '256.png'),
-    path.join(iconsRoot, platformDir, 'app', '128.png'),
-    path.join(iconsRoot, 'linux', 'app', '256.png')
+    path.join(iconsRoot, platformDir, '256.png'),
+    path.join(iconsRoot, platformDir, '128.png'),
+    path.join(iconsRoot, 'linux', '256.png')
   )
   if (fallback) {
     const base = nativeImage.createFromPath(fallback)

@@ -7,7 +7,7 @@
         <!-- Logo / Branding Area -->
         <div class="login-header">
           <div class="logo-wrapper">
-            <img src="@/assets/bar/icon.png" alt="Logo" class="app-logo" />
+            <img src="@/assets/bar/app.png" alt="Logo" class="app-logo" />
           </div>
           <h1 class="app-title">Lightning</h1>
           <p class="app-subtitle">下一代企业级管理平台</p>

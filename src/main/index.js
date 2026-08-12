@@ -24,12 +24,12 @@ if (!app.requestSingleInstanceLock()) {
 }
 // 当Electron完成初始化并准备好创建浏览器窗口时
 app.whenReady().then(() => {
-  // 开发模式下：Dock 图标使用 resources/icon.png
+  // 开发模式下：Dock 图标使用 resources/app.png
   if (!app.isPackaged && process.platform === 'darwin' && app.dock) {
     const devIcon = path.join(
       process.env.APP_ROOT || process.cwd(),
       'resources',
-      'icon.png'
+      'app.png'
     )
     app.dock.setIcon(nativeImage.createFromPath(devIcon))
   }

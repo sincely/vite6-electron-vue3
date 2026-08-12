@@ -30,8 +30,8 @@ const getWindowIcon = () => {
 
   if (process.platform === 'linux') {
     // 优先使用 512px，退而用 256px
-    const p512 = path.join(iconsRoot, 'linux', 'app', '512.png')
-    const p256 = path.join(iconsRoot, 'linux', 'app', '256.png')
+    const p512 = path.join(iconsRoot, 'linux', '512.png')
+    const p256 = path.join(iconsRoot, 'linux', '256.png')
     return fs.existsSync(p512) ? p512 : p256
   }
 

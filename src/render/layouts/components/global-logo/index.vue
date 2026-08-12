@@ -3,7 +3,7 @@
     class="logo-block"
     :class="{ 'is-mac': isMac, 'is-top-mode': isTopMenu }"
   >
-    <img src="@/assets/bar/icon.png" class="logo-block__img" alt="logo" />
+    <img src="@/assets/bar/app.png" class="logo-block__img" alt="logo" />
     <span
       class="logo-block__name"
       :class="{

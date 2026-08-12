@@ -126,7 +126,7 @@
     "artifactName": "${productName}-${platform}-${version}-${arch}.${ext}"
   },
   "linux": {
-    "icon": "resources/icons/linux/app",
+    "icon": "resources/icons/linux",
     "extraResources": [
       {
         "from": "resources/icons/linux",
@@ -146,7 +146,7 @@
   "win": {
     // 代码签名
     "signAndEditExecutable": false,
-    "icon": "icons/win/app.ico",
+    "icon": "resources/icons/win/app.ico",
     "extraResources": [
       {
         "from": "resources/icons/win",

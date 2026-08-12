@@ -7,7 +7,7 @@
         <!-- Logo / Branding Area -->
         <div class="login-header">
           <div class="logo-wrapper">
-            <img src="@/assets/bar/icon.png" alt="Logo" class="app-logo" />
+            <img src="@/assets/bar/app.png" alt="Logo" class="app-logo" />
           </div>
           <h1 class="app-title">找回密码</h1>
           <p class="app-subtitle">验证身份并重置您的密码</p>
