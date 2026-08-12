@@ -112,6 +112,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'system-user' })
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'

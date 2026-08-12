@@ -92,6 +92,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'system-role' })
 import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'

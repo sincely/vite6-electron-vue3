@@ -7,4 +7,6 @@
   />
 </template>
 
-<script setup></script>
+<script setup>
+defineOptions({ name: 'exception-500' })
+</script>

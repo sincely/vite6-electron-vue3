@@ -236,6 +236,7 @@ const initAffixTags = () => {
       path: r.path,
       title: r.meta.title || '未命名',
       name: r.name,
+      meta: r.meta,
       icon: r.meta.icon || resolveTagIcon(r.path),
       affix: true
     })
@@ -250,6 +251,7 @@ const addCurrentTag = () => {
     path,
     title: meta.title,
     name: name || path,
+    meta,
     icon: meta.icon || resolveTagIcon(path),
     affix: !!meta.affix
   })

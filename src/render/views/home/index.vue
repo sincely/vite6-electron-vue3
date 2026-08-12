@@ -86,6 +86,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'desktop' })
 import { ref, watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'

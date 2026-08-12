@@ -6,16 +6,11 @@
       :style="contentStyle"
     >
       <router-view v-slot="{ Component, route }">
-        <!-- keepAlive 页面：keep-alive 在外层，transition 在内层 -->
-        <keep-alive v-if="route.meta?.keepAlive" :max="10">
+        <keep-alive :include="cachedViews" :max="10">
           <transition :name="transitionName" mode="out-in">
             <component :is="Component" :key="route.name ?? route.path" />
           </transition>
         </keep-alive>
-        <!-- 非 keepAlive 页面 -->
-        <transition v-else :name="transitionName" mode="out-in">
-          <component :is="Component" :key="route.path" />
-        </transition>
       </router-view>
     </div>
   </div>
@@ -25,10 +20,15 @@
 <script setup>
 import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
+import { useTagsViewStore } from '@/store/modules/tagsView'
 import BackTop from '@/components/BackTop/index.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
+const tagsViewStore = useTagsViewStore()
+
+// keep-alive 缓存列表：由 tagsView store 驱动，仅缓存已打开标签页对应的组件
+const cachedViews = computed(() => tagsViewStore.cachedViews)
 const animateValueSet = new Set(animates.map((item) => item.value))
 
 const transitionName = computed(() => {

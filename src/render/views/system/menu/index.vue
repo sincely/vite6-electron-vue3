@@ -97,6 +97,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'system-menu' })
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'

@@ -165,6 +165,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'advance-table-demo' })
 import { ref, reactive } from 'vue'
 import UserDetail from './components/UserDetail.vue'
 import { useDialog } from '@/hooks/useDialog'
