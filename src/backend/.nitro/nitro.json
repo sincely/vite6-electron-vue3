@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-12T15:11:03.978Z",
+  "preset": "nitro-dev",
+  "framework": {
+    "name": "nitro",
+    "version": ""
+  },
+  "versions": {
+    "nitro": "2.13.4"
+  },
+  "dev": {
+    "pid": 40475,
+    "workerAddress": {
+      "socketPath": "/var/folders/nw/rcr_8cw90kb00ztzjmld6s280000gn/T/nitro-worker-40475-1-1-1991.sock"
+    }
+  }
+}
