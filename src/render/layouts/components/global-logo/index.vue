@@ -42,6 +42,11 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
 
   &.is-mac {
     height: 80px;
+
+    // 侧边栏模式：logo 区域作为窗口拖拽区域（配合 hiddenInset）
+    &:not(.is-top-mode) {
+      -webkit-app-region: drag;
+    }
   }
 
   &.is-top-mode {

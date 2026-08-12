@@ -221,6 +221,7 @@ export function createMainWindow() {
   // 计算窗口大小，默认为屏幕的 80%
   const windowWidth = Math.floor(screenWidth * 0.8)
   const windowHeight = Math.floor(screenHeight * 0.8)
+  const isMacOS = process.platform === 'darwin'
   const win = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
@@ -229,7 +230,9 @@ export function createMainWindow() {
     icon: getWindowIcon(),
     show: false,
     autoHideMenuBar: true,
-    titleBarStyle: 'hidden', // 隐藏原生标题栏
+    titleBarStyle: isMacOS ? 'hiddenInset' : 'hidden',
+    // macOS: 精确控制红绿灯位置，避免与 UI 内容重叠
+    ...(isMacOS && { trafficLightPosition: { x: 10, y: 10 } }),
     resizable: true,
     center: true,
     webPreferences: {

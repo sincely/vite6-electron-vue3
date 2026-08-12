@@ -1,5 +1,8 @@
 <template>
-  <header class="title-bar" :class="{ 'is-top-mode': isTopMenu }">
+  <header
+    class="title-bar"
+    :class="{ 'is-top-mode': isTopMenu, 'is-mac': isMac() }"
+  >
     <div class="title-bar__inner">
       <!-- 侧边栏折叠 / 子菜单栏切换 -->
       <button
@@ -117,7 +120,7 @@ import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
-import { isWindows } from '@/utils/platform'
+import { isWindows, isMac } from '@/utils/platform'
 import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
@@ -221,6 +224,11 @@ onBeforeUnmount(() => {
   background: var(--color-bg-titlebar);
   border-bottom: 1px solid var(--color-border);
   -webkit-app-region: drag;
+
+  // Mac 平台顶部菜单模式：为红绿灯预留左侧空间（配合 trafficLightPosition）
+  &.is-mac.is-top-mode &__inner {
+    padding-left: 70px;
+  }
 
   &__inner {
     display: flex;
