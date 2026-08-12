@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell, screen, nativeTheme } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { VITE_DEV_SERVER_URL, renderer_dist } from './config'
+import { VITE_DEV_SERVER_URL } from './config'
 import { initUpdater } from './update' // 更新器
 import createNotification from './notification' // 创建通知
 import logger from './log'
@@ -10,7 +10,6 @@ import { bindMaximizeListener } from './ipc/win-control' // 窗口最大化状�
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
-const indexHtml = path.join(renderer_dist, 'index.html') // index.html 的绝对路径
 /**
  * 按平台返回 BrowserWindow 图标路径
  * - macOS  : 应用图标由 .icns bundle 决定，传 undefined 即可
@@ -99,7 +98,7 @@ const setupWindow = (win) => {
 /**
  * 加载哈希路由页面
  * - 开发环境：loadURL (Vite 开发服务器)
- * - 生产环境：loadFile (本地 index.html)
+ * - 生产环境：loadURL (app:// 自定义协议，满足应用商店安全审核要求)
  * - 注册 F12 快捷键切换 DevTools
  */
 const loadHash = (win, hash) => {
@@ -108,9 +107,9 @@ const loadHash = (win, hash) => {
     win.loadURL(hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL)
     // win.webContents.openDevTools()
   } else {
-    // 生产环境使用loadFile加载本地文件
-    // hash直接通过options传递，Electron 会自动处理
-    win.loadFile(indexHtml, hash ? { hash } : {})
+    // 生产环境使用 app:// 自定义协议加载页面
+    // 替代 file://，统一跨平台路径、规避安全策略限制，满足应用商店审核要求
+    win.loadURL(`app://renderer/index.html${hash ? '#' + hash : ''}`)
   }
 
   // 监听键盘事件，F12 打开开发者工具（仅开发模式）

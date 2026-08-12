@@ -200,6 +200,15 @@ export default defineConfig(({ mode, command }) => {
               'process.env.VITE_UPDATE_URL': JSON.stringify(
                 viteEnv.VITE_UPDATE_URL
               ),
+              'process.env.VITE_API_BASE_URL': JSON.stringify(
+                viteEnv.VITE_API_BASE_URL
+              ),
+              'process.env.VITE_SERVER_URL': JSON.stringify(
+                viteEnv.VITE_SERVER_URL
+              ),
+              'process.env.VITE_USE_MOCK': JSON.stringify(
+                viteEnv.VITE_USE_MOCK
+              ),
               __COMMIT_HASH__,
               __BUILD_DATE__
             },
