@@ -121,6 +121,13 @@
           "tray.png",
           "tray@2x.png"
         ]
+      },
+      {
+        "from": "resources",
+        "to": "icons/mac",
+        "filter": [
+          "app.png"
+        ]
       }
     ],
     "artifactName": "${productName}-${platform}-${version}-${arch}.${ext}"

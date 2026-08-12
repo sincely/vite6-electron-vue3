@@ -1,4 +1,5 @@
-import { Menu, app, shell, dialog, BrowserWindow } from 'electron'
+import { Menu, app, shell, dialog, BrowserWindow, nativeImage } from 'electron'
+import path from 'node:path'
 import os from 'os'
 import logger from './log'
 
@@ -30,6 +31,14 @@ const getRelativeTime = (dateStr) => {
   return '刚刚'
 }
 
+// 获取应用图标路径（macOS 用于 dialog 显示）
+const getAppIcon = () => {
+  const iconsRoot = app.isPackaged
+    ? path.join(process.resourcesPath, 'icons', 'mac')
+    : path.join(process.env.APP_ROOT || process.cwd(), 'resources')
+  return nativeImage.createFromPath(path.join(iconsRoot, 'app.png'))
+}
+
 // 显示关于对话框
 const showAboutDialog = () => {
   const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -56,7 +65,8 @@ const showAboutDialog = () => {
     type: 'info',
     title: '关于',
     message: `${app.name}`,
-    detail
+    detail,
+    icon: getAppIcon()
   })
 }
 
