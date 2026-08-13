@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import { updateElementPlusTheme } from '@/utils/color'
+import { startThemeTransition } from '@/utils/themeTransition'
 
 // 系统主题监听的内部引用。
 // 注意：不能挂在 store 上（this._xxx），否则会成为 store 的可枚举属性，
@@ -142,14 +143,16 @@ export const useAppStore = defineStore('app', {
       const nextTheme = this.theme === 'light' ? 'dark' : 'auto'
       this.setTheme(nextTheme)
     },
-    // 切换主题时添加过渡动画
+    // 切换主题时添加过渡动画（View Transition 圆形扩散，参考 art-design-pro）
     // 支持直接指定目标主题（如 'light' / 'dark'），否则回退到三态循环
-    toggleThemeWithTransition(_event, targetTheme) {
-      if (targetTheme && (targetTheme === 'light' || targetTheme === 'dark')) {
-        this.setTheme(targetTheme)
-      } else {
-        this.toggleTheme()
-      }
+    toggleThemeWithTransition(event, targetTheme) {
+      startThemeTransition(event, () => {
+        if (targetTheme === 'light' || targetTheme === 'dark') {
+          this.setTheme(targetTheme)
+        } else {
+          this.toggleTheme()
+        }
+      })
     },
     // 设置主题
     setTheme(theme) {

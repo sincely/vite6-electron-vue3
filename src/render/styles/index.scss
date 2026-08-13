@@ -365,33 +365,57 @@ body {
 //   background: color-mix(in srgb, var(--brand-accent), black 10%);
 // }
 
-/* Theme toggle transition (Element Plus-style circular reveal) */
+/* 主题切换过渡动画（View Transition 圆形扩散，参考 art-design-pro）
+ * --theme-vt-x / --theme-vt-y / --theme-vt-r 由 utils/themeTransition.js 按点击坐标写入。
+ * 方向判断依赖切换完成后 html 上的 .dark 类（过渡期间伪元素样式按新 DOM 状态解析）：
+ * - 切到亮色：新快照从点击处圆形展开覆盖旧快照
+ * - 切到暗色：旧快照向点击处圆形收缩，露出新快照 */
 @media (prefers-reduced-motion: no-preference) {
-  /* Disable normal color transitions while View Transition is running. */
-  html.theme-vt,
-  html.theme-vt body {
-    transition: none !important;
+  @keyframes theme-vt-clip {
+    from {
+      clip-path: circle(0% at var(--theme-vt-x) var(--theme-vt-y));
+    }
+
+    to {
+      clip-path: circle(
+        var(--theme-vt-r) at var(--theme-vt-x) var(--theme-vt-y)
+      );
+    }
   }
 
-  ::view-transition-image-pair(root) {
-    isolation: auto;
-  }
+  html {
+    &::view-transition-old(*) {
+      animation: none;
+    }
 
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    display: block;
-    mix-blend-mode: normal;
-    animation: none;
-  }
+    &::view-transition-new(*) {
+      animation: theme-vt-clip 0.5s ease-in both;
+    }
 
-  /* Control which snapshot sits on top depending on direction. */
-  html.theme-vt-to-dark::view-transition-old(root),
-  html.theme-vt-to-light::view-transition-new(root) {
-    z-index: 1;
-  }
+    &::view-transition-old(root) {
+      z-index: 1;
+    }
 
-  html.theme-vt-to-dark::view-transition-new(root),
-  html.theme-vt-to-light::view-transition-old(root) {
-    z-index: 9999;
+    &::view-transition-new(root) {
+      z-index: 9999;
+    }
+
+    &.dark {
+      &::view-transition-old(*) {
+        animation: theme-vt-clip 0.5s ease-in reverse both;
+      }
+
+      &::view-transition-new(*) {
+        animation: none;
+      }
+
+      &::view-transition-old(root) {
+        z-index: 9999;
+      }
+
+      &::view-transition-new(root) {
+        z-index: 1;
+      }
+    }
   }
 }
