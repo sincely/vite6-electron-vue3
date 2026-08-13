@@ -1,10 +1,10 @@
 <template>
-  <div ref="chartRef" class="chart"></div>
+  <div ref="chartRef" class="chart" :style="sizeStyle"></div>
 </template>
 
 <script setup>
 import { echarts } from '@/plugins'
-import { markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { markRaw, onBeforeUnmount, onMounted, ref, watch, computed } from 'vue'
 defineOptions({
   name: 'chart'
 })
@@ -34,6 +34,21 @@ const emit = defineEmits(['init'])
 
 const chart = ref(null)
 const chartRef = ref()
+
+// 显式传入 width/height 时同步约束容器尺寸，
+// 避免 .chart 默认 100% 高度把后续兄弟元素挤出固定高度卡片
+const sizeStyle = computed(() => {
+  const style = {}
+  if (props.width != null) {
+    style.width =
+      typeof props.width === 'number' ? `${props.width}px` : props.width
+  }
+  if (props.height != null) {
+    style.height =
+      typeof props.height === 'number' ? `${props.height}px` : props.height
+  }
+  return style
+})
 
 // options 变化时只更新，不重新 init（原来重新 init 会导致实例泄漏）
 watch(

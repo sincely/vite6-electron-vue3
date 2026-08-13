@@ -2,6 +2,7 @@
 @use './text-ellipsis'; // 文字溢出样式
 @use './scroll'; // 通用样式
 @use './transition'; // 动画样式
+@use './dashboard'; // 仪表板页面通用样式
 @use './element/index'; // 引入 Element Plus 自定义变量
 @use './message-box'; // ElMessageBox 统一样式
 @use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *; // 引入 Element Plus 暗黑模式 CSS 变量

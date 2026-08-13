@@ -88,19 +88,20 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
+import { useLockStore } from '@/store/modules/lock'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
-const router = useRouter()
+const lockStore = useLockStore()
 
 const userDropdownRef = ref(null)
 const avatarLoadFailed = ref(false)
 
 const primaryUserActions = [
   { action: 'profile', label: '设置', icon: 'setting' },
+  { action: 'lock', label: '锁屏', icon: 'Lock' },
   { action: 'docs', label: '文档', icon: 'Document' },
   { action: 'help', label: '问题 & 帮助', icon: 'QuestionFilled' }
 ]
@@ -154,7 +155,7 @@ const handleUserAction = async (action) => {
   } else if (action === 'help') {
     openExternal('https://github.com/issues')
   } else if (action === 'lock') {
-    router.push('/login').catch(() => {})
+    lockStore.openLockDialog()
   } else if (action === 'logout') {
     try {
       await userStore.logoutAction().catch(() => {})

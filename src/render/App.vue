@@ -6,6 +6,7 @@
         <router-view />
       </div>
       <setting-dialog />
+      <lock-screen />
     </div>
   </el-config-provider>
 </template>

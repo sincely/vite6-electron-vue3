@@ -12,7 +12,7 @@
 
     <SidebarMenu />
 
-    <UserPanel v-if="!isLeftMixed" />
+    <UserPanel />
   </div>
 </template>
 

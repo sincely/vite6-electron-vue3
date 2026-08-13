@@ -81,7 +81,7 @@
             height="16px"
           />
         </button>
-        <!-- 混合模式下的设置按钮（left-mixed 时 UserPanel 被隐藏，提供直接入口） -->
+        <!-- 混合模式下的设置按钮（left-mixed 时侧边栏为折叠态，UserPanel 仅显示头像，提供直接入口） -->
         <button
           v-if="isMixedMode"
           class="icon-btn"

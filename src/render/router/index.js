@@ -53,8 +53,43 @@ export const asyncRouteTree = [
         component: () => import('@/views/home/index.vue'),
         meta: {
           title: '仪表板',
+          icon: 'home',
+          group: '/desktop',
           keepAlive: true,
           affix: true
+        }
+      },
+      {
+        path: 'console',
+        name: 'dashboard-console',
+        component: () => import('@/views/dashboard/console/index.vue'),
+        meta: {
+          title: '工作台',
+          icon: 'layout-dashboard',
+          group: '/desktop',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'analysis',
+        name: 'dashboard-analysis',
+        component: () => import('@/views/dashboard/analysis/index.vue'),
+        meta: {
+          title: '分析页',
+          icon: 'chart-line',
+          group: '/desktop',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'ecommerce',
+        name: 'dashboard-ecommerce',
+        component: () => import('@/views/dashboard/ecommerce/index.vue'),
+        meta: {
+          title: '电子商务',
+          icon: 'shopping-cart',
+          group: '/desktop',
+          keepAlive: true
         }
       }
     ]
@@ -208,6 +243,75 @@ export const asyncRouteTree = [
           title: '通知演示',
           icon: 'bell',
           group: '/components',
+          keepAlive: true
+        }
+      }
+    ]
+  },
+  //  模板中心
+  {
+    path: '/template',
+    component: Layout,
+    redirect: '/template/cards',
+    meta: {
+      title: '模板中心',
+      icon: 'template',
+      order: 6,
+      sidebar: true
+    },
+    children: [
+      {
+        path: 'cards',
+        name: 'template-cards',
+        component: () => import('@/views/template/cards/index.vue'),
+        meta: {
+          title: '卡片',
+          icon: 'layers',
+          group: '/template',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'banners',
+        name: 'template-banners',
+        component: () => import('@/views/template/banners/index.vue'),
+        meta: {
+          title: '横幅',
+          icon: 'gallery-horizontal',
+          group: '/template',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'charts',
+        name: 'template-charts',
+        component: () => import('@/views/template/charts/index.vue'),
+        meta: {
+          title: '图表',
+          icon: 'bar-chart-3',
+          group: '/template',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'calendar',
+        name: 'template-calendar',
+        component: () => import('@/views/template/calendar/index.vue'),
+        meta: {
+          title: '日历',
+          icon: 'calendar',
+          group: '/template',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'pricing',
+        name: 'template-pricing',
+        component: () => import('@/views/template/pricing/index.vue'),
+        meta: {
+          title: '定价',
+          icon: 'credit-card',
+          group: '/template',
           keepAlive: true
         }
       }

@@ -36,5 +36,6 @@ artifacts/*
 .vscode
 .trae
 .zcode
+.qoder
 
 electron-builder.json

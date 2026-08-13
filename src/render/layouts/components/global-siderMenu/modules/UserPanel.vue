@@ -1,25 +1,28 @@
 <template>
   <div class="sidebar-footer">
-    <div
-      class="user-profile"
-      :class="{ 'is-collapsed': appStore.sidebarCollapsed }"
-    >
-      <div class="user-avatar">
-        <SvgIcon icon-class="user" width="26px" height="26px" />
+    <div class="user-profile" :class="{ 'is-collapsed': isCollapsed }">
+      <div class="user-avatar" :title="isCollapsed ? displayName : ''">
+        <img
+          v-if="userAvatar && !avatarLoadFailed"
+          :src="userAvatar"
+          :alt="displayName"
+          @error="avatarLoadFailed = true"
+        />
+        <span v-else class="user-avatar-fallback">{{ userInitial }}</span>
       </div>
       <div class="user-info">
-        <div class="user-name">{{ userStore.name }}</div>
+        <div class="user-name">{{ displayName }}</div>
         <div class="user-detail">系统管理员</div>
       </div>
       <SvgIcon
-        v-if="!appStore.sidebarCollapsed"
+        v-if="!isCollapsed"
         icon-class="settings"
         class="user-settings-icon"
         width="18px"
         height="18px"
         @click="handleSettingsClick"
       />
-      <div v-if="showSettings" class="sidebar-footer-settings">
+      <div v-if="showSettings && !isCollapsed" class="sidebar-footer-settings">
         <div v-for="item in actionList" :key="item.id">
           <div class="sidebar-setting-item" @click="handleClick(item)">
             <div class="sidebar-label">{{ item.label }}</div>
@@ -31,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
@@ -41,6 +44,23 @@ const userStore = useUserStore()
 const router = useRouter()
 
 const showSettings = ref(false)
+const avatarLoadFailed = ref(false)
+
+const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
+// left-mixed 模式下侧边栏固定为折叠宽度，按折叠态渲染（仅显示头像）
+const isCollapsed = computed(
+  () => appStore.sidebarCollapsed || isLeftMixed.value
+)
+
+const displayName = computed(
+  () =>
+    userStore.userInfo?.nickname ||
+    userStore.userInfo?.name ||
+    userStore.userInfo?.username ||
+    'Admin'
+)
+const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
+const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 const actionList = ref([
   {
     id: 'settings',
@@ -139,6 +159,18 @@ $transition: 0.2s ease;
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .user-avatar-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--color-primary);
     }
   }
 

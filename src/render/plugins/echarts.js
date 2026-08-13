@@ -1,12 +1,14 @@
 /** 引入柱状图and折线图图表，图表后缀都为 Chart  */
 import {
   BarChart,
+  CandlestickChart,
   GaugeChart,
   LineChart,
   MapChart,
   PictorialBarChart,
   PieChart,
-  RadarChart
+  RadarChart,
+  ScatterChart
 } from 'echarts/charts'
 // 引入提示框，标题，直角坐标系，数据集，内置数据转换器组件，组件后缀都为 Component
 import {
@@ -46,6 +48,8 @@ echarts.use([
   MapChart,
   RadarChart,
   GaugeChart,
+  ScatterChart,
+  CandlestickChart,
   SVGRenderer,
   PictorialBarChart,
   RadarComponent,
