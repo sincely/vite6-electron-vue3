@@ -84,6 +84,10 @@ export default defineConfig(({ mode, command }) => {
       cssCodeSplit: true, // 启用 CSS 代码分割
       assetsInlineLimit: 4096, // 小于 4kb 的资源内联为 base64
       rollupOptions: {
+        // 渲染进程是浏览器环境，排除 electron，避免其内部的
+        // fs / child_process / path 等 Node 内置模块被打包而产生
+        // "externalized for browser compatibility" 警告
+        external: ['electron'],
         treeshake: {
           propertyReadSideEffects: false,
           tryCatchDeoptimization: false
@@ -276,7 +280,7 @@ export default defineConfig(({ mode, command }) => {
         // Ployfill the Electron and Node.js API for Renderer process.
         // If you want use Node.js in Renderer process, the `nodeIntegration` needs to be enabled in the Main process.
         // See 👉 https://github.com/electron-vite/vite-plugin-electron-renderer
-        resolve: {}
+        renderer: {}
       }),
       ...createVitePlugins(viteEnv, command === 'build')
     ],
