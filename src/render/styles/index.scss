@@ -19,7 +19,6 @@
  *    - --glass-shadow-soft / --glass-shadow-hover：轻量投影层级
  * 2) 工具类：
  *    - .glass-card：卡片容器
- *    - .page-enter：页面入场动效
  * 3) 动效：
  *    - fade-up：轻量上浮淡入
  * ========================= */
@@ -30,10 +29,6 @@
 
   // border: 1px solid var(--glass-surface-border);
   // box-shadow: var(--glass-shadow-soft);
-}
-
-.page-enter {
-  animation: fade-up 0.45s cubic-bezier(0.2, 0.75, 0.2, 1) both;
 }
 
 @keyframes fade-up {

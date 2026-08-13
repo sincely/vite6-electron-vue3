@@ -1,5 +1,5 @@
 <template>
-  <div class="system-page page-enter">
+  <div class="system-page">
     <PageHeader
       title="菜单管理"
       subtitle="维护菜单结构、路由信息和按钮级权限"

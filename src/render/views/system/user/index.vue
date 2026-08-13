@@ -1,5 +1,5 @@
 <template>
-  <div class="system-page page-enter">
+  <div class="system-page">
     <PageHeader
       title="用户管理"
       subtitle="维护后台账号、角色归属和账号状态"

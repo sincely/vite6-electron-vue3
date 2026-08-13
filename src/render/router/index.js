@@ -114,8 +114,7 @@ export const asyncRouteTree = [
           title: '用户管理',
           icon: 'users',
           group: '/manage',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       },
       {
@@ -126,8 +125,7 @@ export const asyncRouteTree = [
           title: '角色管理',
           icon: 'shield-check',
           group: '/manage',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       },
       {
@@ -138,8 +136,7 @@ export const asyncRouteTree = [
           title: '菜单管理',
           icon: 'list-tree',
           group: '/manage',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       }
     ]
@@ -164,8 +161,7 @@ export const asyncRouteTree = [
           title: '高级表格',
           icon: 'table-2',
           group: '/components',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       },
       {
@@ -176,8 +172,7 @@ export const asyncRouteTree = [
           title: '通知演示',
           icon: 'bell',
           group: '/components',
-          keepAlive: true,
-          transition: 'slide-up'
+          keepAlive: true
         }
       }
     ]
