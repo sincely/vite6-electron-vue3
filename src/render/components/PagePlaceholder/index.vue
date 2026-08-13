@@ -20,11 +20,12 @@ defineProps({
 <style lang="scss" scoped>
 .page-placeholder {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 10px;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  width: 100%;
   min-height: 240px;
   padding: 32px;
   text-align: center;
