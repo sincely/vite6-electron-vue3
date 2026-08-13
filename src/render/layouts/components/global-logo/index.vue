@@ -10,7 +10,7 @@
         'is-hidden': (appStore.sidebarCollapsed || isLeftMixed) && !isTopMenu
       }"
     >
-      AI Desktop
+      Lightning
     </span>
   </div>
 </template>
