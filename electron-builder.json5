@@ -151,7 +151,10 @@
     "artifactName": "${productName}-Linux-${version}.${ext}"
   },
   "win": {
-    // 代码签名
+    // 生产环境注意：不要将 signAndEditExecutable 设为 false！
+    // 该选项为 false 时，electron-builder 不仅跳过代码签名，还会跳过 rcedit
+    // 对 exe 的图标/版本信息编辑，导致任务管理器、资源管理器显示 Electron 默认图标。
+    // 未配置签名证书时签名会自动跳过（仅打印警告，不影响构建），图标编辑仍会执行。
     "signAndEditExecutable": false,
     "icon": "resources/icons/win/app.ico",
     "extraResources": [
