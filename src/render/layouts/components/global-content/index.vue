@@ -6,11 +6,14 @@
       :style="contentStyle"
     >
       <router-view v-slot="{ Component, route }">
-        <keep-alive :include="cachedViews" :max="10">
-          <transition :name="transitionName" mode="out-in">
+        <!-- Transition 必须包裹在 KeepAlive 外层：KeepAlive 不会展开 Transition，
+             若将 Transition 放在内部，KeepAlive 的直接子组件会变成 Transition 本身，
+             其组件名无法命中 include 列表，导致缓存静默失效 -->
+        <transition :name="transitionName" mode="out-in">
+          <keep-alive :include="cachedViews" :max="10">
             <component :is="Component" :key="route.name ?? route.path" />
-          </transition>
-        </keep-alive>
+          </keep-alive>
+        </transition>
       </router-view>
     </div>
   </div>
@@ -66,7 +69,9 @@ watch(
 <style lang="scss" scoped>
 .global-content {
   position: relative;
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
   padding: 14px;
   overflow-y: auto;
@@ -83,7 +88,11 @@ watch(
 }
 
 .global-content-inner {
-  min-height: 100%;
+  // flex 列布局：内容较少时铺满可视高度，内容超出时随内容增高；
+  // 页面根节点作为 flex 子项，占位页可用 flex: 1 撑满并垂直居中
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   transition:
     max-width 0.3s ease,
     padding 0.3s ease,
