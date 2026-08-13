@@ -54,6 +54,8 @@
   </div>
   <!-- 更新弹框 -->
   <UpdateDialog />
+  <!-- 聊天窗口（Lightning Bot） -->
+  <ChatBot />
 </template>
 
 <script setup>

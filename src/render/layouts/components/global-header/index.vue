@@ -45,6 +45,14 @@
           <span>更新</span>
         </button>
 
+        <!-- 聊天窗口入口 -->
+        <div class="chat-btn-wrap">
+          <button class="icon-btn" title="Lightning Bot" @click="openChat">
+            <SvgIcon icon-class="message" width="18px" height="18px" />
+            <span class="chat-dot"></span>
+          </button>
+        </div>
+
         <!-- 通知铃铛 -->
         <div class="notif-btn-wrap">
           <button ref="bellBtnRef" class="icon-btn" @click="handleNotice">
@@ -120,6 +128,7 @@ import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
+import { useChatStore } from '@/store/modules/chat'
 import { isWindows, isMac } from '@/utils/platform'
 import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
@@ -129,6 +138,7 @@ import NotificationPanel from '@/components/NotificationPanel/index.vue'
 const appStore = useAppStore()
 const updateStore = useUpdateStore()
 const noticeStore = useNotificationStore()
+const chatStore = useChatStore()
 
 const latestVersion = computed(() => updateStore.latestVersion)
 const updateAvailable = computed(
@@ -143,6 +153,11 @@ const showUpdateDialog = () => {
 
 const handleNotice = () => {
   noticeStore.togglePanel()
+}
+
+// 打开聊天窗口
+const openChat = () => {
+  chatStore.toggleChat(true)
 }
 
 const isTopMenu = computed(
@@ -315,6 +330,39 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 34px;
   margin-right: 8px;
+}
+
+// 聊天入口包装
+.chat-btn-wrap {
+  position: relative;
+  -webkit-app-region: no-drag;
+}
+
+// 在线呼吸点
+.chat-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  pointer-events: none;
+  background: var(--color-success);
+  border-radius: 50%;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-success), transparent 40%);
+  animation: chat-dot-breathing 2.4s ease-in-out infinite;
+}
+
+@keyframes chat-dot-breathing {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.35;
+    transform: scale(0.75);
+  }
 }
 
 // 通知按鈕包裃
