@@ -59,6 +59,42 @@ export const asyncRouteTree = [
       }
     ]
   },
+  //  结果页面
+  {
+    path: '/result',
+    component: Layout,
+    redirect: '/result/success',
+    meta: {
+      title: '结果页面',
+      icon: 'circle-check',
+      order: 2,
+      sidebar: true
+    },
+    children: [
+      {
+        path: 'success',
+        name: 'result-success',
+        component: () => import('@/views/result/success/index.vue'),
+        meta: {
+          title: '成功页',
+          icon: 'circle-check',
+          group: '/result',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'fail',
+        name: 'result-fail',
+        component: () => import('@/views/result/fail/index.vue'),
+        meta: {
+          title: '失败页',
+          icon: 'circle-x',
+          group: '/result',
+          keepAlive: true
+        }
+      }
+    ]
+  },
   //  异常处理
   {
     path: '/exception',
