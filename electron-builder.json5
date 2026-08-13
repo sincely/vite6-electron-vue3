@@ -6,12 +6,6 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "ichengzhou@icloud.com",
   "asar": true,
-  "asarUnpack": [
-    "dist/*",
-    "node_modules/better-sqlite3/**/*",
-    "node_modules/typeorm/**/*",
-    "**/node_modules/app-root-path/**"
-  ],
   "productName": "lightning",
   "copyright": "Copyright © 2024 dyy.dongyuanwai",
   "directories": {
@@ -38,8 +32,6 @@
     "!**/node_modules/**/Makefile",
     "!**/node_modules/**/{.bin}/**",
     "!node_modules/.bin/**",
-    "node_modules/better-sqlite3/**/*",
-    "node_modules/typeorm/**/*",
     "!**/node_modules/**/*.{png,jpg,jpeg,gif,svg,bmp,ico,webp,tif,tiff}",
     "!**/node_modules/**/{*.min.js.map,*.min.css.map,*.map}",
     "!**/node_modules/**/bench/**",
