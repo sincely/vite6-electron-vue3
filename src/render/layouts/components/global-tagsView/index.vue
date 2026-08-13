@@ -16,8 +16,14 @@
         >
           <!-- Chrome 标签背景几何图形（google 风格下渲染） -->
           <ChromeTabBg v-if="tagsViewStyle === 'google'" />
-          <!-- 固定指示器 -->
-          <span v-if="tag.affix" class="tag-affix-dot" />
+          <!-- 固定指示器：已固定标签打上 pin 图标标识 -->
+          <Icon
+            v-if="tag.affix"
+            icon="lucide:pin"
+            class="tag-affix-icon"
+            width="12"
+            height="12"
+          />
           <Icon
             v-if="tag.icon"
             :icon="`lucide:${tag.icon}`"
@@ -512,11 +518,6 @@ watch(
         opacity: 0;
       }
 
-      // 已用图标表达路由含义，固定小圆点不再需要
-      .tag-affix-dot {
-        display: none;
-      }
-
       // 关闭按钮：Chrome 风格圆形悬停块
       .tag-close-icon {
         width: 16px;
@@ -617,17 +618,14 @@ watch(
     color: inherit;
   }
 
-  // 固定指示器小圆点
-  .tag-affix-dot {
+  // 固定指示器 pin 图标（主题色标识，激活态加深）
+  .tag-affix-icon {
     flex-shrink: 0;
-    width: 6px;
-    height: 6px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    opacity: 0.6;
+    color: var(--color-primary);
+    opacity: 0.65;
   }
 
-  &.is-active .tag-affix-dot {
+  &.is-active .tag-affix-icon {
     opacity: 1;
   }
 
