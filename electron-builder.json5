@@ -14,6 +14,16 @@
   },
   "removePackageScripts": true,
   "extraResources": [],
+  // 自定义 URL 协议：浏览器唤起应用（lightning://desktop/console?id=1）
+  // macOS → 写入 Info.plist CFBundleURLTypes；Windows → NSIS 安装时写入注册表
+  "protocols": [
+    {
+      "name": "lightning",
+      "schemes": [
+        "lightning"
+      ]
+    }
+  ],
   "files": [
     "dist/**/*",
     "dist-electron/**/*",

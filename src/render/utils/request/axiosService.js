@@ -1,22 +1,22 @@
 /**
  * Mock 模式 — axios 请求服务
- * 仅在 VITE_USE_MOCK=true 时激活，由 vite-plugin-mock 拦截请求
+ * 仅在 VITE_USE_MOCK=true 时激活，请求发往 Nitro mock 服务（src/backend）
  */
 import axios from 'axios'
 import { useUserStore } from '@/store/modules/user'
+import { ResultEnum } from '@/enums/httpEnum'
 import { addRequest, removeRequest } from './cancel'
 import { startLoading, stopLoading } from './loading'
 import { parseResponse, handleAxiosError } from './response'
 
-// 根据环境设置 baseURL
+// Mock 服务地址（Nitro backend，见 src/backend/.env）
 const baseURL =
-  process.env.NODE_ENV === 'production'
-    ? import.meta.env.VITE_API_BASE_URL
-    : 'http://localhost:3200'
+  import.meta.env.VITE_MOCK_SERVER_URL || 'http://localhost:5320/api'
 
 const service = axios.create({
   baseURL,
-  timeout: 5000
+  timeout: 5000,
+  withCredentials: true // 携带 httpOnly 的 refresh token cookie
 })
 
 // ── 请求拦截器 ──────────────────────────────────────
@@ -41,6 +41,30 @@ service.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
+// ── 401 无感刷新 ────────────────────────────────────
+// 并发 401 共享同一次刷新请求
+let refreshPromise = null
+
+// 登录 / 刷新接口本身不参与刷新重试
+function isAuthRequest(config = {}) {
+  return config._isRefresh || /\/auth\/(login|refresh)$/.test(config.url || '')
+}
+
+function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = service
+      .post('/auth/refresh', null, {
+        showLoading: false,
+        showErrorMessage: false,
+        _isRefresh: true
+      })
+      .finally(() => {
+        refreshPromise = null
+      })
+  }
+  return refreshPromise
+}
+
 // ── 响应拦截器 ──────────────────────────────────────
 service.interceptors.response.use(
   (response) => {
@@ -51,8 +75,30 @@ service.interceptors.response.use(
 
     return parseResponse(response.data, config)
   },
-  (error) => {
+  async (error) => {
     const config = error.config || {}
+
+    // 401 时先尝试刷新 token 并重试一次原请求
+    if (
+      error.response?.status === ResultEnum.TOKEN_EXPIRED &&
+      !isAuthRequest(config) &&
+      !config._isRetryWithRefresh
+    ) {
+      try {
+        const accessToken = await refreshAccessToken()
+        const userStore = useUserStore()
+
+        userStore.setToken(accessToken)
+        config._isRetryWithRefresh = true
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${accessToken}`
+        }
+        return service(config)
+      } catch {
+        // 刷新失败，走下方统一的未授权处理
+      }
+    }
 
     removeRequest(config)
     stopLoading(config)

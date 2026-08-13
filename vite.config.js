@@ -282,7 +282,7 @@ export default defineConfig(({ mode, command }) => {
         // See 👉 https://github.com/electron-vite/vite-plugin-electron-renderer
         renderer: {}
       }),
-      ...createVitePlugins(viteEnv, command === 'build')
+      ...createVitePlugins()
     ],
     optimizeDeps: {
       include: optimizeDepsElementPlusIncludes

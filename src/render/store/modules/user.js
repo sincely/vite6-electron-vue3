@@ -34,7 +34,8 @@ export const useUserStore = defineStore('user', {
     async loginAction(params) {
       try {
         const data = await login(params)
-        this.token = data.token
+        // Nitro mock 服务返回 accessToken 字段
+        this.token = data.accessToken || data.token
         await this.getUserInfoAction()
         return data
       } catch (error) {

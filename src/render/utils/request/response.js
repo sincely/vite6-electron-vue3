@@ -29,11 +29,13 @@ function showError(config, message) {
 
 /**
  * 解析业务响应体
- * 期望后端返回 { code, result, message } 格式
+ * 兼容两种后端格式：
+ *   - 旧：{ code, result, message }
+ *   - 新（Nitro mock 服务）：{ code, data, message }
  *
  * @param {Object} data - 响应体
  * @param {Object} config - 请求配置
- * @returns {*} 成功返回 result 字段，失败抛错
+ * @returns {*} 成功返回业务数据（result ?? data），失败抛错
  */
 export function parseResponse(data, config) {
   // 二进制响应直接返回
@@ -41,14 +43,14 @@ export function parseResponse(data, config) {
     return data
   }
 
-  const { code, result, message } = data
+  const { code, result, data: bodyData, message } = data
 
   if (code !== ResultEnum.SUCCESS && code !== 0) {
     showError(config, message || '请求失败')
     return Promise.reject(new Error(message || '请求失败'))
   }
 
-  return result
+  return result ?? bodyData
 }
 
 /**
@@ -76,8 +78,9 @@ export function handleAxiosError(error, config = {}) {
     return Promise.reject(new Error('请求超时，请稍后重试'))
   }
 
-  // 其他网络错误
-  showError(config, error.message || '请求失败')
+  // 其他网络错误（优先展示后端返回的业务错误信息）
+  const serverMessage = error.response?.data?.message
+  showError(config, serverMessage || error.message || '请求失败')
   return Promise.reject(error)
 }
 

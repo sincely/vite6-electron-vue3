@@ -2,7 +2,7 @@
  * 统一请求入口
  *
  * 根据 VITE_USE_MOCK 环境变量自动选择请求通道：
- *   - Mock 模式 (true)  → 渲染进程 axios → vite-plugin-mock 拦截
+ *   - Mock 模式 (true)  → 渲染进程 axios → Nitro mock 服务（src/backend）
  *   - 真实模式 (false)  → IPC → 主进程 axios → 后端 API
  *
  * 两种模式对外接口完全一致，API 层无需关心底层差异。
@@ -14,7 +14,7 @@
  * request({ url: '/user/info', method: 'get' })
  *
  * // POST
- * request({ url: '/login', method: 'post', data: { username, password } })
+ * request({ url: '/auth/login', method: 'post', data: { username, password } })
  *
  * // 自定义配置
  * request({

@@ -14,6 +14,7 @@
 <script setup>
 import { useUpdater } from '@/core/update'
 import { useNetwork } from '@/hooks/useNetwork'
+import { useDeepLink } from '@/hooks/useDeepLink'
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
@@ -24,6 +25,8 @@ const isLoginPage = computed(() => route.path === '/login')
 useUpdater()
 // 挂载网络状态监听
 useNetwork()
+// 挂载浏览器唤起应用（lightning://）深链监听
+useDeepLink()
 </script>
 
 <style lang="scss" scoped>

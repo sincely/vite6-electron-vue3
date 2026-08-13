@@ -2,6 +2,9 @@ import { ipcRenderer, contextBridge } from 'electron'
 import useLoading from '../main/loading/train'
 // api 暴露的方法
 const api = {}
+// 监听器包装函数缓存：on 会用匿名函数包装 listener，
+// 缓存起来保证 off(channel, listener) 能命中同一包装函数，正确移除监听
+const listenerWrapperMap = new WeakMap()
 // contextBridge: 安全地向渲染进程暴露 API 的桥梁
 // ipcRenderer: 渲染进程与主进程通信的模块
 // 如果上下文隔离已启用 ，则使用 contextBridge 暴露 API
@@ -10,14 +13,18 @@ if (process.contextIsolated) {
     // 添加事件监听器
     on(...args) {
       const [channel, listener] = args
-      return ipcRenderer.on(channel, (event, ...args) =>
-        listener(event, ...args)
-      )
+      let wrapper = listenerWrapperMap.get(listener)
+      if (!wrapper) {
+        wrapper = (event, ...rest) => listener(event, ...rest)
+        listenerWrapperMap.set(listener, wrapper)
+      }
+      return ipcRenderer.on(channel, wrapper)
     },
     // 移除事件监听器
     off(...args) {
-      const [channel, ...omit] = args
-      return ipcRenderer.off(channel, ...omit)
+      const [channel, listener, ...omit] = args
+      const wrapper = listenerWrapperMap.get(listener)
+      return ipcRenderer.off(channel, wrapper || listener, ...omit)
     },
     // 发送事件到主进程
     send(...args) {
@@ -236,7 +243,8 @@ if (process.contextIsolated) {
    * unsubscribe() // 取消监听
    */
   contextBridge.exposeInMainWorld('store', {
-    get: (key, defaultValue) => ipcRenderer.invoke('store-get', key, defaultValue),
+    get: (key, defaultValue) =>
+      ipcRenderer.invoke('store-get', key, defaultValue),
     set: (key, value) => ipcRenderer.invoke('store-set', key, value),
     delete: (key) => ipcRenderer.invoke('store-delete', key),
     has: (key) => ipcRenderer.invoke('store-has', key),

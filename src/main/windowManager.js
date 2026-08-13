@@ -348,9 +348,10 @@ export function restoreMainWindow() {
   if (mainWindowId) {
     // 恢复主窗口
     const win = windows.get(mainWindowId)
-    if (win) {
-      // 恢复窗口
+    if (win && !win.isDestroyed()) {
+      // 恢复窗口（可能被最小化或隐藏到托盘）
       if (win.isMinimized()) win.restore()
+      if (!win.isVisible()) win.show()
       win.focus()
       return
     }
@@ -359,6 +360,7 @@ export function restoreMainWindow() {
   if (loginWin) {
     if (loginWin.isMinimized()) loginWin.restore()
     // 恢复登录窗口
+    if (!loginWin.isVisible()) loginWin.show()
     loginWin.focus()
   }
 }

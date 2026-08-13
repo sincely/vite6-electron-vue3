@@ -4,6 +4,7 @@ import initIpc from './ipc'
 import initTray from './tray'
 import createMenu from './menu'
 import { registerSchemes, setupProtocol } from './protocol'
+import { setupDeepLink, handleDeepLinkFromArgv } from './deeplink'
 import store from './store'
 import {
   setCloseAction,
@@ -31,6 +32,8 @@ if (!app.requestSingleInstanceLock()) {
   app.quit()
   process.exit(0)
 }
+// 注册 lightning:// 协议并监听深链事件（⚠️ 需在 whenReady 之前，macOS 冷启动的 open-url 可能早于 ready 触发）
+setupDeepLink()
 // 当Electron完成初始化并准备好创建浏览器窗口时
 app.whenReady().then(() => {
   // 注册 app:// 协议处理器（⚠️ 必须在 app.whenReady() 之后）
@@ -84,8 +87,9 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
-// 当应用被激活时
-app.on('second-instance', () => {
+// 第二个实例被启动时（Windows/Linux 下点击协议链接会唤起新实例，链接在 argv 中）
+app.on('second-instance', (_event, argv) => {
+  handleDeepLinkFromArgv(argv, 'second-instance')
   restoreMainWindow()
 })
 

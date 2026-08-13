@@ -93,24 +93,25 @@ const rules = reactive({
 
 const submitForm = async (formEl) => {
   if (!formEl) return
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      loading.value = true
-      // 模拟登录请求
-      setTimeout(() => {
-        // 设置 mock token 和用户信息，供路由守卫校验
-        userStore.setToken('mock-token')
-        userStore.setUserInfo({
-          username: 'admin',
-          nickname: '管理员',
-          roles: ['admin']
-        })
-        userStore.setRoles(['admin'])
-        window.ipcRenderer?.send('toMain')
-        loading.value = false
-      }, 800)
-    } else {
+  await formEl.validate(async (valid, fields) => {
+    if (!valid) {
       console.log('error submit!', fields)
+      return
+    }
+
+    loading.value = true
+    try {
+      // 调用 Nitro mock 服务登录（支持手机号或用户名）
+      await userStore.loginAction({
+        username: ruleForm.phone,
+        password: ruleForm.password
+      })
+      window.ipcRenderer?.send('toMain')
+    } catch (error) {
+      // 错误提示已由请求层统一处理
+      console.log('login failed:', error)
+    } finally {
+      loading.value = false
     }
   })
 }

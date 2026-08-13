@@ -11,7 +11,7 @@ node_modules/
 dist/
 dist-electron/
 release/
-src/backend/.nitro/
+src/backend/.nitro/**
 *.local
 
 # Editor directories and files
@@ -24,5 +24,4 @@ src/backend/.nitro/
 *.njsproj
 *.sln
 *.sw?
-
 pnpm-lock.yaml
