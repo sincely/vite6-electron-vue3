@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.3](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.2...v1.0.3) (2026-08-13)
+
+### ✨ Features
+
+* 修复关于弹框icon错误 ([a2130e8](https://github.com/sincely/vite6-electron-vue3/commit/a2130e8ff66b9502e60c84a95e275240bc44f402))
+* 修复弹框样式 ([7f0a5f8](https://github.com/sincely/vite6-electron-vue3/commit/7f0a5f87ee82a79d93fdf4c2bb9652f580d97aa4))
+* 删除不再使用的图标文件 ([3831375](https://github.com/sincely/vite6-electron-vue3/commit/38313758c0c6d79ea9a212348770182420dc260d))
+* 增加tag-view 支持 keep-alive ([cafe69a](https://github.com/sincely/vite6-electron-vue3/commit/cafe69a99a4c693fb083998ca5da2b1369d48bf5))
+* 增加后端服务 ([ba4228d](https://github.com/sincely/vite6-electron-vue3/commit/ba4228d1f434ca2a203ede1fd9f31152307d8aec))
+* 增强 macOS 支持，调整窗口标题栏样式及拖拽区域 ([41b1425](https://github.com/sincely/vite6-electron-vue3/commit/41b1425401c81eb3f3443624ab0a85a4a4902ce9))
+* 完善主进程通知模块，增加平台图标适配及通知创建逻辑 ([6f66e04](https://github.com/sincely/vite6-electron-vue3/commit/6f66e04a7bc01a9f06e9a9f0e30543307eb102b5))
+* 实现主进程 HTTP 请求管理，支持 IPC 调用并处理响应 ([e6e88fd](https://github.com/sincely/vite6-electron-vue3/commit/e6e88fdb48fc5762776ff2850124b1b625e26ec9))
+* 实现配置持久化和日志功能 ([73fe695](https://github.com/sincely/vite6-electron-vue3/commit/73fe695a071ea58dd2fee06c5f94f501555d0923))
+* 更新 connect-src 以支持更多外部资源 ([55eee82](https://github.com/sincely/vite6-electron-vue3/commit/55eee82192737a7d757d6b1f353278ded1282ac2))
+* 更新 Vite 配置，排除 Electron 模块以避免打包警告 ([a561437](https://github.com/sincely/vite6-electron-vue3/commit/a561437ac302141466c61d622d9df9480b53afa6))
+* 更新 Windows 配置注释，说明代码签名选项影响 ([36c10e9](https://github.com/sincely/vite6-electron-vue3/commit/36c10e91b417c862f94bbd76c1e302bade714222))
+* 更新入口文件路径，新增主进程渲染逻辑 ([ad6bf42](https://github.com/sincely/vite6-electron-vue3/commit/ad6bf42d20f7ebcc39680d09aae8e7ee59d9ebad))
+* 更新图标资源路径，新增应用图标文件 ([20493b3](https://github.com/sincely/vite6-electron-vue3/commit/20493b3310e6a3285da3b19058a796e85f6b3cd1))
+* 添加 src/backend/.nitro/ 到 .gitignore ([1f10f1c](https://github.com/sincely/vite6-electron-vue3/commit/1f10f1c3bcf9810d005fe0c7cb4314b5c9502c90))
+* 添加主题切换过渡动画，支持圆形扩散效果，优化用户体验 ([16aadd1](https://github.com/sincely/vite6-electron-vue3/commit/16aadd1452e24dafcb348a4b76aa59101b4d9eb5))
+* 添加卡片、图表和定价模板页面 ([192af22](https://github.com/sincely/vite6-electron-vue3/commit/192af22b8f5ad01eeb957c62733a2eaa9d61a0c6))
+* 添加样式设置组件，支持表格样式自定义，更新图标使用，替换为 Iconify 图标库 ([2a91e77](https://github.com/sincely/vite6-electron-vue3/commit/2a91e7732cc30d631161874ac32eda9a0c9e324a))
+* 添加结果页面组件，支持成功和失败状态，优化用户反馈体验 ([05a6b13](https://github.com/sincely/vite6-electron-vue3/commit/05a6b1389c168e046d19ddbdba4eb09f95b6b362))
+* 添加聊天窗口组件（Lightning Bot），支持消息发送和状态管理 ([baa655c](https://github.com/sincely/vite6-electron-vue3/commit/baa655cfe4ad408a54d6e9ab61bfe3d54f49bfc4))
+* 添加自定义协议 app:// 注册及处理器 ([0cb9101](https://github.com/sincely/vite6-electron-vue3/commit/0cb9101ac1a059564ef0cf31621520d2b3655264))
+* 移除不再需要的 asarUnpack 配置项 ([f882954](https://github.com/sincely/vite6-electron-vue3/commit/f882954b7c7431f013dd607bc406e35693d0b3b2))
+* 移除不必要的环境变量日志输出 ([527752a](https://github.com/sincely/vite6-electron-vue3/commit/527752aa065c6b4fcb8c2d4d3cf42208f1e34910))
+* 移除面包屑导航组件的代码 ([e617dba](https://github.com/sincely/vite6-electron-vue3/commit/e617dba607456fb0918f923043450f98055bbb6d))
+* 重构全局搜索组件，添加搜索弹窗和历史记录功能，优化用户体验 ([48bdf4a](https://github.com/sincely/vite6-electron-vue3/commit/48bdf4a849c4202549f75feb51fecfd57699b47a))
+
+### 🐞 Bug Fixes
+
+* 修复 KeepAlive 和 Transition 组件的嵌套关系，确保缓存正常工作 ([e1fc373](https://github.com/sincely/vite6-electron-vue3/commit/e1fc373a297ef140011e9b4a5d435b64e28a8ebd))
+* 将 logo 名称从 "AI Desktop" 修改为 "Lightning" ([a7f05a0](https://github.com/sincely/vite6-electron-vue3/commit/a7f05a024894b41933651c82afb40bdaecc591ed))
+* 替换固定指示器小圆点为 pin 图标，优化标签显示样式 ([a4da2e8](https://github.com/sincely/vite6-electron-vue3/commit/a4da2e8c2aeeb4d49fe130e34d451df3294cd020))
+* 移除页面入场动效类，简化系统页面结构 ([bb72edb](https://github.com/sincely/vite6-electron-vue3/commit/bb72edb11847917c9855916dc93e5e2830b21611))
+* 调整 PagePlaceholder 组件样式，修复宽度和高度设置 ([a7c7081](https://github.com/sincely/vite6-electron-vue3/commit/a7c70810c57baa4b8d109df5a3d863da92ed922f))
+
 ## [1.0.2](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.1...v1.0.2) (2026-08-12)
 
 ### ✨ Features
