@@ -7,6 +7,8 @@ export const MOCK_USERS = [
       'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png',
     roles: ['user'],
     username: 'user',
+    phone: '13900139000',
+    permissions: ['system:user:view', 'system:role:view', 'system:menu:view'],
   },
   {
     id: 1,
@@ -16,6 +18,8 @@ export const MOCK_USERS = [
       'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png',
     roles: ['admin'],
     username: 'admin',
+    phone: '13800138000',
+    permissions: ['*:*:*'],
   },
 ];
 

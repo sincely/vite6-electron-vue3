@@ -21,13 +21,16 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  // 支持用户名或手机号登录
   const findUser = MOCK_USERS.find(
-    (item) => item.username === username && item.password === password,
+    (item) =>
+      (item.username === username || item.phone === username) &&
+      item.password === password,
   );
 
   if (!findUser) {
     clearRefreshTokenCookie(event);
-    return forbiddenResponse(event, 'Username or password is incorrect.');
+    return forbiddenResponse(event, '用户名或密码错误');
   }
 
   const accessToken = generateAccessToken(findUser);
@@ -35,8 +38,9 @@ export default defineEventHandler(async (event) => {
 
   setRefreshTokenCookie(event, refreshToken);
 
+  const { password: _pwd, ...userinfo } = findUser;
   return useResponseSuccess({
-    ...findUser,
+    ...userinfo,
     accessToken,
   });
 });

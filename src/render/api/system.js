@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getUserList(params) {
   return request({
-    url: '/mock/system/users/list',
+    url: '/system/users/list',
     method: 'get',
     params
   })
@@ -10,7 +10,7 @@ export function getUserList(params) {
 
 export function createUser(data) {
   return request({
-    url: '/mock/system/users/create',
+    url: '/system/users/create',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function createUser(data) {
 
 export function updateUser(data) {
   return request({
-    url: '/mock/system/users/update',
+    url: '/system/users/update',
     method: 'put',
     data
   })
@@ -26,7 +26,7 @@ export function updateUser(data) {
 
 export function deleteUsers(data) {
   return request({
-    url: '/mock/system/users/delete',
+    url: '/system/users/delete',
     method: 'post',
     data
   })
@@ -34,7 +34,7 @@ export function deleteUsers(data) {
 
 export function getRoleList(params) {
   return request({
-    url: '/mock/system/roles/list',
+    url: '/system/roles/list',
     method: 'get',
     params
   })
@@ -42,7 +42,7 @@ export function getRoleList(params) {
 
 export function createRole(data) {
   return request({
-    url: '/mock/system/roles/create',
+    url: '/system/roles/create',
     method: 'post',
     data
   })
@@ -50,7 +50,7 @@ export function createRole(data) {
 
 export function updateRole(data) {
   return request({
-    url: '/mock/system/roles/update',
+    url: '/system/roles/update',
     method: 'put',
     data
   })
@@ -58,7 +58,7 @@ export function updateRole(data) {
 
 export function deleteRoles(data) {
   return request({
-    url: '/mock/system/roles/delete',
+    url: '/system/roles/delete',
     method: 'post',
     data
   })
@@ -66,7 +66,7 @@ export function deleteRoles(data) {
 
 export function getMenuList(params) {
   return request({
-    url: '/mock/system/menus/list',
+    url: '/system/menus/list',
     method: 'get',
     params
   })
@@ -74,7 +74,7 @@ export function getMenuList(params) {
 
 export function createMenu(data) {
   return request({
-    url: '/mock/system/menus/create',
+    url: '/system/menus/create',
     method: 'post',
     data
   })
@@ -82,7 +82,7 @@ export function createMenu(data) {
 
 export function updateMenu(data) {
   return request({
-    url: '/mock/system/menus/update',
+    url: '/system/menus/update',
     method: 'put',
     data
   })
@@ -90,7 +90,7 @@ export function updateMenu(data) {
 
 export function deleteMenus(data) {
   return request({
-    url: '/mock/system/menus/delete',
+    url: '/system/menus/delete',
     method: 'post',
     data
   })

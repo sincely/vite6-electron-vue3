@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 登录
 export const login = (data) => {
   return request({
-    url: '/login',
+    url: '/auth/login',
     method: 'post',
     data
   })
@@ -20,7 +20,7 @@ export const getUserInfo = () => {
 // 退出登录
 export const logout = () => {
   return request({
-    url: '/logout',
+    url: '/auth/logout',
     method: 'post'
   })
 }
