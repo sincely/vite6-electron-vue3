@@ -7,7 +7,7 @@
   >
     <template #reference>
       <span class="column-setting-trigger" title="列设置">
-        <Operation />
+        <Icon icon="ri:align-right" width="18" height="18" />
       </span>
     </template>
 
@@ -36,7 +36,13 @@
           @drop="drop($event, index)"
         >
           <div class="drag-icon">
-            <Rank v-if="!isDragDisabled(element)" class="drag-rank-icon" />
+            <Icon
+              v-if="!isDragDisabled(element)"
+              icon="ri:drag-move-2-fill"
+              class="drag-rank-icon"
+              width="14"
+              height="14"
+            />
           </div>
           <el-checkbox
             v-model="element.show"
@@ -52,7 +58,7 @@
 </template>
 
 <script setup>
-import { Operation, Rank } from '@element-plus/icons-vue'
+import { Icon } from '@iconify/vue'
 import { cloneDeep } from 'lodash-es'
 
 const props = defineProps({

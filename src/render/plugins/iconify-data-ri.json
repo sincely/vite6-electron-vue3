@@ -1,0 +1,22 @@
+{
+  "prefix": "ri",
+  "icons": {
+    "refresh-line": {
+      "body": "<path fill=\"currentColor\" d=\"M5.463 4.433A9.96 9.96 0 0 1 12 2c5.523 0 10 4.477 10 10c0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228zm13.074 15.134A9.96 9.96 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772z\"/>"
+    },
+    "arrow-up-down-fill": {
+      "body": "<path fill=\"currentColor\" d=\"M12 8H8.001L8 20H6V8H2l5-5zm10 8l-5 5l-5-5h4V4h2v12z\"/>"
+    },
+    "align-right": {
+      "body": "<path fill=\"currentColor\" d=\"M3 4h18v2H3zm4 15h14v2H7zm-4-5h18v2H3zm4-5h14v2H7z\"/>"
+    },
+    "settings-line": {
+      "body": "<path fill=\"currentColor\" d=\"m12 1l9.5 5.5v11L12 23l-9.5-5.5v-11zm0 2.311L4.5 7.653v8.694l7.5 4.342l7.5-4.342V7.653zM12 16a4 4 0 1 1 0-8a4 4 0 0 1 0 8m0-2a2 2 0 1 0 0-4a2 2 0 0 0 0 4\"/>"
+    },
+    "drag-move-2-fill": {
+      "body": "<path fill=\"currentColor\" d=\"M18 11V8l4 4l-4 4v-3h-5v5h3l-4 4l-4-4h3v-5H6v3l-4-4l4-4v3h5V6H8l4-4l4 4h-3v5z\"/>"
+    }
+  },
+  "width": 24,
+  "height": 24
+}

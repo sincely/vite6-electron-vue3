@@ -7,12 +7,20 @@
       </div>
       <div class="toolbar-right">
         <slot name="toolbar" />
-        <RefreshRight
+        <Icon
+          icon="ri:refresh-line"
           class="toolbar-icon"
           :class="{ 'is-spinning': loading }"
+          width="18"
+          height="18"
           @click="refresh"
         />
         <ColumnSetting v-model:columns="localColumns" />
+        <StyleSetting
+          v-model:stripe="tableStyle.stripe"
+          v-model:border="tableStyle.border"
+          v-model:header-bg="tableStyle.headerBg"
+        />
       </div>
     </div>
 
@@ -22,6 +30,9 @@
       :data="tableData"
       size="small"
       v-bind="mergedConfig.table"
+      :stripe="tableStyle.stripe"
+      :border="tableStyle.border"
+      :style="headerBgCssVar"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
@@ -197,13 +208,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { parseTime } from '@/utils/time'
 import ColumnSetting from '@/components/AdvanceTable/components/ColumnSetting.vue'
+import StyleSetting from '@/components/AdvanceTable/components/StyleSetting.vue'
 import DictTag from './DictTag.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
-import { RefreshRight } from '@element-plus/icons-vue'
+import { Icon } from '@iconify/vue'
 
 const router = useRouter()
 
@@ -253,6 +265,20 @@ const queryParams = reactive({
 })
 const localColumns = ref([])
 
+// 表格样式设置（在列设置面板中调整）
+const tableStyle = reactive({
+  // 树形表格默认不使用斑马纹，层级关系更清晰
+  stripe: props.config?.table?.stripe ?? false,
+  border: props.config?.table?.border ?? true,
+  headerBg: props.config?.table?.headerBg ?? ''
+})
+// 自定义表头背景 -> CSS 变量（为空时使用主题默认背景）
+const headerBgCssVar = computed(() => {
+  return tableStyle.headerBg
+    ? { '--smart-table-header-bg': tableStyle.headerBg }
+    : {}
+})
+
 // 初始化列配置
 watch(
   () => props.columns,
@@ -262,6 +288,16 @@ watch(
     }
   },
   { immediate: true, deep: true }
+)
+
+// 斑马纹/边框变更后重新布局
+watch(
+  () => [tableStyle.stripe, tableStyle.border],
+  () => {
+    nextTick(() => {
+      tableRef.value?.doLayout()
+    })
+  }
 )
 
 // 合并配置
@@ -571,13 +607,13 @@ defineExpose({
   overflow: hidden;
   border-radius: 10px;
 
-  // 表头：微弱底色 + 更重字重
+  // 表头：微弱底色 + 更重字重（可通过列设置自定义背景色）
   .el-table__header-wrapper {
     .el-table__cell {
       padding: 10px 0;
       font-size: 13px;
       font-weight: 600;
-      background: var(--color-bg-content);
+      background: var(--smart-table-header-bg, var(--color-bg-content));
     }
 
     th.el-table__cell {

@@ -7,9 +7,12 @@
       </div>
       <div class="toolbar-right">
         <slot name="toolbar" />
-        <RefreshRight
+        <Icon
+          icon="ri:refresh-line"
           class="toolbar-icon"
           :class="{ 'is-spinning': loading }"
+          width="18"
+          height="18"
           @click="refresh"
         />
         <!-- 设置表格大小（点击箭头下拉） -->
@@ -19,33 +22,23 @@
           @command="handleTableSizeCommand"
         >
           <span class="toolbar-icon table-size-trigger" title="表格大小">
-            <SvgIcon icon-class="arrow" width="18px" height="18px" />
+            <Icon icon="ri:arrow-up-down-fill" width="18" height="18" />
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="small">
-                <div class="size-option">
-                  <el-icon><Fold /></el-icon>
-                  <span>紧凑</span>
-                </div>
-              </el-dropdown-item>
-              <el-dropdown-item command="default">
-                <div class="size-option">
-                  <el-icon><Operation /></el-icon>
-                  <span>默认</span>
-                </div>
-              </el-dropdown-item>
-              <el-dropdown-item command="large">
-                <div class="size-option">
-                  <el-icon><Expand /></el-icon>
-                  <span>宽松</span>
-                </div>
-              </el-dropdown-item>
+              <el-dropdown-item command="small">紧凑</el-dropdown-item>
+              <el-dropdown-item command="default">默认</el-dropdown-item>
+              <el-dropdown-item command="large">宽松</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
 
         <ColumnSetting v-model:columns="localColumns" />
+        <StyleSetting
+          v-model:stripe="tableStyle.stripe"
+          v-model:border="tableStyle.border"
+          v-model:header-bg="tableStyle.headerBg"
+        />
       </div>
     </div>
 
@@ -54,7 +47,10 @@
       v-loading="loading"
       :data="tableData"
       v-bind="mergedConfig.table"
+      :stripe="tableStyle.stripe"
+      :border="tableStyle.border"
       :size="tableSize"
+      :style="headerBgCssVar"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
@@ -167,9 +163,10 @@
 
 <script setup>
 import ColumnSetting from './components/ColumnSetting.vue'
+import StyleSetting from './components/StyleSetting.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { promiseTimeout } from '@vueuse/core'
-import { RefreshRight, Fold, Operation, Expand } from '@element-plus/icons-vue'
+import { Icon } from '@iconify/vue'
 // Props
 const props = defineProps({
   columns: {
@@ -209,6 +206,18 @@ defineExpose({
 // 响应式数据
 const loading = ref(false)
 const tableSize = ref(props.config?.table?.size || 'small')
+// 表格样式设置（在列设置面板中调整）
+const tableStyle = reactive({
+  stripe: props.config?.table?.stripe ?? true,
+  border: props.config?.table?.border ?? true,
+  headerBg: props.config?.table?.headerBg ?? ''
+})
+// 自定义表头背景 -> CSS 变量（为空时使用主题默认背景）
+const headerBgCssVar = computed(() => {
+  return tableStyle.headerBg
+    ? { '--smart-table-header-bg': tableStyle.headerBg }
+    : {}
+})
 const tableData = ref([])
 const total = ref(0)
 const queryParams = reactive({
@@ -230,7 +239,7 @@ watch(
 )
 
 watch(
-  tableSize,
+  [tableSize, () => tableStyle.stripe, () => tableStyle.border],
   () => {
     nextTick(() => {
       tableRef.value?.doLayout()
@@ -497,12 +506,6 @@ watch(
   margin-top: auto;
 }
 
-:deep(.size-option) {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-}
-
 // ---------- Element Plus 表格深度美化 ----------
 :deep(.el-table) {
   --el-table-border-color: var(--color-border-light);
@@ -517,13 +520,13 @@ watch(
   overflow: hidden;
   border-radius: 10px;
 
-  // 表头：微弱底色 + 更重字重，营造层次
+  // 表头：微弱底色 + 更重字重，营造层次（可通过列设置自定义背景色）
   .el-table__header-wrapper {
     .el-table__cell {
       padding: 10px 0;
       font-size: 13px;
       font-weight: 600;
-      background: var(--color-bg-content);
+      background: var(--smart-table-header-bg, var(--color-bg-content));
     }
 
     th.el-table__cell {
