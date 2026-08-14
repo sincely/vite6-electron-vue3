@@ -31,9 +31,18 @@
                 }}
               </p>
             </div>
-            <!-- 仅初始态和下载完成态显示关闭按钮（强制升级时隐藏，防止跳过） -->
+            <!-- 下载中显示"后台运行"按钮：最小化窗口，下载在后台继续（强制升级时隐藏） -->
             <button
-              v-if="!isUpdating && !isForce"
+              v-if="isUpdating && !isForce"
+              class="update-close-btn"
+              title="最小化窗口，后台继续下载"
+              @click="handleBackground"
+            >
+              <SvgIcon icon-class="close" width="16px" height="16px" />
+            </button>
+            <!-- 初始态和下载完成态显示关闭按钮（强制升级时隐藏，防止跳过） -->
+            <button
+              v-else-if="!isForce"
               class="update-close-btn"
               title="稍后提醒"
               @click="handleLater"
@@ -92,7 +101,16 @@
                   {{ formattedDownloadVolume }}
                 </span>
               </div>
-              <p class="progress-tip">下载完成后将提示安装，请勿关闭应用</p>
+              <p class="progress-tip">可最小化窗口后台下载，完成后将通知您</p>
+            </div>
+            <!-- 下载中操作：最小化窗口到后台，下载在主进程继续（强制升级时隐藏） -->
+            <div v-if="!isForce" class="update-dialog__actions">
+              <button
+                class="update-btn update-btn--later"
+                @click="handleBackground"
+              >
+                最小化到后台
+              </button>
             </div>
           </template>
 
@@ -373,6 +391,11 @@ const completeDownload = (info) => {
     isUpdating.value = false
     updateDownloaded.value = true
 
+    // 同步 Store，标题栏切换为"安装"状态（PROD 下 useUpdater 钩子已同步，幂等）
+    updateStore.setUpdating(false)
+    updateStore.setDownloadProgress(100)
+    updateStore.setUpdateDownloaded(true)
+
     if (info?.version) {
       updateStore.setLatestVersion(info.version)
     }
@@ -410,9 +433,11 @@ const startMockDownload = () => {
   totalBytes.value = total
 
   mockTimer = setInterval(() => {
-    const ratio = transferred / total
+    // const ratio = transferred / total
     // 模拟真实网络：后期降速
-    const slowdown = ratio > 0.82 ? 0.48 : ratio > 0.58 ? 0.72 : 1
+    // const slowdown = ratio > 0.82 ? 0.48 : ratio > 0.58 ? 0.72 : 1
+
+    const slowdown = 10
     // 每次推送的数据块大小（基于 240ms 间隔计算速度）
     const chunk = (0.9 + Math.random() * 1.8) * 1024 * 1024 * slowdown * 0.24
 
@@ -420,6 +445,9 @@ const startMockDownload = () => {
     transferredBytes.value = transferred
     downloadSpeed.value = chunk / 0.24 // 换算为 bytes/s
     targetDownloadProgress.value = Math.min((transferred / total) * 100, 99.2) // 上限 99.2%
+    // DEV 模拟下载也同步到 Store，标题栏可实时看到进度变化
+    updateStore.setUpdating(true)
+    updateStore.setDownloadProgress(targetDownloadProgress.value)
     syncProgressDisplay()
 
     // 下载完成，停止模拟
@@ -464,12 +492,23 @@ const handleInstall = () => {
 
 /**
  * 点击"稍后更新"/"稍后重启"或关闭按钮
- * 下载进行中或强制升级时禁止关闭，防止中断下载/跳过强制升级
+ * 下载由主进程执行，收起弹窗不会中断下载（窗口聚焦时可重新打开查看进度）
+ * 仅强制升级时禁止关闭，防止跳过强制升级
  */
 const handleLater = () => {
-  if (isUpdating.value) return // 下载中不允许关闭
   if (isForce.value) return // 强制升级不允许跳过
   visible.value = false
+}
+
+/**
+ * 点击"后台运行"/"最小化到后台"按钮
+ * 收起弹窗并最小化窗口，下载在主进程后台继续；
+ * 下载完成后主进程通过系统通知/Dock 弹跳提醒，窗口聚焦时自动弹出安装视图
+ */
+const handleBackground = () => {
+  if (isForce.value) return // 强制升级不允许后台跳过
+  visible.value = false
+  // ipcRenderer.send('minimize-window')
 }
 
 // ─── 事件监听器引用（用于 onUnmounted 清理）──────────────────────────
@@ -482,6 +521,8 @@ let onOpenDialog = null
 let onConfig = null
 let onForce = null
 let onRemoveLoading = null
+let onWindowFocus = null
+let onVisibilityChange = null
 
 // ─── 组件挂载：注册所有事件监听 ────────────────────────────────────────
 
@@ -549,13 +590,17 @@ onMounted(() => {
   /**
    * IPC 事件：更新过程出错
    * 重置下载状态，输出错误日志
-   * 用户可再次点击"立即更新"重试
+   * 后台下载出错时恢复弹窗显示，便于用户感知失败并重试
    */
   onError = (_, message) => {
+    const wasUpdating = isUpdating.value
     isUpdating.value = false
     downloadSpeed.value = 0
     clearProgressTimer()
     clearCompleteTimer()
+    if (wasUpdating && !visible.value && !isForce.value) {
+      visible.value = true
+    }
   }
 
   /**
@@ -599,6 +644,11 @@ onMounted(() => {
    *   - 否则：通知主进程执行检查更新（会触发 update-available 或 update-not-available）
    */
   onOpenDialog = () => {
+    // 后台下载中 / 已下载完成：直接重新打开弹窗展示当前状态，不重置下载进度
+    if (isUpdating.value || updateDownloaded.value) {
+      visible.value = true
+      return
+    }
     if (latestVersion.value && latestVersion.value !== currentVersion.value) {
       resetDownloadState()
       visible.value = true
@@ -635,6 +685,20 @@ onMounted(() => {
     visible.value = true
   }
 
+  /**
+   * 窗口重新聚焦/恢复可见时：
+   * 若更新已在后台下载完成且弹窗处于收起状态，自动弹出"下载完成"视图引导安装
+   * （覆盖两种场景：窗口聚焦 focus / 托盘恢复显示 visibilitychange）
+   */
+  onWindowFocus = () => {
+    if (updateDownloaded.value && !visible.value) {
+      visible.value = true
+    }
+  }
+  onVisibilityChange = () => {
+    if (!document.hidden) onWindowFocus()
+  }
+
   // 注册 IPC 事件监听（直接来自主进程）
   ipcRenderer.on('download-progress', onProgress)
   ipcRenderer.on('update-downloaded', onDownloaded)
@@ -645,6 +709,9 @@ onMounted(() => {
   window.addEventListener('update:open-dialog', onOpenDialog)
   window.addEventListener('update:config', onConfig)
   window.addEventListener('update:force', onForce)
+  // 注册窗口焦点/可见性监听（后台下载完成后自动弹出安装视图）
+  window.addEventListener('focus', onWindowFocus)
+  document.addEventListener('visibilitychange', onVisibilityChange)
 })
 
 // ─── 组件卸载：清理所有监听和定时器 ───────────────────────────────────
@@ -662,6 +729,9 @@ onUnmounted(() => {
   window.removeEventListener('update:open-dialog', onOpenDialog)
   window.removeEventListener('update:config', onConfig)
   window.removeEventListener('update:force', onForce)
+  // 移除窗口焦点/可见性监听
+  window.removeEventListener('focus', onWindowFocus)
+  document.removeEventListener('visibilitychange', onVisibilityChange)
   // 移除 loading 消息监听
   window.removeEventListener('message', onRemoveLoading)
 })

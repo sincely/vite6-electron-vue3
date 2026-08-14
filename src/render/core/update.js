@@ -31,9 +31,14 @@ export function useUpdater() {
   /**
    * 发现新版本
    * 将版本号存入 Pinia Store，并派发自定义事件通知 UI 层
+   * 自动下载模式下主进程会立即开始下载，提前置为下载中状态
    */
   const onUpdateAvailable = (_event, info) => {
     updateStore.setLatestVersion(info.version)
+    updateStore.resetDownloadState()
+    if (updateStore.autoDownload) {
+      updateStore.setUpdating(true)
+    }
     window.dispatchEvent(new CustomEvent('update:available', { detail: info }))
   }
 
@@ -43,13 +48,16 @@ export function useUpdater() {
    */
   const onUpdateNotAvailable = () => {
     updateStore.setLatestVersion('')
+    updateStore.resetDownloadState()
   }
 
   /**
    * 下载进度更新
-   * 将进度数据（bytesPerSecond, transferred, total, percent）转发给 UI
+   * 进度写入 Store（标题栏实时展示），并转发给 UI（弹窗进度条）
    */
   const onDownloadProgress = (_event, progress) => {
+    updateStore.setUpdating(true)
+    updateStore.setDownloadProgress(progress?.percent ?? 0)
     window.dispatchEvent(
       new CustomEvent('update:download-progress', { detail: progress })
     )
@@ -57,18 +65,23 @@ export function useUpdater() {
 
   /**
    * 更新包下载完成
-   * 更新 Store 版本号，通知 UI 显示"安装"按钮
+   * 更新 Store 版本号与下载状态，通知 UI 显示"安装"按钮
    */
   const onUpdateDownloaded = (_event, info) => {
     if (info?.version) updateStore.setLatestVersion(info.version)
+    updateStore.setUpdating(false)
+    updateStore.setDownloadProgress(100)
+    updateStore.setUpdateDownloaded(true)
     window.dispatchEvent(new CustomEvent('update:downloaded', { detail: info }))
   }
 
   /**
    * 更新过程出错
-   * 通知 UI 层显示错误状态
+   * 重置下载中状态，通知 UI 层显示错误状态
    */
   const onUpdateError = (_event, message) => {
+    updateStore.setUpdating(false)
+    updateStore.setDownloadProgress(0)
     window.dispatchEvent(new CustomEvent('update:error', { detail: message }))
   }
 

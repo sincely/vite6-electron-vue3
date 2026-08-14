@@ -1,6 +1,8 @@
 import { app } from 'electron'
 import pkg from 'electron-updater'
 import logger from './log'
+import createNotification from './notification'
+import { setTrayToolTip, setUpdatePendingInstall } from './tray'
 import {
   getUpdateConfig,
   refreshUpdateConfig,
@@ -39,6 +41,46 @@ function sendToRenderer(channel, payload) {
   ) {
     mainWindow.webContents.send(channel, payload)
   }
+}
+
+// ─── 后台下载辅助（窗口最小化/隐藏时的进度反馈）─────────────────────
+
+// 清除后台下载的任务栏进度条与托盘进度提示
+function clearBackgroundProgress() {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.setProgressBar(-1)
+  }
+  setTrayToolTip(app.getName())
+}
+
+/**
+ * 下载完成时的后台提醒
+ * 窗口不可见/最小化/未聚焦时：macOS Dock 弹跳 + 系统原生通知（点击恢复窗口）
+ * 窗口正在前台时由应用内弹窗接管，不重复打扰
+ */
+function notifyUpdateReady(payload) {
+  const winInView =
+    mainWindow &&
+    !mainWindow.isDestroyed() &&
+    mainWindow.isVisible() &&
+    !mainWindow.isMinimized() &&
+    mainWindow.isFocused()
+  if (winInView) return
+
+  if (process.platform === 'darwin') app.dock?.bounce('informational')
+  createNotification({
+    title: '更新下载完成',
+    body: `新版本 v${payload.version} 已就绪，点击恢复窗口进行安装`,
+    type: 'success',
+    noToast: true, // 窗口隐藏时应用内 toast 不可见，仅发系统通知
+    onClick: () => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.show()
+        mainWindow.focus()
+      }
+    }
+  })
 }
 
 // ─── 检查更新（带门控与节流）─────────────────────────────────────
@@ -147,12 +189,22 @@ export const initUpdater = async (win) => {
   autoUpdater.on('download-progress', (progress) => {
     logger.info(`下载进度: ${progress.percent.toFixed(2)}%`)
     sendToRenderer('download-progress', progress)
+    // 后台下载反馈：任务栏/Dock 进度条 + 托盘 tooltip，窗口最小化时仍可见进度
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setProgressBar(progress.percent / 100)
+    }
+    setTrayToolTip(
+      `${app.getName()} - 正在下载更新 ${Math.floor(progress.percent)}%`
+    )
   })
 
   autoUpdater.on('update-downloaded', (info) => {
     const payload = buildUpdatePayload(info)
     logger.info(`下载完成，准备安装 ${payload.version}`)
     sendToRenderer('update-downloaded', payload)
+    clearBackgroundProgress()
+    setUpdatePendingInstall(payload.version) // 托盘菜单展示"重启安装更新"入口
+    notifyUpdateReady(payload) // 窗口在后台时系统通知提醒
   })
 
   autoUpdater.on('quit-and-install', () => {
@@ -163,6 +215,7 @@ export const initUpdater = async (win) => {
   autoUpdater.on('error', (error) => {
     logger.error('更新出错：', error.message)
     sendToRenderer('update-error', error.message)
+    clearBackgroundProgress() // 出错时清理任务栏进度与托盘提示
   })
 
   // 启动时拉取远端配置（eligible/禁用版本/autoDownload），并启动轮询

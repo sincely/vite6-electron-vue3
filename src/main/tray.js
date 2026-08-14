@@ -1,6 +1,7 @@
 import { app, Menu, Tray, nativeImage } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
+import pkg from 'electron-updater'
 import {
   getMainWindow,
   getLoginWindow,
@@ -8,7 +9,27 @@ import {
 } from './windowManager'
 import logger from './log'
 
+const { autoUpdater } = pkg
+
 let tray = null
+let pendingInstallVersion = '' // 已下载待安装的版本号（托盘菜单显示"重启安装更新"）
+
+/**
+ * 更新托盘 tooltip 文本
+ * 后台下载更新时用于展示下载进度，默认显示应用名
+ */
+export function setTrayToolTip(text) {
+  if (tray) tray.setToolTip(text || app.getName())
+}
+
+/**
+ * 标记更新已下载待安装，托盘菜单动态展示"重启安装更新"入口
+ * 供后台下载完成后调用（main/update.js），重启应用后自动重置
+ */
+export function setUpdatePendingInstall(version) {
+  pendingInstallVersion = version || ''
+  rebuildTrayMenu()
+}
 
 /**
  * 获取图标根路径（兼容开发环境与打包后环境）
@@ -147,6 +168,19 @@ const rebuildTrayMenu = () => {
   const isVisible = !!win?.isVisible()
 
   const contextMenu = Menu.buildFromTemplate([
+    // 更新已下载待安装时置顶显示安装入口（后台更新场景）
+    ...(pendingInstallVersion
+      ? [
+          {
+            label: `重启安装更新 v${pendingInstallVersion}`,
+            click: () => {
+              // isSilent=false 显示安装进度，isForceRunAfter=true 安装后自动启动
+              autoUpdater.quitAndInstall(false, true)
+            }
+          },
+          { type: 'separator' }
+        ]
+      : []),
     {
       label: isVisible ? '隐藏窗口' : '显示窗口',
       click: () => toggleWindow()

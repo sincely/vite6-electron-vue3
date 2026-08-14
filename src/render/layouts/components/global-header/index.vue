@@ -30,19 +30,52 @@
         <!-- 右侧插槽（搜索等） -->
         <slot name="right" />
 
-        <!-- 更新提示 -->
+        <!-- 更新提示：下载中实时显示环形进度，下载完成提示安装，点击重新打开更新弹窗 -->
         <button
           v-if="updateAvailable"
           class="icon-btn update-btn"
+          :class="{
+            'is-downloading': isUpdating,
+            'is-downloaded': updateDownloaded
+          }"
+          :title="updateButtonTitle"
           @click="showUpdateDialog"
         >
+          <!-- 下载中：环形进度条 + 下载图标（pathLength 归一化保证进度精确） -->
+          <span v-if="isUpdating" class="update-ring-wrap">
+            <svg class="update-ring" viewBox="0 0 32 32">
+              <circle
+                class="update-ring__track"
+                cx="16"
+                cy="16"
+                r="13"
+                pathLength="100"
+              />
+              <circle
+                class="update-ring__fill"
+                cx="16"
+                cy="16"
+                r="13"
+                pathLength="100"
+                transform="rotate(-90 16 16)"
+                :style="{ strokeDashoffset: ringDashOffset }"
+              />
+            </svg>
+            <SvgIcon
+              icon-class="download"
+              class="update-ring-icon"
+              width="10px"
+              height="10px"
+            />
+          </span>
           <SvgIcon
-            icon-class="update"
+            v-else
+            :icon-class="updateDownloaded ? 'success' : 'update'"
             class="update-icon"
             width="16px"
             height="16px"
           />
-          <span>更新</span>
+          <span class="update-btn-text">{{ updateButtonText }}</span>
         </button>
 
         <!-- 聊天窗口入口 -->
@@ -145,6 +178,29 @@ const updateAvailable = computed(
   () =>
     !!latestVersion.value && latestVersion.value !== updateStore.currentVersion
 )
+
+// ─── 更新下载进度（标题栏实时展示）───────────────────────────────────
+const isUpdating = computed(() => updateStore.isUpdating) // 是否下载中
+const downloadProgress = computed(() => updateStore.downloadProgress) // 下载进度（0-100）
+const updateDownloaded = computed(() => updateStore.updateDownloaded) // 是否已下载完成
+
+// 环形进度：circle 用 pathLength="100" 归一化，dashoffset = 100 - 进度，
+// 与几何周长解耦，任何半径/缩放下进度都与百分比文本严格一致
+const ringDashOffset = computed(() => 100 - downloadProgress.value)
+
+// 按钮文案：下载中显示百分比，下载完成显示"安装"，否则显示"更新"
+const updateButtonText = computed(() => {
+  if (isUpdating.value) return `${Math.floor(downloadProgress.value)}%`
+  if (updateDownloaded.value) return '安装'
+  return '更新'
+})
+
+const updateButtonTitle = computed(() => {
+  if (isUpdating.value) return '正在后台下载更新，点击查看详情'
+  if (updateDownloaded.value) return '更新已就绪，点击重启安装'
+  return '发现新版本，点击查看'
+})
+
 const bellBtnRef = ref(null)
 
 const showUpdateDialog = () => {
@@ -323,6 +379,25 @@ onBeforeUnmount(() => {
     .update-icon {
       color: var(--color-primary);
     }
+
+    // 下载中：百分比文本保持等宽，避免数字跳动
+    &.is-downloading .update-btn-text {
+      min-width: 34px;
+      font-variant-numeric: tabular-nums;
+      text-align: left;
+    }
+
+    // 下载完成：切换为成功色并呼吸提示，引导用户点击安装
+    &.is-downloaded {
+      color: var(--color-success);
+      background: color-mix(in srgb, var(--color-success), transparent 90%);
+      border-color: color-mix(in srgb, var(--color-success), transparent 40%);
+      animation: downloaded-pulse 2s ease-in-out infinite;
+
+      .update-icon {
+        color: var(--color-success);
+      }
+    }
   }
 }
 
@@ -330,6 +405,60 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 34px;
   margin-right: 8px;
+}
+
+// 更新按钮：环形实时进度
+.update-ring-wrap {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+
+.update-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  // 进度起点通过 fill 圆上的 SVG 属性 transform="rotate(-90 16 16)" 转到正上方，
+  // 不依赖 CSS transform，避免浏览器对 SVG 元素 transform-origin 推断差异
+
+  circle {
+    fill: none;
+    stroke-width: 3;
+  }
+
+  &__track {
+    stroke: color-mix(in srgb, var(--color-primary), transparent 78%);
+  }
+
+  &__fill {
+    stroke: var(--color-primary);
+    stroke-dasharray: 100; // 与 pathLength="100" 对应，满环即 100
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.2s linear;
+  }
+}
+
+.update-ring-icon {
+  color: var(--color-primary);
+}
+
+@keyframes downloaded-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0
+      color-mix(in srgb, var(--color-success), transparent 70%);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px
+      color-mix(in srgb, var(--color-success), transparent 90%);
+  }
 }
 
 // 聊天入口包装
