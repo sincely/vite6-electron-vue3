@@ -20,6 +20,10 @@ importers:
       electron-updater:
         specifier: 6.6.2
         version: 6.6.2
+    optionalDependencies:
+      dmg-license:
+        specifier: 1.0.11
+        version: 1.0.11
     devDependencies:
       '@commitlint/cli':
         specifier: 18.6.1
@@ -96,9 +100,6 @@ importers:
       fs-extra:
         specifier: 11.3.3
         version: 11.3.3
-      gsap:
-        specifier: 3.14.2
-        version: 3.14.2
       husky:
         specifier: 8.0.3
         version: 8.0.3
@@ -216,10 +217,6 @@ importers:
       vue-router:
         specifier: 4.5.1
         version: 4.5.1(vue@3.5.30(typescript@5.9.3))
-    optionalDependencies:
-      dmg-license:
-        specifier: 1.0.11
-        version: 1.0.11
 
 packages:
 
@@ -3190,9 +3187,6 @@ packages:
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
-
-  gsap@3.14.2:
-    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
 
   handlebars@4.7.9:
     resolution: {integrity: sha512-4E71E0rpOaQuJR2A3xDZ+GM1HyWYv1clR58tC8emQNeQe3RH7MAzSbat+V0wG78LQBo6m6bzSG/L4pBuCsgnUQ==}
@@ -8950,8 +8944,6 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
-
-  gsap@3.14.2: {}
 
   handlebars@4.7.9:
     dependencies:

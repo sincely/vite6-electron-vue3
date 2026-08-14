@@ -8,7 +8,7 @@ export const MOCK_USERS = [
     roles: ['user'],
     username: 'user',
     phone: '13900139000',
-    permissions: ['system:user:view', 'system:role:view', 'system:menu:view'],
+    permissions: ['system:user:view', 'system:role:view', 'system:menu:view']
   },
   {
     id: 1,
@@ -19,9 +19,20 @@ export const MOCK_USERS = [
     roles: ['admin'],
     username: 'admin',
     phone: '13800138000',
-    permissions: ['*:*:*'],
+    permissions: ['*:*:*']
   },
-];
+  {
+    id: 1,
+    password: '123456',
+    realName: '管理员',
+    avatar:
+      'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png',
+    roles: ['admin'],
+    username: 'admin',
+    phone: '15651376325',
+    permissions: ['*:*:*']
+  }
+]
 
 export const MOCK_PRODUCTS = [
   {
@@ -35,7 +46,8 @@ export const MOCK_PRODUCTS = [
     shopDesc: '自营',
     delivery: '厂商配送',
     shopName: '阳澄湖大闸蟹自营店',
-    description: '新鲜捕捞，顺丰冷链配送，保证鲜活到家。公蟹膏满黄肥，母蟹籽多肉嫩。',
+    description:
+      '新鲜捕捞，顺丰冷链配送，保证鲜活到家。公蟹膏满黄肥，母蟹籽多肉嫩。'
   },
   {
     id: 2,
@@ -48,7 +60,7 @@ export const MOCK_PRODUCTS = [
     shopDesc: '自营',
     delivery: '厂商配送',
     shopName: '阳澄湖大闸蟹自营店',
-    description: '精选海鲜礼盒，包含多种海产品，送礼体面大方。',
+    description: '精选海鲜礼盒，包含多种海产品，送礼体面大方。'
   },
   {
     id: 3,
@@ -61,7 +73,7 @@ export const MOCK_PRODUCTS = [
     shopDesc: '自营',
     delivery: '厂商配送',
     shopName: '苏泊尔官方自营店',
-    description: '远红外加热，IH本釜内胆，4L大容量，一键柴火饭，智能预约。',
+    description: '远红外加热，IH本釜内胆，4L大容量，一键柴火饭，智能预约。'
   },
   {
     id: 4,
@@ -74,7 +86,7 @@ export const MOCK_PRODUCTS = [
     delivery: '京东物流',
     shopName: '华为官方自营店',
     description:
-      '搭载A19芯片，6.1英寸超视网膜XDR显示屏，支持5G网络，双卡双待设计，提供卓越性能和流畅体验。',
+      '搭载A19芯片，6.1英寸超视网膜XDR显示屏，支持5G网络，双卡双待设计，提供卓越性能和流畅体验。'
   },
   {
     id: 5,
@@ -86,6 +98,6 @@ export const MOCK_PRODUCTS = [
     shopDesc: '自营',
     delivery: '京东物流',
     shopName: '戴森官方旗舰店',
-    description: '激光探测微尘，智能调节吸力，轻巧机身仅1.5kg。',
-  },
-];
+    description: '激光探测微尘，智能调节吸力，轻巧机身仅1.5kg。'
+  }
+]

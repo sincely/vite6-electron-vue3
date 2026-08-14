@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "concurrently -k \"npm run backend:dev\" \"npm run dev:win\"",
     "dev:win": "node scripts/pre-dev.js && vite --mode development",
-    "dev:mac": "concurrently -k \"npm run backend:dev\" \"vite --mode development\"",
+    "dev:mac": "vite --mode development",
     "build:dev": "vite build --mode development",
     "build:test": "vite build --mode test",
     "build:prod": "vite build --mode production",
@@ -84,7 +84,6 @@
     "eslint-plugin-vue": "9.18.1",
     "esno": "4.7.0",
     "fs-extra": "11.3.3",
-    "gsap": "3.14.2",
     "husky": "8.0.3",
     "inquirer": "13.2.2",
     "lint-staged": "13.3.0",

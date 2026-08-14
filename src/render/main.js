@@ -43,7 +43,8 @@ async function setupApp() {
   const appStore = useAppStore()
   const notifStore = useNotificationStore()
   appStore.initTheme()
-  await appStore.initDesktopSettings()
+  // 桌面设置（关闭行为/开机自启）不阻塞首屏挂载，后台异步加载
+  appStore.initDesktopSettings()
 
   app.mount('#app').$nextTick(() => {
     const updateStore = useUpdateStore()

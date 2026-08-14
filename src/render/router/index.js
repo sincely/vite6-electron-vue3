@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from '@/config/nprogress'
 import { useUserStore } from '@/store/modules/user'
+// 登录页为应用首屏，静态导入随入口 chunk 一并加载，
+// 避免 mount 后再等懒加载 chunk 造成的短暂空白
+import Login from '@/views/login/index.vue'
 
 /**
  * 固定路由 - 无需权限，始终加载
@@ -10,7 +13,7 @@ export const constantRoutes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/login/index.vue'),
+    component: Login,
     meta: { title: '登录', noLayout: true }
   },
   {

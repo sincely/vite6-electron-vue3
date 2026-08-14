@@ -123,10 +123,6 @@ export default defineConfig(({ mode, command }) => {
             ) {
               return 'utils-vendor'
             }
-            // gsap 动画单独分包
-            if (id.includes('node_modules/gsap/')) {
-              return 'gsap'
-            }
             // nprogress
             if (id.includes('node_modules/nprogress/')) {
               return 'nprogress'
@@ -285,7 +281,18 @@ export default defineConfig(({ mode, command }) => {
       ...createVitePlugins()
     ],
     optimizeDeps: {
-      include: optimizeDepsElementPlusIncludes
+      include: [
+        ...optimizeDepsElementPlusIncludes,
+        // 懒加载路由/组件才会用到的大依赖，提前预构建，
+        // 避免首次访问时触发二次依赖优化导致页面 reload
+        'echarts/core',
+        'echarts/charts',
+        'echarts/components',
+        'echarts/features',
+        'echarts/renderers',
+        'qrcode',
+        '@vueuse/core'
+      ]
     }
   })
 })
