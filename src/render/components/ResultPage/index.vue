@@ -40,6 +40,7 @@ defineProps({
   flex: 1;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 240px;
   padding: 56px 32px 48px;
