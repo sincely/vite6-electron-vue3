@@ -29,6 +29,7 @@
     "dist-electron/**/*",
     "!dist/**/*.map",
     "package.json",
+    "src/backend/**/*",
     "node_modules/**/*",
     "!**/node_modules/*/{CHANGELOG.md,CHANGELOG,changelog.md,CHANGELOG.txt}",
     "!**/node_modules/*/{README.md,README,readme.md,readme,Readme.md}",
