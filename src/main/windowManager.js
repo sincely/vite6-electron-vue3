@@ -38,6 +38,13 @@ const getWindowIcon = () => {
   return path.join(iconsRoot, 'win', 'app.ico')
 }
 
+/**
+ * 窗口初始背景色，与 index.html 启动画面及主题变量保持一致，
+ * 避免 ready-to-show 前系统默认白色画布造成的白屏闪烁
+ */
+const getWindowBackgroundColor = () =>
+  nativeTheme.shouldUseDarkColors ? '#0b0c0f' : '#ffffff'
+
 const windows = new Map() // 窗口映射表
 let mainWindowId = null // 主窗口 ID
 let loginWindowId = null // 登录窗口 ID
@@ -173,6 +180,7 @@ export function createLoginWindow() {
     height: 640,
     icon: getWindowIcon(),
     show: false,
+    backgroundColor: getWindowBackgroundColor(),
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     frame: false,
@@ -229,6 +237,7 @@ export function createMainWindow() {
     minHeight: 600,
     icon: getWindowIcon(),
     show: false,
+    backgroundColor: getWindowBackgroundColor(),
     autoHideMenuBar: true,
     titleBarStyle: isMacOS ? 'hiddenInset' : 'hidden',
     // macOS: 精确控制红绿灯位置，避免与 UI 内容重叠
@@ -239,7 +248,10 @@ export function createMainWindow() {
       sandbox: false, // 关闭沙箱，提升启动速度
       preload, // 预加载脚本,桥接主进程和渲染进程
       nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
-      contextIsolation: true // 启用上下文隔离
+      contextIsolation: true, // 启用上下文隔离
+      // 关闭后台节流：窗口最小化/隐藏后渲染进程的定时器与 IPC 不被降频，
+      // 保证更新包在后台下载时进度状态实时刷新（DEV 模拟下载也能正常跑完）
+      backgroundThrottling: false
     }
   })
 

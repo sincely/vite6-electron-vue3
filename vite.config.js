@@ -31,18 +31,21 @@ export default defineConfig(({ mode, command }) => {
   const sourcemap = isServe
   // 解决终端optimized dependencies changed时，reload问题
   const optimizeDepsElementPlusIncludes = ['element-plus/es']
-  fs.readdirSync('node_modules/element-plus/es/components').map((dirname) => {
-    fs.access(
-      `node_modules/element-plus/es/components/${dirname}/style/css.mjs`,
-      (err) => {
-        if (!err) {
-          optimizeDepsElementPlusIncludes.push(
-            `element-plus/es/components/${dirname}/style/css`
-          )
-        }
+  // ⚠️ 必须同步收集：异步 fs.access 回调在配置返回后才执行，
+  // 会导致 include 列表不完整，首次启动触发二次优化和整页 reload（白屏）
+  fs.readdirSync('node_modules/element-plus/es/components').forEach(
+    (dirname) => {
+      if (
+        fs.existsSync(
+          `node_modules/element-plus/es/components/${dirname}/style/css.mjs`
+        )
+      ) {
+        optimizeDepsElementPlusIncludes.push(
+          `element-plus/es/components/${dirname}/style/css`
+        )
       }
-    )
-  })
+    }
+  )
   return defineConfig({
     base: viteEnv.VITE_BASE_URL,
     server: {

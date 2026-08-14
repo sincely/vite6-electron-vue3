@@ -26,16 +26,35 @@ export default [
     channel: 'toMain',
     type: 'on',
     handler: (event, data) => {
-      closeLoginWindow()
-      createMainWindow()
+      const mainWin = createMainWindow()
+      // 等主窗口 ready-to-show 后再关闭登录窗口，避免先关旧窗口、
+      // 新窗口尚在加载的空窗期露出桌面造成闪屏
+      if (mainWin.isVisible()) {
+        closeLoginWindow()
+        return
+      }
+      const timer = setTimeout(() => closeLoginWindow(), 5000)
+      mainWin.once('ready-to-show', () => {
+        clearTimeout(timer)
+        closeLoginWindow()
+      })
     }
   },
   {
     channel: 'logout',
     type: 'on',
     handler: () => {
-      closeMainWindow()
-      createLoginWindow()
+      const loginWin = createLoginWindow()
+      // 等登录窗口 ready-to-show 后再关闭主窗口，原因同上
+      if (loginWin.isVisible()) {
+        closeMainWindow()
+        return
+      }
+      const timer = setTimeout(() => closeMainWindow(), 5000)
+      loginWin.once('ready-to-show', () => {
+        clearTimeout(timer)
+        closeMainWindow()
+      })
     }
   },
   {
