@@ -8,14 +8,26 @@
         @click="handleNav(item)"
       >
         <div class="sidebar-icon-wrap">
-          <SvgIcon
-            :icon-class="item.icon"
+          <Icon
+            v-if="item.icon"
+            :icon="`lucide:${item.icon}`"
             class="sidebar-icon"
             width="18px"
             height="18px"
           />
+          <span
+            v-if="isCollapsed && item.showBadge"
+            class="menu-badge menu-badge-icon"
+          ></span>
         </div>
         <span v-if="!isCollapsed" class="sidebar-label">{{ item.label }}</span>
+        <span v-if="!isCollapsed && item.showBadge" class="menu-badge"></span>
+        <span
+          v-else-if="!isCollapsed && item.showTextBadge"
+          class="menu-text-badge"
+        >
+          {{ item.showTextBadge }}
+        </span>
         <SvgIcon
           v-if="item.children?.length && !isCollapsed"
           icon-class="chevron-right"
@@ -34,23 +46,12 @@
         }"
       >
         <div class="sidebar-submenu-inner">
-          <a
+          <SubMenuNode
             v-for="child in item.children"
             :key="child.id"
-            class="sidebar-item sidebar-item-child"
-            :class="{ 'sidebar-item-active': isChildActive(child) }"
-            @click="handleClick(child)"
-          >
-            <Icon
-              v-if="child.icon"
-              :icon="`lucide:${child.icon}`"
-              class="sidebar-child-icon"
-              width="14px"
-              height="14px"
-            />
-            <span v-else class="sidebar-child-dot"></span>
-            <span class="sidebar-label">{{ child.label }}</span>
-          </a>
+            :item="child"
+            :depth="2"
+          />
         </div>
       </div>
     </div>
@@ -58,11 +59,12 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, provide } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
-import { menuItems } from '@/config/menu'
+import { menuItems, findMenuPath, containsRoute } from '@/config/menu'
+import SubMenuNode from './SubMenuNode.vue'
 
 const appStore = useAppStore()
 const router = useRouter()
@@ -71,63 +73,47 @@ const route = useRoute()
 const mainItems = computed(() => menuItems.filter((item) => !item.footer))
 const expandedIds = ref([])
 
-const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
-const isCollapsed = computed(
-  () => appStore.sidebarCollapsed || isLeftMixed.value
-)
+const isCollapsed = computed(() => appStore.sidebarCollapsed)
 
 const isExpanded = (id) => expandedIds.value.includes(id)
 
-const toggleExpand = (id) => {
+// 一级菜单手风琴展开（同时只展开一个）；更深层级各自独立展开
+const toggleExpand = (id, level = 1) => {
   const idx = expandedIds.value.indexOf(id)
-  if (idx >= 0) {
-    expandedIds.value = []
+  if (level <= 1) {
+    expandedIds.value = idx >= 0 ? [] : [id]
+  } else if (idx >= 0) {
+    expandedIds.value.splice(idx, 1)
   } else {
-    expandedIds.value = [id]
+    expandedIds.value.push(id)
   }
 }
 
+// 递归子菜单节点（SubMenuNode）通过 inject 共享展开状态
+provide('menu-expanded-ids', expandedIds)
+provide('menu-toggle-expand', toggleExpand)
+provide('menu-collapsed', isCollapsed)
+
+// 展开态仅自身路由命中时高亮；折叠态（纯图标模式）任一后代激活即高亮
 const isParentActive = (item) => {
-  const selfMatch = item.route === route.path
-  const childMatch = item.children?.some((c) => c.route === route.path) ?? false
-  return isCollapsed.value ? selfMatch || childMatch : selfMatch
-}
-
-const isChildActive = (child) => child.route === route.path
-
-const handleClick = (child) => {
-  if (child.children?.length && !isCollapsed.value) {
-    toggleExpand(child.id)
-  } else {
-    router.push(child.route).catch(() => {})
-  }
+  if (isCollapsed.value) return containsRoute(item, route.path)
+  return item.route === route.path
 }
 
 watch(
   () => route.path,
   (path) => {
-    for (const item of mainItems.value) {
-      if (item.children?.some((c) => c.route === path)) {
-        expandedIds.value = [item.id]
-        return
-      }
-    }
-
-    expandedIds.value = []
+    // 自动展开当前页面的所有祖先菜单（不含页面自身）
+    expandedIds.value = findMenuPath(path)
+      .slice(0, -1)
+      .map((item) => item.id)
   },
   { immediate: true }
 )
 
 const handleNav = (item) => {
-  if (isLeftMixed.value) {
-    // left-mixed 模式：点击一级菜单导航到其路由（或第一个子项）
-    if (item.children?.length) {
-      router.push(item.children[0].route).catch(() => {})
-    } else {
-      router.push(item.route).catch(() => {})
-    }
-  } else if (item.children?.length && !isCollapsed.value) {
-    toggleExpand(item.id)
+  if (item.children?.length && !isCollapsed.value) {
+    toggleExpand(item.id, 1)
   } else {
     router.push(item.route).catch(() => {})
   }
@@ -214,42 +200,64 @@ const handleNav = (item) => {
       border-radius: 4px;
     }
   }
+}
 
-  &-child {
-    height: 36px;
-    padding-left: 42px;
-    margin-bottom: 2px;
-    font-size: 13px;
-    background: transparent;
-    border-color: transparent;
-    border-radius: var(--radius-sm);
-    box-shadow: none;
+// 子级菜单项（含递归渲染的所有层级，使用 :deep 穿透组件边界；
+// :deep 选择器不支持 SCSS & 后缀写法，状态类均平铺书写）
+:deep(.sidebar-item-child) {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 36px;
+  padding-left: 42px;
+  margin-bottom: 2px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-    &:hover {
-      background: var(--color-bg-hover);
+:deep(.sidebar-item-child:hover) {
+  background: var(--color-bg-hover);
 
-      .sidebar-child-dot {
-        background: var(--color-primary);
-        transform: scale(1.4);
-      }
+  .sidebar-child-dot {
+    background: var(--color-primary);
+    transform: scale(1.4);
+  }
 
-      .sidebar-child-icon {
-        color: var(--color-primary);
-      }
-    }
-
-    &::before {
-      display: none;
-    }
+  .sidebar-child-icon {
+    color: var(--color-primary);
   }
 }
 
+:deep(.sidebar-item-child.sidebar-item-active) {
+  .sidebar-child-dot {
+    background: var(--color-primary);
+  }
+
+  .sidebar-child-icon {
+    color: var(--color-primary);
+  }
+}
+
+:deep(.sidebar-item-child::before) {
+  display: none;
+}
+
 .sidebar-icon {
-  color: var(--color-text-secondary);
+  color: var(--color-menu-icon);
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .sidebar-icon-wrap {
+  position: relative; // 折叠态红点（.menu-badge-icon）的定位基准
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -258,7 +266,8 @@ const handleNav = (item) => {
   height: 30px;
 }
 
-.sidebar-label {
+// 菜单文字标签（含递归子级内部元素，使用 :deep 穿透）
+:deep(.sidebar-label) {
   flex: 1;
   overflow: hidden;
   font-size: 13px;
@@ -269,7 +278,7 @@ const handleNav = (item) => {
   transition: opacity 0.2s;
 }
 
-.sidebar-child-dot {
+:deep(.sidebar-child-dot) {
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -279,24 +288,24 @@ const handleNav = (item) => {
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.sidebar-child-icon {
+:deep(.sidebar-child-icon) {
   flex-shrink: 0;
-  color: var(--color-text-muted);
+  color: var(--color-menu-icon);
   transition: color 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.sidebar-chevron {
+:deep(.sidebar-chevron) {
   flex-shrink: 0;
   margin-left: auto;
   color: var(--color-text-secondary);
   transition: transform 0.2s;
-
-  &-open {
-    transform: rotate(90deg);
-  }
 }
 
-.sidebar-submenu {
+:deep(.sidebar-chevron-open) {
+  transform: rotate(90deg);
+}
+
+:deep(.sidebar-submenu) {
   display: grid;
   grid-template-rows: 0fr;
   margin: 0 4px;
@@ -312,14 +321,14 @@ const handleNav = (item) => {
     border-color 0.3s ease;
 }
 
-.sidebar-submenu-inner {
+:deep(.sidebar-submenu-inner) {
   min-height: 0;
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
-.sidebar-submenu-open {
+:deep(.sidebar-submenu-open) {
   position: relative;
   grid-template-rows: 1fr;
   padding: 4px;

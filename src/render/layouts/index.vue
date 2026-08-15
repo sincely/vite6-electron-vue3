@@ -6,23 +6,22 @@
       { 'is-fullscreen': isFullscreen }
     ]"
   >
-    <!-- 侧边栏 (left / left-mixed) -->
-    <div v-show="!isTopMenu && !isFullscreen" class="layout-sidebar">
+    <!-- 侧边栏 (left) -->
+    <div v-show="!isTopMenu && !isDual && !isFullscreen" class="layout-sidebar">
       <GlobalSiderMenu />
     </div>
 
-    <!-- 子菜单栏 (left-mixed 模式，位于侧边栏右侧) -->
-    <div
-      v-if="isLeftMixed && appStore.mixedSubmenuVisible && !isFullscreen"
-      class="layout-submenu"
-    >
-      <MixedSubmenu :parent-item="activeParentItem" />
-    </div>
+    <!-- 双列菜单 (dual 模式：一级菜单窄栏 + 子菜单列) -->
+    <DualMenu v-if="isDual && !isFullscreen" />
 
     <!-- 右侧主区域 -->
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
       <GlobalHeader v-show="!isFullscreen">
+        <!-- 面包屑（参照 art-design-pro）：仅侧边/双列菜单布局显示，顶部菜单模式不显示 -->
+        <template v-if="!isTopMenu && appStore.breadCrumb" #center>
+          <GlobalBreadcrumb />
+        </template>
         <template #right>
           <GlobalSearch />
         </template>
@@ -30,11 +29,8 @@
 
       <!-- 内容主体区域（可能包含子菜单栏） -->
       <div class="layout-body">
-        <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧) -->
-        <div
-          v-if="isTopMixed && appStore.mixedSubmenuVisible && !isFullscreen"
-          class="layout-submenu"
-        >
+        <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧，固定显示) -->
+        <div v-if="isTopMixed && !isFullscreen" class="layout-submenu">
           <MixedSubmenu :parent-item="activeParentItem" />
         </div>
 
@@ -44,7 +40,7 @@
           <GlobalTagsView v-if="appStore.tagsView" />
 
           <!-- 页面内容（路由视图 + 过渡 + 加载） -->
-          <GlobalContent v-if="isRouterAlive" />
+          <GlobalContent />
 
           <!-- 底部状态栏 -->
           <GlobalFooter v-if="appStore.footerVisible" />
@@ -56,6 +52,8 @@
   <UpdateDialog />
   <!-- 聊天窗口（Lightning Bot） -->
   <ChatBot />
+  <!-- 全局水印 -->
+  <Watermark />
 </template>
 
 <script setup>
@@ -65,10 +63,12 @@ import GlobalSearch from './components/global-search/index.vue'
 import GlobalContent from './components/global-content/index.vue'
 import GlobalFooter from './components/global-footer/index.vue'
 import GlobalTagsView from './components/global-tagsView/index.vue'
+import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import MixedSubmenu from './components/global-siderMenu/modules/MixedSubmenu.vue'
+import DualMenu from './components/global-dualMenu/index.vue'
 import { useAppStore } from '@/store/modules/app'
 import { findTopLevelParent } from '@/config/menu'
-import { computed, ref, nextTick, provide, onMounted, onUnmounted } from 'vue'
+import { computed, ref, provide, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const appStore = useAppStore()
@@ -77,8 +77,8 @@ const route = useRoute()
 const isTopMenu = computed(
   () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
 )
-const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
 const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
+const isDual = computed(() => appStore.layoutMode === 'dual')
 
 // 根据当前路由计算激活的一级菜单项
 const activeParentItem = computed(() => findTopLevelParent(route.path))
@@ -99,17 +99,7 @@ onUnmounted(() => {
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
 })
 
-// 页面刷新逻辑：通过 v-if 销毁并重建组件
-const isRouterAlive = ref(true)
-const reload = () => {
-  isRouterAlive.value = false
-  nextTick(() => {
-    isRouterAlive.value = true
-  })
-}
-
-// 向后代组件暴露刷新方法和全屏切换
-provide('reload', reload)
+// 向后代组件暴露全屏切换（页面刷新已改为 store 驱动，见 app store 的 reloadPage）
 provide('toggleFullscreen', handleFullscreenChange)
 provide('isFullscreen', isFullscreen)
 </script>

@@ -2,12 +2,14 @@
   <div
     class="logo-block"
     :class="{ 'is-mac': isMac, 'is-top-mode': isTopMenu }"
+    title="回到首页"
+    @click="goHome"
   >
     <img src="@/assets/bar/app.png" class="logo-block__img" alt="logo" />
     <span
       class="logo-block__name"
       :class="{
-        'is-hidden': (appStore.sidebarCollapsed || isLeftMixed) && !isTopMenu
+        'is-hidden': (appStore.sidebarCollapsed || isDual) && !isTopMenu
       }"
     >
       Lightning
@@ -19,12 +21,19 @@
 import { useAppStore } from '@/store/modules/app'
 import { isMac } from '@/utils/platform'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
+const router = useRouter()
 const isTopMenu = computed(
   () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
 )
-const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
+const isDual = computed(() => appStore.layoutMode === 'dual')
+
+// 点击 app 区域回到首页（工作台）
+const goHome = () => {
+  router.push('/desktop').catch(() => {})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -37,8 +46,12 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   align-items: center;
   height: 74px;
   padding: 20px 16px 0;
-  cursor: default;
+  cursor: pointer;
   transition: padding $transition;
+
+  &:hover .logo-block__img {
+    transform: scale(1.06);
+  }
 
   &.is-mac {
     height: 80px;
@@ -64,6 +77,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     flex-shrink: 0;
     width: 42px;
     height: 42px;
+    transition: transform 0.2s ease;
   }
 
   &__name {

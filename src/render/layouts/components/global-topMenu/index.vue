@@ -24,13 +24,18 @@
           :class="{ active: isParentActive(item) }"
           @click="handleNav(item)"
         >
-          <SvgIcon
-            :icon-class="item.icon"
+          <Icon
+            v-if="item.icon"
+            :icon="`lucide:${item.icon}`"
             class="menu-icon"
             width="16px"
             height="16px"
           />
           <span>{{ item.label }}</span>
+          <span v-if="item.showBadge" class="menu-badge"></span>
+          <span v-else-if="item.showTextBadge" class="menu-text-badge">
+            {{ item.showTextBadge }}
+          </span>
 
           <!-- 二级菜单 Dropdown (仅非混合模式显示) -->
           <div v-if="item.children?.length && !isTopMixed" class="top-submenu">
@@ -38,8 +43,11 @@
               v-for="child in item.children"
               :key="child.id"
               class="top-submenu-item"
-              :class="{ active: isChildActive(child) }"
-              @click.stop="router.push(child.route)"
+              :class="{
+                active: child.route === route.path,
+                'has-flyout': child.children?.length
+              }"
+              @click.stop="router.push(firstLeafRoute(child))"
             >
               <Icon
                 v-if="child.icon"
@@ -49,6 +57,41 @@
                 height="14px"
               />
               <span>{{ child.label }}</span>
+              <span v-if="child.showBadge" class="menu-badge"></span>
+              <span v-else-if="child.showTextBadge" class="menu-text-badge">
+                {{ child.showTextBadge }}
+              </span>
+
+              <!-- 三级菜单 Flyout（悬停展开） -->
+              <Icon
+                v-if="child.children?.length"
+                icon="lucide:chevron-right"
+                class="flyout-arrow"
+                width="12px"
+                height="12px"
+              />
+              <div v-if="child.children?.length" class="top-submenu-flyout">
+                <div
+                  v-for="leaf in child.children"
+                  :key="leaf.id"
+                  class="top-submenu-item"
+                  :class="{ active: leaf.route === route.path }"
+                  @click.stop="router.push(leaf.route)"
+                >
+                  <Icon
+                    v-if="leaf.icon"
+                    :icon="`lucide:${leaf.icon}`"
+                    class="top-submenu-icon"
+                    width="14px"
+                    height="14px"
+                  />
+                  <span>{{ leaf.label }}</span>
+                  <span v-if="leaf.showBadge" class="menu-badge"></span>
+                  <span v-else-if="leaf.showTextBadge" class="menu-text-badge">
+                    {{ leaf.showTextBadge }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +117,7 @@ import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
-import { menuItems } from '@/config/menu'
+import { menuItems, containsRoute, firstLeafRoute } from '@/config/menu'
 
 const route = useRoute()
 const router = useRouter()
@@ -83,25 +126,16 @@ const appStore = useAppStore()
 const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
 const mainItems = menuItems.filter((item) => !item.footer)
 
-const isParentActive = (item) => {
-  const selfMatch = item.route === route.path
-  const childMatch = item.children?.some((c) => c.route === route.path) ?? false
-  return selfMatch || childMatch
-}
-
-const isChildActive = (child) => child.route === route.path
+// 任一层级后代激活时，一级菜单保持高亮
+const isParentActive = (item) => containsRoute(item, route.path)
 
 const handleNav = (item) => {
   if (isTopMixed.value) {
-    // top-mixed 模式：点击一级菜单导航到其路由（或第一个子项），子菜单由 MixedSubmenu 组件显示
-    if (item.children?.length) {
-      router.push(item.children[0].route).catch(() => {})
-    } else {
-      router.push(item.route).catch(() => {})
-    }
+    // top-mixed 模式：点击一级菜单导航到其第一个叶子页面，子菜单由 MixedSubmenu 组件显示
+    router.push(firstLeafRoute(item) || item.route).catch(() => {})
   } else if (item.children?.length) {
-    // top 模式：有子菜单的项，点击导航到第一个子项路由
-    router.push(item.children[0].route).catch(() => {})
+    // top 模式：有子菜单的项，点击导航到第一个叶子页面路由
+    router.push(firstLeafRoute(item)).catch(() => {})
   } else {
     router.push(item.route).catch(() => {})
   }
@@ -316,6 +350,17 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
     margin-bottom: 2px;
   }
 
+  // 悬停二级分组项时向右展开三级 flyout
+  &:hover > .top-submenu-flyout {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  &.has-flyout {
+    padding-right: 10px;
+  }
+
   &:hover:not(.active) {
     color: var(--color-text-primary);
     background: color-mix(in srgb, var(--color-bg-hover), transparent 20%);
@@ -351,6 +396,42 @@ watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
   flex-shrink: 0;
   color: var(--color-text-secondary);
   transition: color 0.2s ease;
+}
+
+// ─── 三级菜单 Flyout（悬停二级分组项时向右展开） ──────────────
+.flyout-arrow {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--color-text-muted);
+}
+
+.top-submenu-flyout {
+  position: absolute;
+  top: -9px;
+  left: calc(100% + 6px);
+  z-index: 101;
+  min-width: 160px;
+  padding: 8px;
+  visibility: hidden;
+  background: var(--glass-surface);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(6px);
+
+  // 隐形感应桥：连接父级菜单项与 flyout，避免鼠标移动途中菜单消失
+  &::before {
+    position: absolute;
+    top: 0;
+    left: -8px;
+    width: 8px;
+    height: 100%;
+    content: '';
+    background: transparent;
+  }
 }
 
 // ─── 滚动箭头按钮 ──────────────────────────────────────────

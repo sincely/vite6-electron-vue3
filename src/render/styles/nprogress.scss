@@ -1,0 +1,15 @@
+/* NProgress 顶部加载进度条主题适配
+   覆盖 nprogress.css 内置的固定颜色（#29d），
+   改用主题主色变量，跟随浅色/深色主题及自定义主色切换 */
+
+#nprogress {
+  .bar {
+    background: var(--color-primary);
+  }
+
+  .peg {
+    box-shadow:
+      0 0 10px var(--color-primary),
+      0 0 5px var(--color-primary);
+  }
+}

@@ -3,16 +3,13 @@
     class="sidebar"
     :class="{
       'sidebar-collapsed': isCollapsed,
-      'is-mac': isMac,
-      'is-left-mixed': isLeftMixed
+      'is-mac': isMac
     }"
   >
     <!-- Logo 区域 -->
     <GlobalLogo />
 
     <SidebarMenu />
-
-    <UserPanel />
   </div>
 </template>
 
@@ -21,15 +18,11 @@ import { computed } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import GlobalLogo from '../global-logo/index.vue'
 import SidebarMenu from './modules/Menu.vue'
-import UserPanel from './modules/UserPanel.vue'
 import { isMac } from '@/utils/platform'
 
 const appStore = useAppStore()
 
-const isLeftMixed = computed(() => appStore.layoutMode === 'left-mixed')
-const isCollapsed = computed(
-  () => appStore.sidebarCollapsed || isLeftMixed.value
-)
+const isCollapsed = computed(() => appStore.sidebarCollapsed)
 </script>
 
 <style lang="scss" scoped>
@@ -75,19 +68,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     display: none;
   }
 
-  // left-mixed 模式：紧凑图标栏，不显示 logo 文本
-  &.is-left-mixed {
-    width: var(--sidebar-collapsed-width);
-
-    :deep(.sidebar-item) {
-      gap: 0;
-      justify-content: center;
-      padding: 0;
-      margin-inline: 4px;
-      border-radius: var(--radius-md);
-    }
-  }
-
   // 深色/品牌色风格下的文字颜色调整
   :deep(.sidebar-item) {
     color: var(--color-text-secondary);
@@ -104,7 +84,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   }
 
   :deep(.sidebar-icon) {
-    color: var(--color-text-muted);
+    color: var(--color-menu-icon);
   }
 
   :deep(.sidebar-label) {

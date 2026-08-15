@@ -1,30 +1,21 @@
 <template>
   <div v-if="parentItem && parentItem.children?.length" class="mixed-submenu">
     <nav class="mixed-submenu-nav">
-      <a
+      <MixedMenuItem
         v-for="child in parentItem.children"
         :key="child.id"
-        class="mixed-submenu-item"
-        :class="{ 'mixed-submenu-item-active': isChildActive(child) }"
-        @click="handleClick(child)"
-      >
-        <Icon
-          v-if="child.icon"
-          :icon="`lucide:${child.icon}`"
-          class="mixed-submenu-icon"
-          width="14px"
-          height="14px"
-        />
-        <span v-else class="mixed-submenu-dot"></span>
-        <span class="mixed-submenu-label">{{ child.label }}</span>
-      </a>
+        :item="child"
+        :depth="2"
+      />
     </nav>
   </div>
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
-import { Icon } from '@iconify/vue'
+import { ref, watch, provide } from 'vue'
+import { useRoute } from 'vue-router'
+import { findMenuPath } from '@/config/menu'
+import MixedMenuItem from './MixedMenuItem.vue'
 
 const props = defineProps({
   parentItem: {
@@ -34,13 +25,38 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const router = useRouter()
 
-const isChildActive = (child) => child.route === route.path
+// 子级分组的展开状态（递归节点通过 inject 共享）
+const expandedIds = ref([])
 
-const handleClick = (child) => {
-  router.push(child.route).catch(() => {})
+const toggleExpand = (id) => {
+  const idx = expandedIds.value.indexOf(id)
+  if (idx >= 0) {
+    expandedIds.value.splice(idx, 1)
+  } else {
+    expandedIds.value.push(id)
+  }
 }
+
+provide('mixed-expanded-ids', expandedIds)
+provide('mixed-toggle-expand', toggleExpand)
+
+// 路由变化时自动展开当前页面所属的分组链路
+watch(
+  () => [route.path, props.parentItem],
+  ([path]) => {
+    if (!props.parentItem) {
+      expandedIds.value = []
+      return
+    }
+    const chain = findMenuPath(path)
+    expandedIds.value =
+      chain[0]?.id === props.parentItem.id
+        ? chain.slice(1, -1).map((item) => item.id)
+        : []
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss" scoped>
@@ -89,81 +105,5 @@ const handleClick = (child) => {
   &:hover::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb);
   }
-}
-
-.mixed-submenu-item {
-  position: relative;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  height: 38px;
-  padding: 0 12px;
-  margin-bottom: 2px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: var(--color-text-primary);
-    background: var(--color-bg-hover);
-    border-color: var(--color-border-light);
-
-    .mixed-submenu-dot {
-      background: var(--color-primary);
-    }
-
-    .mixed-submenu-icon {
-      color: var(--color-primary);
-    }
-  }
-
-  &-active {
-    color: var(--color-primary) !important;
-    background: var(--brand-accent-soft);
-    border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
-
-    .mixed-submenu-dot {
-      background: var(--color-primary);
-    }
-
-    .mixed-submenu-icon {
-      color: var(--color-primary);
-    }
-
-    &::before {
-      position: absolute;
-      inset: 8px auto 8px 0;
-      width: 3px;
-      content: '';
-      background: var(--color-primary);
-      border-radius: 4px;
-    }
-  }
-}
-
-.mixed-submenu-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: var(--color-border);
-  border-radius: 50%;
-}
-
-.mixed-submenu-icon {
-  flex-shrink: 0;
-  color: var(--color-text-muted);
-  transition: color 0.2s ease;
-}
-
-.mixed-submenu-label {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 </style>

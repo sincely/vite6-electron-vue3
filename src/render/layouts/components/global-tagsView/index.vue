@@ -223,14 +223,13 @@ const router = useRouter()
 const tagsViewStore = useTagsViewStore()
 const appStore = useAppStore()
 
-// 多标签导航风格：card | google
+// 多标签导航风格：default | card | google
 const tagsViewStyle = computed(() => appStore.tagsViewStyle || 'card')
 
 // 根据路由解析标签图标：优先取路由自身图标，否则回退到顶级父菜单图标
 const resolveTagIcon = (path) => findTopLevelParent(path)?.icon || ''
 
-// 注入布局提供的方法和状态
-const reload = inject('reload', () => {})
+// 注入布局提供的方法和状态（页面刷新为 store 驱动：appStore.reloadPage()）
 const toggleFullscreen = inject('toggleFullscreen', () => {})
 const isFullscreen = inject('isFullscreen', ref(false))
 
@@ -325,7 +324,7 @@ const handleCommand = (command) => {
   const tag = currentTag()
   switch (command) {
     case 'refresh':
-      reload()
+      appStore.reloadPage()
       break
     case 'closeLeft':
       tagsViewStore.removeLeftViews(tag)
@@ -379,7 +378,7 @@ const closeContextMenu = () => {
 
 const handleCtxRefresh = () => {
   closeContextMenu()
-  reload()
+  appStore.reloadPage()
 }
 
 const handleCtxClose = () => {
@@ -465,6 +464,35 @@ watch(
   padding: 0 14px;
   background: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border);
+
+  /* ── 默认风格：描边标签（无填充背景，激活态主题色描边 + 圆点标识） ── */
+  &.is-style-default {
+    .tag-item {
+      background: transparent;
+      border-color: var(--color-border);
+    }
+
+    .tag-item:hover {
+      background: var(--color-bg-hover);
+    }
+
+    .tag-item.is-active {
+      background: transparent;
+      border-color: color-mix(in srgb, var(--color-primary), transparent 30%);
+    }
+
+    // 激活标签标题前的主题色圆点标识
+    .tag-item.is-active .tag-title::before {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 6px;
+      vertical-align: 1px;
+      content: '';
+      background: var(--color-primary);
+      border-radius: 50%;
+    }
+  }
 
   /* ── 谷歌（Chrome 标签）风格 ─────────────────────────────── */
   &.is-style-google {

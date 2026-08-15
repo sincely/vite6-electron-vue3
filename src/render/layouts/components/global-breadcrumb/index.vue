@@ -1,187 +1,132 @@
 <template>
-  <Card class="nav-bar">
-    <template #content>
-      <div class="nav-bar-content">
-        <!-- 面包屑导航 -->
-        <div class="nav-bar-breadcrumb">
-          <div class="nav-bar-breadcrumb-track">
-            <template v-for="(crumb, idx) in breadcrumb" :key="crumb.route">
-              <SvgIcon
-                v-if="idx > 0"
-                icon-class="chevron-right"
-                class="nav-bar-sep"
-                width="14px"
-                height="14px"
-              />
-              <span
-                class="nav-bar-crumb"
-                :class="{
-                  'nav-bar-crumb-active': idx === breadcrumb.length - 1,
-                  'nav-bar-crumb-link': idx < breadcrumb.length - 1
-                }"
-                @click="
-                  idx < breadcrumb.length - 1
-                    ? router.push(crumb.route)
-                    : undefined
-                "
-              >
-                <SvgIcon
-                  v-if="idx === 0 && crumb.icon"
-                  :icon-class="crumb.icon"
-                  class="nav-bar-icon"
-                  width="14px"
-                  height="14px"
-                />
-                <span class="nav-bar-crumb-label">{{ crumb.label }}</span>
-              </span>
-            </template>
-
-            <span
-              v-if="!breadcrumb.length"
-              class="nav-bar-crumb nav-bar-crumb-active"
-            >
-              <span class="nav-bar-crumb-label">
-                {{ route.name ?? route.path }}
-              </span>
-            </span>
-          </div>
-        </div>
-
-        <!-- 右侧插槽，供各页面扩展 -->
-        <div class="nav-bar-extra">
-          <slot name="extra" />
-        </div>
-      </div>
-    </template>
-  </Card>
+  <!-- 标题栏面包屑：仅在存在两级及以上层级时显示（参照 art-design-pro） -->
+  <nav
+    v-if="breadcrumbs.length > 1"
+    class="global-breadcrumb"
+    aria-label="breadcrumb"
+  >
+    <ul class="breadcrumb-track">
+      <li
+        v-for="(crumb, idx) in breadcrumbs"
+        :key="`${crumb.path}-${idx}`"
+        class="breadcrumb-item"
+      >
+        <span
+          class="breadcrumb-label"
+          :class="{ 'is-link': !isLast(idx), 'is-current': isLast(idx) }"
+          :aria-current="isLast(idx) ? 'page' : undefined"
+          @click="handleClick(crumb, idx)"
+        >
+          {{ crumb.title }}
+        </span>
+        <span v-if="!isLast(idx)" class="breadcrumb-sep" aria-hidden="true">
+          /
+        </span>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script setup>
-import { findMenuPath } from '@/config/menu'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 
-// 根据当前路由计算面包屑链路 [一级] 或 [一级, 二级]
-const breadcrumb = computed(() => findMenuPath(route.path))
+// 基于 route.matched 生成面包屑链路：父级菜单 -> 当前页面
+// - 跳过没有 title 的层级
+// - 仅合并 path 与 title 均相同的连续层级（如同名分组路由与其默认子路由）；
+//   空路径默认子路由与父级 path 相同但 title 不同时正常保留（如 仪表板/工作台）
+const breadcrumbs = computed(() => {
+  const items = []
+  for (const record of route.matched) {
+    const title = record.meta?.title
+    if (!title) continue
+    const prev = items[items.length - 1]
+    if (prev && prev.path === record.path && prev.title === title) continue
+    items.push({ path: record.path, title })
+  }
+  return items
+})
+
+const isLast = (idx) => idx === breadcrumbs.value.length - 1
+
+// 点击中间层级跳转到对应路由（带 redirect 的分组路由会自动解析到首个子页面）
+const handleClick = (crumb, idx) => {
+  if (isLast(idx) || crumb.path === route.path) return
+  router.push(crumb.path).catch(() => {})
+}
 </script>
 
 <style lang="scss" scoped>
-.nav-bar {
-  margin: 12px 26px 0;
+.global-breadcrumb {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 100%;
+  padding-left: 10px;
+  overflow: hidden;
+  -webkit-app-region: no-drag;
 
-  :deep(.card-container) {
-    padding: 12px 16px;
-    border-radius: var(--radius-lg);
-  }
-
-  &-content {
+  .breadcrumb-track {
     display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: space-between;
-    min-width: 0;
-    min-height: 32px;
-  }
-
-  &-breadcrumb {
-    display: flex;
-    flex: 1;
     align-items: center;
     min-width: 0;
+    padding: 0;
+    margin: 0;
+    list-style: none;
   }
 
-  &-breadcrumb-track {
+  .breadcrumb-item {
     display: flex;
-    gap: 4px;
-    align-items: center;
-    min-width: 0;
-    max-width: 100%;
-    padding: 4px;
-    overflow: hidden;
-    background: var(--color-bg-hover);
-    border: 1px solid var(--color-border-light);
-    border-radius: 999px;
-  }
-
-  &-sep {
     flex-shrink: 0;
-    color: var(--color-text-muted);
-    opacity: 0.65;
+    align-items: center;
+    min-width: 0;
+    font-size: 13px;
+    white-space: nowrap;
+
+    &:last-child {
+      flex-shrink: 1;
+      overflow: hidden;
+    }
   }
 
-  &-crumb {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    max-width: 240px;
-    min-height: 32px;
-    padding: 0 10px;
+  .breadcrumb-label {
+    max-width: 180px;
+    padding: 4px 8px;
     overflow: hidden;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     text-overflow: ellipsis;
-    white-space: nowrap;
-    border: 1px solid transparent;
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     transition:
       color 0.2s ease,
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+      background-color 0.2s ease;
 
-    &-active {
-      font-weight: 600;
-      color: var(--color-primary);
-      background: var(--brand-accent-soft);
-      border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
-    }
-
-    &-link {
+    &.is-link {
       cursor: pointer;
 
       &:hover {
         color: var(--color-text-primary);
         background: var(--color-bg-hover);
-        border-color: var(--color-border-light);
+      }
+
+      &:active {
+        background: var(--color-bg-active);
       }
     }
-  }
 
-  &-crumb-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &-icon {
-    flex-shrink: 0;
-    color: var(--color-text-primary);
-  }
-
-  &-extra {
-    display: flex;
-    flex-shrink: 0;
-    gap: 8px;
-    align-items: center;
-  }
-}
-
-@media (width <=960px) {
-  .nav-bar {
-    margin-inline: 10px;
-
-    &-breadcrumb-track {
-      max-width: 100%;
+    &.is-current {
+      font-weight: 600;
+      color: var(--color-text-primary);
     }
+  }
 
-    &-crumb {
-      max-width: 150px;
-      padding-inline: 8px;
-    }
+  .breadcrumb-sep {
+    margin: 0 2px;
+    color: var(--color-text-muted);
+    user-select: none;
+    opacity: 0.6;
   }
 }
 </style>

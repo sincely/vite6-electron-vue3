@@ -16,7 +16,25 @@
 
       <!-- Logo 区域 (顶部菜单模式显示) -->
       <GlobalLogo v-if="isTopMenu" class="top-mode-logo" />
+      <!-- 刷新当前页面：翻转 store 的 refresh，内容区销毁重建路由视图（软刷新，保留布局与已打开标签），可在设置中关闭 -->
+      <button
+        v-if="appStore.refreshBtn"
+        class="icon-btn refresh-btn"
+        title="刷新当前页面"
+        @click="handleRefresh"
+      >
+        <SvgIcon
+          icon-class="refresh"
+          :class-name="
+            isRefreshing ? 'refresh-icon is-spinning' : 'refresh-icon'
+          "
+          width="16px"
+          height="16px"
+        />
+      </button>
 
+      <!-- 快速入口（参照 art-design-pro）：九宫格悬停下拉面板，可在设置中关闭 -->
+      <FastEnter v-if="appStore.fastEnter" />
       <!-- 顶部菜单 (顶部菜单模式显示) -->
       <GlobalTopMenu v-if="isTopMenu" />
 
@@ -114,17 +132,8 @@
             height="16px"
           />
         </button>
-        <!-- 混合模式下的设置按钮（left-mixed 时侧边栏为折叠态，UserPanel 仅显示头像，提供直接入口） -->
-        <button
-          v-if="isMixedMode"
-          class="icon-btn"
-          title="设置"
-          @click="appStore.toggleSettings(true)"
-        >
-          <SvgIcon icon-class="settings" width="18px" height="18px" />
-        </button>
-        <!-- 顶部模式下的用户信息和设置 -->
-        <UserDropdown v-if="isTopMenu" />
+        <!-- 用户头像与菜单（所有布局模式统一置于右上角） -->
+        <UserDropdown />
         <!-- 窗口控制 -->
         <div v-if="isWindows()" class="window-controls">
           <el-tooltip content="最小化" placement="bottom" :show-after="200">
@@ -166,6 +175,7 @@ import { isWindows, isMac } from '@/utils/platform'
 import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
+import FastEnter from './modules/FastEnter.vue'
 import NotificationPanel from '@/components/NotificationPanel/index.vue'
 
 const appStore = useAppStore()
@@ -216,44 +226,40 @@ const openChat = () => {
   chatStore.toggleChat(true)
 }
 
+// ─── 刷新当前页面（全局软刷新）─────────────────────────────────────
+// 翻转 store 的 refresh 状态，由内容区监听后销毁重建路由视图；
+// 图标旋转一圈作为点击反馈，期间拦截重复点击
+const isRefreshing = ref(false)
+let refreshTimer = null
+
+const handleRefresh = () => {
+  if (isRefreshing.value) return
+  isRefreshing.value = true
+  appStore.reloadPage()
+  refreshTimer = setTimeout(() => {
+    isRefreshing.value = false
+  }, 600)
+}
+
 const isTopMenu = computed(
   () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
 )
 const isDark = computed(() => appStore.isDark)
 
-// 是否显示侧边栏切换按钮：
-// - left / left-mixed: 显示（控制侧边栏折叠 / 子菜单栏显隐）
-// - top-mixed: 显示（控制子菜单栏显隐）
-// - top: 不显示
-const showSidebarToggle = computed(
-  () => appStore.layoutMode !== 'top' && appStore.layoutMode !== 'top-mixed'
+// 是否显示侧边栏切换按钮（仅 left 模式，控制侧边栏折叠；
+// top 用悬停下拉、top-mixed 子菜单列固定显示、dual 第二列固定展开，均无需此按钮）
+const showSidebarToggle = computed(() => appStore.layoutMode === 'left')
+
+const toggleButtonTitle = computed(() =>
+  appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'
 )
 
-const isMixedMode = computed(
-  () =>
-    appStore.layoutMode === 'left-mixed' || appStore.layoutMode === 'top-mixed'
+const toggleIcon = computed(() =>
+  appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'
 )
-
-const toggleButtonTitle = computed(() => {
-  if (isMixedMode.value) {
-    return appStore.mixedSubmenuVisible ? '隐藏子菜单' : '显示子菜单'
-  }
-  return appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'
-})
-
-const toggleIcon = computed(() => {
-  if (isMixedMode.value) {
-    return appStore.mixedSubmenuVisible ? 'panel-left-close' : 'panel-left-open'
-  }
-  return appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'
-})
 
 const handleToggleClick = () => {
-  if (isMixedMode.value) {
-    appStore.toggleMixedSubmenu()
-  } else {
-    appStore.toggleSidebar()
-  }
+  appStore.toggleSidebar()
 }
 
 const minimize = () => ipcRenderer.send('minimize-window')
@@ -279,6 +285,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   ipcRenderer.off('window-maximize-change', onMaximizeChange)
+  if (refreshTimer) clearTimeout(refreshTimer)
 })
 </script>
 
@@ -405,6 +412,25 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 34px;
   margin-right: 8px;
+}
+
+// 刷新按钮：图标旋转一圈作为点击反馈（仅 transform，ease-out）
+.refresh-btn {
+  margin-left: 2px;
+
+  .refresh-icon.is-spinning {
+    animation: refresh-spin 0.6s ease-out;
+  }
+}
+
+@keyframes refresh-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // 更新按钮：环形实时进度

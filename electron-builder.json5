@@ -6,6 +6,7 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "ichengzhou@icloud.com",
   "asar": true,
+  "asarUnpack": [],
   "productName": "lightning",
   "copyright": "Copyright © 2024 dyy.dongyuanwai",
   "directories": {
@@ -13,6 +14,8 @@
     "buildResources": "resources"
   },
   "removePackageScripts": true,
+  // 打包后钩子：清理 mac Electron Framework 内未使用的语言文件（electronLanguages 对 framework 目录不生效）
+  "afterPack": "./scripts/afterPack.cjs",
   "extraResources": [],
   // 自定义 URL 协议：浏览器唤起应用（lightning://desktop/console?id=1）
   // macOS → 写入 Info.plist CFBundleURLTypes；Windows → NSIS 安装时写入注册表
@@ -28,8 +31,12 @@
     "dist/**/*",
     "dist-electron/**/*",
     "!dist/**/*.map",
+    "!dist-electron/**/*.map",
+    "!.vscode",
+    "!*.log",
+    "!README.md",
     "package.json",
-    "src/backend/**/*",
+    "!node_modules/**/*.md",
     "node_modules/**/*",
     "!**/node_modules/*/{CHANGELOG.md,CHANGELOG,changelog.md,CHANGELOG.txt}",
     "!**/node_modules/*/{README.md,README,readme.md,readme,Readme.md}",
@@ -62,7 +69,7 @@
     "!**/node_modules/**/.git/**",
     "!**/node_modules/**/.gitignore",
     "!**/node_modules/**/.npmignore",
-    "!**/node_modules/**/election-builder/**",
+    "!**/node_modules/**/electron-builder/**",
     "!**/node_modules/vite/**",
     "!**/node_modules/rollup/**",
     "!**/node_modules/esbuild/**",
@@ -100,6 +107,12 @@
   "mac": {
     "icon": "resources/icons/mac/app.icns",
     "darkModeSupport": true,
+    // mac的lproj目录为下划线命名；electron-builder只清理应用级 lproj，
+    // framework 内的 locale.pak 由 scripts/afterPack.cjs 按同一白名单裁剪
+    "electronLanguages": [
+      "en",
+      "zh_CN"
+    ],
     "target": [
       {
         "target": "dmg",
@@ -137,6 +150,11 @@
   },
   "linux": {
     "icon": "resources/icons/linux",
+    // win/linux 的 locale 文件为连字符命名（zh-CN.pak），此处与文件名严格一致
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
     "extraResources": [
       {
         "from": "resources/icons/linux",
@@ -160,6 +178,10 @@
     // 未配置签名证书时签名会自动跳过（仅打印警告，不影响构建），图标编辑仍会执行。
     "signAndEditExecutable": false,
     "icon": "resources/icons/win/app.ico",
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
     "extraResources": [
       {
         "from": "resources/icons/win",
@@ -190,10 +212,6 @@
     }
   ],
   "compression": "maximum",
-  "electronLanguages": [
-    "zh-CN",
-    "en-US"
-  ],
   "nsis": {
     // 不允许一键安装
     "oneClick": false,

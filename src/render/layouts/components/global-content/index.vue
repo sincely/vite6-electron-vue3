@@ -5,7 +5,7 @@
       :class="{ 'is-fixed-width': appStore.contentWidth === 'fixed' }"
       :style="contentStyle"
     >
-      <router-view v-slot="{ Component, route }">
+      <router-view v-if="isRefresh" v-slot="{ Component, route }">
         <!-- Transition 必须包裹在 KeepAlive 外层：KeepAlive 不会展开 Transition，
              若将 Transition 放在内部，KeepAlive 的直接子组件会变成 Transition 本身，
              其组件名无法命中 include 列表，导致缓存静默失效 -->
@@ -53,6 +53,22 @@ const contentStyle = computed(() => {
   }
   return {}
 })
+
+// 全局刷新：监听到 appStore.refresh 翻转后，先卸载 RouterView，
+// nextTick 后重新挂载，使当前路由组件（含 keep-alive 缓存）彻底重建，
+// 同时保留布局框架（侧边栏 / 顶栏 / 标签页）
+const isRefresh = ref(true)
+
+watch(
+  () => appStore.refresh,
+  () => {
+    isRefresh.value = false
+    nextTick(() => {
+      isRefresh.value = true
+    })
+  },
+  { flush: 'post' }
+)
 const isLoading = ref(false)
 
 watch(

@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from '@/config/nprogress'
+import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 // 登录页为应用首屏，静态导入随入口 chunk 一并加载，
 // 避免 mount 后再等懒加载 chunk 造成的短暂空白
@@ -32,9 +33,11 @@ export const constantRoutes = [
  *   icon     - 侧边栏图标（lucide-xxx）
  *   order    - 侧边栏排序，数值越小越靠前
  *   sidebar  - true 时作为顶级侧边栏菜单项
- *   group    - 所属父菜单路径，有此字段则为二级菜单项
+ *   group    - 所属父菜单路径，有此字段则为子级菜单项（父级可为任意层级，即支持多级嵌套）
  *   footer   - true 时渲染在侧边栏底部固定区
  *   keepAlive - 是否缓存组件
+ *   showBadge     - true 时菜单项显示红点
+ *   showTextBadge - 字符串，菜单项显示文本角标（如 'New' / 'Hot'）
  */
 const Layout = () => import('@/layouts/index.vue')
 
@@ -53,25 +56,30 @@ export const asyncRouteTree = [
       {
         path: '',
         name: 'desktop',
-        component: () => import('@/views/home/index.vue'),
+        component: () => import('@/views/dashboard/console/index.vue'),
         meta: {
-          title: '仪表板',
-          icon: 'home',
+          title: '工作台',
+          icon: 'layout-dashboard',
           group: '/desktop',
           keepAlive: true,
           affix: true
         }
       },
       {
-        path: 'console',
-        name: 'dashboard-console',
-        component: () => import('@/views/dashboard/console/index.vue'),
+        path: 'dashboard',
+        name: 'dashboard-home',
+        component: () => import('@/views/home/index.vue'),
         meta: {
-          title: '工作台',
-          icon: 'layout-dashboard',
+          title: '数据看板',
+          icon: 'home',
           group: '/desktop',
           keepAlive: true
         }
+      },
+      // 兼容旧路径：原工作台地址统一重定向到全局工作台（/desktop）
+      {
+        path: 'console',
+        redirect: '/desktop'
       },
       {
         path: 'analysis',
@@ -215,6 +223,88 @@ export const asyncRouteTree = [
       }
     ]
   },
+  //  嵌套菜单（三级菜单案例）
+  {
+    path: '/nested',
+    component: Layout,
+    redirect: '/nested/menu1/menu1-1',
+    meta: {
+      title: '嵌套菜单',
+      icon: 'list',
+      order: 5,
+      sidebar: true
+    },
+    children: [
+      {
+        // 二级分组：无 component 的透传路由记录，仅用于菜单分层，
+        // vue-router 会跳过该层级，子页面直接渲染到 Layout 的 router-view
+        path: 'menu1',
+        redirect: '/nested/menu1/menu1-1',
+        meta: {
+          title: '菜单 1',
+          icon: 'list-tree',
+          group: '/nested'
+        },
+        children: [
+          {
+            path: 'menu1-1',
+            name: 'nested-menu1-1',
+            component: () => import('@/views/nested/menu1/menu1-1/index.vue'),
+            meta: {
+              title: '菜单 1-1',
+              icon: 'file',
+              group: '/nested/menu1',
+              keepAlive: true
+            }
+          },
+          {
+            path: 'menu1-2',
+            name: 'nested-menu1-2',
+            component: () => import('@/views/nested/menu1/menu1-2/index.vue'),
+            meta: {
+              title: '菜单 1-2',
+              icon: 'file',
+              group: '/nested/menu1',
+              keepAlive: true
+            }
+          }
+        ]
+      },
+      {
+        path: 'menu2',
+        redirect: '/nested/menu2/menu2-1',
+        meta: {
+          title: '菜单 2',
+          icon: 'folder',
+          group: '/nested'
+        },
+        children: [
+          {
+            path: 'menu2-1',
+            name: 'nested-menu2-1',
+            component: () => import('@/views/nested/menu2/menu2-1/index.vue'),
+            meta: {
+              title: '菜单 2-1',
+              icon: 'file',
+              group: '/nested/menu2',
+              keepAlive: true
+            }
+          }
+        ]
+      },
+      {
+        path: 'menu3',
+        name: 'nested-menu3',
+        component: () => import('@/views/nested/menu3/index.vue'),
+        meta: {
+          title: '菜单 3',
+          icon: 'layers',
+          group: '/nested',
+          keepAlive: true
+        }
+      }
+    ]
+  },
   //  高级表格演示
   {
     path: '/components',
@@ -222,8 +312,8 @@ export const asyncRouteTree = [
     redirect: '/components/table',
     meta: {
       title: '组件演示',
-      icon: 'dashboard',
-      order: 5,
+      icon: 'blocks',
+      order: 6,
       sidebar: true
     },
     children: [
@@ -246,7 +336,8 @@ export const asyncRouteTree = [
           title: '通知演示',
           icon: 'bell',
           group: '/components',
-          keepAlive: true
+          keepAlive: true,
+          showBadge: true
         }
       }
     ]
@@ -258,9 +349,10 @@ export const asyncRouteTree = [
     redirect: '/template/cards',
     meta: {
       title: '模板中心',
-      icon: 'template',
-      order: 6,
-      sidebar: true
+      icon: 'layout-template',
+      order: 7,
+      sidebar: true,
+      showTextBadge: 'New'
     },
     children: [
       {
@@ -362,6 +454,21 @@ const router = createRouter({
 })
 
 export default router
+
+// ─── 顶部加载进度条（受「设置 - 外观显示 - 顶部进度条」开关控制） ─────
+router.beforeEach(() => {
+  const appStore = useAppStore()
+  if (appStore.showNProgress) {
+    NProgress.start()
+  }
+})
+
+router.afterEach(() => {
+  // 以是否已启动为准收尾，避免导航中途关闭开关导致进度条残留
+  if (NProgress.isStarted()) {
+    NProgress.done()
+  }
+})
 
 // // ─── 路由守卫 ──────────────────────────────────────────────
 // const whiteList = ['/login']

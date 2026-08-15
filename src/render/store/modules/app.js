@@ -12,18 +12,24 @@ let systemThemeMediaQuery = null
 export const useAppStore = defineStore('app', {
   state: () => ({
     theme: 'light', // 当前主题，默认是亮色主题
-    layoutMode: 'left', // 布局模式：left | left-mixed | top | top-mixed
-    mixedSubmenuVisible: true, // 混合模式下子菜单栏是否显示
+    layoutMode: 'left', // 布局模式：left | top | top-mixed | dual
+    dualMenuShowText: false, // 双列模式下第一列是否显示菜单文字
     sidebarCollapsed: false, // 侧边栏是否折叠
     footerVisible: true, // 是否显示底部状态栏
     footerHeight: 26, // 底部状态栏高度（px）
     tagsView: true, // 是否显示多标签导航
-    tagsViewStyle: 'card', // 多标签导航风格：card（卡片）| google（谷歌）
+    tagsViewStyle: 'card', // 多标签导航风格：default（默认）| card（卡片）| google（谷歌）
+    breadCrumb: true, // 是否在标题栏显示面包屑导航
+    fastEnter: true, // 是否在标题栏显示快速入口（九宫格面板）
+    refreshBtn: true, // 是否在标题栏显示全局刷新按钮
+    showNProgress: true, // 是否显示顶部加载进度条
+    watermarkVisible: false, // 是否显示全局水印
     transitionEnabled: true, // 是否启用页面切换动画
     transitionType: 'page', // 页面切换动画类型
     contentWidth: 'full', // 内容容器宽度模式：full（铺满）| fixed（定宽）
     contentWidthValue: 1600, // 定宽模式下的具体宽度值（px）
     settingsVisible: false, // 设置弹窗是否可见
+    refresh: false, // 是否刷新当前页面（由 reloadPage 翻转，内容区监听后销毁重建路由视图）
     loading: false, // 是否显示加载中状态
     loadingTargets: [], // 加载中状态的目标元素
     autoLaunch: false, // 开机自启
@@ -48,11 +54,9 @@ export const useAppStore = defineStore('app', {
     setLayoutMode(mode) {
       this.layoutMode = mode
     },
-    toggleMixedSubmenu() {
-      this.mixedSubmenuVisible = !this.mixedSubmenuVisible
-    },
-    setMixedSubmenuVisible(val) {
-      this.mixedSubmenuVisible = val
+    // 设置双列模式第一列的图标/文字显示
+    setDualMenuShowText(val) {
+      this.dualMenuShowText = !!val
     },
     // 切换设置弹窗可见性
     toggleSettings(visible) {
@@ -263,9 +267,30 @@ export const useAppStore = defineStore('app', {
     setTagsView(val) {
       this.tagsView = !!val
     },
-    // 设置多标签导航风格：card | google
+    // 设置多标签导航风格：default | card | google
     setTagsViewStyle(style) {
-      this.tagsViewStyle = style === 'google' ? 'google' : 'card'
+      const allowed = ['default', 'card', 'google']
+      this.tagsViewStyle = allowed.includes(style) ? style : 'card'
+    },
+    // 设置面包屑导航显示状态
+    setBreadCrumb(val) {
+      this.breadCrumb = !!val
+    },
+    // 设置快速入口显示状态
+    setFastEnter(val) {
+      this.fastEnter = !!val
+    },
+    // 设置全局刷新按钮显示状态
+    setRefreshBtn(val) {
+      this.refreshBtn = !!val
+    },
+    // 设置顶部加载进度条显示状态
+    setShowNProgress(val) {
+      this.showNProgress = !!val
+    },
+    // 设置全局水印显示状态
+    setWatermarkVisible(val) {
+      this.watermarkVisible = !!val
     },
     // 设置底部栏高度（限制 20~80）
     setFooterHeight(val) {
@@ -286,6 +311,11 @@ export const useAppStore = defineStore('app', {
       this.contentWidthValue = Math.min(1920, Math.max(800, Math.round(width)))
     },
 
+    // 刷新当前页面：翻转 refresh，内容区监听后销毁并重建 RouterView
+    // （全局软刷新：不重置布局框架，仅内容区重渲染，任意组件均可触发）
+    reloadPage() {
+      this.refresh = !this.refresh
+    },
     // 设置loading状态
     setLoading(val) {
       this.loading = val
@@ -318,5 +348,12 @@ export const useAppStore = defineStore('app', {
       // this.autoLaunch = false
     }
   },
-  persist: true
+  persist: {
+    // left-mixed 布局已并入 dual，旧持久化值迁移为 dual
+    afterRestore(ctx) {
+      if (ctx.store.layoutMode === 'left-mixed') {
+        ctx.store.layoutMode = 'dual'
+      }
+    }
+  }
 })

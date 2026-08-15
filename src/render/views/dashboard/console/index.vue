@@ -37,7 +37,7 @@ import DynamicStats from './modules/dynamic-stats.vue'
 import TodoList from './modules/todo-list.vue'
 import AboutProject from './modules/about-project.vue'
 
-defineOptions({ name: 'dashboard-console' })
+defineOptions({ name: 'desktop' })
 </script>
 
 <style lang="scss" scoped>

@@ -265,9 +265,60 @@
                         <span class="item-desc">选择多标签导航的视觉风格</span>
                       </div>
                       <el-select v-model="tagsViewStyle" style="width: 140px">
+                        <el-option label="默认风格" value="default" />
                         <el-option label="卡片风格" value="card" />
                         <el-option label="谷歌风格" value="google" />
                       </el-select>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">显示全局刷新按钮</span>
+                        <span class="item-desc">
+                          在标题栏显示刷新当前页面按钮
+                        </span>
+                      </div>
+                      <el-switch v-model="refreshBtnVisible" />
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">显示快速入口</span>
+                        <span class="item-desc">
+                          在标题栏显示快速入口按钮（九宫格面板）
+                        </span>
+                      </div>
+                      <el-switch v-model="fastEnterVisible" />
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">显示全局面包屑导航</span>
+                        <span class="item-desc">
+                          在标题栏显示当前页面的层级路径
+                        </span>
+                      </div>
+                      <el-switch v-model="breadCrumbVisible" />
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">顶部进度条</span>
+                        <span class="item-desc">
+                          页面切换时在顶部显示加载进度条（跟随主题色）
+                        </span>
+                      </div>
+                      <el-switch v-model="showNProgress" />
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="item-info">
+                        <span class="item-label">全局水印</span>
+                        <span class="item-desc">
+                          在界面上显示水印标识，防止截图泄密
+                        </span>
+                      </div>
+                      <el-switch v-model="watermarkVisible" />
                     </div>
 
                     <div v-if="footerVisible" class="setting-item">
@@ -364,25 +415,6 @@
                         <span class="layout-label">左侧菜单模式</span>
                       </div>
 
-                      <!-- 左侧菜单混合模式 -->
-                      <div
-                        class="layout-card"
-                        :class="{
-                          active: appStore.layoutMode === 'left-mixed'
-                        }"
-                        @click="appStore.setLayoutMode('left-mixed')"
-                      >
-                        <div class="layout-preview">
-                          <div class="preview-layout-sidebar"></div>
-                          <div class="preview-layout-sidebar-sub"></div>
-                          <div class="preview-layout-main">
-                            <div class="preview-layout-header"></div>
-                            <div class="preview-layout-content"></div>
-                          </div>
-                        </div>
-                        <span class="layout-label">左侧菜单混合模式</span>
-                      </div>
-
                       <!-- 顶部菜单模式 -->
                       <div
                         class="layout-card"
@@ -412,6 +444,23 @@
                           </div>
                         </div>
                         <span class="layout-label">顶部菜单混合模式</span>
+                      </div>
+
+                      <!-- 双列菜单模式 -->
+                      <div
+                        class="layout-card"
+                        :class="{ active: appStore.layoutMode === 'dual' }"
+                        @click="appStore.setLayoutMode('dual')"
+                      >
+                        <div class="layout-preview">
+                          <div class="preview-layout-sidebar-narrow"></div>
+                          <div class="preview-layout-sidebar-sub"></div>
+                          <div class="preview-layout-main">
+                            <div class="preview-layout-header"></div>
+                            <div class="preview-layout-content"></div>
+                          </div>
+                        </div>
+                        <span class="layout-label">双列菜单模式</span>
                       </div>
                     </div>
                   </div>
@@ -740,6 +789,31 @@ const tagsVisible = computed({
 const tagsViewStyle = computed({
   get: () => appStore.tagsViewStyle,
   set: (val) => appStore.setTagsViewStyle(val)
+})
+
+const breadCrumbVisible = computed({
+  get: () => appStore.breadCrumb,
+  set: (val) => appStore.setBreadCrumb(val)
+})
+
+const showNProgress = computed({
+  get: () => appStore.showNProgress,
+  set: (val) => appStore.setShowNProgress(val)
+})
+
+const watermarkVisible = computed({
+  get: () => appStore.watermarkVisible,
+  set: (val) => appStore.setWatermarkVisible(val)
+})
+
+const fastEnterVisible = computed({
+  get: () => appStore.fastEnter,
+  set: (val) => appStore.setFastEnter(val)
+})
+
+const refreshBtnVisible = computed({
+  get: () => appStore.refreshBtn,
+  set: (val) => appStore.setRefreshBtn(val)
 })
 
 const footerHeight = computed({
@@ -1327,6 +1401,12 @@ const handleClose = () => {
 
     .preview-layout-sidebar {
       width: 24px;
+      background: #a5b4fc;
+      border-radius: 6px;
+    }
+
+    .preview-layout-sidebar-narrow {
+      width: 12px;
       background: #a5b4fc;
       border-radius: 6px;
     }
