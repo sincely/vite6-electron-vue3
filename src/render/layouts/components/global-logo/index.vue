@@ -77,6 +77,10 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     flex-shrink: 0;
     width: 42px;
     height: 42px;
+
+    // 拖拽区（-webkit-app-region: drag）会吞掉 click 事件，
+    // 图标与名称标记为 no-drag 保证可点击，外围空白处仍可拖拽窗口
+    -webkit-app-region: no-drag;
     transition: transform 0.2s ease;
   }
 
@@ -90,6 +94,7 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
     letter-spacing: 0.3px;
     white-space: nowrap;
     opacity: 1;
+    -webkit-app-region: no-drag;
     transition:
       opacity $transition,
       width $transition;
