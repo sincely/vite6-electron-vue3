@@ -21,6 +21,13 @@
           ></span>
         </div>
         <span v-if="!isCollapsed" class="sidebar-label">{{ item.label }}</span>
+        <Icon
+          v-if="!isCollapsed && item.link"
+          icon="lucide:arrow-up-right"
+          class="sidebar-external-icon"
+          width="12px"
+          height="12px"
+        />
         <span v-if="!isCollapsed && item.showBadge" class="menu-badge"></span>
         <span
           v-else-if="!isCollapsed && item.showTextBadge"
@@ -63,14 +70,22 @@ import { computed, ref, watch, provide } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
-import { menuItems, findMenuPath, containsRoute } from '@/config/menu'
+import {
+  visibleMenuItems,
+  findMenuPath,
+  containsRoute,
+  firstLeaf
+} from '@/config/menu'
+import { openExternalLink } from '@/utils/openLink'
 import SubMenuNode from './SubMenuNode.vue'
 
 const appStore = useAppStore()
 const router = useRouter()
 const route = useRoute()
 
-const mainItems = computed(() => menuItems.filter((item) => !item.footer))
+const mainItems = computed(() =>
+  visibleMenuItems.value.filter((item) => !item.footer)
+)
 const expandedIds = ref([])
 
 const isCollapsed = computed(() => appStore.sidebarCollapsed)
@@ -97,7 +112,9 @@ provide('menu-collapsed', isCollapsed)
 // 展开态仅自身路由命中时高亮；折叠态（纯图标模式）任一后代激活即高亮
 const isParentActive = (item) => {
   if (isCollapsed.value) return containsRoute(item, route.path)
-  return item.route === route.path
+  if (item.route !== route.path) return false
+  // 存在同路径后代（如仪表板下的默认子路由「工作台」）时高亮让位给子级
+  return !item.children?.some((child) => containsRoute(child, route.path))
 }
 
 watch(
@@ -114,9 +131,12 @@ watch(
 const handleNav = (item) => {
   if (item.children?.length && !isCollapsed.value) {
     toggleExpand(item.id, 1)
-  } else {
-    router.push(item.route).catch(() => {})
+    return
   }
+  // 外部链接（含折叠态下分组的首个外链叶子）交由系统浏览器打开
+  const leaf = firstLeaf(item)
+  if (leaf?.link) return openExternalLink(leaf.link)
+  router.push(item.route).catch(() => {})
 }
 </script>
 
@@ -303,6 +323,12 @@ const handleNav = (item) => {
 
 :deep(.sidebar-chevron-open) {
   transform: rotate(90deg);
+}
+
+// 外部链接标识图标
+:deep(.sidebar-external-icon) {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 :deep(.sidebar-submenu) {

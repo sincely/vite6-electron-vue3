@@ -57,10 +57,11 @@
 
 <script setup>
 import { Iphone, Lock } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const ruleFormRef = ref()
 const showPassword = ref(false)
@@ -106,6 +107,14 @@ const submitForm = async (formEl) => {
         username: ruleForm.phone,
         password: ruleForm.password
       })
+      // 守卫携带 redirect 时（如主窗口内 token 失效后重登）原地回跳
+      const redirect = route.query.redirect
+      if (redirect) {
+        router.push(decodeURIComponent(String(redirect)))
+      } else if (!window.ipcRenderer) {
+        // 非 Electron 环境（浏览器预览）无窗口切换 IPC，直接路由跳转
+        router.push('/desktop')
+      }
       window.ipcRenderer?.send('toMain')
     } catch (error) {
       // 错误提示已由请求层统一处理

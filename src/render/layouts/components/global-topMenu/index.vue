@@ -47,7 +47,7 @@
                 active: child.route === route.path,
                 'has-flyout': child.children?.length
               }"
-              @click.stop="router.push(firstLeafRoute(child))"
+              @click.stop="handleLeafNav(firstLeaf(child))"
             >
               <Icon
                 v-if="child.icon"
@@ -61,6 +61,13 @@
               <span v-else-if="child.showTextBadge" class="menu-text-badge">
                 {{ child.showTextBadge }}
               </span>
+              <Icon
+                v-if="child.link"
+                icon="lucide:arrow-up-right"
+                class="top-submenu-icon"
+                width="12px"
+                height="12px"
+              />
 
               <!-- 三级菜单 Flyout（悬停展开） -->
               <Icon
@@ -76,7 +83,7 @@
                   :key="leaf.id"
                   class="top-submenu-item"
                   :class="{ active: leaf.route === route.path }"
-                  @click.stop="router.push(leaf.route)"
+                  @click.stop="handleLeafNav(leaf)"
                 >
                   <Icon
                     v-if="leaf.icon"
@@ -90,6 +97,13 @@
                   <span v-else-if="leaf.showTextBadge" class="menu-text-badge">
                     {{ leaf.showTextBadge }}
                   </span>
+                  <Icon
+                    v-if="leaf.link"
+                    icon="lucide:arrow-up-right"
+                    class="top-submenu-icon"
+                    width="12px"
+                    height="12px"
+                  />
                 </div>
               </div>
             </div>
@@ -117,27 +131,37 @@ import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
-import { menuItems, containsRoute, firstLeafRoute } from '@/config/menu'
+import { visibleMenuItems, containsRoute, firstLeaf } from '@/config/menu'
+import { openExternalLink } from '@/utils/openLink'
 
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
 
 const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
-const mainItems = menuItems.filter((item) => !item.footer)
+const mainItems = computed(() =>
+  visibleMenuItems.value.filter((item) => !item.footer)
+)
 
 // 任一层级后代激活时，一级菜单保持高亮
 const isParentActive = (item) => containsRoute(item, route.path)
 
+// 叶子菜单点击：外链唤起系统浏览器，否则应用内路由跳转
+const handleLeafNav = (leaf) => {
+  if (!leaf) return
+  if (leaf.link) return openExternalLink(leaf.link)
+  router.push(leaf.route).catch(() => {})
+}
+
 const handleNav = (item) => {
   if (isTopMixed.value) {
     // top-mixed 模式：点击一级菜单导航到其第一个叶子页面，子菜单由 MixedSubmenu 组件显示
-    router.push(firstLeafRoute(item) || item.route).catch(() => {})
+    handleLeafNav(firstLeaf(item) || item)
   } else if (item.children?.length) {
     // top 模式：有子菜单的项，点击导航到第一个叶子页面路由
-    router.push(firstLeafRoute(item)).catch(() => {})
+    handleLeafNav(firstLeaf(item))
   } else {
-    router.push(item.route).catch(() => {})
+    handleLeafNav(item)
   }
 }
 
@@ -202,7 +226,7 @@ onBeforeUnmount(() => {
 })
 
 // 菜单项或布局变化时重新检测溢出
-watch([() => menuItems, isTopMixed], () => nextTick(updateScrollState))
+watch([visibleMenuItems, isTopMixed], () => nextTick(updateScrollState))
 </script>
 
 <style lang="scss" scoped>

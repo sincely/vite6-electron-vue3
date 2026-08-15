@@ -6,6 +6,7 @@ import router from '@/router' // 路由
 import '@/styles/index.scss' // 全局样式
 import '@/plugins/iconify' // Iconify 离线图标
 import { setupIcon } from './plugins'
+import { setupDirectives } from '@/directives' // 全局自定义指令（v-permission / v-role）
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
@@ -13,6 +14,7 @@ import { useNotificationStore } from '@/store/modules/notification'
 async function setupApp() {
   const app = createApp(App)
   setupIcon(app)
+  setupDirectives(app)
   app.use(store)
   app.use(router)
 

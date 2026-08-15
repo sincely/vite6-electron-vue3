@@ -67,8 +67,9 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    // 检查用户权限
+    // 检查用户权限（'*:*:*' 为超级权限通配符，拥有全部权限）
     hasPermission(permission) {
+      if (this.permissions.includes('*:*:*')) return true
       return this.permissions.includes(permission)
     },
 

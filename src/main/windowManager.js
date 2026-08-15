@@ -78,7 +78,7 @@ nativeTheme.on('updated', () => {
  */
 const setupWindow = (win) => {
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https:')) shell.openExternal(url)
+    if (/^https?:\/\//.test(url)) shell.openExternal(url)
     return { action: 'deny' } // 拒绝打开外部链接
   })
 

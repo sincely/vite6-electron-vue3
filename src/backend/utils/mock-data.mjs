@@ -8,7 +8,28 @@ export const MOCK_USERS = [
     roles: ['user'],
     username: 'user',
     phone: '13900139000',
-    permissions: ['system:user:view', 'system:role:view', 'system:menu:view']
+    permissions: [
+      'system:user:view',
+      'system:role:view',
+      'system:menu:view',
+      'example:view'
+    ]
+  },
+  {
+    id: 2,
+    password: '123456',
+    realName: '运营编辑',
+    avatar:
+      'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png',
+    roles: ['editor'],
+    username: 'editor',
+    phone: '13700137000',
+    permissions: [
+      'system:user:view',
+      'example:view',
+      'example:add',
+      'example:edit'
+    ]
   },
   {
     id: 1,

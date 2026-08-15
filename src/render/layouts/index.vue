@@ -54,6 +54,8 @@
   <ChatBot />
   <!-- 全局水印 -->
   <Watermark />
+  <!-- 礼花/烟花特效（全局注册，触发时机由 config/festival.js 控制） -->
+  <FireworksEffect />
 </template>
 
 <script setup>

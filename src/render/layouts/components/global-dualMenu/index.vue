@@ -59,7 +59,8 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
-import { menuItems, findTopLevelParent, firstLeafRoute } from '@/config/menu'
+import { visibleMenuItems, findTopLevelParent, firstLeaf } from '@/config/menu'
+import { openExternalLink } from '@/utils/openLink'
 import GlobalLogo from '../global-logo/index.vue'
 import MixedSubmenu from '../global-siderMenu/modules/MixedSubmenu.vue'
 
@@ -67,7 +68,9 @@ const appStore = useAppStore()
 const router = useRouter()
 const route = useRoute()
 
-const mainItems = computed(() => menuItems.filter((item) => !item.footer))
+const mainItems = computed(() =>
+  visibleMenuItems.value.filter((item) => !item.footer)
+)
 const showText = computed(() => appStore.dualMenuShowText)
 
 // 当前路由对应的一级菜单项（决定第一列激活态与第二列内容）
@@ -75,9 +78,11 @@ const activeParent = computed(() => findTopLevelParent(route.path))
 
 const isActive = (item) => activeParent.value?.id === item.id
 
-// 点击一级菜单：导航到其第一个叶子页面（无子项则导航到自身）
+// 点击一级菜单：导航到其第一个叶子页面（无子项则导航到自身；外链则唤起系统浏览器）
 const handleNav = (item) => {
-  router.push(firstLeafRoute(item) || item.route).catch(() => {})
+  const leaf = firstLeaf(item)
+  if (leaf?.link) return openExternalLink(leaf.link)
+  router.push(leaf?.route || item.route).catch(() => {})
 }
 </script>
 

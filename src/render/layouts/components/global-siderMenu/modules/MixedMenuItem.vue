@@ -16,6 +16,13 @@
     />
     <span v-else class="mixed-submenu-dot"></span>
     <span class="mixed-submenu-label">{{ item.label }}</span>
+    <Icon
+      v-if="item.link"
+      icon="lucide:arrow-up-right"
+      class="mixed-submenu-external-icon"
+      width="12px"
+      height="12px"
+    />
     <span v-if="item.showBadge" class="menu-badge"></span>
     <span v-else-if="item.showTextBadge" class="menu-text-badge">
       {{ item.showTextBadge }}
@@ -51,6 +58,7 @@
 import { computed, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
+import { openExternalLink } from '@/utils/openLink'
 
 const props = defineProps({
   item: {
@@ -77,9 +85,10 @@ const isActive = computed(() => props.item.route === route.path)
 const handleClick = () => {
   if (props.item.children?.length) {
     toggleExpand(props.item.id)
-  } else {
-    router.push(props.item.route).catch(() => {})
+    return
   }
+  if (props.item.link) return openExternalLink(props.item.link)
+  router.push(props.item.route).catch(() => {})
 }
 </script>
 
@@ -170,6 +179,12 @@ const handleClick = () => {
   &-open {
     transform: rotate(90deg);
   }
+}
+
+// 外部链接标识图标
+.mixed-submenu-external-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 // 子级分组展开容器（grid-rows 过渡）

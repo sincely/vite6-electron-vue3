@@ -119,10 +119,12 @@
 import { Icon } from '@iconify/vue'
 import { asyncRoutes } from '@/router'
 import { useSearchStore } from '@/store/modules/search'
+import { useUserStore } from '@/store/modules/user'
 import { isMac } from '@/utils/platform'
 
 const router = useRouter()
 const searchStore = useSearchStore()
+const userStore = useUserStore()
 
 const visible = ref(false)
 const keyword = ref('')
@@ -145,6 +147,14 @@ const menuList = computed(() => {
     if (!title || !path) return
     if (route.meta?.noLayout) return
     if (!route.name) return
+    // 页面可见性：过滤当前角色无权访问的路由
+    const roles = route.meta?.roles
+    if (
+      roles?.length &&
+      !roles.some((role) => userStore.roles.includes(role))
+    ) {
+      return
+    }
 
     if (!map.has(path)) {
       map.set(path, { title, path })

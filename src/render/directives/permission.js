@@ -1,4 +1,4 @@
-import { useUserStore } from '@/store/user'
+import { useUserStore } from '@/store/modules/user'
 
 /**
  * 权限指令
@@ -7,6 +7,9 @@ import { useUserStore } from '@/store/user'
  */
 function checkPermission(el, binding) {
   const userStore = useUserStore()
+
+  // 超级权限通配符，放行所有权限校验
+  if (userStore.permissions.includes('*:*:*')) return
 
   const { value } = binding
   if (!value) return
