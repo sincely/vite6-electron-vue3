@@ -52,7 +52,10 @@
 <script setup>
 import CustomTitleBar from './components/CustomTitleBar.vue'
 import AccountLogin from './components/AccountLogin.vue'
-import QRCodeLogin from './components/QRCodeLogin.vue'
+// 扫码登录为次要功能，异步加载避免 qrcode 库进入登录首屏
+const QRCodeLogin = defineAsyncComponent(
+  () => import('./components/QRCodeLogin.vue')
+)
 
 const activeTab = ref('account')
 

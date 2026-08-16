@@ -1,5 +1,4 @@
 import { createApp } from 'vue'
-import { ElMessage } from 'element-plus'
 import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由

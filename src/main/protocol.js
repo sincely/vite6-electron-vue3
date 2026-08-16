@@ -13,6 +13,7 @@
 
 import { protocol, net } from 'electron'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { renderer_dist } from './config'
 
 /**
@@ -40,6 +41,8 @@ export function registerSchemes() {
 export function setupProtocol() {
   protocol.handle('app', (request) => {
     const { pathname } = new URL(request.url)
-    return net.fetch('file://' + path.join(renderer_dist, pathname))
+    // 用 pathToFileURL 生成标准 file:// URL：
+    // 直接字符串拼接在 Windows 上会得到 file://C:\...（缺少一个斜杠），导致页面加载失败白屏
+    return net.fetch(pathToFileURL(path.join(renderer_dist, pathname)).href)
   })
 }

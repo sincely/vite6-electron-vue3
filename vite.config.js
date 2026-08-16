@@ -106,10 +106,10 @@ export default defineConfig(({ mode, command }) => {
             ) {
               return 'vue-vendor'
             }
-            // Element Plus 组件（按需拆分减小首屏）
-            if (id.includes('node_modules/element-plus/')) {
-              return 'element-plus'
-            }
+            // Element Plus 组件不强制合包：
+            // 统一打成一个 chunk 会导致登录窗口（入口）静态依赖整个 element-plus，
+            // 即使登录页只用到少量组件也要全量加载执行。
+            // 移除后由 Rollup 自动拆分，登录链路只加载实际引用的组件。
             // Element Plus 图标
             if (id.includes('node_modules/@element-plus/icons-vue/')) {
               return 'element-icons'

@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import NProgress from '@/config/nprogress'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'

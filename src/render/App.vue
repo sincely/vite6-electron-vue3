@@ -16,7 +16,6 @@
 import { useUpdater } from '@/core/update'
 import { useNetwork } from '@/hooks/useNetwork'
 import { useDeepLink } from '@/hooks/useDeepLink'
-import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 const route = useRoute()
