@@ -468,6 +468,42 @@
                   <!-- 主题颜色 -->
                   <div class="setting-section">
                     <h3 class="section-title">主题颜色</h3>
+
+                    <!-- 预设主题色（参照 art-design-pro ColorSettings.vue） -->
+                    <div class="setting-item preset-color-item">
+                      <div class="item-info">
+                        <span class="item-label">预设主题色</span>
+                        <span class="item-desc">
+                          点击下方色块快速切换主色，配套信息色/成功/警告/错误色保持不变
+                        </span>
+                      </div>
+                      <div class="preset-color-list">
+                        <button
+                          v-for="color in presetColors"
+                          :key="color"
+                          type="button"
+                          class="preset-color-dot"
+                          :class="{
+                            active:
+                              themeColors.primary?.toLowerCase() ===
+                              color.toLowerCase()
+                          }"
+                          :style="{ background: color }"
+                          :aria-label="`选择主题色 ${color}`"
+                          @click="handleSelectPresetColor(color)"
+                        >
+                          <SvgIcon
+                            v-show="
+                              themeColors.primary?.toLowerCase() ===
+                              color.toLowerCase()
+                            "
+                            icon-class="check"
+                            class="preset-color-dot__icon"
+                          />
+                        </button>
+                      </div>
+                    </div>
+
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">应用推荐算法的颜色</span>
@@ -751,6 +787,7 @@
 
 <script setup>
 import { animates } from '@/settings/animateSetting'
+import { appPresetColors } from '@/settings/designSetting'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 import { useUpdateStore } from '@/store/modules/version'
@@ -851,8 +888,20 @@ const themeColors = ref({
   ...appStore.themeColors
 })
 
+const presetColors = appPresetColors
+
 const updateThemeColor = () => {
   appStore.setThemeColors(themeColors.value)
+}
+
+// 预设主题色快速选择：同步到本地 ref 后调用 store，
+// 保证 el-color-picker 的 v-model 也能立即反映变更。
+const handleSelectPresetColor = (color) => {
+  themeColors.value.primary = color
+  if (themeColors.value.infoFollowPrimary) {
+    themeColors.value.info = color
+  }
+  appStore.setPresetThemeColor(color)
 }
 
 const form = ref({
@@ -1243,6 +1292,58 @@ const handleClose = () => {
   .item-desc {
     font-size: 12px;
     color: var(--color-text-secondary);
+  }
+}
+
+/* Preset Theme Colors（参照 art-design-pro ColorSettings.vue） */
+.preset-color-item {
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+
+  .item-info {
+    width: 100%;
+  }
+}
+
+.preset-color-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.preset-color-dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px -2px rgb(0 0 0 / 35%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 12px -4px rgb(0 0 0 / 45%);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 2px var(--color-bg-window),
+      0 0 0 4px var(--color-primary),
+      0 4px 10px -4px rgb(0 0 0 / 40%);
+  }
+
+  &__icon {
+    font-size: 14px;
+    color: #fff;
   }
 }
 

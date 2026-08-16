@@ -225,6 +225,17 @@ export const useAppStore = defineStore('app', {
       }
       this.setThemeColors(colors)
     },
+    // 应用预设主题色（参照 art-design-pro 的 colorHandlers.selectColor）
+    // 点击预设色圆点时调用：仅替换主色，其它辅助色保持不变，
+    // 同时根据 infoFollowPrimary 自动同步 info。
+    setPresetThemeColor(color) {
+      if (typeof color !== 'string' || !color) return
+      this.setThemeColors({
+        primary: color,
+        infoFollowPrimary: this.themeColors.infoFollowPrimary,
+        info: this.themeColors.infoFollowPrimary ? color : this.themeColors.info
+      })
+    },
     // 设置主题颜色
     setThemeColors(colors) {
       this.themeColors = { ...this.themeColors, ...colors }
