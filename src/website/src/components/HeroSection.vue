@@ -55,11 +55,7 @@ import { hero, site } from '../config/site.js'
   pointer-events: none;
   background:
     radial-gradient(closest-side, rgb(89 126 247 / 22%), transparent),
-    radial-gradient(
-      closest-side at 70% 60%,
-      rgb(189 52 254 / 12%),
-      transparent
-    );
+    radial-gradient(closest-side at 70% 60%, rgb(189 52 254 / 12%), transparent);
   filter: blur(40px);
   transform: translateX(-50%);
 }

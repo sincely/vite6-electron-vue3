@@ -14,7 +14,7 @@ export default defineFlatConfig([
       'public/**',
       'artifacts/**',
       'src/render/assets/**',
-      'src/render/icons/svg/**',
+      'src/website/dist/**/*',
       'CHANGELOG.md',
       'README.md',
       '*.local',
