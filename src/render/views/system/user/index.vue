@@ -78,13 +78,23 @@
       </template>
 
       <template #action="{ row }">
-        <div class="action-group">
-          <el-button link type="primary" size="small" @click="handleEdit(row)">
-            编辑
-          </el-button>
-          <el-button link type="danger" size="small" @click="handleDelete(row)">
-            删除
-          </el-button>
+        <div class="table-action">
+          <el-button
+            link
+            type="primary"
+            size="small"
+            :icon="Edit"
+            title="编辑"
+            @click="handleEdit(row)"
+          />
+          <el-button
+            link
+            type="danger"
+            size="small"
+            :icon="Delete"
+            title="删除"
+            @click="handleDelete(row)"
+          />
         </div>
       </template>
     </AdvanceTable>
@@ -115,6 +125,7 @@
 defineOptions({ name: 'system-user' })
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Edit, Delete } from '@element-plus/icons-vue'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'
 import AdvanceTable from '@/components/AdvanceTable/index.vue'
 import DynamicSearchBar from '@/components/DynamicSearchBar/index.vue'
@@ -490,12 +501,5 @@ onMounted(() => {
         color-mix(in srgb, var(--color-amber), transparent 75%);
     }
   }
-}
-
-.action-group {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: center;
 }
 </style>

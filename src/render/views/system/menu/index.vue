@@ -53,22 +53,32 @@
       </template>
 
       <template #action="{ row }">
-        <div class="action-group">
+        <div class="table-action">
           <el-button
             v-if="row.menuType !== 'BUTTON'"
             link
             type="success"
             size="small"
+            :icon="Plus"
+            title="新增子菜单"
             @click="handleCreateChild(row)"
-          >
-            新增子菜单
-          </el-button>
-          <el-button link type="primary" size="small" @click="handleEdit(row)">
-            编辑
-          </el-button>
-          <el-button link type="danger" size="small" @click="handleDelete(row)">
-            删除
-          </el-button>
+          />
+          <el-button
+            link
+            type="primary"
+            size="small"
+            :icon="Edit"
+            title="编辑"
+            @click="handleEdit(row)"
+          />
+          <el-button
+            link
+            type="danger"
+            size="small"
+            :icon="Delete"
+            title="删除"
+            @click="handleDelete(row)"
+          />
         </div>
       </template>
     </TreeTable>
@@ -100,6 +110,7 @@
 defineOptions({ name: 'system-menu' })
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Edit, Delete, Plus } from '@element-plus/icons-vue'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'
 import DynamicSearchBar from '@/components/DynamicSearchBar/index.vue'
 import ModalDialog from '@/components/ModalDialog/index.vue'
@@ -543,12 +554,5 @@ onMounted(() => {
       background: var(--color-text-muted);
     }
   }
-}
-
-.action-group {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: center;
 }
 </style>

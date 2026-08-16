@@ -39,11 +39,23 @@
           </template>
         </el-table-column>
         <el-table-column label="发布日期" prop="date" width="110" />
-        <el-table-column label="操作" width="100" fixed="right">
+        <el-table-column label="操作" width="90" fixed="right" align="center">
           <template #default>
-            <div class="job-posts-actions">
-              <el-button size="small" :icon="View" circle />
-              <el-button size="small" :icon="Edit" circle />
+            <div class="table-action">
+              <el-button
+                link
+                type="info"
+                size="small"
+                :icon="View"
+                title="查看"
+              />
+              <el-button
+                link
+                type="primary"
+                size="small"
+                :icon="Edit"
+                title="编辑"
+              />
             </div>
           </template>
         </el-table-column>
@@ -200,11 +212,6 @@ const filteredList = computed(() => {
     display: flex;
     gap: 8px;
     align-items: center;
-  }
-
-  &-actions {
-    display: flex;
-    gap: 4px;
   }
 
   &-footer {

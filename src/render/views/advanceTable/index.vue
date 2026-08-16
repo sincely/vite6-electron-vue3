@@ -128,24 +128,31 @@
 
       <!-- 操作列 -->
       <template #action="{ row }">
-        <div class="action-cell">
-          <button
-            class="action-link"
-            title="查看详情"
+        <div class="table-action">
+          <el-button
+            link
+            type="info"
+            size="small"
+            :icon="View"
+            title="查看"
             @click="handleDetail(row)"
-          >
-            <SvgIcon icon-class="open-eye" width="16px" height="16px" />
-          </button>
-          <button class="action-link" title="编辑" @click="handleEdit(row)">
-            <SvgIcon icon-class="file-text" width="16px" height="16px" />
-          </button>
-          <button
-            class="action-link action-link--danger"
+          />
+          <el-button
+            link
+            type="primary"
+            size="small"
+            :icon="Edit"
+            title="编辑"
+            @click="handleEdit(row)"
+          />
+          <el-button
+            link
+            type="danger"
+            size="small"
+            :icon="Delete"
             title="删除"
             @click="handleDelete(row)"
-          >
-            <SvgIcon icon-class="close" width="16px" height="16px" />
-          </button>
+          />
         </div>
       </template>
 
@@ -167,6 +174,7 @@
 <script setup>
 defineOptions({ name: 'advance-table-demo' })
 import { ref, reactive } from 'vue'
+import { View, Edit, Delete } from '@element-plus/icons-vue'
 import UserDetail from './components/UserDetail.vue'
 import { useDialog } from '@/hooks/useDialog'
 import { getTableList } from '@/api/table'
@@ -714,39 +722,5 @@ function handleDetail(row) {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   color: var(--color-text-secondary);
-}
-
-// Action cell
-.action-cell {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-link {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  &:hover {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary), transparent 92%);
-    border-color: color-mix(in srgb, var(--color-primary), transparent 80%);
-    transform: scale(1.1);
-  }
-
-  &--danger:hover {
-    color: var(--color-rose);
-    background: color-mix(in srgb, var(--color-rose), transparent 92%);
-    border-color: color-mix(in srgb, var(--color-rose), transparent 80%);
-  }
 }
 </style>

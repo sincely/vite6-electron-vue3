@@ -38,12 +38,30 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="130" fixed="right">
+        <el-table-column label="操作" width="110" fixed="right" align="center">
           <template #default>
-            <div class="applicant-list-actions">
-              <el-button size="small" :icon="View" circle />
-              <el-button size="small" :icon="Edit" circle />
-              <el-button size="small" :icon="Delete" circle type="danger" />
+            <div class="table-action">
+              <el-button
+                link
+                type="info"
+                size="small"
+                :icon="View"
+                title="查看"
+              />
+              <el-button
+                link
+                type="primary"
+                size="small"
+                :icon="Edit"
+                title="编辑"
+              />
+              <el-button
+                link
+                type="danger"
+                size="small"
+                :icon="Delete"
+                title="删除"
+              />
             </div>
           </template>
         </el-table-column>
@@ -204,11 +222,6 @@ const filteredList = computed(() => {
       color: var(--color-danger);
       background: color-mix(in srgb, var(--color-danger), transparent 88%);
     }
-  }
-
-  &-actions {
-    display: flex;
-    gap: 4px;
   }
 
   &-footer {
