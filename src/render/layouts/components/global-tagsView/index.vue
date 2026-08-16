@@ -1,7 +1,17 @@
 <template>
   <div class="tags-view-wrapper" :class="`is-style-${tagsViewStyle}`">
+    <!-- 左滚动箭头（标签溢出时出现） -->
+    <span
+      v-if="showScrollArrows"
+      class="scroll-arrow"
+      :class="{ 'is-disabled': !canScrollLeft }"
+      @click="handleScrollArrow('left')"
+    >
+      <Icon icon="lucide:chevron-left" width="14" height="14" />
+    </span>
+
     <!-- 标签列表（横向滚动） -->
-    <div ref="scrollRef" class="tags-view-scroll">
+    <div ref="scrollRef" class="tags-view-scroll" @wheel.prevent="handleWheel">
       <div class="tags-view-list">
         <div
           v-for="tag in tagsViewStore.visitedViews"
@@ -43,6 +53,16 @@
         </div>
       </div>
     </div>
+
+    <!-- 右滚动箭头（标签溢出时出现） -->
+    <span
+      v-if="showScrollArrows"
+      class="scroll-arrow"
+      :class="{ 'is-disabled': !canScrollRight }"
+      @click="handleScrollArrow('right')"
+    >
+      <Icon icon="lucide:chevron-right" width="14" height="14" />
+    </span>
 
     <!-- 右侧操作区 -->
     <div class="tags-view-actions">
@@ -232,6 +252,51 @@ const resolveTagIcon = (path) => findTopLevelParent(path)?.icon || ''
 // 注入布局提供的方法和状态（页面刷新为 store 驱动：appStore.reloadPage()）
 const toggleFullscreen = inject('toggleFullscreen', () => {})
 const isFullscreen = inject('isFullscreen', ref(false))
+
+// ─── 横向滚动（左右箭头） ───────────────────────────────────
+const scrollRef = ref(null)
+const showScrollArrows = ref(false)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+
+// 根据滚动容器的溢出程度与当前位置，同步箭头显隐与可用态
+const updateScrollState = () => {
+  const el = scrollRef.value
+  if (!el) return
+  const { scrollLeft, scrollWidth, clientWidth } = el
+  showScrollArrows.value = scrollWidth > clientWidth + 1
+  canScrollLeft.value = scrollLeft > 1
+  canScrollRight.value = scrollLeft + clientWidth < scrollWidth - 1
+}
+
+const handleScrollArrow = (direction) => {
+  const el = scrollRef.value
+  if (!el) return
+  const distance = el.clientWidth * 0.75
+  el.scrollBy({
+    left: direction === 'left' ? -distance : distance,
+    behavior: 'smooth'
+  })
+}
+
+// 纵向滚轮转换为横向滚动
+const handleWheel = (e) => {
+  const el = scrollRef.value
+  if (!el) return
+  const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX
+  el.scrollLeft += delta
+}
+
+// 路由切换后确保激活标签滚入可视区域
+const scrollActiveIntoView = () => {
+  const el = scrollRef.value
+  if (!el) return
+  el.querySelector('.tag-item.is-active')?.scrollIntoView({
+    behavior: 'smooth',
+    inline: 'nearest',
+    block: 'nearest'
+  })
+}
 
 // ─── 初始化固定标签 ──────────────────────────────────────────
 const initAffixTags = () => {
@@ -437,20 +502,37 @@ const handleCtxCloseAll = () => {
 }
 
 // ─── 生命周期 ──────────────────────────────────────────────
+let scrollResizeObserver = null
+
 onMounted(() => {
   initAffixTags()
   addCurrentTag()
   document.addEventListener('click', closeContextMenu)
+
+  const el = scrollRef.value
+  if (el) {
+    el.addEventListener('scroll', updateScrollState, { passive: true })
+    // 容器尺寸（窗口缩放）与列表内容尺寸（增删标签）变化都会触发溢出状态更新
+    scrollResizeObserver = new ResizeObserver(updateScrollState)
+    scrollResizeObserver.observe(el)
+    if (el.firstElementChild) scrollResizeObserver.observe(el.firstElementChild)
+  }
+  nextTick(updateScrollState)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', closeContextMenu)
+  scrollRef.value?.removeEventListener('scroll', updateScrollState)
+  scrollResizeObserver?.disconnect()
 })
 
 watch(
   () => route.path,
-  () => {
+  async () => {
     addCurrentTag()
+    await nextTick()
+    updateScrollState()
+    scrollActiveIntoView()
   }
 )
 </script>
@@ -595,6 +677,35 @@ watch(
 
   &::-webkit-scrollbar {
     height: 0;
+  }
+}
+
+// 左右滚动箭头：仅溢出时出现，到达边界后禁用
+.scroll-arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
+  }
+
+  &.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+
+    &:hover {
+      color: var(--color-text-muted);
+      background: transparent;
+    }
   }
 }
 
