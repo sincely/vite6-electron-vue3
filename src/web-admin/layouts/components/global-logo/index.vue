@@ -43,8 +43,10 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   z-index: 2;
   display: flex;
   align-items: center;
-  height: 74px;
-  padding: 20px 16px 0;
+  justify-content: center;
+  width: 100%;
+  height: 60px;
+  padding: 0 16px;
   cursor: pointer;
   transition: padding $transition;
 
@@ -62,8 +64,8 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   }
 
   &.is-top-mode {
+    justify-content: flex-start;
     height: 100%;
-    padding: 0;
     padding: 0 16px;
     -webkit-app-region: drag;
 
