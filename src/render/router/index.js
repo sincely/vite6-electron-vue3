@@ -6,6 +6,7 @@ import { useUserStore } from '@/store/modules/user'
 // 登录页为应用首屏，静态导入随入口 chunk 一并加载，
 // 避免 mount 后再等懒加载 chunk 造成的短暂空白
 import Login from '@/views/login/index.vue'
+import { asIframeComponent } from '@/views/iframe/route'
 
 /**
  * 固定路由 - 无需权限，始终加载
@@ -39,11 +40,31 @@ export const constantRoutes = [
  *   keepAlive - 是否缓存组件
  *   showBadge     - true 时菜单项显示红点
  *   showTextBadge - 字符串，菜单项显示文本角标（如 'New' / 'Hot'）
- *   link     - 外部链接 URL，点击菜单由系统浏览器打开，不做应用内跳转（外链路由无需 component）
+ *   link     - 外部链接 URL，默认点击菜单由系统浏览器打开，不做应用内跳转（此时无需 component）
+ *   iframe   - true 时配合 link 在内容区内嵌 iframe 展示该页面（路由需声明 name 与 component，
+ *              component 统一使用 asIframeComponent(路由 name) 生成，保证 keep-alive 按路由名缓存）
  */
 const Layout = () => import('@/layouts/index.vue')
 
 export const asyncRouteTree = [
+  //  个人中心（头像下拉进入，无 sidebar/group，不出现在侧边栏菜单）
+  {
+    path: '/profile',
+    component: Layout,
+    meta: { title: '个人中心' },
+    children: [
+      {
+        path: '',
+        name: 'profile',
+        component: () => import('@/views/profile/index.vue'),
+        meta: {
+          title: '个人中心',
+          icon: 'user-round',
+          keepAlive: true
+        }
+      }
+    ]
+  },
   //  仪表板
   {
     path: '/desktop',
@@ -750,12 +771,12 @@ export const asyncRouteTree = [
       }
     ]
   },
-  //  外部链接（点击菜单唤起系统默认浏览器，不在应用内打开）
+  //  内嵌网页（点击菜单在内容区以 iframe 展示；不配 iframe: true 的外链仍由系统浏览器打开）
   {
     path: '/external',
     component: Layout,
     meta: {
-      title: '外链',
+      title: '内嵌网页',
       icon: 'square-arrow-out-up-right',
       order: 9,
       sidebar: true
@@ -763,29 +784,41 @@ export const asyncRouteTree = [
     children: [
       {
         path: 'vue',
+        name: 'external-vue',
+        component: asIframeComponent('external-vue'),
         meta: {
-          title: 'Vue 官网',
+          title: 'Vue 官网(外部打开链接)',
           icon: 'atom',
           group: '/external',
-          link: 'https://cn.vuejs.org'
+          link: 'https://cn.vuejs.org',
+          // iframe: true,
+          keepAlive: true
         }
       },
       {
         path: 'electron',
+        name: 'external-electron',
+        component: asIframeComponent('external-electron'),
         meta: {
           title: 'Electron 官网',
           icon: 'zap',
           group: '/external',
-          link: 'https://www.electronjs.org'
+          link: 'https://www.electronjs.org',
+          iframe: true,
+          keepAlive: true
         }
       },
       {
         path: 'github',
+        name: 'external-github',
+        component: asIframeComponent('external-github'),
         meta: {
           title: 'GitHub',
           icon: 'github',
           group: '/external',
-          link: 'https://github.com'
+          link: 'https://github.com',
+          iframe: true,
+          keepAlive: true
         }
       }
     ]

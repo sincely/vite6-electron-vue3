@@ -203,23 +203,43 @@
         </template>
 
         <!-- 操作列 -->
-        <el-table-column label="操作" width="180" align="center" fixed="right">
+        <el-table-column label="操作" width="90" align="center" fixed="right">
           <template #default="{ row, $index }">
-            <div v-if="isEditing(row)" class="action-cell">
-              <el-button type="success" @click="handleSave(row, $index)">
-                保存
-              </el-button>
-              <el-button type="warning" @click="handleCancel(row, $index)">
-                取消
-              </el-button>
+            <div v-if="isEditing(row)" class="table-action">
+              <el-button
+                link
+                type="success"
+                size="small"
+                :icon="Check"
+                title="保存"
+                @click="handleSave(row, $index)"
+              />
+              <el-button
+                link
+                type="warning"
+                size="small"
+                :icon="Close"
+                title="取消"
+                @click="handleCancel(row, $index)"
+              />
             </div>
-            <div v-else class="action-cell">
-              <el-button type="primary" @click="handleEdit(row, $index)">
-                编辑
-              </el-button>
-              <el-button type="danger" @click="handleDelete(row, $index)">
-                删除
-              </el-button>
+            <div v-else class="table-action">
+              <el-button
+                link
+                type="primary"
+                size="small"
+                :icon="Edit"
+                title="编辑"
+                @click="handleEdit(row, $index)"
+              />
+              <el-button
+                link
+                type="danger"
+                size="small"
+                :icon="Delete"
+                title="删除"
+                @click="handleDelete(row, $index)"
+              />
             </div>
           </template>
         </el-table-column>
@@ -247,6 +267,7 @@
 import { ref, computed, watch } from 'vue'
 import { cloneDeep } from 'lodash-es'
 import { ElMessage } from 'element-plus'
+import { Edit, Delete, Check, Close } from '@element-plus/icons-vue'
 
 const props = defineProps({
   // 表格数据

@@ -11,7 +11,8 @@ import { useUserStore } from '@/store/modules/user'
  *   meta.footer  = true             -> 渲染到侧边栏底部固定区
  *   meta.showBadge     = true       -> 菜单项显示红点
  *   meta.showTextBadge = '文本'     -> 菜单项显示文本角标（如 New / Hot）
- *   meta.link  = 'https://...'      -> 外部链接，点击菜单由系统浏览器打开，不做应用内路由跳转
+ *   meta.link  = 'https://...'      -> 外部链接，默认点击菜单由系统浏览器打开；
+ *                                      配合 meta.iframe = true 时改为应用内嵌 iframe 展示
  */
 
 // 递归收集某个父路径下的所有子级菜单项
@@ -33,6 +34,7 @@ function buildChildren(parentPath, routes, idBase) {
       icon: route.meta.icon,
       route: route.path,
       link: route.meta.link,
+      iframe: !!route.meta.iframe,
       roles: route.meta.roles,
       showBadge: !!route.meta.showBadge,
       showTextBadge: route.meta.showTextBadge,
@@ -54,6 +56,7 @@ function buildMenuItems(routes) {
       icon: route.meta.icon,
       route: route.path,
       link: route.meta.link,
+      iframe: !!route.meta.iframe,
       footer: route.meta.footer ?? false,
       roles: route.meta.roles,
       showBadge: !!route.meta.showBadge,

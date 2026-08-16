@@ -146,10 +146,10 @@ const mainItems = computed(() =>
 // 任一层级后代激活时，一级菜单保持高亮
 const isParentActive = (item) => containsRoute(item, route.path)
 
-// 叶子菜单点击：外链唤起系统浏览器，否则应用内路由跳转
+// 叶子菜单点击：外链唤起系统浏览器（声明 iframe 的内嵌页除外），否则应用内路由跳转
 const handleLeafNav = (leaf) => {
   if (!leaf) return
-  if (leaf.link) return openExternalLink(leaf.link)
+  if (leaf.link && !leaf.iframe) return openExternalLink(leaf.link)
   router.push(leaf.route).catch(() => {})
 }
 

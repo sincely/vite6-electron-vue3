@@ -88,10 +88,12 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 import { useLockStore } from '@/store/modules/lock'
 
+const router = useRouter()
 const appStore = useAppStore()
 const userStore = useUserStore()
 const lockStore = useLockStore()
@@ -100,6 +102,7 @@ const userDropdownRef = ref(null)
 const avatarLoadFailed = ref(false)
 
 const primaryUserActions = [
+  { action: 'center', label: '个人中心', icon: 'User' },
   { action: 'profile', label: '设置', icon: 'setting' },
   { action: 'lock', label: '锁屏', icon: 'Lock' },
   { action: 'docs', label: '文档', icon: 'Document' },
@@ -146,7 +149,9 @@ const openExternal = (url) => {
 const handleUserAction = async (action) => {
   closeUserDropdown()
 
-  if (action === 'profile') {
+  if (action === 'center') {
+    router.push('/profile')
+  } else if (action === 'profile') {
     appStore.toggleSettings(true)
   } else if (action === 'docs') {
     openExternal('https://element-plus.org/zh-CN/')

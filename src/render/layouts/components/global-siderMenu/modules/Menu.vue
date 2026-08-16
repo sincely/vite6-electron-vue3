@@ -133,9 +133,10 @@ const handleNav = (item) => {
     toggleExpand(item.id, 1)
     return
   }
-  // 外部链接（含折叠态下分组的首个外链叶子）交由系统浏览器打开
+  // 外部链接（含折叠态下分组的首个外链叶子）交由系统浏览器打开；
+  // 声明 iframe 的内嵌页除外，走应用内路由跳转
   const leaf = firstLeaf(item)
-  if (leaf?.link) return openExternalLink(leaf.link)
+  if (leaf?.link && !leaf?.iframe) return openExternalLink(leaf.link)
   router.push(item.route).catch(() => {})
 }
 </script>

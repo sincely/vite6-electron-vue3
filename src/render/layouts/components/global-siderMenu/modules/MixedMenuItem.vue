@@ -87,7 +87,8 @@ const handleClick = () => {
     toggleExpand(props.item.id)
     return
   }
-  if (props.item.link) return openExternalLink(props.item.link)
+  if (props.item.link && !props.item.iframe)
+    return openExternalLink(props.item.link)
   router.push(props.item.route).catch(() => {})
 }
 </script>

@@ -78,10 +78,11 @@ const activeParent = computed(() => findTopLevelParent(route.path))
 
 const isActive = (item) => activeParent.value?.id === item.id
 
-// 点击一级菜单：导航到其第一个叶子页面（无子项则导航到自身；外链则唤起系统浏览器）
+// 点击一级菜单：导航到其第一个叶子页面（无子项则导航到自身；
+// 外链唤起系统浏览器，声明 iframe 的内嵌页走应用内路由跳转）
 const handleNav = (item) => {
   const leaf = firstLeaf(item)
-  if (leaf?.link) return openExternalLink(leaf.link)
+  if (leaf?.link && !leaf?.iframe) return openExternalLink(leaf.link)
   router.push(leaf?.route || item.route).catch(() => {})
 }
 </script>

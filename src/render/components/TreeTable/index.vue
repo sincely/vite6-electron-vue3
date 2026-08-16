@@ -15,6 +15,17 @@
           height="18"
           @click="refresh"
         />
+        <!-- 全屏切换 -->
+        <Icon
+          :icon="
+            isFullscreen ? 'ri:fullscreen-exit-line' : 'ri:fullscreen-line'
+          "
+          class="toolbar-icon"
+          width="18"
+          height="18"
+          :title="isFullscreen ? '退出全屏' : '全屏'"
+          @click="toggleFullscreen"
+        />
         <ColumnSetting v-model:columns="localColumns" />
         <StyleSetting
           v-model:stripe="tableStyle.stripe"
@@ -140,7 +151,7 @@
       <el-table-column
         v-if="mergedConfig.useAction"
         label="操作"
-        width="240"
+        width="120"
         align="center"
         fixed="right"
       >
@@ -151,23 +162,23 @@
             :row="row"
             :index="$index"
           />
-          <div v-else class="action-group">
+          <div v-else class="table-action">
             <el-button
               link
               type="primary"
               size="small"
+              :icon="Edit"
+              title="编辑"
               @click="handleEdit(row, $index)"
-            >
-              编辑
-            </el-button>
+            />
             <el-button
               link
               type="success"
               size="small"
+              :icon="Plus"
+              title="新增"
               @click="handleAdd(row, $index)"
-            >
-              新增
-            </el-button>
+            />
             <el-popconfirm
               title="确认删除？"
               confirm-button-text="确认"
@@ -175,7 +186,13 @@
               @confirm="handleDelete(row, $index)"
             >
               <template #reference>
-                <el-button link type="danger" size="small">删除</el-button>
+                <el-button
+                  link
+                  type="danger"
+                  size="small"
+                  :icon="Delete"
+                  title="删除"
+                />
               </template>
             </el-popconfirm>
           </div>
@@ -216,6 +233,7 @@ import StyleSetting from '@/components/AdvanceTable/components/StyleSetting.vue'
 import DictTag from './DictTag.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { Icon } from '@iconify/vue'
+import { Edit, Delete, Plus } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -415,6 +433,10 @@ const reload = () => {
   tableRef.value?.doLayout()
 }
 
+// 内容全屏由布局层统一管理（隐藏侧边栏/头部/标签栏，ESC 退出也在布局层处理），此处直接注入使用
+const toggleFullscreen = inject('toggleFullscreen', () => {})
+const isFullscreen = inject('isFullscreen', ref(false))
+
 // 排序变更
 const handleSortChange = ({ prop, order }) => {
   if (mergedConfig.value.sort) {
@@ -585,12 +607,6 @@ defineExpose({
   justify-content: flex-end;
   padding: 12px 0 4px;
   margin-top: auto;
-}
-
-.action-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 // ---------- Element Plus 表格深度美化 ----------

@@ -11,6 +11,16 @@ const notifyCheckUpdate = () => {
   }
 }
 
+// 通知渲染进程打开问题反馈弹窗（由渲染进程收集后跳转 GitHub Issues）
+const notifyReportIssue = () => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win && !win.isDestroyed()) {
+    if (win.isMinimized()) win.restore()
+    win.focus()
+    win.webContents.send('menu-report-issue')
+  }
+}
+
 // 计算相对时间（如 "2 个月前"）
 const getRelativeTime = (dateStr) => {
   const date = new Date(dateStr)
@@ -193,11 +203,7 @@ const createMenu = () => {
         },
         {
           label: '报告问题',
-          click: async () => {
-            await shell.openExternal(
-              'https://github.com/sincely/vite6-electron-vue3/issues'
-            )
-          }
+          click: notifyReportIssue
         },
         { type: 'separator' },
         {
