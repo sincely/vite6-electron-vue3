@@ -74,9 +74,9 @@ nativeTheme.on('updated', () => {
  * - 拦截外部链接，使用系统浏览器打开
  * - 记录页面加载失败日志
  * - 记录渲染进程崩溃日志
- * - ready-to-show 时显示窗口
+ * - ready-to-show 时显示窗口（autoShow=false 时跳过，由调用方控制显示时机）
  */
-const setupWindow = (win) => {
+const setupWindow = (win, { autoShow = true } = {}) => {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https?:\/\//.test(url)) shell.openExternal(url)
     return { action: 'deny' } // 拒绝打开外部链接
@@ -97,9 +97,11 @@ const setupWindow = (win) => {
     logger.error(`渲染进程崩溃: ${details.reason} (${details.exitCode})`)
   })
 
-  win.once('ready-to-show', () => {
-    if (!win.isDestroyed()) win.show()
-  })
+  if (autoShow) {
+    win.once('ready-to-show', () => {
+      if (!win.isDestroyed()) win.show()
+    })
+  }
 }
 
 /**
@@ -200,8 +202,44 @@ export function createLoginWindow() {
   // 加载登录页面
   loadHash(win, 'login')
 
-  // 设置窗口事件
-  setupWindow(win)
+  // 设置窗口事件（登录窗口不自动显示，等登录态检查结果再决定显示或切换）
+  setupWindow(win, { autoShow: false })
+
+  // 页面加载完成后读取渲染进程的登录态（localStorage 持久化的 token）：
+  // 已登录直接切换到主窗口（登录窗口保持隐藏，无闪烁），未登录才显示登录窗口。
+  // 之所以不依赖主进程 store 判断，是因为登录/登出时跨窗口的 IPC 消息无顺序保证，
+  // 双写状态可能不一致，而 localStorage 是唯一的真实数据源。
+  win.webContents.once('did-finish-load', async () => {
+    if (win.isDestroyed()) return
+    try {
+      const userStr = await win.webContents.executeJavaScript(
+        'localStorage.getItem("user")',
+        true
+      )
+      let token = ''
+      if (userStr) {
+        try {
+          token = JSON.parse(userStr).token || ''
+        } catch {
+          // localStorage 数据损坏按未登录处理
+        }
+      }
+      if (token) {
+        // 已登录：创建主窗口，等其就绪后关闭登录窗口
+        const mainWin = createMainWindow()
+        const closeTimer = setTimeout(() => closeLoginWindow(), 5000)
+        mainWin.once('ready-to-show', () => {
+          clearTimeout(closeTimer)
+          closeLoginWindow()
+        })
+      } else {
+        win.show()
+      }
+    } catch (err) {
+      logger.error('检查登录状态失败:', err.message)
+      win.show()
+    }
+  })
 
   win.on('closed', () => {
     windows.delete(windowId)

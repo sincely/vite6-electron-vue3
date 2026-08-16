@@ -68,7 +68,7 @@ app.whenReady().then(() => {
 
   // 创建自定义菜单
   createMenu()
-  // 创建登录窗口
+  // 创建登录窗口（加载完成后由渲染进程登录态决定显示登录窗口还是直接进入主窗口）
   createLoginWindow()
   // 注册 IPC 事件
   initIpc()
@@ -93,7 +93,7 @@ app.on('second-instance', (_event, argv) => {
   restoreMainWindow()
 })
 
-// 当应用被激活时，聚焦到主窗口或创建登录窗口
+// 当应用被激活时，聚焦已有窗口；无窗口时创建登录窗口（由其内部按登录态决定显示还是切主窗口）
 app.on('activate', () => {
   const allWindows = BrowserWindow.getAllWindows()
   if (allWindows.length) {
