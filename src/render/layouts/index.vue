@@ -36,8 +36,8 @@
 
         <!-- 内容列 -->
         <div class="layout-body-content">
-          <!-- 多标签导航（全屏时仍保留，供导航和还原） -->
-          <GlobalTagsView v-if="appStore.tagsView" />
+          <!-- 多标签导航（内容全屏时隐藏，腾出完整可视空间） -->
+          <GlobalTagsView v-if="appStore.tagsView && !isFullscreen" />
 
           <!-- 页面内容（路由视图 + 过渡 + 加载） -->
           <GlobalContent />
@@ -47,6 +47,16 @@
         </div>
       </div>
     </div>
+
+    <!-- 内容全屏提示：进入时短暂告知 ESC 退出方式，随后自动消失 -->
+    <Transition name="fullscreen-hint">
+      <div v-if="showFullscreenHint" class="fullscreen-exit-hint">
+        <Icon icon="lucide:minimize" width="15" height="15" />
+        <span>已进入全屏，按</span>
+        <kbd>ESC</kbd>
+        <span>退出</span>
+      </div>
+    </Transition>
   </div>
   <!-- 更新弹框 -->
   <UpdateDialog />
@@ -68,6 +78,7 @@ import GlobalTagsView from './components/global-tagsView/index.vue'
 import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import MixedSubmenu from './components/global-siderMenu/modules/MixedSubmenu.vue'
 import DualMenu from './components/global-dualMenu/index.vue'
+import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { findTopLevelParent } from '@/config/menu'
 import { computed, ref, provide, onMounted, onUnmounted } from 'vue'
@@ -85,24 +96,44 @@ const isDual = computed(() => appStore.layoutMode === 'dual')
 // 根据当前路由计算激活的一级菜单项
 const activeParentItem = computed(() => findTopLevelParent(route.path))
 
-// 全屏状态管理
+// 内容全屏状态管理（布局内最大化，非浏览器 Fullscreen API）
 const isFullscreen = ref(false)
 
-// 监听全屏状态变化（如用户按下 ESC 键退出全屏）
-const handleFullscreenChange = () => {
+// 进入全屏时短暂提示退出方式（ESC），约 2.6s 后自动消失
+const showFullscreenHint = ref(false)
+let hintTimer = null
+
+const toggleFullscreen = () => {
   isFullscreen.value = !isFullscreen.value
+  clearTimeout(hintTimer)
+  if (isFullscreen.value) {
+    showFullscreenHint.value = true
+    hintTimer = setTimeout(() => {
+      showFullscreenHint.value = false
+    }, 2600)
+  } else {
+    showFullscreenHint.value = false
+  }
+}
+
+// ESC 快捷键退出内容全屏
+const handleKeydown = (e) => {
+  if (e.key === 'Escape' && isFullscreen.value) {
+    toggleFullscreen()
+  }
 }
 
 onMounted(() => {
-  document.addEventListener('fullscreenchange', handleFullscreenChange)
+  document.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  document.removeEventListener('keydown', handleKeydown)
+  clearTimeout(hintTimer)
 })
 
 // 向后代组件暴露全屏切换（页面刷新已改为 store 驱动，见 app store 的 reloadPage）
-provide('toggleFullscreen', handleFullscreenChange)
+provide('toggleFullscreen', toggleFullscreen)
 provide('isFullscreen', isFullscreen)
 </script>
 
@@ -165,40 +196,51 @@ provide('isFullscreen', isFullscreen)
     overflow: hidden;
   }
 
-  .fullscreen-exit-float {
+  /* 全屏退出提示条：顶部居中胶囊，不拦截鼠标事件 */
+  .fullscreen-exit-hint {
     position: fixed;
-    top: 32px;
-    right: 32px;
+    top: 24px;
+    left: 50%;
     z-index: 9999;
     display: flex;
+    gap: 6px;
     align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    color: var(--color-text-secondary);
-    cursor: pointer;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    pointer-events: none;
     background: var(--glass-surface);
     backdrop-filter: blur(16px);
     border: 1px solid var(--glass-surface-border);
-    border-radius: 50%;
+    border-radius: 999px;
     box-shadow: var(--shadow-lg);
-    opacity: 0.3;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
 
-    &:hover {
+    kbd {
+      padding: 2px 7px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
       color: var(--color-text-primary);
-      background: color-mix(
-        in srgb,
-        var(--glass-surface),
-        var(--color-bg-hover) 10%
-      );
-      opacity: 1;
-      transform: scale(1.05);
-    }
-
-    &:active {
-      transform: scale(0.95);
+      background: var(--color-bg-hover);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 1px 0 var(--color-border);
     }
   }
+}
+
+/* 全屏提示条的淡入淡出过渡（保持水平居中定位） */
+.fullscreen-hint-enter-active,
+.fullscreen-hint-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.fullscreen-hint-enter-from,
+.fullscreen-hint-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -8px);
 }
 </style>
