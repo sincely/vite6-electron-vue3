@@ -1,0 +1,260 @@
+// =============================================================
+// 页面切换过渡动画集中管理
+// 在 asyncRoutes 的 meta.transition 中指定名称，默认 'page'
+// 可用值：
+//   page        轻微上滑 + 淡入（默认）
+//   fade        纯淡入淡出
+//   slide-right 左→右滚入
+//   slide-left  右→左滚入
+//   slide-up    下→上滚入
+//   slide-down  上→下滚入
+//   slide-top   下→上滚入
+//   slide-bottom 上→下滚入
+//   scale       居中缩放
+//   zoom        居中放大淡入
+//   blur        模糊淡入
+// =============================================================
+
+$dur: 0.2s;
+$ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── page  轻微上滑 + 淡入（默认页面切换） ──────────────────
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+// ── fade  纯淡入淡出 ────────────────────────────────────────
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $dur $ease;
+  will-change: opacity;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// ── slide-right  左→右滚入 ─────────────────────────────────
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+// ── slide-left  右→左滚入 ──────────────────────────────────
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+// ── slide-up  下→上滚入 ────────────────────────────────────
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+// ── slide-down  上→下滚入 ──────────────────────────────────
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-24px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+// ── scale  居中缩放（小→大进入，大→小离开） ───────────────
+.scale-enter-active,
+.scale-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.scale-enter-from {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(1.03);
+}
+
+// ── zoom  居中放大淡入（大→正常进入，正常→小离开） ────────
+.zoom-enter-active,
+.zoom-leave-active {
+  transition:
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: opacity, transform;
+}
+
+.zoom-enter-from {
+  opacity: 0;
+  transform: scale(1.06);
+}
+
+.zoom-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+// ── blur  模糊淡入 ─────────────────────────────────────────
+.blur-enter-active,
+.blur-leave-active {
+  transition:
+    filter $dur $ease,
+    opacity $dur $ease,
+    transform $dur $ease;
+  will-change: filter, opacity, transform;
+}
+
+.blur-enter-from {
+  filter: blur(6px);
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+.blur-leave-to {
+  filter: blur(4px);
+  opacity: 0;
+  transform: scale(1.01);
+}
+
+// ── loading  加载过渡 ─────────────────────────────────────
+.loading-enter-active,
+.loading-leave-active {
+  transition: opacity 0.3s ease;
+  will-change: opacity;
+}
+
+.loading-enter-from,
+.loading-leave-to {
+  opacity: 0;
+}
+
+.loading-enter-active::after {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 999;
+  width: 40px;
+  height: 40px;
+  content: '';
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%232d79f3' d='M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50'%3E%3Canimation attributeName='transform' attributeType='XML' type='rotate' from='0 50 50' to='360 50 50' dur='0.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+}
+
+// slide-top 动画
+.slide-top-enter-active,
+.slide-top-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+.slide-top-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-top-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-top-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+// slide-bottom 动画
+.slide-bottom-enter-active,
+.slide-bottom-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+.slide-bottom-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.slide-bottom-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-bottom-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
