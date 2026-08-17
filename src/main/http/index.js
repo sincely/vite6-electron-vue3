@@ -1,15 +1,24 @@
-import axios from 'axios'
 import logger from '../log'
 
 // 根据环境变量设置基础URL（开发环境使用后端服务器地址，生产环境使用 API 基础地址）
 const baseURL =
   process.env.VITE_SERVER_URL || process.env.VITE_API_BASE_URL || ''
 
-// 创建主进程 axios 实例
-const service = axios.create({
-  baseURL,
-  timeout: 5000
-})
+// axios 仅在渲染进程发起 HTTP 请求时才会用到，首次使用时惰性加载，
+// 避免主进程启动阶段额外解析执行 axios 及其依赖
+let service = null
+let servicePromise = null
+const getService = () => {
+  if (service) return Promise.resolve(service)
+  if (!servicePromise) {
+    servicePromise = import('axios').then((mod) => {
+      const axios = mod.default ?? mod
+      service = axios.create({ baseURL, timeout: 5000 })
+      return service
+    })
+  }
+  return servicePromise
+}
 
 /**
  * 执行 HTTP 请求
@@ -47,7 +56,8 @@ export async function mainRequest(config) {
       requestConfig.headers = config.headers || {}
     }
 
-    const response = await service(requestConfig)
+    const http = await getService()
+    const response = await http(requestConfig)
 
     // 处理二进制数据（直接返回 buffer）
     if (

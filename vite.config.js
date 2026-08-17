@@ -293,6 +293,9 @@ export default defineConfig(({ mode, command }) => {
         'echarts/components',
         'echarts/features',
         'echarts/renderers',
+        // 锁屏密码 AES 加密仅引入子模块，需预构建避免首次访问触发二次优化
+        'crypto-js/aes',
+        'crypto-js/enc-utf8',
         'qrcode',
         '@vueuse/core'
       ]

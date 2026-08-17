@@ -126,7 +126,9 @@
 <script setup>
 import { Lock, Unlock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import CryptoJS from 'crypto-js'
+// 仅引入 AES 相关模块，避免整包 crypto-js 拖慢首屏
+import AES from 'crypto-js/aes'
+import Utf8 from 'crypto-js/enc-utf8'
 import { useLockStore } from '@/store/modules/lock'
 import { useUserStore } from '@/store/modules/user'
 
@@ -167,10 +169,9 @@ const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 // 校验解锁密码：解密存储的密文与输入比对
 const verifyPassword = (inputPassword, storedPassword) => {
   try {
-    const decryptedPassword = CryptoJS.AES.decrypt(
-      storedPassword,
-      ENCRYPT_KEY
-    ).toString(CryptoJS.enc.Utf8)
+    const decryptedPassword = AES.decrypt(storedPassword, ENCRYPT_KEY).toString(
+      Utf8
+    )
     return inputPassword === decryptedPassword
   } catch (error) {
     console.error('密码解密失败:', error)
@@ -190,7 +191,7 @@ const handleLock = async () => {
 
   await lockFormRef.value.validate((valid) => {
     if (valid) {
-      const encryptedPassword = CryptoJS.AES.encrypt(
+      const encryptedPassword = AES.encrypt(
         lockForm.password,
         ENCRYPT_KEY
       ).toString()

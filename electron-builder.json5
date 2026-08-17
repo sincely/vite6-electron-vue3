@@ -30,6 +30,9 @@
   "files": [
     "dist/**/*",
     "dist-electron/**/*",
+    "apps/backend/*",
+    "apps/website/*",
+    "apps/web-admin/*",
     "!dist/**/*.map",
     "!dist-electron/**/*.map",
     "!.vscode",

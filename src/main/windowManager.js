@@ -202,14 +202,17 @@ export function createLoginWindow() {
   // 加载登录页面
   loadHash(win, 'login')
 
-  // 设置窗口事件（登录窗口不自动显示，等登录态检查结果再决定显示或切换）
+  // 设置窗口事件（登录窗口不自动显示，由 dom-ready 登录态检查结果决定显示或切换）
   setupWindow(win, { autoShow: false })
 
-  // 页面加载完成后读取渲染进程的登录态（localStorage 持久化的 token）：
-  // 已登录直接切换到主窗口（登录窗口保持隐藏，无闪烁），未登录才显示登录窗口。
+  // DOM 就绪后立即读取渲染进程的登录态（localStorage 持久化的 token）：
+  // - 已登录：直接创建主窗口（登录窗口保持隐藏，避免闪现登录页/桌面 UI），主窗口就绪后关闭登录窗口
+  // - 未登录：立即显示登录窗口（index.html 首屏启动动画 → 登录表单），不再等页面完全加载
   // 之所以不依赖主进程 store 判断，是因为登录/登出时跨窗口的 IPC 消息无顺序保证，
   // 双写状态可能不一致，而 localStorage 是唯一的真实数据源。
-  win.webContents.once('did-finish-load', async () => {
+  // 相比 did-finish-load，dom-ready 时 localStorage 已可用且触发更早，
+  // 慢机器上首屏（启动动画）可以提前呈现，避免等待期整窗空白。
+  win.webContents.once('dom-ready', async () => {
     if (win.isDestroyed()) return
     try {
       const userStr = await win.webContents.executeJavaScript(
@@ -225,7 +228,8 @@ export function createLoginWindow() {
         }
       }
       if (token) {
-        // 已登录：创建主窗口，等其就绪后关闭登录窗口
+        // 已登录：标记登录窗口保持隐藏，创建主窗口，等其就绪后关闭登录窗口
+        win._skipShow = true
         const mainWin = createMainWindow()
         const closeTimer = setTimeout(() => closeLoginWindow(), 5000)
         mainWin.once('ready-to-show', () => {
@@ -233,12 +237,20 @@ export function createLoginWindow() {
           closeLoginWindow()
         })
       } else {
-        win.show()
+        // 未登录：直接显示（backgroundColor 与启动动画背景一致，无白屏闪烁）
+        if (!win.isVisible()) win.show()
       }
     } catch (err) {
       logger.error('检查登录状态失败:', err.message)
-      win.show()
+      if (!win.isVisible()) win.show()
     }
+  })
+
+  // 兜底显示：页面完成首次绘制时若仍未决定登录态（如 executeJavaScript 异常/卡住），
+  // 显示窗口，避免用户面对空白。已登录场景由 _skipShow 标记保持隐藏。
+  win.once('ready-to-show', () => {
+    if (win.isDestroyed() || win._skipShow) return
+    if (!win.isVisible()) win.show()
   })
 
   win.on('closed', () => {

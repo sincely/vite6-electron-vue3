@@ -1,15 +1,13 @@
 import { app, Menu, Tray, nativeImage } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
-import pkg from 'electron-updater'
+import { getAutoUpdater } from './autoUpdater'
 import {
   getMainWindow,
   getLoginWindow,
   restoreMainWindow
 } from './windowManager'
 import logger from './log'
-
-const { autoUpdater } = pkg
 
 let tray = null
 let pendingInstallVersion = '' // 已下载待安装的版本号（托盘菜单显示"重启安装更新"）
@@ -173,8 +171,9 @@ const rebuildTrayMenu = () => {
       ? [
           {
             label: `重启安装更新 v${pendingInstallVersion}`,
-            click: () => {
+            click: async () => {
               // isSilent=false 显示安装进度，isForceRunAfter=true 安装后自动启动
+              const autoUpdater = await getAutoUpdater()
               autoUpdater.quitAndInstall(false, true)
             }
           },

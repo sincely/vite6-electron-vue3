@@ -1,9 +1,7 @@
-import pkg from 'electron-updater'
 import logger from '../log'
+import { getAutoUpdater } from '../autoUpdater'
 import { getUpdateConfig, refreshUpdateConfig } from '../updateConfig'
 import { checkForUpdates } from '../update'
-
-const { autoUpdater } = pkg
 
 /**
  * 更新相关 IPC 频道（集中注册，避免与 main/update.js 重复）
@@ -32,8 +30,9 @@ export default [
   {
     channel: 'start-download',
     type: 'on',
-    handler: () => {
+    handler: async () => {
       logger.info('[ipc] 开始下载全量更新')
+      const autoUpdater = await getAutoUpdater()
       autoUpdater.downloadUpdate()
     }
   },
@@ -41,9 +40,10 @@ export default [
   {
     channel: 'install-update',
     type: 'on',
-    handler: () => {
+    handler: async () => {
       logger.info('[ipc] 退出并安装全量更新')
       // isSilent=false 显示安装进度，isForceRunAfter=true 安装后自动启动
+      const autoUpdater = await getAutoUpdater()
       autoUpdater.quitAndInstall(false, true)
     }
   }

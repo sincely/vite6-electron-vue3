@@ -1,6 +1,6 @@
 import { app } from 'electron'
-import pkg from 'electron-updater'
 import logger from './log'
+import { getAutoUpdater } from './autoUpdater'
 import createNotification from './notification'
 import { setTrayToolTip, setUpdatePendingInstall } from './tray'
 import {
@@ -11,7 +11,6 @@ import {
   setConfigChangeHandler
 } from './updateConfig'
 
-const { autoUpdater } = pkg
 let mainWindow = null
 const UPDATE_URL = normalizeUpdateUrl(process.env.VITE_UPDATE_URL)
 
@@ -96,6 +95,7 @@ let lastCheckTime = 0 // 上次发起检查的时间戳（聚焦节流用）
  */
 export async function checkForUpdates({ fromFocus = false } = {}) {
   const config = getUpdateConfig()
+  const autoUpdater = await getAutoUpdater()
 
   // 门控 1：更新资格开关（远端 eligible=false 时禁止检查更新）
   if (!config.eligible) {
@@ -129,6 +129,23 @@ export async function checkForUpdates({ fromFocus = false } = {}) {
 // 初始化更新器
 export const initUpdater = async (win) => {
   mainWindow = win
+
+  // 窗口事件同步注册，避免 await 加载 electron-updater 期间错过事件
+  win.on('closed', () => {
+    mainWindow = null
+  })
+  // 启动即检查更新（受门控控制）
+  win.webContents.once('did-finish-load', () => {
+    checkForUpdates()
+  })
+  // 窗口聚焦时检查更新（对齐 QoderWork，由 checkOnFocus 控制 + 节流）
+  win.on('focus', () => {
+    if (getUpdateConfig().checkOnFocus) {
+      checkForUpdates({ fromFocus: true })
+    }
+  })
+
+  const autoUpdater = await getAutoUpdater() // 首次使用才加载 electron-updater
   autoUpdater.logger = logger // 设置日志记录器
   autoUpdater.autoDownload = getUpdateConfig().autoDownload // 默认按兜底配置
   autoUpdater.forceDevUpdateConfig = process.env.NODE_ENV === 'development' // 强制开发环境更新
@@ -222,20 +239,4 @@ export const initUpdater = async (win) => {
   await refreshUpdateConfig()
   autoUpdater.autoDownload = getUpdateConfig().autoDownload
   startConfigPolling()
-
-  win.on('closed', () => {
-    mainWindow = null
-  })
-
-  // 启动即检查更新（受门控控制）
-  win.webContents.once('did-finish-load', () => {
-    checkForUpdates()
-  })
-
-  // 窗口聚焦时检查更新（对齐 QoderWork，由 checkOnFocus 控制 + 节流）
-  win.on('focus', () => {
-    if (getUpdateConfig().checkOnFocus) {
-      checkForUpdates({ fromFocus: true })
-    }
-  })
 }
