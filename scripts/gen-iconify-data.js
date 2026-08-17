@@ -60,7 +60,11 @@ const ICON_PLAN = {
       'table', // 基础表格
       'file-input', // 基础表单
       'search', // 搜索表单
-      'wifi' // Socket 连接
+      'wifi', // Socket 连接
+      // 用户菜单下拉
+      'user', // 个人中心
+      'file-text', // 文档
+      'log-out' // 退出登录
     ]
   },
   ri: {
@@ -89,7 +93,9 @@ const ICON_PLAN = {
       'arrow-right-s-line',
       // 文字滚动组件
       'volume-down-line',
-      'close-fill'
+      'close-fill',
+      // 用户菜单下拉
+      'question-line' // 问题 & 帮助
     ]
   },
   'svg-spinners': {

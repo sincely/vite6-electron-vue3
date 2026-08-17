@@ -30,7 +30,7 @@
     "web-admin:dev": "pnpm -C src/web-admin dev",
     "web-admin:build": "pnpm -C src/web-admin build",
     "web-admin:preview": "pnpm -C src/web-admin preview",
-    "web-admin:stack": "concurrently -k -n backend,web-admin -c blue,green \"pnpm -C src/backend start\" \"pnpm web-admin:dev\"",
+    "web-admin:stack": "concurrently -k -n backend,web-admin -c blue,green \"pnpm -C apps/backend start\" \"pnpm web-admin:dev\"",
     "check-config": "electron-builder --dir --config",
     "clean": "rimraf dist dist-electron",
     "analyze:size": "esno ./scripts/analyze-build-size.js",
@@ -57,7 +57,7 @@
     "build:icons": "esno ./scripts/build-icons",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
-    "backend:dev": "cd src/backend && nitro dev"
+    "backend:dev": "cd apps/backend && nitro dev"
   },
   "dependencies": {
     "axios": "1.8.4",
