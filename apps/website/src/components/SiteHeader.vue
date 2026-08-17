@@ -96,7 +96,6 @@ onBeforeUnmount(() => {
 .site-header.open {
   background: rgb(11 12 15 / 72%);
   backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
   border-bottom-color: var(--border);
 }
 
@@ -202,7 +201,6 @@ onBeforeUnmount(() => {
   flex-direction: column;
   padding: 12px 24px 20px;
   background: rgb(11 12 15 / 96%);
-  backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }

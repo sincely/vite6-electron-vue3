@@ -25,3 +25,4 @@ src/backend/.nitro/**
 *.sln
 *.sw?
 pnpm-lock.yaml
+apps/backend/.nitro/**
