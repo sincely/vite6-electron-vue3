@@ -57,11 +57,11 @@ const actionTab = ref([
 const openSettings = () => {}
 
 const minimizeWindow = () => {
-  ipcRenderer.send('minimize-window')
+  window.ipcRenderer.send('minimize-window')
 }
 
 const closeWindow = () => {
-  ipcRenderer.send('close-window')
+  window.ipcRenderer.send('close-window')
 }
 </script>
 

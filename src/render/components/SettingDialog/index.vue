@@ -1013,7 +1013,7 @@ const updateCheckBtnText = computed(() => {
 
 const handleCheckUpdate = () => {
   updateCheckState.value = 'checking'
-  ipcRenderer.send('check-for-updates')
+  window.ipcRenderer.send('check-for-updates')
 }
 
 const handleStartUpdate = () => {
@@ -1077,17 +1077,17 @@ onMounted(() => {
     updateCheckState.value = 'force'
   }
 
-  ipcRenderer.on('update-available', onAboutUpdateAvailable)
-  ipcRenderer.on('update-not-available', onAboutUpdateNotAvailable)
-  ipcRenderer.on('update-error', onAboutUpdateError)
+  window.ipcRenderer.on('update-available', onAboutUpdateAvailable)
+  window.ipcRenderer.on('update-not-available', onAboutUpdateNotAvailable)
+  window.ipcRenderer.on('update-error', onAboutUpdateError)
   window.addEventListener('update:config', onAboutUpdateConfig)
   window.addEventListener('update:force', onAboutUpdateForce)
 })
 
 onUnmounted(() => {
-  ipcRenderer.off('update-available', onAboutUpdateAvailable)
-  ipcRenderer.off('update-not-available', onAboutUpdateNotAvailable)
-  ipcRenderer.off('update-error', onAboutUpdateError)
+  window.ipcRenderer.off('update-available', onAboutUpdateAvailable)
+  window.ipcRenderer.off('update-not-available', onAboutUpdateNotAvailable)
+  window.ipcRenderer.off('update-error', onAboutUpdateError)
   window.removeEventListener('update:config', onAboutUpdateConfig)
   window.removeEventListener('update:force', onAboutUpdateForce)
 })

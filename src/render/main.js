@@ -44,20 +44,21 @@ async function setupApp() {
   const appStore = useAppStore()
   const notifStore = useNotificationStore()
   appStore.initTheme()
-  // 桌面设置（关闭行为/开机自启）不阻塞首屏挂载，后台异步加载
-  appStore.initDesktopSettings()
 
   app.mount('#app').$nextTick(() => {
+    // 桌面设置（关闭行为/开机自启）在首屏挂载完成后异步加载，避免 IPC 往返阻塞 mount
+    appStore.initDesktopSettings()
+
     const updateStore = useUpdateStore()
 
     // 获取当前版本号
-    ipcRenderer.invoke('get-app-version').then((version) => {
+    window.ipcRenderer.invoke('get-app-version').then((version) => {
       console.log('当前应用版本号:', version)
       updateStore.setCurrentVersion(version)
     })
 
     // 监听主进程发送的通知 → 推入通知中心
-    ipcRenderer.on('show-notification', (event, options) => {
+    window.ipcRenderer.on('show-notification', (event, options) => {
       notifStore.push({
         title: options.title || '通知',
         body: options.body || '',

@@ -31,12 +31,12 @@ const updateStore = useUpdateStore()
 
 const isUpdating = computed(() => updateStore.isUpdating)
 const downloadProgress = computed(() => updateStore.downloadProgress)
-const updateAvailable = computed(() => updateStore.updateAvailable)
+// const updateAvailable = computed(() => updateStore.updateAvailable)
 const updateDownloaded = computed(() => updateStore.updateDownloaded)
 
 const installUpdate = () => {
   // 通知主进程安装更新
-  ipcRenderer.send('install-update')
+  window.ipcRenderer.send('install-update')
 }
 </script>
 

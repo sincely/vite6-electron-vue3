@@ -4,7 +4,7 @@
       <div class="dash-header">
         <h4>重点客户</h4>
       </div>
-      <el-link class="key-customers-more" type="primary" :underline="false">
+      <el-link class="key-customers-more" type="primary" underline="never">
         查看全部 →
       </el-link>
     </template>

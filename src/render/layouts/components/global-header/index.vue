@@ -262,9 +262,9 @@ const handleToggleClick = () => {
   appStore.toggleSidebar()
 }
 
-const minimize = () => ipcRenderer.send('minimize-window')
-const maximize = () => ipcRenderer.send('maximize-window')
-const close = () => ipcRenderer.send('close-window')
+const minimize = () => window.ipcRenderer.send('minimize-window')
+const maximize = () => window.ipcRenderer.send('maximize-window')
+const close = () => window.ipcRenderer.send('close-window')
 
 // 窗口最大化状态跟踪
 const isMaximized = ref(false)
@@ -276,15 +276,15 @@ const onMaximizeChange = (_event, maximized) => {
 onMounted(async () => {
   // 初始化时查询当前最大化状态
   try {
-    isMaximized.value = await ipcRenderer.invoke('get-window-maximized')
+    isMaximized.value = await window.ipcRenderer.invoke('get-window-maximized')
   } catch {
     // 登录窗口无此 handler，忽略
   }
-  ipcRenderer.on('window-maximize-change', onMaximizeChange)
+  window.ipcRenderer.on('window-maximize-change', onMaximizeChange)
 })
 
 onBeforeUnmount(() => {
-  ipcRenderer.off('window-maximize-change', onMaximizeChange)
+  window.ipcRenderer.off('window-maximize-change', onMaximizeChange)
   if (refreshTimer) clearTimeout(refreshTimer)
 })
 </script>

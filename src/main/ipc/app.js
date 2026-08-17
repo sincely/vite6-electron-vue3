@@ -4,10 +4,10 @@ import {
   closeMainWindow,
   createLoginWindow,
   createWindow,
+  getLoginWindow,
   setCloseAction
 } from '../windowManager'
 import { app } from 'electron'
-import store from '../store'
 
 export default [
   {
@@ -26,6 +26,12 @@ export default [
     channel: 'toMain',
     type: 'on',
     handler: (event, data) => {
+      // 立即标记并隐藏登录窗口，避免在主窗口加载期间把桌面 UI 渲染到 480x640 的小窗里
+      const loginWin = getLoginWindow()
+      if (loginWin && !loginWin.isDestroyed()) {
+        loginWin._skipShow = true
+        loginWin.hide()
+      }
       const mainWin = createMainWindow()
       // 等主窗口 ready-to-show 后再关闭登录窗口，避免先关旧窗口、
       // 新窗口尚在加载的空窗期露出桌面造成闪屏
@@ -67,8 +73,6 @@ export default [
           openAtLogin: enable,
           openAsHidden: false
         })
-        // 持久化到 store
-        store.set('appSettings.autoLaunch', enable)
       }
     }
   },
@@ -87,8 +91,6 @@ export default [
     type: 'on',
     handler: (event, action) => {
       setCloseAction(action)
-      // 持久化到 store
-      store.set('appSettings.closeAction', action)
     }
   },
   {

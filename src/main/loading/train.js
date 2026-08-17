@@ -33,6 +33,8 @@ function useLoading() {
   justify-content: center;
   background: #ffffff;
   z-index: 9999;
+  /* 配套 #app-splash：主窗口 splash 显示期间也允许拖拽整个窗口 */
+  -webkit-app-region: drag;
 }
 
 .loader {

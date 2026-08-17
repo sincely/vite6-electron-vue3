@@ -475,7 +475,7 @@ const handleConfirm = () => {
   resetProgressMetrics()
   isUpdating.value = true
   updateDownloaded.value = false
-  ipcRenderer.send('start-download') // 通知主进程开始下载
+  window.ipcRenderer.send('start-download') // 通知主进程开始下载
 }
 
 /**
@@ -487,7 +487,7 @@ const handleInstall = () => {
     updateStore.setCurrentVersion(latestVersion.value)
   }
   visible.value = false
-  ipcRenderer.send('install-update') // 通知主进程安装更新（会重启应用）
+  window.ipcRenderer.send('install-update') // 通知主进程安装更新（会重启应用）
 }
 
 /**
@@ -654,7 +654,7 @@ onMounted(() => {
       visible.value = true
       return
     }
-    ipcRenderer.send('check-for-updates') // 通知主进程检查更新
+    window.ipcRenderer.send('check-for-updates') // 通知主进程检查更新
   }
 
   /**
@@ -700,10 +700,10 @@ onMounted(() => {
   }
 
   // 注册 IPC 事件监听（直接来自主进程）
-  ipcRenderer.on('download-progress', onProgress)
-  ipcRenderer.on('update-downloaded', onDownloaded)
-  ipcRenderer.on('update-error', onError)
-  ipcRenderer.on('update-not-available', onNotAvailable)
+  window.ipcRenderer.on('download-progress', onProgress)
+  window.ipcRenderer.on('update-downloaded', onDownloaded)
+  window.ipcRenderer.on('update-error', onError)
+  window.ipcRenderer.on('update-not-available', onNotAvailable)
   // 注册 CustomEvent 监听（由 useUpdater hook 转发）
   window.addEventListener('update:available', onAvailable)
   window.addEventListener('update:open-dialog', onOpenDialog)
@@ -720,10 +720,10 @@ onUnmounted(() => {
   // 重置下载状态，清理所有定时器
   resetDownloadState()
   // 移除 IPC 事件监听
-  ipcRenderer.off('download-progress', onProgress)
-  ipcRenderer.off('update-downloaded', onDownloaded)
-  ipcRenderer.off('update-error', onError)
-  ipcRenderer.off('update-not-available', onNotAvailable)
+  window.ipcRenderer.off('download-progress', onProgress)
+  window.ipcRenderer.off('update-downloaded', onDownloaded)
+  window.ipcRenderer.off('update-error', onError)
+  window.ipcRenderer.off('update-not-available', onNotAvailable)
   // 移除 CustomEvent 监听
   window.removeEventListener('update:available', onAvailable)
   window.removeEventListener('update:open-dialog', onOpenDialog)

@@ -5,7 +5,6 @@ import updateIpc from './update'
 import winControlIpc from './win-control'
 import notificationIpc from './notification'
 import systemInfoIpc from './systemInfo'
-import storeIpc from './store'
 import logIpc from './log'
 import { deepLinkIpc } from '../deeplink'
 // 注册所有 IPC 频道
@@ -17,7 +16,6 @@ export default function initIpc() {
     ...winControlIpc,
     ...notificationIpc,
     ...systemInfoIpc,
-    ...storeIpc,
     ...logIpc,
     ...deepLinkIpc
   ]

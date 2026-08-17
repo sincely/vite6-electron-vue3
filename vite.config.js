@@ -29,10 +29,11 @@ export default defineConfig(({ mode, command }) => {
   const isServe = command === 'serve'
   const isBuild = command === 'build'
   const sourcemap = isServe
-  // 解决终端optimized dependencies changed时，reload问题
-  const optimizeDepsElementPlusIncludes = ['element-plus/es']
-  // ⚠️ 必须同步收集：异步 fs.access 回调在配置返回后才执行，
-  // 会导致 include 列表不完整，首次启动触发二次优化和整页 reload（白屏）
+  // 不预构建 element-plus/es 整库入口，避免 .vite/deps/element-plus_es.js 过大；
+  // 组件按需 import 由 unplugin-vue-components + ElementPlusResolver 自动完成，
+  // Vite 自身的 ESM transform 会按需处理子模块。仅组件 CSS 仍预构建，
+  // 防止 unplugin 首次 import 新组件时触发"重新优化依赖"导致整页 reload。
+  const optimizeDepsElementPlusIncludes = []
   fs.readdirSync('node_modules/element-plus/es/components').forEach(
     (dirname) => {
       if (
@@ -125,10 +126,6 @@ export default defineConfig(({ mode, command }) => {
               id.includes('node_modules/lodash-es/')
             ) {
               return 'utils-vendor'
-            }
-            // nprogress
-            if (id.includes('node_modules/nprogress/')) {
-              return 'nprogress'
             }
             // qrcode
             if (id.includes('node_modules/qrcode/')) {
@@ -286,8 +283,17 @@ export default defineConfig(({ mode, command }) => {
     optimizeDeps: {
       include: [
         ...optimizeDepsElementPlusIncludes,
-        // 懒加载路由/组件才会用到的大依赖，提前预构建，
-        // 避免首次访问时触发二次依赖优化导致页面 reload
+        // ─── 登录窗口首屏关键路径依赖 ───────────────────────────────
+        // Vite dev server 冷启动时按 ESM 拓扑 transform 每个依赖项，
+        // 把以下首屏必经依赖提前预构建到 .vite/deps/，避免登录窗口首启
+        // 触发瀑布流式 transform，造成 ready-to-show 显著延迟
+        'vue',
+        'vue-router',
+        'pinia',
+        'pinia-plugin-persistedstate',
+        'mitt', // eventBus
+        'dayjs', // 时间处理
+        // ─── 懒加载路由/组件才会用到的大依赖 ───────────────────────
         'echarts/core',
         'echarts/charts',
         'echarts/components',

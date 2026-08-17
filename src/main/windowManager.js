@@ -19,9 +19,19 @@ const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本�
  * 路径规则（与 electron-builder extraResources 保持一致）：
  *   开发：<APP_ROOT>/resources/icons/<platform>/...
  *   打包：process.resourcesPath/icons/<platform>/...
+ *
+ * 同步 fs.existsSync 在文件路径不变的应用生命周期内只需执行一次，
+ * 用模块级 lazy + 缓存避免每次 new BrowserWindow 都阻塞一次磁盘 I/O
  */
+let iconCache = null
+let iconCacheResolved = false
 const getWindowIcon = () => {
-  if (process.platform === 'darwin') return undefined // macOS 由 .icns bundle 控制
+  if (iconCacheResolved) return iconCache
+  iconCacheResolved = true
+  if (process.platform === 'darwin') {
+    iconCache = undefined // macOS 由 .icns bundle 控制
+    return iconCache
+  }
 
   const iconsRoot = app.isPackaged
     ? path.join(process.resourcesPath, 'icons')
@@ -31,11 +41,13 @@ const getWindowIcon = () => {
     // 优先使用 512px，退而用 256px
     const p512 = path.join(iconsRoot, 'linux', '512.png')
     const p256 = path.join(iconsRoot, 'linux', '256.png')
-    return fs.existsSync(p512) ? p512 : p256
+    iconCache = fs.existsSync(p512) ? p512 : p256
+    return iconCache
   }
 
   // Windows
-  return path.join(iconsRoot, 'win', 'app.ico')
+  iconCache = path.join(iconsRoot, 'win', 'app.ico')
+  return iconCache
 }
 
 /**
@@ -191,7 +203,9 @@ export function createLoginWindow() {
     maximizable: false, // 禁止最大化，从而禁止双击标题栏扩大
     webPreferences: {
       preload, // 预加载脚本
-      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
+      // 关闭 Node 集成：渲染进程通过 contextBridge 暴露的 window.ipcRenderer 调用主进程，
+      // 避免 V8 context 初始化时再启 Node 绑定拖慢 ready-to-show
+      nodeIntegration: false,
       contextIsolation: true // 启用上下文隔离
     }
   })
@@ -202,52 +216,14 @@ export function createLoginWindow() {
   // 加载登录页面
   loadHash(win, 'login')
 
-  // 设置窗口事件（登录窗口不自动显示，由 dom-ready 登录态检查结果决定显示或切换）
+  // 设置窗口事件（登录窗口不自动显示，由 ready-to-show 决定显示；
+  // 已登录场景由 'toMain' IPC 在主进程里设置 _skipShow 并隐藏）
   setupWindow(win, { autoShow: false })
 
-  // DOM 就绪后立即读取渲染进程的登录态（localStorage 持久化的 token）：
-  // - 已登录：直接创建主窗口（登录窗口保持隐藏，避免闪现登录页/桌面 UI），主窗口就绪后关闭登录窗口
-  // - 未登录：立即显示登录窗口（index.html 首屏启动动画 → 登录表单），不再等页面完全加载
-  // 之所以不依赖主进程 store 判断，是因为登录/登出时跨窗口的 IPC 消息无顺序保证，
-  // 双写状态可能不一致，而 localStorage 是唯一的真实数据源。
-  // 相比 did-finish-load，dom-ready 时 localStorage 已可用且触发更早，
-  // 慢机器上首屏（启动动画）可以提前呈现，避免等待期整窗空白。
-  win.webContents.once('dom-ready', async () => {
-    if (win.isDestroyed()) return
-    try {
-      const userStr = await win.webContents.executeJavaScript(
-        'localStorage.getItem("user")',
-        true
-      )
-      let token = ''
-      if (userStr) {
-        try {
-          token = JSON.parse(userStr).token || ''
-        } catch {
-          // localStorage 数据损坏按未登录处理
-        }
-      }
-      if (token) {
-        // 已登录：标记登录窗口保持隐藏，创建主窗口，等其就绪后关闭登录窗口
-        win._skipShow = true
-        const mainWin = createMainWindow()
-        const closeTimer = setTimeout(() => closeLoginWindow(), 5000)
-        mainWin.once('ready-to-show', () => {
-          clearTimeout(closeTimer)
-          closeLoginWindow()
-        })
-      } else {
-        // 未登录：直接显示（backgroundColor 与启动动画背景一致，无白屏闪烁）
-        if (!win.isVisible()) win.show()
-      }
-    } catch (err) {
-      logger.error('检查登录状态失败:', err.message)
-      if (!win.isVisible()) win.show()
-    }
-  })
-
-  // 兜底显示：页面完成首次绘制时若仍未决定登录态（如 executeJavaScript 异常/卡住），
-  // 显示窗口，避免用户面对空白。已登录场景由 _skipShow 标记保持隐藏。
+  // 显示时机改为 ready-to-show：等待登录页首次绘制完成后再 show 窗口，
+  // 避免 dom-ready 阶段触发 executeJavaScript IPC 往返、把窗口卡在 backgroundColor 白屏。
+  // 已登录场景由渲染进程路由守卫发送 'toMain' IPC，主进程会在 'toMain'
+  // 处理里设置 _skipShow=true 并隐藏登录窗口，从而跳过这里的显示。
   win.once('ready-to-show', () => {
     if (win.isDestroyed() || win._skipShow) return
     if (!win.isVisible()) win.show()
@@ -295,13 +271,16 @@ export function createMainWindow() {
     resizable: true,
     center: true,
     webPreferences: {
-      sandbox: false, // 关闭沙箱，提升启动速度
+      // sandbox / nodeIntegration 关闭：preload 是 ESM，sandbox=true 需要
+      // preload 为 CJS，超出 P0 范围。nodeIntegration 关闭避免 V8 context
+      // 启动时再启 Node 绑定，所有 Node 能力通过 contextBridge 暴露
       preload, // 预加载脚本,桥接主进程和渲染进程
-      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
+      nodeIntegration: false,
       contextIsolation: true, // 启用上下文隔离
-      // 关闭后台节流：窗口最小化/隐藏后渲染进程的定时器与 IPC 不被降频，
-      // 保证更新包在后台下载时进度状态实时刷新（DEV 模拟下载也能正常跑完）
-      backgroundThrottling: false
+      // 恢复 backgroundThrottling 默认值 true：仅在窗口被最小化/隐藏时
+      // 对渲染进程做定时器与 IPC 节流，让出 CPU；之前显式 false 会让窗口
+      // 隐藏期间渲染进程仍跑满，造成多窗口切换时的卡顿感
+      backgroundThrottling: true
     }
   })
 
@@ -380,7 +359,7 @@ export function createWindow(options = {}) {
     frame: true,
     webPreferences: {
       preload,
-      nodeIntegration: true, // 允许在渲染进程中使用 Node.js 功能
+      nodeIntegration: false, // 通过 contextBridge 暴露 API，无需 Node 集成
       contextIsolation: true // 启用上下文隔离
     }
   }

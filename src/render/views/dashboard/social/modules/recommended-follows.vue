@@ -7,7 +7,7 @@
       <el-link
         class="recommended-follows-more"
         type="primary"
-        :underline="false"
+        underline="never"
       >
         查看全部
       </el-link>

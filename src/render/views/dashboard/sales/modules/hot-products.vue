@@ -4,7 +4,7 @@
       <div class="dash-header">
         <h4>热销商品</h4>
       </div>
-      <el-link class="hot-products-more" type="primary" :underline="false">
+      <el-link class="hot-products-more" type="primary" underline="never">
         查看全部 →
       </el-link>
     </template>

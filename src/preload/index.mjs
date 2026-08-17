@@ -222,40 +222,6 @@ if (process.contextIsolated) {
     error: (...args) => ipcRenderer.invoke('log', 'error', args),
     debug: (...args) => ipcRenderer.invoke('log', 'debug', args)
   })
-
-  /**
-   * 向渲染进程暴露持久化存储 API
-   * 通过 IPC 操作 electron-store，支持完整 CRUD
-   *
-   * @example
-   * // 读取
-   * const closeAction = await window.store.get('appSettings.closeAction')
-   *
-   * @example
-   * // 写入
-   * await window.store.set('appSettings.closeAction', 'quit')
-   *
-   * @example
-   * // 监听变更
-   * const unsubscribe = window.store.onChange((data) => {
-   *   console.log('store changed:', data.key, data.value)
-   * })
-   * unsubscribe() // 取消监听
-   */
-  contextBridge.exposeInMainWorld('store', {
-    get: (key, defaultValue) =>
-      ipcRenderer.invoke('store-get', key, defaultValue),
-    set: (key, value) => ipcRenderer.invoke('store-set', key, value),
-    delete: (key) => ipcRenderer.invoke('store-delete', key),
-    has: (key) => ipcRenderer.invoke('store-has', key),
-    clear: () => ipcRenderer.invoke('store-clear'),
-    getAll: () => ipcRenderer.invoke('store-get-all'),
-    onChange: (callback) => {
-      const handler = (_event, data) => callback(data)
-      ipcRenderer.on('store-changed', handler)
-      return () => ipcRenderer.off('store-changed', handler)
-    }
-  })
 } else {
   window.api = api
 }

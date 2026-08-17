@@ -3,24 +3,14 @@ import path from 'node:path'
 import initIpc from './ipc'
 import initTray from './tray'
 import createMenu from './menu'
-import { registerSchemes, setupProtocol } from './protocol'
 import { setupDeepLink, handleDeepLinkFromArgv } from './deeplink'
-import store from './store'
-import {
-  setCloseAction,
-  createLoginWindow,
-  restoreMainWindow
-} from './windowManager'
-import logger from './log'
+import { createLoginWindow, restoreMainWindow } from './windowManager'
 import './config'
 
 // 开发模式下禁用安全警告，生产环境保留以暴露潜在安全问题
 if (!app.isPackaged) {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 }
-
-// 注册 app:// 协议为标准特权方案（⚠️ 必须在 app.whenReady() 之前）
-registerSchemes()
 
 // 应用是否正在退出
 app.isQuiting = false
@@ -36,8 +26,6 @@ if (!app.requestSingleInstanceLock()) {
 setupDeepLink()
 // 当Electron完成初始化并准备好创建浏览器窗口时
 app.whenReady().then(() => {
-  // 注册 app:// 协议处理器（⚠️ 必须在 app.whenReady() 之后）
-  setupProtocol()
   // 开发模式下：Dock 图标使用 resources/app.png
   if (!app.isPackaged && process.platform === 'darwin' && app.dock) {
     const devIcon = path.join(
@@ -46,24 +34,6 @@ app.whenReady().then(() => {
       'app.png'
     )
     app.dock.setIcon(nativeImage.createFromPath(devIcon))
-  }
-
-  // 从持久化存储中恢复应用设置
-  try {
-    const savedCloseAction = store.get('appSettings.closeAction', 'minimize')
-    setCloseAction(savedCloseAction)
-    logger.info(`[App] 恢复 closeAction: ${savedCloseAction}`)
-
-    const savedAutoLaunch = store.get('appSettings.autoLaunch', false)
-    if (process.platform === 'darwin' || process.platform === 'win32') {
-      app.setLoginItemSettings({
-        openAtLogin: !!savedAutoLaunch,
-        openAsHidden: false
-      })
-      logger.info(`[App] 恢复 autoLaunch: ${savedAutoLaunch}`)
-    }
-  } catch (err) {
-    logger.warn('[App] 恢复应用设置失败:', err.message)
   }
 
   // 创建自定义菜单

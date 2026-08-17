@@ -118,29 +118,29 @@ export function useUpdater() {
     appStore.resetAppState()
 
     // 注册全量更新 IPC 监听
-    ipcRenderer.on('update-available', onUpdateAvailable)
-    ipcRenderer.on('update-not-available', onUpdateNotAvailable)
-    ipcRenderer.on('download-progress', onDownloadProgress)
-    ipcRenderer.on('update-downloaded', onUpdateDownloaded)
-    ipcRenderer.on('update-error', onUpdateError)
+    window.ipcRenderer.on('update-available', onUpdateAvailable)
+    window.ipcRenderer.on('update-not-available', onUpdateNotAvailable)
+    window.ipcRenderer.on('download-progress', onDownloadProgress)
+    window.ipcRenderer.on('update-downloaded', onUpdateDownloaded)
+    window.ipcRenderer.on('update-error', onUpdateError)
     // 注册远端配置与强制升级监听
-    ipcRenderer.on('update-config', onUpdateConfig)
-    ipcRenderer.on('force-update', onForceUpdate)
+    window.ipcRenderer.on('update-config', onUpdateConfig)
+    window.ipcRenderer.on('force-update', onForceUpdate)
     // 注册菜单手动检查更新监听
-    ipcRenderer.on('menu-check-update', onMenuCheckUpdate)
+    window.ipcRenderer.on('menu-check-update', onMenuCheckUpdate)
   })
 
   onUnmounted(() => {
     // 清理全量更新 IPC 监听
-    ipcRenderer.off('update-available', onUpdateAvailable)
-    ipcRenderer.off('update-not-available', onUpdateNotAvailable)
-    ipcRenderer.off('download-progress', onDownloadProgress)
-    ipcRenderer.off('update-downloaded', onUpdateDownloaded)
-    ipcRenderer.off('update-error', onUpdateError)
+    window.ipcRenderer.off('update-available', onUpdateAvailable)
+    window.ipcRenderer.off('update-not-available', onUpdateNotAvailable)
+    window.ipcRenderer.off('download-progress', onDownloadProgress)
+    window.ipcRenderer.off('update-downloaded', onUpdateDownloaded)
+    window.ipcRenderer.off('update-error', onUpdateError)
     // 清理远端配置与强制升级监听
-    ipcRenderer.off('update-config', onUpdateConfig)
-    ipcRenderer.off('force-update', onForceUpdate)
+    window.ipcRenderer.off('update-config', onUpdateConfig)
+    window.ipcRenderer.off('force-update', onForceUpdate)
     // 清理菜单检查更新监听
-    ipcRenderer.off('menu-check-update', onMenuCheckUpdate)
+    window.ipcRenderer.off('menu-check-update', onMenuCheckUpdate)
   })
 }

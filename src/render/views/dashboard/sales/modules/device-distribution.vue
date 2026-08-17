@@ -7,7 +7,7 @@
       <el-link
         class="device-distribution-more"
         type="primary"
-        :underline="false"
+        underline="never"
       >
         查看报告 →
       </el-link>

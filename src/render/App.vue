@@ -21,12 +21,22 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
 
-// 挂载更新IPC监听
-useUpdater()
-// 挂载网络状态监听
-useNetwork()
-// 挂载浏览器唤起应用（lightning://）深链监听
-useDeepLink()
+// 移除 index.html 中的预挂载启动层：frame:false 的窗口（登录/通用）
+// 在 Vue 接管渲染前由它提供唯一可拖拽区域，避免白屏期无法拖拽窗口。
+onMounted(() => {
+  if (window.__appSplashFailsafe) {
+    clearTimeout(window.__appSplashFailsafe)
+    window.__appSplashFailsafe = null
+  }
+  const splash = document.getElementById('app-splash')
+  if (splash && splash.parentNode) splash.parentNode.removeChild(splash)
+  // 挂载更新IPC监听
+  useUpdater()
+  // 挂载网络状态监听
+  useNetwork()
+  // 挂载浏览器唤起应用（lightning://）深链监听
+  useDeepLink()
+})
 </script>
 
 <style lang="scss" scoped>
