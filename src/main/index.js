@@ -3,6 +3,7 @@ import path from 'node:path'
 import initIpc from './ipc'
 import initTray from './tray'
 import createMenu from './menu'
+import { registerSchemes, setupProtocol } from './protocol'
 import { setupDeepLink, handleDeepLinkFromArgv } from './deeplink'
 import { createLoginWindow, restoreMainWindow } from './windowManager'
 import './config'
@@ -11,6 +12,9 @@ import './config'
 if (!app.isPackaged) {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 }
+
+// 注册 app:// 协议为标准特权方案（⚠️ 必须在 app.whenReady() 之前）
+registerSchemes()
 
 // 应用是否正在退出
 app.isQuiting = false
@@ -26,6 +30,8 @@ if (!app.requestSingleInstanceLock()) {
 setupDeepLink()
 // 当Electron完成初始化并准备好创建浏览器窗口时
 app.whenReady().then(() => {
+  // 注册 app:// 协议处理器（⚠️ 必须在 app.whenReady() 之后）
+  setupProtocol()
   // 开发模式下：Dock 图标使用 resources/app.png
   if (!app.isPackaged && process.platform === 'darwin' && app.dock) {
     const devIcon = path.join(
