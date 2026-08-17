@@ -1,4 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint-staged
+# monorepo: 遍历所有 app 触发其各自的 lint-staged
+# pnpm -F 语法按 workspace package name 过滤
+pnpm -F @lightning/desktop run lint-staged
+pnpm -F @lightning/web-admin run lint-staged
+pnpm -F @lightning/website run lint-staged
+pnpm -F @lightning/backend-mock run lint-staged

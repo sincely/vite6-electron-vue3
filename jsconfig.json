@@ -1,16 +1,26 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/render/*"]
+      "@/*": ["./apps/desktop/src/renderer/*"]
     }
   },
   "include": [
-    "src/**/*.js",
-    "src/**/*.vue",
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*",
-    "utils"
+    "apps/desktop/src/**/*.js",
+    "apps/desktop/src/**/*.vue",
+    "apps/desktop/src/**/*.ts",
+    "apps/desktop/src/**/*.d.ts",
+    "apps/desktop/src/**/*",
+    "apps/web-admin/**/*",
+    "apps/website/**/*",
+    "packages/shared/**/*.js",
+    "packages/build-config/**/*.js"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-electron",
+    "release",
+    ".turbo",
+    "**/.turbo"
+  ]
 }

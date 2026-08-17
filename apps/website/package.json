@@ -1,0 +1,25 @@
+{
+  "name": "@lightning/website",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "npm run prettier:fix",
+    "lint:check": "npm run prettier:check",
+    "prettier:fix": "prettier --write \"**/*.{js,vue,scss,css,html,json,md}\"",
+    "prettier:check": "prettier --check \"**/*.{js,vue,scss,css,html,json,md}\"",
+    "lint-staged": "lint-staged"
+  },
+  "dependencies": {
+    "vue": "3.5.30"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "5.2.3",
+    "lint-staged": "13.3.0",
+    "prettier": "3.6.2",
+    "vite": "6.4.3"
+  }
+}

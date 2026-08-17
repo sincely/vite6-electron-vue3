@@ -1,0 +1,36 @@
+{
+  "name": "@lightning/build-config",
+  "version": "1.0.0",
+  "description": "共享 Vite 构建配置、插件、代理和路径工具",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./config": "./config/index.js",
+    "./config/*": "./config/*.js",
+    "./plugins": "./plugins/index.js",
+    "./utils": "./utils/index.js",
+    "./utils/*": "./utils/*.js"
+  },
+  "files": [
+    "config",
+    "plugins",
+    "utils",
+    "index.js"
+  ],
+  "scripts": {
+    "clean": "rimraf .turbo"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "5.2.3",
+    "unplugin-auto-import": "19.3.0",
+    "unplugin-vue-components": "28.8.0",
+    "vite": "6.4.3",
+    "vite-plugin-svg-icons": "2.0.1",
+    "vue": "3.5.30"
+  },
+  "devDependencies": {
+    "rimraf": "6.0.1"
+  }
+}

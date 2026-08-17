@@ -1,0 +1,33 @@
+{
+  "name": "@lightning/shared",
+  "version": "1.0.0",
+  "description": "Lightning 跨进程共享代码 (Electron 通知封装等)",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./notification": {
+      "import": "./dist/notification.mjs",
+      "require": "./dist/notification.js"
+    }
+  },
+  "files": [
+    "dist",
+    "notification.js",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "clean": "rimraf dist .turbo"
+  },
+  "devDependencies": {
+    "rimraf": "6.0.1",
+    "vite": "5.4.21"
+  }
+}

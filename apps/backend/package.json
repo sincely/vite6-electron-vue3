@@ -1,0 +1,29 @@
+{
+  "name": "@lightning/backend-mock",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Lightning mock backend service",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "nitro dev",
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "preview": "node .output/server/index.mjs",
+    "lint": "npm run prettier:fix",
+    "lint:check": "npm run prettier:check",
+    "prettier:fix": "prettier --write \"**/*.{js,mjs,json,md}\"",
+    "prettier:check": "prettier --check \"**/*.{js,mjs,json,md}\"",
+    "lint-staged": "lint-staged",
+    "clean": "rimraf .nitro .output node_modules/.cache"
+  },
+  "dependencies": {
+    "jsonwebtoken": "9.0.2",
+    "nitropack": "2.11.12"
+  },
+  "devDependencies": {
+    "lint-staged": "13.3.0",
+    "prettier": "3.6.2",
+    "rimraf": "5.0.1"
+  }
+}

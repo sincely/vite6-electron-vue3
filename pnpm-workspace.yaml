@@ -1,0 +1,7 @@
+# pnpm-workspace.yaml
+# apps 或 packages 目录中每个包含 package.json 的目录都将被视为一个包。
+packages:
+  # 项目
+  - 'apps/*'
+  # 公共依赖包,这样写相当于可以访问 packages 目录下的所有子目录
+  - 'packages/*'

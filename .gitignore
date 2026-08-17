@@ -24,4 +24,12 @@ src/backend/.nitro/**
 *.njsproj
 *.sln
 *.sw?
-pnpm-lock.yaml
+
+# Turborepo
+.turbo/
+**/.turbo/
+packages/*/dist/
+
+# Monorepo node_modules lockfiles
+**/pnpm-lock.yaml
+!pnpm-lock.yaml

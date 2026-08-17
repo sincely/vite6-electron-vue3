@@ -1,0 +1,302 @@
+import { defineConfig, loadEnv } from 'vite'
+import { resolve } from 'path'
+import { execSync } from 'child_process'
+import { createVitePlugins, proxyServer } from '@lightning/build-config'
+import electron from 'vite-plugin-electron/simple'
+import pkg from './package.json'
+import fs from 'fs'
+
+// 构建时获取 git 提交哈希和构建日期
+const getGitCommitHash = () => {
+  try {
+    return execSync('git rev-parse HEAD').toString().trim()
+  } catch {
+    return 'unknown'
+  }
+}
+
+const getBuildDate = () => {
+  return new Date().toISOString()
+}
+
+const __COMMIT_HASH__ = JSON.stringify(getGitCommitHash())
+const __BUILD_DATE__ = JSON.stringify(getBuildDate())
+
+export default defineConfig(({ mode, command }) => {
+  const viteEnv = loadEnv(mode, process.cwd())
+  console.log('viteEnv:', viteEnv)
+  const isServe = command === 'serve'
+  const isBuild = command === 'build'
+  const sourcemap = isServe
+  // 解决终端optimized dependencies changed时，reload问题
+  const optimizeDepsElementPlusIncludes = ['element-plus/es']
+  // ⚠️ 必须同步收集：异步 fs.access 回调在配置返回后才执行，
+  // 会导致 include 列表不完整，首次启动触发二次优化和整页 reload（白屏）
+  fs.readdirSync('node_modules/element-plus/es/components').forEach(
+    (dirname) => {
+      if (
+        fs.existsSync(
+          `node_modules/element-plus/es/components/${dirname}/style/css.mjs`
+        )
+      ) {
+        optimizeDepsElementPlusIncludes.push(
+          `element-plus/es/components/${dirname}/style/css`
+        )
+      }
+    }
+  )
+  return defineConfig({
+    base: viteEnv.VITE_BASE_URL,
+    server: {
+      port: 3200, // 指定服务器端口
+      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined,
+      warmup: {
+        clientFiles: [
+          './src/renderer/components/**/*.vue',
+          './src/renderer/views/**/*.vue'
+        ]
+      }
+    },
+    build: {
+      // 传递给Terser的更多 minify 选项。
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: [
+            'console.log',
+            'console.info',
+            'console.debug',
+            'console.warn'
+          ],
+          passes: 3, // 多次压缩，体积更小
+          reduce_funcs: true // 减小函数体积
+        },
+        mangle: {
+          toplevel: true // 混淆顶级变量和函数名
+        },
+        format: {
+          comments: false // 移除所有注释
+        }
+      },
+      reportCompressedSize: false, // 关闭压缩计算，加快构建速度
+      sourcemap,
+      chunkSizeWarningLimit: 4000,
+      minify: 'terser',
+      cssCodeSplit: true, // 启用 CSS 代码分割
+      assetsInlineLimit: 4096, // 小于 4kb 的资源内联为 base64
+      rollupOptions: {
+        // 渲染进程是浏览器环境，排除 electron，避免其内部的
+        // fs / child_process / path 等 Node 内置模块被打包而产生
+        // "externalized for browser compatibility" 警告
+        external: ['electron'],
+        treeshake: {
+          propertyReadSideEffects: false,
+          tryCatchDeoptimization: false
+        },
+        output: {
+          manualChunks(id) {
+            // Vue 核心
+            if (
+              id.includes('node_modules/vue/') ||
+              id.includes('node_modules/@vue/') ||
+              id.includes('node_modules/vue-router/') ||
+              id.includes('node_modules/pinia/')
+            ) {
+              return 'vue-vendor'
+            }
+            // Element Plus 组件不强制合包：
+            // 统一打成一个 chunk 会导致登录窗口（入口）静态依赖整个 element-plus，
+            // 即使登录页只用到少量组件也要全量加载执行。
+            // 移除后由 Rollup 自动拆分，登录链路只加载实际引用的组件。
+            // Element Plus 图标
+            if (id.includes('node_modules/@element-plus/icons-vue/')) {
+              return 'element-icons'
+            }
+            // ECharts 图表库
+            if (id.includes('node_modules/echarts/')) {
+              return 'echarts'
+            }
+            // 工具库
+            if (
+              id.includes('node_modules/axios/') ||
+              id.includes('node_modules/dayjs/') ||
+              id.includes('node_modules/lodash-es/')
+            ) {
+              return 'utils-vendor'
+            }
+            // nprogress
+            if (id.includes('node_modules/nprogress/')) {
+              return 'nprogress'
+            }
+            // qrcode
+            if (id.includes('node_modules/qrcode/')) {
+              return 'qrcode'
+            }
+          },
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames(assetInfo) {
+            const info = assetInfo.name.split('.')
+            const ext = info[info.length - 1]
+            if (/png|jpe?g|gif|tiff|bmp|ico|webp|svg/i.test(ext)) {
+              return `images/[name]-[hash][extname]`
+            } else if (/woff|woff2|eot|ttf|otf/i.test(ext)) {
+              return `fonts/[name]-[hash][extname]`
+            } else if (ext === 'css') {
+              return `css/[name]-[hash][extname]`
+            } else {
+              return `assets/[name]-[hash][extname]`
+            }
+          },
+          compact: true // 压缩生成代码的空白字符
+        }
+      }
+    },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src/renderer'),
+        '@/styles': resolve(__dirname, 'src/renderer/styles'),
+        '@/router': resolve(__dirname, 'src/renderer/router'),
+        '@/views': resolve(__dirname, 'src/renderer/views'),
+        '@/components': resolve(__dirname, 'src/renderer/components'),
+        '@/utils': resolve(__dirname, 'src/renderer/utils'),
+        '@/assets': resolve(__dirname, 'src/renderer/assets'),
+        '@/icons': resolve(__dirname, 'src/renderer/icons')
+      },
+      // 导入时想要省略的扩展名列表
+      // 不建议使用.vue 影响IDE和类型支持
+      // 在Vite中,不建议(实测还是可以配置的)忽略自定义扩展名，因为会影响IDE和类型支持。因此需要完整书写
+      extensions: ['.mjs', '.js', '.json', 'vue'] // 默认支持
+    },
+    css: {
+      preprocessorOptions: {
+        // 指定传递给css预处理器的选项
+        // sass variable and mixin
+        scss: {
+          api: 'modern-compiler',
+          additionalData: `
+            @use "@/styles/variables.scss" as *;
+            @use "@/styles/mixin.scss" as *;
+            @use "@/styles/element/index.scss" as *;
+          `
+        }
+      }
+    },
+    plugins: [
+      electron({
+        main: {
+          // Shortcut of `build.lib.entry`
+          entry: 'src/main/index.js',
+          onstart({ startup }) {
+            if (process.env.VSCODE_DEBUG) {
+              console.log('[startup] Electron App')
+            } else {
+              startup()
+            }
+          },
+          vite: {
+            define: {
+              // 将 .env 文件中的 VITE_* 变量注入主进程（Node.js 不读取 VITE_ 前缀变量）
+              'process.env.VITE_UPDATE_URL': JSON.stringify(
+                viteEnv.VITE_UPDATE_URL
+              ),
+              'process.env.VITE_API_BASE_URL': JSON.stringify(
+                viteEnv.VITE_API_BASE_URL
+              ),
+              'process.env.VITE_SERVER_URL': JSON.stringify(
+                viteEnv.VITE_SERVER_URL
+              ),
+              'process.env.VITE_USE_MOCK': JSON.stringify(
+                viteEnv.VITE_USE_MOCK
+              ),
+              __COMMIT_HASH__,
+              __BUILD_DATE__
+            },
+            build: {
+              sourcemap,
+              minify: isBuild ? 'terser' : false,
+              terserOptions: isBuild
+                ? {
+                    compress: {
+                      drop_console: true,
+                      drop_debugger: true,
+                      passes: 2
+                    },
+                    mangle: true,
+                    format: { comments: false }
+                  }
+                : undefined,
+              outDir: 'dist-electron/main',
+              rollupOptions: {
+                // Some third-party Node.js libraries may not be built correctly by Vite, especially `C/C++` addons,
+                // we can use `external` to exclude them to ensure they work correctly.
+                // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
+                // Of course, this is not absolute, just this way is relatively simple. :)
+                external: Object.keys(
+                  'dependencies' in pkg ? pkg.dependencies : {}
+                ),
+                treeshake: {
+                  moduleSideEffects: 'no-external'
+                }
+              }
+            }
+          }
+        },
+        preload: {
+          // Shortcut of `build.rollupOptions.input`.
+          // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
+          input: 'src/preload/index.mjs',
+          vite: {
+            build: {
+              sourcemap: sourcemap ? 'inline' : undefined, // #332
+              minify: isBuild ? 'terser' : false,
+              terserOptions: isBuild
+                ? {
+                    compress: {
+                      drop_console: true,
+                      drop_debugger: true,
+                      passes: 2
+                    },
+                    mangle: true,
+                    format: { comments: false }
+                  }
+                : undefined,
+              outDir: 'dist-electron/preload',
+              rollupOptions: {
+                external: Object.keys(
+                  'dependencies' in pkg ? pkg.dependencies : {}
+                ),
+                treeshake: {
+                  moduleSideEffects: 'no-external'
+                }
+              }
+            }
+          }
+        },
+        // Ployfill the Electron and Node.js API for Renderer process.
+        // If you want use Node.js in Renderer process, the `nodeIntegration` needs to be enabled in the Main process.
+        // See 👉 https://github.com/electron-vite/vite-plugin-electron-renderer
+        renderer: {}
+      }),
+      ...createVitePlugins({
+        componentsDir: 'src/renderer/components',
+        iconDirs: [resolve(__dirname, 'src/renderer/icons/svg')]
+      })
+    ],
+    optimizeDeps: {
+      include: [
+        ...optimizeDepsElementPlusIncludes,
+        // 懒加载路由/组件才会用到的大依赖，提前预构建，
+        // 避免首次访问时触发二次依赖优化导致页面 reload
+        'echarts/core',
+        'echarts/charts',
+        'echarts/components',
+        'echarts/features',
+        'echarts/renderers',
+        'qrcode',
+        '@vueuse/core'
+      ]
+    }
+  })
+})
