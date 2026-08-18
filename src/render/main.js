@@ -8,6 +8,7 @@ import { setupIcon } from './plugins'
 import { setupDirectives } from '@/directives' // 全局自定义指令（v-permission / v-role）
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
+import { useUserStore } from '@/store/modules/user'
 import { useNotificationStore } from '@/store/modules/notification'
 // import SvgIcon from '@/components/SvgIcon/index.vue'
 async function setupApp() {
@@ -44,6 +45,14 @@ async function setupApp() {
   const appStore = useAppStore()
   const notifStore = useNotificationStore()
   appStore.initTheme()
+
+  // 从主进程拉取 token（auth 状态的唯一权威在主进程持有的 auth.json）。
+  // 必须 await 后再 app.mount()，否则路由守卫会拿到空 token 误判未登录、跳转 /login，
+  // 而主进程早已根据 token 创建了主窗口 —— 此时路由再跳 /login 会引发不必要的重定向。
+  const userStore = useUserStore()
+  if (userStore.token && window.ipcRenderer) {
+    window.ipcRenderer.send('toMain')
+  }
 
   app.mount('#app').$nextTick(() => {
     // 桌面设置（关闭行为/开机自启）在首屏挂载完成后异步加载，避免 IPC 往返阻塞 mount
