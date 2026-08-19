@@ -7,37 +7,47 @@
     ]"
   >
     <!-- 侧边栏 (left) -->
-    <div v-show="!isTopMenu && !isDual && !isFullscreen" class="layout-sidebar">
-      <GlobalSiderMenu />
-    </div>
+    <Transition name="layout-fade-x">
+      <div v-if="!isTopMenu && !isDual && !isFullscreen" class="layout-sidebar">
+        <GlobalSiderMenu />
+      </div>
+    </Transition>
 
     <!-- 双列菜单 (dual 模式：一级菜单窄栏 + 子菜单列) -->
-    <DualMenu v-if="isDual && !isFullscreen" />
+    <Transition name="layout-fade-x">
+      <DualMenu v-if="isDual && !isFullscreen" />
+    </Transition>
 
     <!-- 右侧主区域 -->
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
-      <GlobalHeader v-show="!isFullscreen">
-        <!-- 面包屑（参照 art-design-pro）：仅侧边/双列菜单布局显示，顶部菜单模式不显示 -->
-        <template v-if="!isTopMenu && appStore.breadCrumb" #center>
-          <GlobalBreadcrumb />
-        </template>
-        <template #right>
-          <GlobalSearch />
-        </template>
-      </GlobalHeader>
+      <Transition name="layout-fade-y">
+        <GlobalHeader v-if="!isFullscreen">
+          <!-- 面包屑（参照 art-design-pro）：仅侧边/双列菜单布局显示，顶部菜单模式不显示 -->
+          <template v-if="!isTopMenu && appStore.breadCrumb" #center>
+            <GlobalBreadcrumb />
+          </template>
+          <template #right>
+            <GlobalSearch />
+          </template>
+        </GlobalHeader>
+      </Transition>
 
-      <!-- 内容主体区域（可能包含子菜单栏） -->
+      <!-- 内容主体区域（可能��含子菜单栏） -->
       <div class="layout-body">
         <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧，固定显示) -->
-        <div v-if="isTopMixed && !isFullscreen" class="layout-submenu">
-          <MixedSubmenu :parent-item="activeParentItem" />
-        </div>
+        <Transition name="layout-fade-x">
+          <div v-if="isTopMixed && !isFullscreen" class="layout-submenu">
+            <MixedSubmenu :parent-item="activeParentItem" />
+          </div>
+        </Transition>
 
         <!-- 内容列 -->
         <div class="layout-body-content">
           <!-- 多标签导航（内容全屏时隐藏，腾出完整可视空间） -->
-          <GlobalTagsView v-if="appStore.tagsView && !isFullscreen" />
+          <Transition name="layout-fade-y">
+            <GlobalTagsView v-if="appStore.tagsView && !isFullscreen" />
+          </Transition>
 
           <!-- 页面内容（路由视图 + 过渡 + 加载） -->
           <GlobalContent />
@@ -242,5 +252,33 @@ provide('isFullscreen', isFullscreen)
 .fullscreen-hint-leave-to {
   opacity: 0;
   transform: translate(-50%, -8px);
+}
+
+/* 横向收起：侧边栏 / 双列菜单 / 子菜单 */
+.layout-fade-x-enter-active,
+.layout-fade-x-leave-active {
+  transition:
+    opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.layout-fade-x-enter-from,
+.layout-fade-x-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+/* 纵向收起：顶栏 / 多标签栏 */
+.layout-fade-y-enter-active,
+.layout-fade-y-leave-active {
+  transition:
+    opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.layout-fade-y-enter-from,
+.layout-fade-y-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
