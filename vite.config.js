@@ -209,6 +209,9 @@ export default defineConfig(({ mode, command }) => {
               'process.env.VITE_USE_MOCK': JSON.stringify(
                 viteEnv.VITE_USE_MOCK
               ),
+              'process.env.VITE_MOCK_LOGIN': JSON.stringify(
+                viteEnv.VITE_MOCK_LOGIN
+              ),
               __COMMIT_HASH__,
               __BUILD_DATE__
             },
