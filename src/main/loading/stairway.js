@@ -37,79 +37,71 @@ function useLoading() {
   -webkit-app-region: drag;
 }
 
-.loader-text {
-  margin-top: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #006DFE;
-  letter-spacing: 1px;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.6;
-  }
-}
-
-.loaderBar {
-  width: 226px; /* calc(160px / 0.707) */
-  height: 10px;
-  background: #F9F9F9;
-  border-radius: 10px;
-  border: 1px solid #006DFE;
+.loader {
   position: relative;
-  overflow: hidden;
+  width: 120px;
+  height: 90px;
+  margin: 0 auto;
 }
 
-.loaderBar::before {
+.loader:before {
   content: "";
   position: absolute;
+  bottom: 30px;
+  left: 50px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: #2a9d8f;
+  animation: loading-bounce 0.5s ease-in-out infinite alternate;
+}
+
+.loader:after {
+  content: "";
+  position: absolute;
+  right: 0;
   top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 5px;
-  background: repeating-linear-gradient(45deg, #0031F2 0 30px, #006DFE 0 40px) right/200% 100%;
-  animation: fillProgress 6s cubic-bezier(0.2, 0, 0, 1) forwards, lightEffect 1s infinite linear;
+  height: 7px;
+  width: 45px;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 #f2f2f2, -35px 50px 0 #f2f2f2, -70px 95px 0 #f2f2f2;
+  animation: loading-step 1s ease-in-out infinite;
 }
 
-.loaderBar.finish::before {
-  animation: finishProgress 0.3s ease-out forwards;
-}
-
-@keyframes fillProgress {
+@keyframes loading-bounce {
   0% {
-    width: 0;
+    transform: scale(1, 0.7);
   }
+
+  40% {
+    transform: scale(0.8, 1.2);
+  }
+
+  60% {
+    transform: scale(1, 1);
+  }
+
   100% {
-    width: 99.9%;
+    bottom: 140px;
   }
 }
 
-@keyframes finishProgress {
+@keyframes loading-step {
   0% {
-    width: 99.9%;
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0),
+            0 10px 0 #f2f2f2,
+            -35px 50px 0 #f2f2f2,
+            -70px 90px 0 #f2f2f2;
   }
+
   100% {
-    width: 100%;
+    box-shadow: 0 10px 0 #f2f2f2,
+            -35px 50px 0 #f2f2f2,
+            -70px 90px 0 #f2f2f2,
+            -70px 90px 0 rgba(0, 0, 0, 0);
   }
 }
 
-@keyframes lightEffect {
-  0%, 20%, 40%, 60%, 80%, 90%, 100% {
-    background: repeating-linear-gradient(45deg, #0031F2 0 30px, #006DFE 0 40px) right/200% 100%;
-  }
-
-  10%, 30%, 50%, 70%, 80%, 90%, 100% {
-    background: repeating-linear-gradient(45deg, #0031F2 0 30px, #006DFE 0 40px, rgba(255, 255, 255, 0.3) 0 40px) right/200% 100%;
-  }
-}
     `
   const oStyle = document.createElement('style')
   const oDiv = document.createElement('div')
@@ -119,7 +111,7 @@ function useLoading() {
   oDiv.className = 'app-loading-wrap'
   oDiv.innerHTML = `
     <div class="${className}"><div></div></div>
-    <div class="loader-text">正在加载中...</div>
+    <div class="loader"></div>
   `
 
   return {

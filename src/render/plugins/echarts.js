@@ -2,6 +2,7 @@
 import {
   BarChart,
   CandlestickChart,
+  FunnelChart,
   GaugeChart,
   LineChart,
   MapChart,
@@ -50,6 +51,7 @@ echarts.use([
   GaugeChart,
   ScatterChart,
   CandlestickChart,
+  FunnelChart,
   SVGRenderer,
   PictorialBarChart,
   RadarComponent,

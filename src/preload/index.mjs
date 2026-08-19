@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron'
-import useLoading from '../main/loading/train'
+import useLoading from '../main/loading/stairway'
 // api 暴露的方法
 const api = {}
 // 监听器包装函数缓存：on 会用匿名函数包装 listener，
