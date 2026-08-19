@@ -21,7 +21,7 @@
       :config="tableConfig"
       @selection-change="handleSelectionChange"
     >
-      <template #toolbar>
+      <template #toolbar-left>
         <div class="toolbar-buttons">
           <el-button type="primary" @click="handleCreate">
             <SvgIcon icon-class="plus" width="14px" height="14px" />
@@ -111,6 +111,7 @@
         :schemas="formSchemas"
         :is-edit="true"
         :form-props="{ labelWidth: '100px' }"
+        :col-props="{ span: 12 }"
       />
 
       <template #footer>
@@ -211,7 +212,12 @@ const columns = [
     label: '用户状态',
     width: 110,
     align: 'center',
-    slot: 'status'
+    slot: 'status',
+    filterable: true,
+    filters: [
+      { text: '启用', value: '1' },
+      { text: '禁用', value: '0' }
+    ]
   },
   {
     prop: 'createTime',

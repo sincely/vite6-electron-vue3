@@ -21,7 +21,7 @@
       :config="tableConfig"
       @selection-change="handleSelectionChange"
     >
-      <template #toolbar>
+      <template #toolbar-left>
         <div class="toolbar-buttons">
           <el-button type="primary" @click="handleCreate">
             <SvgIcon icon-class="plus" width="14px" height="14px" />

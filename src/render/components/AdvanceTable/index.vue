@@ -6,7 +6,6 @@
         <slot name="toolbar-left" />
       </div>
       <div class="toolbar-right">
-        <slot name="toolbar" />
         <Icon
           icon="ri:refresh-line"
           class="toolbar-icon"
@@ -394,22 +393,6 @@ function handleSelectionChange(selection) {
 function handleSizeChange(val) {
   queryParams.pageSize = val
   getList()
-}
-
-// 链接点击
-function handleLinkClick(column, row) {
-  if (props.events?.onLinkClick) {
-    props.events.onLinkClick(column, row)
-  } else if (column.link?.name) {
-    // 路由跳转
-    router.push({
-      name: column.link.name,
-      params:
-        typeof column.link.params === 'function'
-          ? column.link.params(row)
-          : column.link.params
-    })
-  }
 }
 
 // 初始化
