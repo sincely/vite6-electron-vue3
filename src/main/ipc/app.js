@@ -50,6 +50,10 @@ export default [
     channel: 'logout',
     type: 'on',
     handler: () => {
+      // 先彻底销毁现有登录窗口（包括 toMain 时被 hide 但未销毁的残留窗口），
+      // 避免 createLoginWindow 复用旧窗口导致登录窗口不可见。
+      // closeLoginWindow 会清理 loginWindowId，createLoginWindow 之后会创建全新可见窗口。
+      closeLoginWindow()
       const loginWin = createLoginWindow()
       // 等登录窗口 ready-to-show 后再关闭主窗口，原因同上
       if (loginWin.isVisible()) {

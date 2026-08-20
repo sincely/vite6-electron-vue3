@@ -186,12 +186,25 @@ export function createLoginWindow() {
   if (loginWindowId) {
     const win = windows.get(loginWindowId)
     if (win && !win.isDestroyed()) {
-      if (win.isMinimized()) win.restore()
-      win.focus()
-      return win
+      // 防御：若窗口处于 hide 状态（toMain 时被 hide 但 close 事件尚未派发完成，
+      // 或 ready-to-show 还没触发就被登出），focus() 无法让 hide 窗口可见，
+      // 复用旧窗口会导致登录窗口永不显示。直接销毁后创建全新可见窗口。
+      if (!win.isVisible()) {
+        // 同步清理 loginWindowId，避免 win.close() 后 closed 事件异步派发时
+        // 仍被下面的 if 分支判断为有旧窗口可复用
+        const oldId = loginWindowId
+        loginWindowId = null
+        windows.delete(oldId)
+        win.close()
+      } else {
+        if (win.isMinimized()) win.restore()
+        win.focus()
+        return win
+      }
+    } else {
+      // 窗口已销毁，清理残留引用
+      loginWindowId = null
     }
-    // 窗口已销毁，清理残留引用
-    loginWindowId = null
   }
 
   const win = new BrowserWindow({
