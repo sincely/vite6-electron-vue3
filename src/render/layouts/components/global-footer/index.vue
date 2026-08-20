@@ -15,60 +15,7 @@
       <span class="global-footer__item">
         © {{ copyrightYear }} {{ company.fullName }} 版权所有
       </span>
-      <!-- <span class="global-footer__separator" />
-      <a
-        v-if="company.icp"
-        class="global-footer__item global-footer__item--link"
-        :href="company.icpUrl || 'https://beian.miit.gov.cn/'"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <SvgIcon icon-class="shield" width="11px" height="11px" />
-        {{ company.icp }}
-      </a>
-      <template v-if="company.policeIcp">
-        <span class="global-footer__separator" />
-        <a
-          class="global-footer__item global-footer__item--link"
-          :href="company.policeIcpUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <SvgIcon icon-class="safety" width="11px" height="11px" />
-          {{ company.policeIcp }}
-        </a>
-      </template> -->
     </div>
-
-    <!-- <div class="global-footer__right">
-      <a
-        v-if="company.website"
-        class="global-footer__item global-footer__item--link"
-        :href="company.website"
-        target="_blank"
-        rel="noopener noreferrer"
-        :title="company.website"
-      >
-        <SvgIcon icon-class="globe" width="11px" height="11px" />
-        {{ company.websiteLabel || company.website }}
-      </a>
-      <template v-if="company.email">
-        <span class="global-footer__separator" />
-        <a
-          class="global-footer__item global-footer__item--link"
-          :href="`mailto:${company.email}`"
-          :title="`联系我们:${company.email}`"
-        >
-          <SvgIcon icon-class="email" width="11px" height="11px" />
-          {{ company.email }}
-        </a>
-      </template>
-      <span class="global-footer__separator" />
-      <span class="global-footer__item global-footer__item--online">
-        <span class="global-footer__dot" />
-        运行中
-      </span>
-    </div> -->
   </footer>
 </template>
 
@@ -85,16 +32,7 @@ const footerHeight = computed(() => appStore.footerHeight || 26)
 // 公司信息（可按需修改或抽到独立配置文件）
 const company = {
   shortName: import.meta.env.VITE_COMPANY_SHORT_NAME || '闪电科技',
-  fullName: import.meta.env.VITE_COMPANY_FULL_NAME || '闪电科技有限公司',
-  website: import.meta.env.VITE_COMPANY_WEBSITE || 'https://www.example.com',
-  websiteLabel: import.meta.env.VITE_COMPANY_WEBSITE_LABEL || 'www.example.com',
-  email: import.meta.env.VITE_COMPANY_EMAIL || 'support@example.com',
-  icp: import.meta.env.VITE_COMPANY_ICP || '京ICP备XXXXXXXX号-1',
-  icpUrl: import.meta.env.VITE_COMPANY_ICP_URL || '',
-  policeIcp:
-    import.meta.env.VITE_COMPANY_POLICE_ICP || '京公网安备XXXXXXXXXXXX号',
-  policeIcpUrl:
-    import.meta.env.VITE_COMPANY_POLICE_ICP_URL || 'https://beian.mps.gov.cn/'
+  fullName: import.meta.env.VITE_COMPANY_FULL_NAME || '闪电科技有限公司'
 }
 
 // 版权年份（跟随当前年份）
