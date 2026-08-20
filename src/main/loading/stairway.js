@@ -19,9 +19,14 @@ function useLoading() {
       }
     }
   }
+  // 浅色主题变量，暗色主题在下方 prefers-color-scheme 媒体查询中覆盖，
+  // Electron 渲染进程的 prefers-color-scheme 默认跟随 nativeTheme.themeSource（system），
+  // 系统主题切换时无需 IPC 即可实时更新
   const className = `loaderBar`
   const styleContent = `
 .app-loading-wrap {
+  --loading-bg: #ffffff;
+  --stair-color: #f2f2f2;
   position: fixed;
   top: 0;
   left: 0;
@@ -31,10 +36,18 @@ function useLoading() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: var(--loading-bg);
   z-index: 9999;
   /* 配套 #app-splash：主窗口 splash 显示期间也允许拖拽整个窗口 */
   -webkit-app-region: drag;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-loading-wrap {
+    /* 与 windowManager.getWindowBackgroundColor 的暗色值保持一致 */
+    --loading-bg: #0b0c0f;
+    --stair-color: #26292f;
+  }
 }
 
 .loader {
@@ -64,7 +77,7 @@ function useLoading() {
   height: 7px;
   width: 45px;
   border-radius: 4px;
-  box-shadow: 0 5px 0 #f2f2f2, -35px 50px 0 #f2f2f2, -70px 95px 0 #f2f2f2;
+  box-shadow: 0 5px 0 var(--stair-color), -35px 50px 0 var(--stair-color), -70px 95px 0 var(--stair-color);
   animation: loading-step 1s ease-in-out infinite;
 }
 
@@ -89,15 +102,15 @@ function useLoading() {
 @keyframes loading-step {
   0% {
     box-shadow: 0 10px 0 rgba(0, 0, 0, 0),
-            0 10px 0 #f2f2f2,
-            -35px 50px 0 #f2f2f2,
-            -70px 90px 0 #f2f2f2;
+            0 10px 0 var(--stair-color),
+            -35px 50px 0 var(--stair-color),
+            -70px 90px 0 var(--stair-color);
   }
 
   100% {
-    box-shadow: 0 10px 0 #f2f2f2,
-            -35px 50px 0 #f2f2f2,
-            -70px 90px 0 #f2f2f2,
+    box-shadow: 0 10px 0 var(--stair-color),
+            -35px 50px 0 var(--stair-color),
+            -70px 90px 0 var(--stair-color),
             -70px 90px 0 rgba(0, 0, 0, 0);
   }
 }
