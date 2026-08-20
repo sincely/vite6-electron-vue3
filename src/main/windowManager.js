@@ -120,7 +120,7 @@ const setupWindow = (win, { autoShow = true } = {}) => {
  * 加载哈希路由页面
  * - 开发环境：loadURL (Vite 开发服务器)
  * - 生产环境：loadURL (app:// 自定义协议，满足应用商店安全审核要求)
- * - 注册 F12 快捷键切换 DevTools
+ * - 注册 DevTools 快捷键：开发模式 F12，生产环境 Ctrl+F12
  */
 const loadHash = (win, hash) => {
   // 开发环境使用 loadURL 加载 Vite 开发服务器
@@ -133,9 +133,14 @@ const loadHash = (win, hash) => {
     win.loadURL(`app://renderer/index.html${hash ? '#' + hash : ''}`)
   }
 
-  // 监听键盘事件，F12 打开开发者工具（仅开发模式）
+  // 监听键盘事件
+  // - 开发模式：F12 直接切换 DevTools
+  // - 生产环境：Ctrl+F12 作为受控的"暗门"切换 DevTools，便于线上问题排查
   win.webContents.on('before-input-event', (_event, input) => {
-    if (input.key === 'F12' && !app.isPackaged) {
+    if (input.type !== 'keyDown' || input.key !== 'F12') return
+    const isDev = !app.isPackaged
+    const isCtrlF12 = input.modifiers?.includes('control')
+    if (isDev || isCtrlF12) {
       win?.webContents.toggleDevTools()
     }
   })
