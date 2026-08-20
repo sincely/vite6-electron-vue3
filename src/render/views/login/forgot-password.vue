@@ -179,7 +179,7 @@
             <!-- Step 2: 完成 -->
             <div v-else key="success" class="step-content success-content">
               <div class="success-icon">
-                <svg-icon iconClass="check" width="32px" height="32px" />
+                <svg-icon iconClass="success" width="62px" height="62px" />
               </div>
               <h2 class="success-title">密码重置成功</h2>
               <p class="success-desc">请使用新密码重新登录</p>
@@ -708,7 +708,8 @@ const goLogin = () => {
     height: 64px;
     margin-bottom: 16px;
     color: #fff;
-    background: var(--color-success);
+
+    //  background: var(--color-success);
     border-radius: 50%;
     animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
