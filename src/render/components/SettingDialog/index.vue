@@ -696,82 +696,6 @@
                       </div>
                     </div>
                   </div>
-
-                  <!-- System Info -->
-                  <div class="setting-section">
-                    <h3 class="section-title">系统信息</h3>
-                    <div class="about-info-grid">
-                      <div class="about-info-item">
-                        <span class="about-info-item__label">Electron</span>
-                        <span class="about-info-item__value">
-                          {{ systemInfo.electron }}
-                        </span>
-                      </div>
-                      <div class="about-info-item">
-                        <span class="about-info-item__label">Chromium</span>
-                        <span class="about-info-item__value">
-                          {{ systemInfo.chrome }}
-                        </span>
-                      </div>
-                      <div class="about-info-item">
-                        <span class="about-info-item__label">Node.js</span>
-                        <span class="about-info-item__value">
-                          {{ systemInfo.node }}
-                        </span>
-                      </div>
-                      <div class="about-info-item">
-                        <span class="about-info-item__label">系统平台</span>
-                        <span class="about-info-item__value">
-                          {{ systemInfo.platform }}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Links -->
-                  <!-- <div class="setting-section">
-                    <h3 class="section-title">相关链接</h3>
-                    <div class="about-links-list">
-                      <a
-                        href="https://github.com/sincely/vite6-electron-vue3"
-                        target="_blank"
-                        class="about-link-item"
-                      >
-                        <div class="about-link-item__icon">
-                          <SvgIcon icon-class="github" />
-                        </div>
-                        <div class="about-link-item__content">
-                          <span class="about-link-item__title">
-                            GitHub 仓库
-                          </span>
-                          <span class="about-link-item__desc">
-                            查看源码、提交反馈
-                          </span>
-                        </div>
-                        <SvgIcon
-                          icon-class="chevron-right"
-                          class="about-link-item__arrow"
-                        />
-                      </a>
-                      <a href="#" class="about-link-item">
-                        <div class="about-link-item__icon">
-                          <SvgIcon icon-class="document" />
-                        </div>
-                        <div class="about-link-item__content">
-                          <span class="about-link-item__title">使用文档</span>
-                          <span class="about-link-item__desc">
-                            查看功能说明与使用指南
-                          </span>
-                        </div>
-                        <SvgIcon
-                          icon-class="chevron-right"
-                          class="about-link-item__arrow"
-                        />
-                      </a>
-                    </div>
-                  </div> -->
-
-                  <!-- Copyright -->
                   <div class="about-copyright">
                     Copyright © 2024 Lightning Team. All rights reserved.
                   </div>
@@ -1020,14 +944,6 @@ const handleStartUpdate = () => {
   // Trigger the UpdateDialog to show
   window.dispatchEvent(new Event('update:open-dialog'))
 }
-
-// System info (exposed via preload contextBridge)
-const systemInfo = reactive({
-  electron: window.versions?.electron || 'N/A',
-  chrome: window.versions?.chrome || 'N/A',
-  node: window.versions?.node || 'N/A',
-  platform: `${window.process?.platform || 'unknown'} ${window.process?.arch || ''}`
-})
 
 // Listen for update events in the About tab
 let onAboutUpdateAvailable = null
@@ -1819,40 +1735,6 @@ const handleClose = () => {
     :deep(.is-spinning) {
       animation: spin 1s linear infinite;
     }
-  }
-}
-
-/* About Info Grid */
-.about-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.about-info-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: var(--color-bg-card);
-  border: 1px solid transparent;
-  border-radius: 10px;
-  transition: border-color 0.2s;
-
-  &:hover {
-    border-color: var(--color-border);
-  }
-
-  &__label {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-  }
-
-  &__value {
-    font-size: 13px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text-primary);
   }
 }
 
