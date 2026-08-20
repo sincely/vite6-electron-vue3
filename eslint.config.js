@@ -3,8 +3,7 @@ import pluginVue from 'eslint-plugin-vue'
 import * as parserVue from 'vue-eslint-parser'
 import configPrettier from 'eslint-config-prettier'
 import pluginPrettier from 'eslint-plugin-prettier'
-import { defineFlatConfig } from 'eslint-define-config'
-export default defineFlatConfig([
+export default [
   {
     ignores: [
       'node_modules/**',
@@ -139,4 +138,4 @@ export default defineFlatConfig([
       'vue/one-component-per-file': 0
     }
   }
-])
+]
