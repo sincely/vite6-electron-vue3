@@ -18,28 +18,6 @@ async function setupApp() {
   app.use(store)
   app.use(router)
 
-  // ─── 全局错误处理 ──────────────────────────────────────────
-  app.config.errorHandler = (err, _instance, info) => {
-    console.error('[Vue Error]', err, info)
-    try {
-      ElMessage.error(`应用发生错误：${err?.message || '未知错误'}`)
-    } catch (e) {
-      // ElMessage 尚未就绪，仅控制台记录
-    }
-  }
-
-  // 捕获未处理的 Promise 拒绝
-  window.addEventListener('unhandledrejection', (event) => {
-    console.error('[Unhandled Promise Rejection]', event.reason)
-    try {
-      ElMessage.error(
-        `异步错误：${event.reason?.message || event.reason || '未知错误'}`
-      )
-    } catch (e) {
-      // ElMessage 尚未就绪，仅控制台记录
-    }
-  })
-
   // persist插件在useAppStore()首次调用时同步从localStorage 恢复状态
   // 在mount前调用initTheme确保首次渲染时data-theme已正确设置
   const appStore = useAppStore()
