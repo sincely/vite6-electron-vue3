@@ -192,13 +192,8 @@
       </div>
     </div>
     <div id="app"></div>
+    <!-- 兜底脚本：必须早于 main.js，确保 Vue 致命错误时仍能按顺序执行 -->
+    <script type="module" src="/src/render/splashFailsafe.js"></script>
     <script type="module" src="/src/render/main.js"></script>
-    <script>
-      // 兜底：若 Vue 异常导致 splash 残留，10s 后强制移除
-      window.__appSplashFailsafe = setTimeout(function () {
-        var s = document.getElementById('app-splash')
-        if (s && s.parentNode) s.parentNode.removeChild(s)
-      }, 6000)
-    </script>
   </body>
 </html>
