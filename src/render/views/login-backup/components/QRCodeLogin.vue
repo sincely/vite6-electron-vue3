@@ -1,15 +1,11 @@
 <template>
-  <div class="qrcode-login">
-    <AuthTitle>
-      欢迎回来 📱
-      <template #desc>请用手机扫描二维码登录</template>
-    </AuthTitle>
-
-    <div class="qrcode-card">
+  <div class="qrcode-login-container">
+    <!-- <div class="title">使用钉钉扫码登录</div> -->
+    <div class="qrcode-wrapper">
       <div class="canvas-box">
-        <canvas id="loginQrCanvas" ref="qrCanvas"></canvas>
+        <canvas id="myCanvas" ref="qrCanvas"></canvas>
 
-        <!-- 状态遮罩 -->
+        <!-- Status Overlays -->
         <transition name="fade">
           <div
             v-if="qrCodeStatus !== 'waiting' && qrCodeStatus !== 'scanned'"
@@ -38,12 +34,13 @@
                 class="status-icon fail"
               />
 
-              <p class="status-text">{{ statusText }}</p>
+              <p class="status-text">
+                {{ statusText }}
+              </p>
 
               <button
                 v-if="['expired', 'cancelled'].includes(qrCodeStatus)"
                 class="refresh-btn"
-                type="button"
                 @click="onRefresh"
               >
                 点击刷新
@@ -54,30 +51,31 @@
       </div>
     </div>
 
-    <!-- vben qrcodePrompt -->
-    <p class="prompt">扫码后点击「确认」，即可完成登录</p>
-
-    <!-- vben：返回按钮 -->
-    <el-button class="outline-btn" @click="emit('switch', 'account')">
-      返回账号登录
-    </el-button>
+    <p class="helper-text">
+      请使用
+      <span class="highlight">钉钉 APP</span>
+      扫码登录
+    </p>
   </div>
 </template>
 
 <script setup>
 import QRCode from 'qrcode'
-import AuthTitle from './AuthTitle.vue'
 
-defineOptions({ name: 'QrCodeLogin' })
-
-const emit = defineEmits(['switch'])
-
-// 演示二维码内容（与原登录页一致）
 const referralCode = ref('sadasq2e1q2ee3232332')
 const qrCanvas = ref(null)
+
 const qrCodeStatus = ref('waiting')
 let pollInterval = null
 let lastStatus = null
+
+const qrCodeStatusMap = {
+  WAITING: 'waiting',
+  SCANNED: 'scanned',
+  CONFIRMED: 'confirmed',
+  CANCELLED: 'cancelled',
+  EXPIRED: 'expired'
+}
 
 const statusText = computed(() => {
   const map = {
@@ -103,7 +101,7 @@ onMounted(() => {
 const fetchQrCode = async () => {
   try {
     await generateQrCode(referralCode.value)
-    qrCodeStatus.value = 'waiting'
+    qrCodeStatus.value = qrCodeStatusMap.WAITING
     lastStatus = null
     pollQrCodeStatus()
   } catch (error) {
@@ -117,7 +115,7 @@ const generateQrCode = (code) => {
       qrCanvas.value,
       code,
       {
-        width: 168,
+        width: 160,
         margin: 0,
         color: {
           dark: '#1e1b4b',
@@ -126,8 +124,11 @@ const generateQrCode = (code) => {
         errorCorrectionLevel: 'H'
       },
       (error) => {
-        if (error) reject(error)
-        else resolve()
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
       }
     )
   })
@@ -135,9 +136,11 @@ const generateQrCode = (code) => {
 
 const pollQrCodeStatus = () => {
   stopPolling()
-  if (qrCodeStatus.value !== 'waiting') return
-  pollInterval = setInterval(() => {
-    // 模拟扫码状态轮询
+  if (qrCodeStatus.value !== qrCodeStatusMap.WAITING) return
+
+  pollInterval = setInterval(async () => {
+    // 模拟轮询逻辑
+    // console.log('Polling status...')
   }, 3000)
 }
 
@@ -153,17 +156,26 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-.qrcode-login {
+.qrcode-login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
+  height: 100%;
   animation: fade-up 0.4s ease-out;
 }
 
-.qrcode-card {
+.title {
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.qrcode-wrapper {
   position: relative;
-  padding: 12px;
+  padding: 10px;
   margin-bottom: 16px;
   background: #fff;
   border: 1px solid var(--color-border);
@@ -182,8 +194,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 168px;
-  height: 168px;
+  width: 160px;
+  height: 160px;
   overflow: hidden;
   border-radius: 8px;
 }
@@ -206,8 +218,8 @@ onBeforeUnmount(() => {
 }
 
 .status-text {
-  margin: 10px 0 12px;
-  font-size: 13px;
+  margin: 12px 0 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -223,7 +235,7 @@ onBeforeUnmount(() => {
 }
 
 .refresh-btn {
-  padding: 6px 14px;
+  padding: 6px 16px;
   font-size: 13px;
   font-weight: 500;
   color: var(--color-primary);
@@ -238,29 +250,17 @@ onBeforeUnmount(() => {
   }
 }
 
-.prompt {
-  margin-bottom: 18px;
+.helper-text {
   font-size: 13px;
   color: var(--color-text-muted);
-  text-align: center;
-}
 
-.outline-btn {
-  width: 100%;
-  height: 40px;
-  font-size: 14px;
-  color: var(--color-text-primary);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-
-  &:hover {
+  .highlight {
+    font-weight: 600;
     color: var(--color-primary);
-    background: var(--color-bg-hover);
-    border-color: var(--color-primary);
   }
 }
 
+// Animations
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
