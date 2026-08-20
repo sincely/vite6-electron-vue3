@@ -145,13 +145,13 @@ onBeforeUnmount(() => {
 
 .login-form {
   :deep(.el-form-item) {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 }
 
 .custom-input {
   :deep(.el-input__wrapper) {
-    height: 42px;
+    height: 38px;
     padding: 0 14px;
     background-color: var(--color-bg-input);
     border-radius: 8px;
@@ -191,7 +191,7 @@ onBeforeUnmount(() => {
   .code-btn {
     flex-shrink: 0;
     width: 120px;
-    height: 42px;
+    height: 38px;
     padding: 0;
     font-size: 13px;
     color: var(--color-primary);
@@ -215,7 +215,7 @@ onBeforeUnmount(() => {
 
 .submit-btn {
   width: 100%;
-  height: 42px;
+  height: 38px;
   font-size: 15px;
   font-weight: 600;
   color: #fff;
@@ -234,9 +234,13 @@ onBeforeUnmount(() => {
 
 .outline-btn {
   width: 100%;
-  height: 40px;
+  height: 38px;
   margin-top: 12px;
-  font-size: 14px;
+
+  // 覆盖 Element Plus 相邻按钮默认的 12px 左边距，与登录按钮保持左右对齐
+  margin-left: 0;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--color-text-primary);
   background: transparent;
   border: 1px solid var(--color-border);

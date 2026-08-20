@@ -198,11 +198,11 @@ const goForgotPassword = () => {
 
 .login-form {
   :deep(.el-form-item) {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .select-item {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 }
 
@@ -212,7 +212,7 @@ const goForgotPassword = () => {
   width: 100%;
 
   :deep(.el-input__wrapper) {
-    height: 42px;
+    height: 38px;
     padding: 0 14px;
     background-color: var(--color-bg-input);
     border-radius: 8px;
@@ -247,7 +247,7 @@ const goForgotPassword = () => {
 
 .account-select {
   :deep(.el-select__wrapper) {
-    min-height: 42px;
+    min-height: 38px;
     padding: 0 14px;
     background-color: var(--color-bg-input);
     border-radius: 8px;
@@ -278,8 +278,8 @@ const goForgotPassword = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: -4px;
-  margin-bottom: 18px;
+  margin-top: -2px;
+  margin-bottom: 12px;
 
   :deep(.el-checkbox__label) {
     font-size: 13px;
@@ -301,7 +301,7 @@ const goForgotPassword = () => {
 
 .submit-btn {
   width: 100%;
-  height: 42px;
+  height: 38px;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -319,13 +319,16 @@ const goForgotPassword = () => {
 
 .alt-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 10px;
 
   .outline-btn {
     flex: 1;
-    height: 40px;
-    font-size: 14px;
+    height: 36px;
+
+    // 覆盖 Element Plus 相邻按钮默认的 12px 左边距（与 gap 叠加会错位）
+    margin-left: 0;
+    font-size: 13px;
     color: var(--color-text-primary);
     background: transparent;
     border: 1px solid var(--color-border);
@@ -341,7 +344,7 @@ const goForgotPassword = () => {
 }
 
 .to-register {
-  margin-top: 20px;
+  margin-top: 12px;
   font-size: 13px;
   color: var(--color-text-secondary);
   text-align: center;

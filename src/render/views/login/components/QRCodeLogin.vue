@@ -163,8 +163,8 @@ onBeforeUnmount(() => {
 
 .qrcode-card {
   position: relative;
-  padding: 12px;
-  margin-bottom: 16px;
+  padding: 10px;
+  margin-bottom: 12px;
   background: #fff;
   border: 1px solid var(--color-border);
   border-radius: 12px;
@@ -239,7 +239,7 @@ onBeforeUnmount(() => {
 }
 
 .prompt {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   font-size: 13px;
   color: var(--color-text-muted);
   text-align: center;
@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
 
 .outline-btn {
   width: 100%;
-  height: 40px;
+  height: 38px;
   font-size: 14px;
   color: var(--color-text-primary);
   background: transparent;

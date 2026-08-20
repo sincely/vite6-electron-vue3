@@ -144,11 +144,11 @@ const handleSubmit = async () => {
 
 .login-form {
   :deep(.el-form-item) {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .policy-item {
-    margin-bottom: 18px;
+    margin-bottom: 12px;
 
     :deep(.el-form-item__content) {
       line-height: 1.5;
@@ -163,7 +163,7 @@ const handleSubmit = async () => {
 
 .custom-input {
   :deep(.el-input__wrapper) {
-    height: 42px;
+    height: 38px;
     padding: 0 14px;
     background-color: var(--color-bg-input);
     border-radius: 8px;
@@ -200,7 +200,7 @@ const handleSubmit = async () => {
 
 .submit-btn {
   width: 100%;
-  height: 42px;
+  height: 38px;
   font-size: 15px;
   font-weight: 600;
   color: #fff;
@@ -229,7 +229,7 @@ const handleSubmit = async () => {
 }
 
 .to-login {
-  margin-top: 20px;
+  margin-top: 12px;
   font-size: 13px;
   color: var(--color-text-secondary);
   text-align: center;

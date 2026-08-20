@@ -9,10 +9,10 @@
     <!-- 认证表单面板（left=居右 / right=居左 / center=居中卡片） -->
     <div class="auth-form-panel">
       <!-- Logo + 应用名 -->
-      <div class="form-header">
+      <!-- <div class="form-header">
         <img src="@/assets/bar/app.png" alt="Lightning" class="app-logo" />
         <span class="app-name">Lightning</span>
-      </div>
+      </div> -->
 
       <!-- 表单内容（垂直居中；center 布局渲染为居中卡片，复刻 vben authPanelCenter） -->
       <div class="form-content">
@@ -91,7 +91,7 @@ const { authPanelLayout } = useAuthPanelLayout()
 .form-header {
   display: flex;
   align-items: center;
-  padding: 20px 24px;
+  padding: 16px 24px 8px;
 
   .app-logo {
     width: 34px;
@@ -119,11 +119,11 @@ const { authPanelLayout } = useAuthPanelLayout()
 
 .form-inner {
   width: 100%;
-  max-width: 360px;
+  max-width: 340px;
 }
 
 .form-footer {
-  padding: 16px;
+  padding: 12px;
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;

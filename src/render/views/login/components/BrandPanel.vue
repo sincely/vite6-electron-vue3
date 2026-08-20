@@ -6,11 +6,23 @@
     <div class="brand-blob brand-blob--2"></div>
     <div class="grid-pattern"></div>
 
+    <!-- 左上角品牌标识 -->
+    <div class="brand-header enter-x">
+      <img
+        src="@/assets/bar/app.png"
+        alt="Lightning"
+        class="brand-header-logo"
+      />
+      <span class="brand-header-name">Lightning</span>
+    </div>
+
     <!-- 系统介绍 -->
     <div class="brand-content enter-x">
-      <div class="logo-card animate-float">
-        <img src="@/assets/bar/app.png" alt="Lightning" class="brand-logo" />
-      </div>
+      <img
+        src="@/assets/images/background.svg"
+        alt="Lightning"
+        class="brand-logo animate-float"
+      />
       <h2 class="brand-title">开箱即用的企业级桌面应用模版</h2>
       <p class="brand-desc">
         工程化、高性能、跨端一致的 Electron 桌面应用解决方案
@@ -118,21 +130,42 @@ html[data-theme='dark'] .brand-streak {
   text-align: center;
 }
 
-// vben animate-float
-.logo-card {
+// 左上角品牌标识：Logo + 应用名
+.brand-header {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 2;
   display: flex;
-  padding: 18px;
-  background: color-mix(in srgb, var(--color-bg-card), transparent 25%);
-  backdrop-filter: blur(8px);
-  border: 1px solid color-mix(in srgb, var(--color-border), transparent 30%);
-  border-radius: 22px;
-  box-shadow: var(--shadow-lg);
-  animation: float 6s ease-in-out infinite alternate;
+  gap: 10px;
+  align-items: center;
 
-  .brand-logo {
-    width: 56px;
-    height: 56px;
+  .brand-header-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
   }
+
+  .brand-header-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.3px;
+  }
+}
+
+// 主视觉插画：固定高度、宽度随 SVG 固有比例自适应，避免拉伸变形
+.brand-logo {
+  width: auto;
+  height: clamp(220px, 42vh, 320px);
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgb(15 23 42 / 18%));
+}
+
+// vben animate-float
+.animate-float {
+  animation: float 6s ease-in-out infinite alternate;
 }
 
 .brand-title {

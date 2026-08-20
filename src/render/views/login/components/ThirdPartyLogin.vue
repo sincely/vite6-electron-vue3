@@ -46,7 +46,7 @@ const handleProvider = (provider) => {
 <style lang="scss" scoped>
 .third-party-login {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .divider {
@@ -70,17 +70,17 @@ const handleProvider = (provider) => {
 .providers {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 10px;
 }
 
 .provider-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   color: var(--color-text-primary);
   cursor: pointer;

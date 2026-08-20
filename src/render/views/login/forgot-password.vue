@@ -447,7 +447,7 @@ onBeforeUnmount(() => {
 // ─── 表单样式 ───────────────────────────────────────
 .login-form {
   :deep(.el-form-item) {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   :deep(.el-form-item__label) {
@@ -460,7 +460,7 @@ onBeforeUnmount(() => {
 
 .custom-input {
   :deep(.el-input__wrapper) {
-    height: 42px;
+    height: 38px;
     padding: 0 14px;
     background-color: var(--color-bg-input);
     border-radius: 8px;
@@ -506,7 +506,7 @@ onBeforeUnmount(() => {
   .code-btn {
     flex-shrink: 0;
     width: 110px;
-    height: 42px;
+    height: 38px;
     padding: 0;
     font-size: 13px;
     color: var(--color-primary);
@@ -594,7 +594,7 @@ onBeforeUnmount(() => {
 
 .submit-btn {
   width: 100%;
-  height: 42px;
+  height: 38px;
   font-size: 15px;
   font-weight: 600;
   color: #fff;
@@ -648,7 +648,7 @@ onBeforeUnmount(() => {
 
 // ─── 返回链接 ───────────────────────────────────────
 .back-row {
-  margin-top: 20px;
+  margin-top: 14px;
   text-align: center;
 
   .back-link {

@@ -15,12 +15,12 @@ defineOptions({ name: 'AuthTitle' })
 
 <style lang="scss" scoped>
 .auth-title {
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 
   .title {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 700;
     line-height: 1.3;
     color: var(--color-text-primary);
@@ -28,8 +28,8 @@ defineOptions({ name: 'AuthTitle' })
   }
 
   .desc {
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 12.5px;
+    line-height: 1.5;
     color: var(--color-text-muted);
   }
 }
