@@ -150,7 +150,6 @@
 
 <script setup>
 defineOptions({ name: 'example-socket' })
-import { ref, shallowRef, computed, onUnmounted } from 'vue'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 import WebSocketClient, { DEFAULT_WS_URL } from '@/utils/socket'

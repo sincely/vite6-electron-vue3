@@ -55,7 +55,6 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { openExternalLink } from '@/utils/openLink'

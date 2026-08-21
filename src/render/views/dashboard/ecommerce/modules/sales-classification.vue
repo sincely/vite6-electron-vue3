@@ -33,7 +33,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { Money, Wallet } from '@element-plus/icons-vue'
 import { useChartTheme } from '@/hooks/useChartTheme'
 

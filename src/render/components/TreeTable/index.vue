@@ -225,7 +225,6 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { parseTime } from '@/utils/time'
 import ColumnSetting from '@/components/AdvanceTable/components/ColumnSetting.vue'

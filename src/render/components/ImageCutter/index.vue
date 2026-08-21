@@ -53,7 +53,6 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
 import ImgCutter from 'vue-img-cutter'
 
 defineOptions({ name: 'ImageCutter' })

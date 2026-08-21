@@ -45,7 +45,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { ArrowUp } from '@element-plus/icons-vue'
 
 /**

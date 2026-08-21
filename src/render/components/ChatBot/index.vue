@@ -89,7 +89,6 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, nextTick } from 'vue'
 import { useChatStore } from '@/store/modules/chat'
 import { useUserStore } from '@/store/modules/user'
 import botAvatar from '@/assets/bar/app.png'

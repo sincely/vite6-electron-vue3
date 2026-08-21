@@ -19,7 +19,6 @@
 
 <script setup>
 import '@wangeditor/editor/dist/css/style.css'
-import { shallowRef, computed, onBeforeUnmount } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { ElMessage } from 'element-plus'
 

@@ -56,8 +56,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
 /**
  * 买卖加密货币表单
  */

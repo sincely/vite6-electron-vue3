@@ -4,7 +4,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import dayjs from 'dayjs'
 import eventBus from '@/utils/eventBus'

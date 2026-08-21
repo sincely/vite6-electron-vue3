@@ -20,7 +20,6 @@
 <script setup>
 import { useAppStore } from '@/store/modules/app'
 import { isMac } from '@/utils/platform'
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()

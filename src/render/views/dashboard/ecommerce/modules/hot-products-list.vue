@@ -62,7 +62,6 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
 import product1 from '@/assets/images/products/icon1.webp'
 import product2 from '@/assets/images/products/icon2.webp'
 import product3 from '@/assets/images/products/icon3.webp'

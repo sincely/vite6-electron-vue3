@@ -79,7 +79,6 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 
 defineOptions({ name: 'ContextMenu' })

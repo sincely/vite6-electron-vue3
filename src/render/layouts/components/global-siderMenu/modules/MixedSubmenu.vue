@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import { ref, watch, provide } from 'vue'
 import { useRoute } from 'vue-router'
 import { findMenuPath } from '@/config/menu'
 import MixedMenuItem from './MixedMenuItem.vue'

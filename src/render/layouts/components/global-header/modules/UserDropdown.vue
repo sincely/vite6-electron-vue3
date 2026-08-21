@@ -87,7 +87,6 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'

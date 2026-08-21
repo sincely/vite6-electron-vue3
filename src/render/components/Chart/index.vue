@@ -4,7 +4,6 @@
 
 <script setup>
 import echarts from '@/plugins/echarts'
-import { markRaw, onBeforeUnmount, onMounted, ref, watch, computed } from 'vue'
 defineOptions({
   name: 'chart'
 })

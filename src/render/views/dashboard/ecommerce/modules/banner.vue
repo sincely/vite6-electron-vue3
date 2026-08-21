@@ -48,7 +48,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { TopRight } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/modules/user'
 import bannerCover from '@/assets/images/banner/lf_icon2.webp'

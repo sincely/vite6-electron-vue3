@@ -25,7 +25,6 @@
 
 <script setup>
 import { useUpdateStore } from '@/store/modules/version'
-import { ElProgress, ElCard, ElButton } from 'element-plus'
 
 const updateStore = useUpdateStore()
 

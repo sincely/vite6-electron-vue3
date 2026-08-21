@@ -201,7 +201,6 @@
 
 <script setup>
 defineOptions({ name: 'notification-demo' })
-import { ref, computed } from 'vue'
 import {
   SuccessFilled,
   WarningFilled,

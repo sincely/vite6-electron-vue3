@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import posterUrl from '@/assets/images/cover/img1.webp'
 
 defineOptions({ name: 'WidgetsVideo' })

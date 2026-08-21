@@ -75,7 +75,6 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
 import { Search, Filter } from '@element-plus/icons-vue'
 
 /**

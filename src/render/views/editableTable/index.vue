@@ -42,7 +42,6 @@ import { Search } from '@element-plus/icons-vue'
 import PageHeader from '@/components/PageHeader/index.vue'
 import { ElButton } from 'element-plus'
 import EditTable from '@/components/EditTable/index.vue'
-import { ref } from 'vue'
 
 const searchKeyword = ref('')
 const columns = [

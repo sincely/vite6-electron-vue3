@@ -42,7 +42,6 @@
 
 <script setup>
 defineOptions({ name: 'example-search-form' })
-import { ref, reactive } from 'vue'
 import { getTableList } from '@/api/table'
 
 const basicTableRef = ref(null)

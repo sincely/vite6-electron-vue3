@@ -108,7 +108,6 @@
 
 <script setup>
 defineOptions({ name: 'system-menu' })
-import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete, Plus } from '@element-plus/icons-vue'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'

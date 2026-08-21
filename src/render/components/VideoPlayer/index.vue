@@ -4,7 +4,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
 import Player from 'xgplayer'
 import 'xgplayer/dist/index.min.css'
 

@@ -173,7 +173,6 @@
 
 <script setup>
 defineOptions({ name: 'advance-table-demo' })
-import { ref, reactive } from 'vue'
 import { View, Edit, Delete } from '@element-plus/icons-vue'
 import UserDetail from './components/UserDetail.vue'
 import { useDialog } from '@/hooks/useDialog'

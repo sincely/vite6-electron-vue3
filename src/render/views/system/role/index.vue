@@ -103,7 +103,6 @@
 
 <script setup>
 defineOptions({ name: 'system-role' })
-import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import AdvanceForm from '@/components/AdvanceForm/index.vue'

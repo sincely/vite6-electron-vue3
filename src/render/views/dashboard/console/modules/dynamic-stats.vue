@@ -26,8 +26,6 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-
 /**
  * 用户动态列表
  * 记录用户的关注、发文、提问、兑换等各类活动
