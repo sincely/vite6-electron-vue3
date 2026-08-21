@@ -10,7 +10,6 @@ import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useUserStore } from '@/store/modules/user'
 import { useNotificationStore } from '@/store/modules/notification'
-// import SvgIcon from '@/components/SvgIcon/index.vue'
 async function setupApp() {
   const app = createApp(App)
   setupIcon(app)
@@ -57,52 +56,15 @@ async function setupApp() {
     if (import.meta.env.DEV) {
       setTimeout(() => {
         updateStore.setCurrentVersion(updateStore.currentVersion || '1.0.3')
-        updateStore.setLatestVersion('0.1.0')
+        updateStore.setLatestVersion('1.0.6')
         window.dispatchEvent(
           new CustomEvent('update:available', {
             detail: {
-              version: '0.1.0'
+              version: '1.0.6'
             }
           })
         )
       }, 1500)
-
-      // 模拟几条通知
-      notifStore.push({
-        title: '欢迎使用',
-        body: '应用已成功启动，祝您使用愉快！',
-        type: 'success'
-      })
-      notifStore.push({
-        title: '系统提示',
-        body: '检测到新版本 v0.1.0 可用，建议尽快更新。',
-        type: 'info'
-      })
-      notifStore.push({
-        title: '服务器发生错误',
-        body: '代理服务器响应超时，请检查网络配置。',
-        type: 'error'
-      })
-      notifStore.push({
-        title: '网络发生波动',
-        body: '代理服务器响应超时，请检查网络配置。',
-        type: 'exception'
-      })
-      notifStore.push({
-        title: '连接警告',
-        body: '代理服务器响应超时，请检查网络配置。',
-        type: 'success'
-      })
-      notifStore.push({
-        title: '公告申明',
-        body: '代理服务器响应超时，请检查网络配置。',
-        type: 'celebrate'
-      })
-      notifStore.push({
-        title: '连接警告',
-        body: '代理服务器响应超时，请检查网络配置。',
-        type: 'warning'
-      })
     }
   })
   app.config.performance = false

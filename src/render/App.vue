@@ -28,8 +28,28 @@ onMounted(() => {
     clearTimeout(window.__appSplashFailsafe)
     window.__appSplashFailsafe = null
   }
-  const splash = document.getElementById('app-splash')
-  if (splash && splash.parentNode) splash.parentNode.removeChild(splash)
+
+  const removeSplash = () => {
+    const splash = document.getElementById('app-splash')
+    if (splash && splash.parentNode) splash.parentNode.removeChild(splash)
+  }
+
+  // 生产环境冷启动未登录时，本地资源加载过快会使首屏启动动画一闪而过。
+  // 主窗口（#desktop）由 preload 的 stairway loading 接管首屏，须立即移除 #app-splash，
+  // 否则动画残留会遮挡桌面；其余窗口（登录等）保底展示 2s 再移除。
+  // 基准取窗口首次可见时刻（splashFailsafe 记录），缺失时回退到导航起始，
+  // 两种情况都能保证动画至少展示约 2s。
+  const MIN_SPLASH_HOLD = 2000
+  const isMainWindow = /desktop/.test(location.hash)
+  if (isMainWindow) {
+    removeSplash()
+  } else {
+    const anchor = window.__appSplashVisibleAt ?? 0
+    const remaining = MIN_SPLASH_HOLD - (performance.now() - anchor)
+    if (remaining > 0) setTimeout(removeSplash, remaining)
+    else removeSplash()
+  }
+
   // 挂载更新IPC监听
   useUpdater()
   // 挂载网络状态监听
