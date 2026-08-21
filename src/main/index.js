@@ -6,6 +6,7 @@ import createMenu from './menu'
 import { registerSchemes, setupProtocol } from './protocol'
 import { setupDeepLink, handleDeepLinkFromArgv } from './deeplink'
 import { createLoginWindow, restoreMainWindow } from './windowManager'
+import { initAppTheme } from './theme'
 import './config'
 
 // 开发模式下禁用安全警告，生产环境保留以暴露潜在安全问题
@@ -44,6 +45,8 @@ app.whenReady().then(() => {
 
   // 创建自定义菜单
   createMenu()
+  // 应用持久化的主题到 nativeTheme，使首个窗口的 backgroundColor 与应用主题一致
+  initAppTheme()
   // 创建登录窗口（加载完成后由渲染进程登录态决定显示登录窗口还是直接进入主窗口）
   createLoginWindow()
   // 注册 IPC 事件

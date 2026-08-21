@@ -7,6 +7,7 @@ import {
   getLoginWindow,
   setCloseAction
 } from '../windowManager'
+import { setAppTheme } from '../theme'
 import { app } from 'electron'
 
 export default [
@@ -95,6 +96,15 @@ export default [
     type: 'on',
     handler: (event, action) => {
       setCloseAction(action)
+    }
+  },
+  {
+    // 渲染进程切换主题时同步到主进程：设置 nativeTheme.themeSource
+    // （驱动原生窗口背景色与 prefers-color-scheme）并持久化供下次冷启动
+    channel: 'set-app-theme',
+    type: 'on',
+    handler: (event, theme) => {
+      setAppTheme(theme)
     }
   },
   {
