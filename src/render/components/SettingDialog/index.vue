@@ -235,12 +235,24 @@
 
                   <div class="setting-section">
                     <h3 class="section-title">界面显示</h3>
-                    <div class="setting-item">
+                    <div
+                      class="setting-item"
+                      :class="{ 'is-disabled': !isSidebarCollapseEnabled }"
+                    >
                       <div class="item-info">
                         <span class="item-label">侧边栏折叠</span>
-                        <span class="item-desc">默认折叠侧边栏菜单</span>
+                        <span class="item-desc">
+                          {{
+                            isSidebarCollapseEnabled
+                              ? '默认折叠侧边栏菜单'
+                              : '仅在左侧菜单模式下可用'
+                          }}
+                        </span>
                       </div>
-                      <el-switch v-model="appStore.sidebarCollapsed" />
+                      <el-switch
+                        v-model="appStore.sidebarCollapsed"
+                        :disabled="!isSidebarCollapseEnabled"
+                      />
                     </div>
 
                     <div class="setting-item">
@@ -792,6 +804,10 @@ const contentWidthValue = computed({
   set: (val) => appStore.setContentWidthValue(val)
 })
 
+// 侧边栏折叠开关仅在左侧菜单模式下有意义（顶部/顶部混合/双列菜单均无折叠侧边栏），
+// 与 global-header 的 showSidebarToggle 逻辑保持一致
+const isSidebarCollapseEnabled = computed(() => appStore.layoutMode === 'left')
+
 console.log(visible.value)
 
 const appVersion = pkg.version
@@ -1191,6 +1207,14 @@ const handleClose = () => {
 
   &:hover {
     border-color: var(--color-border-hover);
+  }
+
+  &.is-disabled {
+    opacity: 0.6;
+
+    .item-desc {
+      color: var(--color-text-muted);
+    }
   }
 
   .item-info {
