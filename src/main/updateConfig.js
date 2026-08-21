@@ -12,7 +12,7 @@ const DEFAULT_CONFIG = Object.freeze({
 })
 
 // 配置轮询间隔
-const POLL_INTERVAL = 10 * 60 * 1000 // 10 分钟（对齐 QoderWork 600s 轮询）
+const POLL_INTERVAL = 2 * 60 * 1000 // 10 分钟（对齐 QoderWork 600s 轮询）
 
 let config = { ...DEFAULT_CONFIG } // 当前生效配置（内存缓存）
 let lastConfigJson = '' // 上次成功配置的序列化结果，用于检测变化
@@ -87,8 +87,12 @@ export async function refreshUpdateConfig() {
     return false
   }
   try {
-    const res = await net.fetch(url, {
+    // 服务端未下发 Cache-Control，Chromium 会对同一 URL 做启发式缓存，
+    // 导致轮询拿到旧响应。追加时间戳 + no-cache 头强制每次回源。
+    const cacheBustUrl = `${url}${url.includes('?') ? '&' : '?'}_=${Date.now()}`
+    const res = await net.fetch(cacheBustUrl, {
       method: 'GET',
+      headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
       signal: AbortSignal.timeout(5000) // 5s 超时，避免阻塞启动
     })
     if (!res.ok) {
