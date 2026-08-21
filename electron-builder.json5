@@ -14,7 +14,7 @@
     "buildResources": "resources"
   },
   "removePackageScripts": true,
-  // 打包后钩子：清理 mac Electron Framework 内未使用的语言文件（electronLanguages 对 framework 目录不生效）
+  // 打包后钩子：mac 清理 Framework 语言文件；win 移除 dxcompiler/dxil.dll（DX12 着色器编译器）
   "afterPack": "./scripts/afterPack.cjs",
   "extraResources": [],
   // 自定义 URL 协议：浏览器唤起应用（lightning://desktop/console?id=1）
@@ -30,20 +30,17 @@
   "files": [
     "dist/**/*",
     "dist-electron/**/*",
-    "apps/backend/*",
-    "apps/website/*",
-    "apps/web-admin/*",
+    // apps/ 是开发用的 mock 后端源码，生产环境通过 simulatedLoginService 绕过，不打包
+    "!apps/**",
     "!dist/**/*.map",
     "!dist-electron/**/*.map",
     "!.vscode",
     "!.zcode",
     "!.trae",
     "!.qoder",
-    "!.qoder",
     "!.github",
-    "doc/**",
-    "releases/**",
-    "packages/**/**",
+    // packages/ 是构建工具配置（eslint/prettier/stylelint）和共享子包，运行时不引用
+    "!packages/**",
     "!*.log",
     "!README.md",
     "package.json",
@@ -62,6 +59,12 @@
     "!**/node_modules/**/{.bin}/**",
     "!node_modules/.bin/**",
     "!**/node_modules/**/*.{png,jpg,jpeg,gif,svg,bmp,ico,webp,tif,tiff}",
+    // 预构建 bundle（.min.js/.min.mjs/.min.cjs）运行时从不使用，Node.js 走 lib/src 入口
+    "!**/node_modules/**/*.min.js",
+    "!**/node_modules/**/*.min.mjs",
+    "!**/node_modules/**/*.min.cjs",
+    // CLI 脚本目录，运行时不 require
+    "!**/node_modules/**/bin/**",
     "!**/node_modules/**/{*.min.js.map,*.min.css.map,*.map}",
     "!**/node_modules/**/bench/**",
     "!**/node_modules/**/benchmark/**",
