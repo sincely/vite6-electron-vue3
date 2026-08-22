@@ -9,7 +9,7 @@
  *
  * ── 渲染进程 ──
  *   import { showNotification } from '@shared/notification'
- *   // 或通过 preload 暴露的 window.$notification.show(...)
+ *   // 或通过 preload 暴露的 window.notification.show(...)
  *   showNotification({ title: '标题', body: '内容' })
  *
  * 环境检测：

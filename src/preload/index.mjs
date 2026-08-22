@@ -80,10 +80,10 @@ if (process.contextIsolated) {
 
   /**
    * 向渲染进程暴露通知 API
-   * 调用 window.$notification.show(options) 显示原生通知
+   * 调用 window.notification.show(options) 显示原生通知
    *
    * @example
-   * window.$notification.show({
+   * window.notification.show({
    *   title: '新消息',
    *   body: '您有 3 条未读消息',
    *   onClick: () => { console.log('点击了通知') }
@@ -91,14 +91,14 @@ if (process.contextIsolated) {
    *
    * @example
    * // macOS 带操作按钮
-   * window.$notification.show({
+   * window.notification.show({
    *   title: '提醒',
    *   body: '会议即将开始',
    *   actions: [{ type: 'button', text: '查看' }],
    *   onAction: (index) => { console.log('点击了按钮', index) }
    * })
    */
-  contextBridge.exposeInMainWorld('$notification', {
+  contextBridge.exposeInMainWorld('notification', {
     /**
      * 显示原生通知
      * @param {Object} options - 通知配置

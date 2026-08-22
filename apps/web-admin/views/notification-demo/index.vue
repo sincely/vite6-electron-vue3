@@ -104,14 +104,14 @@
         </template>
         <div class="btn-group">
           <el-button type="primary" :icon="Connection" @click="sendViaPreload">
-            window.$notification.show()
+            window.notification.show()
           </el-button>
           <el-button :icon="Files" @click="sendViaImport">
             import { showNotification }
           </el-button>
         </div>
         <div class="code-hint">
-          <code>window.$notification.show({ title, body, onClick })</code>
+          <code>window.notification.show({ title, body, onClick })</code>
         </div>
       </el-card>
 
@@ -312,17 +312,17 @@ const sendCritical = async () => {
 
 // ─── Preload / Import 调用 ────────────────────────────
 const sendViaPreload = async () => {
-  if (window.$notification) {
-    await window.$notification.show({
+  if (window.notification) {
+    await window.notification.show({
       title: 'Preload API',
-      body: '通过 window.$notification.show() 发送的原生通知',
+      body: '通过 window.notification.show() 发送的原生通知',
       onClick: () => {
         ElMessage.success('Preload API 通知被点击！')
       }
     })
     ElMessage.success('已通过 Preload API 发送通知')
   } else {
-    ElMessage.warning('window.$notification 不可用')
+    ElMessage.warning('window.notification 不可用')
   }
 }
 
