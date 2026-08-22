@@ -410,6 +410,17 @@ export const asyncRouteTree = [
           keepAlive: true,
           showBadge: true
         }
+      },
+      {
+        path: 'request-demo',
+        name: 'request-demo',
+        component: () => import('@/views/request-demo/index.vue'),
+        meta: {
+          title: '请求演示',
+          icon: 'connection',
+          group: '/components',
+          keepAlive: true
+        }
       }
     ]
   },

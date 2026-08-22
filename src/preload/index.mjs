@@ -52,6 +52,34 @@ if (process.contextIsolated) {
     platform: process.platform,
     arch: process.arch
   })
+
+  /**
+   * 向渲染进程暴露统一请求 API（主进程 axios 代理入口）
+   * 渲染进程只传「普通对象」参数，由主进程负责真实 HTTP / 表单构造 / Token 注入
+   *
+   * @example
+   * const { data, mimeType } = await window.request.send({
+   *   url: '/user/info',
+   *   method: 'get',
+   *   responseType: 'json'
+   * })
+   *
+   * // 取消正在进行的请求
+   * window.request.cancel(requestId)
+   */
+  contextBridge.exposeInMainWorld('request', {
+    /**
+     * 通过 IPC 调用主进程 axios 发起请求
+     * @param {Object} config - 请求配置（见 src/main/http/index.js 协议）
+     * @returns {Promise<{status, headers, dataType, data, mimeType?, filename?}>}
+     */
+    send: (config) => ipcRenderer.invoke('http:request', config),
+    /**
+     * 取消正在进行的请求
+     * @param {string} requestId - 与 send 时一致的 requestId
+     */
+    cancel: (requestId) => ipcRenderer.send('http:cancel', requestId)
+  })
   /**
    * 向渲染进程暴露自定义的 electron API
    * 创建一个安全的 window.electron 对象，包含 setTitle 方法
@@ -67,15 +95,6 @@ if (process.contextIsolated) {
    */
   contextBridge.exposeInMainWorld('systemInfo', {
     getSystemInfo: () => ipcRenderer.invoke('get-system-info')
-  })
-
-  /**
-   * 向渲染进程暴露 HTTP 请求 API
-   * 调用 window.httpRequest.request(config) 通过主进程发起真实 HTTP 请求
-   * 彻底规避跨域问题，统一由主进程管理 token、日志和请求拦截
-   */
-  contextBridge.exposeInMainWorld('httpRequest', {
-    request: (config) => ipcRenderer.invoke('http-request', config)
   })
 
   /**

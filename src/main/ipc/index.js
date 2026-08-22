@@ -1,22 +1,23 @@
 import { ipcMain } from 'electron'
 import appIpc from './app'
-import httpIpc from './http'
 import updateIpc from './update'
 import winControlIpc from './win-control'
 import notificationIpc from './notification'
 import systemInfoIpc from './systemInfo'
 import logIpc from './log'
+import httpIpc from './http'
 import { deepLinkIpc } from '../deeplink'
+
 // 注册所有 IPC 频道
 export default function initIpc() {
   const ipcList = [
     ...appIpc,
-    ...httpIpc,
     ...updateIpc,
     ...winControlIpc,
     ...notificationIpc,
     ...systemInfoIpc,
     ...logIpc,
+    ...httpIpc,
     ...deepLinkIpc
   ]
 
