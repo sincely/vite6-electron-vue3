@@ -3,8 +3,7 @@
  *
  * 规范要点：
  *   1. 渲染进程只传「普通对象」，绝不手动构造 URLSearchParams / FormData
- *   2. 表单请求只需标记 isForm: true，URLSearchParams 由底层统一构造
- *      （真实模式 → 主进程 Node 构造；Mock 模式 → axios 拦截器构造）
+ *   2. 表单请求只需标记 isForm: true，URLSearchParams 由主进程请求拦截器统一构造
  *   3. 所有请求收敛到 @/utils/request，Mock / 真实 IPC 两种模式接口完全一致
  */
 import request from '@/utils/request'
@@ -34,9 +33,10 @@ export const getTableList = (params) =>
     params
   })
 
-/** GET 无参：依赖注入的 Bearer token 鉴权 */
-export const getUserInfo = () =>
+/** GET 携带 Bearer token：简化版 request 不自动注入 token，由调用方显式传入 */
+export const getUserInfo = (token) =>
   request({
     url: '/user/info',
-    method: 'get'
+    method: 'get',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined
   })

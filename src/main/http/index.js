@@ -1,299 +1,176 @@
 /**
- * 主进程 HTTP 代理
+ * 主进程 HTTP 代理（带拦截器 · 含完整报文日志 · 同步转发渲染端）
  *
- * 职责：
- *   1. 在主进程（Node.js）持有 axios 实例，绕开浏览器 CORS / cookie 域限制
- *   2. 接收渲染进程通过 IPC 传来的"普通对象"配置，按需构造请求体
- *      （表单 / JSON / 二进制响应），统一回传规范化结果
- *   3. 通过 axios 请求/响应拦截器统一处理：
- *      - Token 注入、表单构造（请求拦截器）
- *      - 完整请求/响应日志、错误归一化（响应拦截器）
- *   4. 维护 requestId → AbortController，支持外部取消正在进行的请求
+ * 职责：接收渲染进程通过 IPC 传来的请求配置，调用 axios 发起真实 HTTP，返回响应。
  *
- * 协议：
+ * 拦截器：
+ *   - 请求：输出 method/url/params(URL)/data(Body)/headers，并转发到渲染端
+ *   - 响应成功：输出 status/url/响应体，并转发到渲染端
+ *   - 响应失败：输出 message/url/status/响应体，并转发到渲染端
+ *
+ * 双端日志：
+ *   - 主进程终端：ANSI 颜色（黄/绿/红）
+ *   - 渲染端 DevTools console：%c CSS 颜色（amber/green/red），与终端同步
+ *
+ * 协议（params 与 data 严格分桶）：
  *   入参 config = {
- *     url, method, params, data, headers,
- *     isForm, responseType, timeout, token,
- *     requestId
+ *     url, method,
+ *     params,   // → 始终序列化为 URL 查询串
+ *     data,     // → 作为请求体发送（POST/PUT/PATCH）
+ *     headers, isForm, responseType, timeout
  *   }
- *   返回 = {
- *     status, headers, dataType,
- *     data,                  // json → object|string；buffer → ArrayBuffer
- *     mimeType?, filename?   // 仅 buffer 响应
- *   }
- *   抛错：业务错误抛 Error 并附带 .status / .data / .code
+ *   返回 = { status, headers, data }
+ *   抛错：axios 原始错误
  */
 import axios from 'axios'
 import logger from '../log'
 
+// 终端 ANSI 颜色码
+const RED = '\u001b[31m'
+const GREEN = '\u001b[32m'
+const YELLOW = '\u001b[33m'
+const RESET = '\u001b[0m'
+
+// DevTools console %c 样式（与终端色板对应）
+const CSS = {
+  request: 'color:#ca8a04;font-weight:bold', // amber-600
+  success: 'color:#16a34a;font-weight:bold', // green-600
+  error: 'color:#dc2626;font-weight:bold', // red-600
+  warn: 'color:#ca8a04;font-weight:bold'
+}
+
+// 把日志镜像到发起请求的那个渲染窗口
+function logToRenderer(sender, level, message, css, data) {
+  if (!sender || sender.isDestroyed?.()) return
+  try {
+    sender.send('http:log', { level, message, css, data })
+  } catch {
+    /* sender 已失效则忽略 */
+  }
+}
+
 const BASE_URL = process.env.VITE_SERVER_URL || 'http://localhost:5320/api'
 
-// 主进程 axios 实例：baseURL 来自 .env 注入的 VITE_SERVER_URL
 const service = axios.create({
   baseURL: BASE_URL,
-  timeout: 15000,
-  // 关闭 axios 的自动 JSON 解析，文本类响应保持原样回传渲染端
-  transformResponse: [(data) => data]
+  timeout: 15000
 })
 
-// requestId → AbortController，用于外部取消
-const pendingRequests = new Map()
+// 仅允许携带 body 的方法集合（HTTP/1.1 规范层面 GET/HEAD 不能有 body）
+const BODY_ALLOWED_METHODS = new Set(['post', 'put', 'patch'])
 
-function buildFormBody(obj) {
-  const params = new URLSearchParams()
-  for (const [k, v] of Object.entries(obj || {})) {
-    if (v !== undefined && v !== null) {
-      params.append(k, String(v))
-    }
+// 把 URLSearchParams / FormData 等不可读对象转成 plain object 再日志
+function readableBody(data) {
+  if (data == null) return data
+  if (data instanceof URLSearchParams) return Object.fromEntries(data)
+  if (typeof FormData !== 'undefined' && data instanceof FormData) {
+    return Object.fromEntries(data.entries())
   }
-  return params
+  return data
 }
 
-function parseFilenameFromContentDisposition(disposition = '') {
-  // 兼容 RFC 5987 / 简单 filename=
-  const m = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)/i)
-  if (!m) return null
-  try {
-    return decodeURIComponent(m[1])
-  } catch {
-    return m[1]
-  }
-}
+// ── 请求拦截器 ──────────────────────────────────────
+service.interceptors.request.use((config) => {
+  const method = String(config.method).toLowerCase()
 
-// ── 请求拦截器 ─────────────────────────────────────
-// 统一处理：Token 注入 / 表单构造 / 请求日志
-service.interceptors.request.use(
-  (config) => {
-    const startedAt = Date.now()
-    config._startedAt = startedAt
-
-    // 自动注入 Bearer token（由渲染端从 userStore 取出后透传）
-    if (config.token) {
-      config.headers = config.headers || {}
-      config.headers.Authorization = `Bearer ${config.token}`
-    }
-
-    // 表单请求：在主进程构造 URLSearchParams，避免 IPC 序列化异常
-    if (config.isForm && config.data && typeof config.data === 'object') {
-      config.data = buildFormBody(config.data)
-      config.headers = config.headers || {}
-      config.headers['Content-Type'] =
-        'application/x-www-form-urlencoded;charset=UTF-8'
-    }
-
-    // 请求日志（开发环境下保持简洁）
-    logger.info(
-      `[http] → ${String(config.method).toUpperCase()} ${config.url}` +
-        (config.requestId ? `  #${config.requestId}` : ''),
-      {
-        params: config.params,
-        data: config.isForm ? '(form)' : config.data,
-        timeout: config.timeout,
-        token: !!config.token
+  // isForm: 在主进程统一构造 URLSearchParams + 设置 Content-Type，
+  // 渲染端只需要在 config 里写 isForm: true，普通对象照传。
+  if (config.isForm && config.data && typeof config.data === 'object') {
+    const params = new URLSearchParams()
+    for (const [k, v] of Object.entries(config.data)) {
+      if (v !== undefined && v !== null) {
+        params.append(k, String(v))
       }
-    )
-    return config
-  },
-  (error) => {
-    logger.error('[http] request interceptor error:', error)
-    return Promise.reject(error)
+    }
+    config.data = params
+    config.headers = config.headers || {}
+    config.headers['Content-Type'] =
+      'application/x-www-form-urlencoded;charset=UTF-8'
   }
-)
 
-// ── 响应拦截器 ─────────────────────────────────────
-// 统一处理：响应日志 / 二进制响应归一化 / JSON 手动解析 / 错误归一化
+  const msg = `[http] → ${method.toUpperCase()} ${config.url}`
+  const detail = {
+    params: config.params,
+    body: readableBody(config.data),
+    headers: config.headers,
+    isForm: config.isForm,
+    timeout: config.timeout
+  }
+
+  logToRenderer(config.__sender, 'request', msg, CSS.request, detail)
+
+  return config
+})
+
+// ── 响应拦截器 ──────────────────────────��───────────
 service.interceptors.response.use(
   (response) => {
-    const config = response.config
-    const elapsed = config._startedAt ? Date.now() - config._startedAt : 0
+    const msg = `[http] ← ${response.status} ${response.config.url}`
+    const detail = { data: readableBody(response.data) }
 
-    // 清理 pending
-    if (config.requestId) {
-      pendingRequests.delete(config.requestId)
-    }
-
-    // 响应日志
-    logger.info(
-      `[http] ← ${response.status} ${config.url}` +
-        (config.requestId ? `  #${config.requestId}` : '') +
-        `  ${elapsed}ms`
-    )
-
-    // 二进制响应：返回 ArrayBuffer + 解析 Content-Disposition 文件名
-    if (config.responseType === 'arraybuffer') {
-      const raw = response.data
-      const arrayBuffer =
-        raw instanceof ArrayBuffer
-          ? raw
-          : ArrayBuffer.isView(raw)
-            ? raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength)
-            : Buffer.from(raw)
-      const contentType =
-        response.headers?.['content-type'] || 'application/octet-stream'
-      const filename = parseFilenameFromContentDisposition(
-        response.headers?.['content-disposition']
-      )
-      return {
-        status: response.status,
-        headers: response.headers,
-        dataType: 'buffer',
-        data: arrayBuffer,
-        mimeType: contentType,
-        filename
-      }
-    }
-
-    // JSON 响应：axios 已禁用自动解析，这里手动解析
-    let payload = response.data
-    if (typeof payload === 'string') {
-      try {
-        payload = JSON.parse(payload)
-      } catch {
-        /* 保留原始字符串 */
-      }
-    }
+    logToRenderer(response.config.__sender, 'success', msg, CSS.success, detail)
 
     return {
       status: response.status,
       headers: response.headers,
-      dataType: config.responseType || 'json',
-      data: payload
+      data: response.data
     }
   },
   (err) => {
-    const config = err.config || {}
-    const elapsed = config._startedAt ? Date.now() - config._startedAt : 0
-
-    // 清理 pending
-    if (config.requestId) {
-      pendingRequests.delete(config.requestId)
+    const msg = `[http] ✗ ${err.message} ${err.config?.url || ''}`
+    const detail = {
+      status: err.response?.status,
+      data: readableBody(err.response?.data)
     }
+    logToRenderer(err.config?.__sender, 'error', msg, CSS.error, detail)
 
-    // axios 取消（AbortController 触发）
-    if (
-      err.name === 'CanceledError' ||
-      err.name === 'AbortError' ||
-      err.code === 'ERR_CANCELED'
-    ) {
-      logger.warn(
-        `[http] ✗ canceled ${config.url}` +
-          (config.requestId ? `  #${config.requestId}` : '') +
-          `  ${elapsed}ms`
-      )
-      const e = new Error('Request canceled')
-      e.code = 'CANCELED'
-      throw e
-    }
-
-    logger.error(
-      `[http] ✗ ${err.message} ${config.url}` +
-        (config.requestId ? `  #${config.requestId}` : '') +
-        `  ${elapsed}ms`,
-      err.response
-        ? { status: err.response.status, data: err.response.data }
-        : undefined
-    )
-
-    // HTTP 业务错误：透传 status / 响应体
-    if (err.response) {
-      const e = new Error(err.message || `HTTP ${err.response.status}`)
-      e.code = 'HTTP_ERROR'
-      e.status = err.response.status
-      e.data = err.response.data
-      throw e
-    }
-    // 网络错误
-    const e = new Error(err.message || 'Network Error')
-    e.code = 'NETWORK_ERROR'
-    throw e
+    return Promise.reject(err)
   }
 )
 
 /**
  * 处理来自渲染进程的 HTTP 请求
- * 把 IPC 参数原样透传给 axios 拦截器，由拦截器完成 token / 表单 / 日志 / 取消
  *
- * @param {Electron.IpcMainInvokeEvent} _event
- * @param {Object} config
+ * params 与 data 按 HTTP 方法分桶：
+ *   - GET/HEAD/DELETE：通常只传 params；传 data 会发出警告
+ *   - POST/PUT/PATCH：通常传 data；params 仍可附加为 URL 查询串
+ *
+ * 通过 __sender 把发起请求的 webContents 透传给拦截器，用于镜像日志到渲染端
  */
-export async function handleHttpRequest(_event, config = {}) {
+export async function handleHttpRequest(event, config = {}) {
   const {
     url,
-    method = 'get',
-    params,
-    data,
-    headers = {},
-    isForm = false,
-    responseType = 'json',
-    timeout,
-    token,
-    requestId
+    method: rawMethod,
+    params, // → URL 查询串
+    data, // → 请求体
+    headers,
+    responseType,
+    timeout
   } = config
 
   if (!url) {
-    const e = new Error('[http] url is required')
-    e.code = 'INVALID_CONFIG'
-    throw e
+    throw new Error('[http] url is required')
   }
 
-  const axiosConfig = {
+  const method = String(rawMethod || 'get').toLowerCase()
+  const sender = event?.sender
+
+  // 异常组合给出提示，但不阻塞 —— 由调用方决定
+  if (data != null && !BODY_ALLOWED_METHODS.has(method)) {
+    const msg = `[http] ⚠ ${method.toUpperCase()} ${url} 携带了请求体（按 HTTP 规范不推荐）`
+    logToRenderer(sender, 'warn', msg, CSS.warn)
+  }
+
+  return service.request({
     url,
-    method: String(method).toLowerCase(),
+    method,
     params,
     data,
-    headers: { ...headers },
-    isForm,
-    responseType:
-      responseType === 'blob' || responseType === 'arraybuffer'
-        ? 'arraybuffer'
-        : responseType,
-    timeout: timeout ?? undefined,
-    token,
-    requestId
-  }
-
-  // 取消支持：注册 AbortController
-  if (requestId) {
-    const controller = new AbortController()
-    axiosConfig.signal = controller.signal
-    pendingRequests.set(requestId, controller)
-  }
-
-  // 拦截器返回的已是规范化结果，直接回传渲染进程
-  return service.request(axiosConfig)
-}
-
-/**
- * 取消正在进行的请求
- * @param {Electron.IpcMainEvent} _event
- * @param {string} requestId
- */
-export function handleHttpCancel(_event, requestId) {
-  const controller = pendingRequests.get(requestId)
-  if (controller) {
-    try {
-      controller.abort()
-    } catch {
-      /* ignore */
-    }
-    pendingRequests.delete(requestId)
-  }
-}
-
-/** 清空所有 pending 请求（应用退出前调用，避免悬挂的 AbortController） */
-export function clearAllHttpRequests() {
-  pendingRequests.forEach((controller) => {
-    try {
-      controller.abort()
-    } catch {
-      /* ignore */
-    }
+    headers,
+    responseType,
+    timeout,
+    __sender: sender // 透传给拦截器，用于把日志镜像回渲染端
   })
-  pendingRequests.clear()
 }
 
-export default {
-  handleHttpRequest,
-  handleHttpCancel,
-  clearAllHttpRequests
-}
+export default { handleHttpRequest }

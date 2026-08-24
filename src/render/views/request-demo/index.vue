@@ -39,7 +39,7 @@
             <el-input
               v-model="jsonForm.password"
               type="password"
-              placeholder="admin"
+              placeholder="123456"
               show-password
             />
           </el-form-item>
@@ -74,7 +74,7 @@
             <el-input
               v-model="formPayload.password"
               type="password"
-              placeholder="admin"
+              placeholder="123456"
               show-password
             />
           </el-form-item>
@@ -128,7 +128,7 @@
           </div>
         </template>
         <p class="hint">
-          Token 由底层在请求拦截器中自动注入（从 userStore 读取）
+          简化版不再自动注入 token —— 调用方登录后从 userStore 取 token 显式传入
         </p>
         <el-button
           type="primary"
@@ -188,6 +188,7 @@ import {
   Document
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/store/modules/user'
 import {
   loginByJson,
   loginByForm,
@@ -196,14 +197,18 @@ import {
 } from '@/api/request-demo'
 import ResponsePanel from './ResponsePanel.vue'
 
+const userStore = useUserStore()
+
 // 当前请求通道：渲染进程只负责交互与参数传递，
 // 所有真实 HTTP 由主进程 axios 完成，彻底规避 CORS 并隐藏真实接口地址
+const mode = 'main' // 当前只展示主进程代理通道（template 中根据 mode 决定 tag 类型）
 const modeLabel = '主进程 axios 代理（统一接收渲染进程请求）'
 const dataFlow = '渲染进程 IPC → 主进程 axios → 后端'
 
 // ─── 表单状态 ─────────────────────────────────────
-const jsonForm = reactive({ username: 'admin', password: 'admin' })
-const formPayload = reactive({ username: 'admin', password: 'admin' })
+// 默认账号与 apps/backend/utils/mock-data.mjs 中 MOCK_USERS 对齐（密码 123456）
+const jsonForm = reactive({ username: 'admin', password: '123456' })
+const formPayload = reactive({ username: 'admin', password: '123456' })
 const queryForm = reactive({ pageNum: 1, pageSize: 5 })
 
 const loading = reactive({ json: false, form: false, list: false, info: false })
@@ -223,15 +228,30 @@ const record = (key, ok, payload, error) => {
   }
 }
 
+// ─── 响应解包 ─────────────────────────────────────
+// request 返回的是 axios 原始响应 { status, headers, data }，
+// data 又是后端的业务信封 { code, data, error, message }，
+// 这里连续拆两层，把真正的业务数据交给面板展示。
+const unwrapBiz = (result) => {
+  const body = result?.data
+  if (body && typeof body === 'object' && 'code' in body) {
+    return body.data ?? body.result ?? null
+  }
+  return body
+}
+
 // ─── 请求处理 ─────────────────────────────────────
 const handleJsonLogin = async () => {
   loading.json = true
   try {
-    const data = await loginByJson(jsonForm)
-    record('json', true, data)
+    const result = await loginByJson(jsonForm)
+    const biz = unwrapBiz(result)
+    if (biz?.accessToken) userStore.setToken(biz.accessToken)
+    record('json', true, biz)
     ElMessage.success('JSON 登录成功')
   } catch (err) {
     record('json', false, null, err.message)
+    ElMessage.error(err.message)
   } finally {
     loading.json = false
   }
@@ -240,11 +260,14 @@ const handleJsonLogin = async () => {
 const handleFormLogin = async () => {
   loading.form = true
   try {
-    const data = await loginByForm(formPayload)
-    record('form', true, data)
+    const result = await loginByForm(formPayload)
+    const biz = unwrapBiz(result)
+    if (biz?.accessToken) userStore.setToken(biz.accessToken)
+    record('form', true, biz)
     ElMessage.success('表单登录成功')
   } catch (err) {
     record('form', false, null, err.message)
+    ElMessage.error(err.message)
   } finally {
     loading.form = false
   }
@@ -253,24 +276,33 @@ const handleFormLogin = async () => {
 const handleList = async () => {
   loading.list = true
   try {
-    const data = await getTableList(queryForm)
-    record('list', true, data)
-    ElMessage.success(`查询到 ${data?.total ?? 0} 条数据`)
+    const result = await getTableList(queryForm)
+    const biz = unwrapBiz(result)
+    record('list', true, biz)
+    ElMessage.success(`查询到 ${biz?.total ?? 0} 条数据`)
   } catch (err) {
     record('list', false, null, err.message)
+    ElMessage.error(err.message)
   } finally {
     loading.list = false
   }
 }
 
 const handleUserInfo = async () => {
+  if (!userStore.token) {
+    ElMessage.warning('请先登录获取 token')
+    record('info', false, null, '未登录')
+    return
+  }
   loading.info = true
   try {
-    const data = await getUserInfo()
-    record('info', true, data)
-    ElMessage.success('已获取当前用户信息')
+    const result = await getUserInfo(userStore.token)
+    const biz = unwrapBiz(result)
+    record('info', true, biz)
+    ElMessage.success(`已获取：${biz?.username || biz?.name || '当前用户'}`)
   } catch (err) {
     record('info', false, null, err.message)
+    ElMessage.error(err.message)
   } finally {
     loading.info = false
   }
