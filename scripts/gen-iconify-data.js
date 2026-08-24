@@ -61,6 +61,7 @@ const ICON_PLAN = {
       'file-input', // 基础表单
       'search', // 搜索表单
       'wifi', // Socket 连接
+      'webhook', // 请求演示
       // 用户菜单下拉
       'user', // 个人中心
       'file-text', // 文档

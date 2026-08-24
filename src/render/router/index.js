@@ -417,7 +417,7 @@ export const asyncRouteTree = [
         component: () => import('@/views/request-demo/index.vue'),
         meta: {
           title: '请求演示',
-          icon: 'connection',
+          icon: 'webhook',
           group: '/components',
           keepAlive: true
         }
