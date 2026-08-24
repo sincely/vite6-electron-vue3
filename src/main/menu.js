@@ -1,6 +1,4 @@
-import { Menu, app, shell, dialog, BrowserWindow, nativeImage } from 'electron'
-import path from 'node:path'
-import os from 'os'
+import { Menu, app, shell, BrowserWindow } from 'electron'
 import logger from './log'
 
 // 通知渲染进程打开检查更新弹窗（与顶栏按钮走同一流程）
@@ -21,63 +19,14 @@ const notifyReportIssue = () => {
   }
 }
 
-// 计算相对时间（如 "2 个月前"）
-const getRelativeTime = (dateStr) => {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now - date
-  const diffSec = Math.floor(diffMs / 1000)
-  const diffMin = Math.floor(diffSec / 60)
-  const diffHour = Math.floor(diffMin / 60)
-  const diffDay = Math.floor(diffHour / 24)
-  const diffMonth = Math.floor(diffDay / 30)
-  const diffYear = Math.floor(diffDay / 365)
-
-  if (diffYear > 0) return `${diffYear} 年前`
-  if (diffMonth > 0) return `${diffMonth} 个月前`
-  if (diffDay > 0) return `${diffDay} 天前`
-  if (diffHour > 0) return `${diffHour} 小时前`
-  if (diffMin > 0) return `${diffMin} 分钟前`
-  return '刚刚'
-}
-
-// 获取应用图标路径（macOS 用于 dialog 显示）
-const getAppIcon = () => {
-  const iconsRoot = app.isPackaged
-    ? path.join(process.resourcesPath, 'icons', 'mac')
-    : path.join(process.env.APP_ROOT || process.cwd(), 'resources')
-  return nativeImage.createFromPath(path.join(iconsRoot, 'app.png'))
-}
-
-// 显示关于对话框
-const showAboutDialog = () => {
-  const mainWindow = BrowserWindow.getAllWindows()[0]
-  const commitHash =
-    typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown'
-  const buildDate =
-    typeof __BUILD_DATE__ !== 'undefined'
-      ? __BUILD_DATE__
-      : new Date().toISOString()
-  const osInfo = `${os.type()} ${os.arch()} ${os.release()}`
-
-  const detail = [
-    `版本: ${app.getVersion()}`,
-    `提交: ${commitHash}`,
-    `日期: ${buildDate} (${getRelativeTime(buildDate)})`,
-    `Electron: ${process.versions.electron}`,
-    `Chromium: ${process.versions.chrome}`,
-    `Node.js: ${process.versions.node}`,
-    `V8: ${process.versions.v8}`,
-    `OS: ${osInfo}`
-  ].join('\n')
-
-  dialog.showMessageBox(mainWindow, {
-    type: 'info',
-    title: '关于',
-    message: `${app.name}`,
-    detail,
-    icon: getAppIcon()
-  })
+// 通知渲染进程打开「关于」弹窗（弹框内展示版本/提交/日期，两端对齐）
+const notifyAbout = () => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win && !win.isDestroyed()) {
+    if (win.isMinimized()) win.restore()
+    win.focus()
+    win.webContents.send('menu-about')
+  }
 }
 
 // 创建菜单栏的函数
@@ -91,7 +40,7 @@ const createMenu = () => {
           {
             label: app.name,
             submenu: [
-              { label: '关于', click: showAboutDialog },
+              { label: '关于', click: notifyAbout },
               { type: 'separator' },
               {
                 label: '检查更新',
@@ -210,7 +159,7 @@ const createMenu = () => {
         { type: 'separator' },
         {
           label: '关于',
-          click: showAboutDialog
+          click: notifyAbout
         }
       ]
     }

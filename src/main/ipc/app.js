@@ -113,5 +113,35 @@ export default [
     handler: () => {
       return app.getVersion()
     }
+  },
+  {
+    // 渲染进程「关于」弹窗使用：版本号、提交哈希（短）、格式化构建日期
+    channel: 'get-app-build-info',
+    type: 'handle',
+    handler: () => {
+      const rawCommit =
+        typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'unknown'
+      const commitHash =
+        rawCommit && rawCommit !== 'unknown'
+          ? String(rawCommit).slice(0, 7)
+          : rawCommit
+      const rawDate =
+        typeof __BUILD_DATE__ !== 'undefined'
+          ? __BUILD_DATE__
+          : new Date().toISOString()
+      const d = new Date(rawDate)
+      const buildDate = Number.isNaN(d.getTime())
+        ? rawDate
+        : `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ` +
+          `${String(d.getHours()).padStart(2, '0')}:${String(
+            d.getMinutes()
+          ).padStart(2, '0')}`
+      return {
+        name: app.name,
+        version: app.getVersion(),
+        commitHash,
+        buildDate
+      }
+    }
   }
 ]

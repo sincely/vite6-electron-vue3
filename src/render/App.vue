@@ -7,6 +7,7 @@
       </div>
       <setting-dialog />
       <feedback-dialog />
+      <about-dialog />
       <lock-screen />
     </div>
   </el-config-provider>

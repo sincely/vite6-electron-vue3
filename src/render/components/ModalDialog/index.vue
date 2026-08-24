@@ -109,12 +109,12 @@ const handleAction = (event) => {
 }
 // 头部按钮集合
 const headerActions = ref([
-  {
-    icon: 'download',
-    title: '下载',
-    isShow: true,
-    event: 'download'
-  },
+  // {
+  //   icon: 'download',
+  //   title: '下载',
+  //   isShow: true,
+  //   event: 'download'
+  // },
   {
     icon: 'close',
     title: '取消',
