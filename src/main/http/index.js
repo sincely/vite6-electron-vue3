@@ -72,7 +72,8 @@ function readableBody(data) {
 // ── 请求拦截器 ──────────────────────────────────────
 service.interceptors.request.use((config) => {
   const method = String(config.method).toLowerCase()
-
+  config.headers = config.headers || {}
+  config.headers['Content-Type'] = 'application/json;charset=UTF-8'
   // isForm: 在主进程统一构造 URLSearchParams + 设置 Content-Type，
   // 渲染端只需要在 config 里写 isForm: true，普通对象照传。
   if (config.isForm && config.data && typeof config.data === 'object') {
@@ -83,7 +84,6 @@ service.interceptors.request.use((config) => {
       }
     }
     config.data = params
-    config.headers = config.headers || {}
     config.headers['Content-Type'] =
       'application/x-www-form-urlencoded;charset=UTF-8'
   }
