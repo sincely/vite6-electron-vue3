@@ -82,6 +82,7 @@
     "dayjs": "1.11.10",
     "directory-tree": "3.5.1",
     "dmg-license": "1.0.11",
+    "hash-wasm": "^4.12.0",
     "echarts": "5.4.3",
     "electron": "42.2.0",
     "electron-builder": "25.1.8",

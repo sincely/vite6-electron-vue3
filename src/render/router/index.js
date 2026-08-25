@@ -459,6 +459,29 @@ export const asyncRouteTree = [
         }
       },
       {
+        path: 'file-upload',
+        name: 'widgets-file-upload',
+        component: () => import('@/views/widgets/file-upload/index.vue'),
+        meta: {
+          title: '文件上传',
+          icon: 'upload',
+          group: '/widgets',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'chunk-upload',
+        name: 'widgets-chunk-upload',
+        component: () => import('@/views/widgets/chunk-upload/index.vue'),
+        meta: {
+          title: '大文件上传',
+          icon: 'cloud-upload',
+          group: '/widgets',
+          keepAlive: true,
+          showTextBadge: 'New'
+        }
+      },
+      {
         path: 'excel',
         name: 'widgets-excel',
         component: () => import('@/views/widgets/excel/index.vue'),
