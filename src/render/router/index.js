@@ -493,17 +493,6 @@ export const asyncRouteTree = [
         }
       },
       {
-        path: 'video',
-        name: 'widgets-video',
-        component: () => import('@/views/widgets/video/index.vue'),
-        meta: {
-          title: '视频播放器',
-          icon: 'monitor-play',
-          group: '/widgets',
-          keepAlive: true
-        }
-      },
-      {
         path: 'count-to',
         name: 'widgets-count-to',
         component: () => import('@/views/widgets/count-to/index.vue'),
