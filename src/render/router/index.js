@@ -492,6 +492,18 @@ export const asyncRouteTree = [
         }
       },
       {
+        path: 'morph-container',
+        name: 'widgets-morph-container',
+        component: () => import('@/views/widgets/morph-container/index.vue'),
+        meta: {
+          title: '容器变形',
+          icon: 'layers-3',
+          group: '/widgets',
+          keepAlive: true,
+          showTextBadge: 'New'
+        }
+      },
+      {
         path: 'wang-editor',
         name: 'widgets-wang-editor',
         component: () => import('@/views/widgets/wang-editor/index.vue'),
