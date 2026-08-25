@@ -3,6 +3,78 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.6](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.3...v1.0.6) (2026-08-25)
+
+### ✨ Features
+
+*  charts下的目录组件改为 和components 下存放 ([286e144](https://github.com/sincely/vite6-electron-vue3/commit/286e144fd0deb42db1b489679fef7e3125b48c33))
+* pc端 ([ffe333a](https://github.com/sincely/vite6-electron-vue3/commit/ffe333a3780e56b0e80fad2da434333c9db3e58a))
+* 为 Lightning 应用新增网站组件与配置 ([7fedae5](https://github.com/sincely/vite6-electron-vue3/commit/7fedae567938dca39bb3c4405295f70fe8653e85))
+* 为布局组件添加过渡效果，提升用户体验 ([7afd006](https://github.com/sincely/vite6-electron-vue3/commit/7afd006179af894fa0a2607bf122688471c5f60d))
+* 从主进程拉取用户 token，确保路由守卫正确判断登录状态 ([efcdffc](https://github.com/sincely/vite6-electron-vue3/commit/efcdffce7754f0d7e4e0aeb63d7efcaa2c38ef92))
+* 优化 Element Plus 组件加载逻辑，移除强制合包以减少登录窗口的静态依赖 ([7ec4a62](https://github.com/sincely/vite6-electron-vue3/commit/7ec4a620066c24272bec152962865b1cb3d6af30))
+* 优化 logo 组件样式，调整高度和内边距以改善布局 ([b077004](https://github.com/sincely/vite6-electron-vue3/commit/b0770046843b08c8e772ee690bc4fe2c851837f9))
+* 优化全屏体验，添加全屏提示信息并调整多标签导航显示逻辑 ([a554b7b](https://github.com/sincely/vite6-electron-vue3/commit/a554b7bc2f7760621786f31e9b13b32ff9f660fe))
+* 优化启动动画处理，确保主窗口加载时动画展示时间不低于 2s ([bd75dc1](https://github.com/sincely/vite6-electron-vue3/commit/bd75dc1d02a6bf5dba5b97b30e70c5e5c36985d1))
+* 优化操作按钮样式，统一使用 Element Plus 按钮组件并调整布局 ([b5fcc95](https://github.com/sincely/vite6-electron-vue3/commit/b5fcc951e3d031b3e7ce62042cf4741be4d60cbd))
+* 优化模块加载，惰性加载 axios 和 electron-updater，减少主进程启动开销；按需生成 Element Plus 图标注册文件 ([de52889](https://github.com/sincely/vite6-electron-vue3/commit/de528895e07c5a10f540932fe9bd4101eea2ab68))
+* 优化登录窗口显示逻辑，基于登录态决定是否显示主窗口或登录窗口 ([b1d4bfb](https://github.com/sincely/vite6-electron-vue3/commit/b1d4bfb914662cf6c3331050f8e325332d1b436f))
+* 优化登录窗口管理，确保新窗口可见并清理旧窗口引用 ([a0bcd80](https://github.com/sincely/vite6-electron-vue3/commit/a0bcd80e49e582177d3db395f701f267071b9ae9))
+* 在菜单配置中为外部链接添加 iframe 支持 ([b4154b8](https://github.com/sincely/vite6-electron-vue3/commit/b4154b883b2dd5502eb4a2fa22bf9510320b69c5))
+* 增加主题管理功能，支持持久化主题设置并同步到主进程 ([b6749a3](https://github.com/sincely/vite6-electron-vue3/commit/b6749a37d0ae4df413852af4495d1582676cbb88))
+* 增加侧边栏折叠开关的可用性提示，优化界面显示逻辑 ([37a61b3](https://github.com/sincely/vite6-electron-vue3/commit/37a61b39f59e92925c4dee46534846fa77fb5ffc))
+* 增强二级菜单悬停效果，优化对齐和显示逻辑 ([1f5f7f8](https://github.com/sincely/vite6-electron-vue3/commit/1f5f7f82a382c8aa8b0dda8d4916047fe4cdafa4))
+* 增强加载组件，支持浅色和暗色主题的动态样式 ([d9976ce](https://github.com/sincely/vite6-electron-vue3/commit/d9976ce6f08b8b64338e98d3e391e00e48b794c8))
+* 实现应用激活与路由的深度链接支持 ([6feb567](https://github.com/sincely/vite6-electron-vue3/commit/6feb567ab7f64bbca6bb8c0563b6b63fab04e58a))
+* 实现更新下载进度反馈与托盘提示，优化用户体验 ([065e3ab](https://github.com/sincely/vite6-electron-vue3/commit/065e3ab7f51980a22ca07c0bbbec2d6d5c295196))
+* 拆分app目录存放不同项目 ([345e620](https://github.com/sincely/vite6-electron-vue3/commit/345e620e3ced03514710b083a1ad449a74e6db97))
+* 新增图标并优化仪表盘布局 ([c068b0f](https://github.com/sincely/vite6-electron-vue3/commit/c068b0f24678774144bd0a395cd09b3d8ec77814))
+* 新增多种小组件，包括图标展示、图片裁剪、二维码生成、文本滚动、视频播放、富文本编辑及水印功能 ([3e81ca6](https://github.com/sincely/vite6-electron-vue3/commit/3e81ca65924e0e3a3b4c16e7cd00034633949f76))
+* 新增登录界面 ([4fc4b02](https://github.com/sincely/vite6-electron-vue3/commit/4fc4b02d5be86f1f394b6796de8c280ec577e400))
+* 更新 echarts 引入逻辑，优化组件和图表类型的引入 ([cdf9387](https://github.com/sincely/vite6-electron-vue3/commit/cdf93875cd925f7f260965404d17035f86997e4e))
+* 更新 ESLint 配置以包含网站构建输出目录，优化代码检查范围 ([1861dd6](https://github.com/sincely/vite6-electron-vue3/commit/1861dd69cbc2c556d605c6402b370a87c6960904))
+* 更新 loadHash 函数文档，明确 DevTools 快捷键使用方式 ([05f606d](https://github.com/sincely/vite6-electron-vue3/commit/05f606d01433b7a3f6ad7337e0c3e6e84c3056af))
+* 更新 web-admin 和 backend 启动脚本路径，确保正确引用 ([b4ce283](https://github.com/sincely/vite6-electron-vue3/commit/b4ce283cd08bf6d2a53223f84f8983f7069fd995))
+* 更新全局页脚组件，显示公司信息并优化样式 ([c5f5d1a](https://github.com/sincely/vite6-electron-vue3/commit/c5f5d1ace154797d491e062970127eb36f55208c))
+* 更新密码重置成功界面的图标和样式，提升视觉效果 ([d28b090](https://github.com/sincely/vite6-electron-vue3/commit/d28b09015530838500fa4ee7b688d050b9b7078e))
+* 更新工具栏插槽名称为 toolbar-left，并在用户管理页面添加过滤功能 ([77ed6f3](https://github.com/sincely/vite6-electron-vue3/commit/77ed6f3551a23defe67c4596439d2df8a8fe7941))
+* 更新打包配置，增加排除的文件和目录 ([983670f](https://github.com/sincely/vite6-electron-vue3/commit/983670f501c4dcf4d73d6b23d612233287e48a67))
+* 更新用户和角色管理API，支持手机号登录，优化错误提示信息 ([88366c3](https://github.com/sincely/vite6-electron-vue3/commit/88366c333db5f7cca98fc050dab42bf953f4f19b))
+* 更新通知 API 调用方式，统一使用 window.notification.show() ([565133f](https://github.com/sincely/vite6-electron-vue3/commit/565133fb8e02fdd19b61f24199c777f48a0923f1))
+* 更新项目配置，优化启动性能，移除不必要的依赖，添加新的模拟数据 ([0dfcefb](https://github.com/sincely/vite6-electron-vue3/commit/0dfcefb27afceb59561f43b25a49c6d94f3e6b31))
+* 添加 loading 组件样式，支持主窗口 splash 显示期间拖拽 ([52343b5](https://github.com/sincely/vite6-electron-vue3/commit/52343b5af645ed2474bc417a2ccc586ad8086f83))
+* 添加 no-drag 样式以确保图标和名称可点击，优化拖拽体验 ([63c0ec7](https://github.com/sincely/vite6-electron-vue3/commit/63c0ec767e64f0592d4006eada878051f0333a03))
+* 添加 splashFailsafe 脚本以处理 Vue 启动异常，确保应用顺利加载 ([03067c6](https://github.com/sincely/vite6-electron-vue3/commit/03067c6b3612256e49b6a8999fbddd5f4f338276))
+* 添加 webhook 图标并更新请求演示路由图标 ([f013712](https://github.com/sincely/vite6-electron-vue3/commit/f013712c6165163269c4c1a33087462fd1cb60f0))
+* 添加src/backend目录到构建文件列表中 ([87d8098](https://github.com/sincely/vite6-electron-vue3/commit/87d80980a52672bdc688453d9f8e1a621a727979))
+* 添加关于弹窗，展示版本号、提交哈希和构建日期 ([7e2a02e](https://github.com/sincely/vite6-electron-vue3/commit/7e2a02ed13427e052149d4e63ccaead9e8205e63))
+* 添加启动画面和背景色，优化窗口切换体验 ([4405a58](https://github.com/sincely/vite6-electron-vue3/commit/4405a58ffa4a1935c333e2c6fd52bb31cc5ffcde))
+* 添加图标按钮组件，支持自定义尺寸和圆形样式 ([dadc7cd](https://github.com/sincely/vite6-electron-vue3/commit/dadc7cd38e6c65459b6746e8d096c27400a45c6f))
+* 添加左右滚动箭头以优化标签视图的滚动体验 ([c7a746c](https://github.com/sincely/vite6-electron-vue3/commit/c7a746c1138ad9e1c847b5b090ddd6cf5d13164d))
+* 添加生产环境模拟登录功能，更新相关配置和请求逻辑 ([fa9aa0a](https://github.com/sincely/vite6-electron-vue3/commit/fa9aa0acc0555143a3d5f52274939877b77c99e5))
+* 添加预设主题色功能，允许用户快速选择主题色并同步相关颜色设置 ([ca8ccbc](https://github.com/sincely/vite6-electron-vue3/commit/ca8ccbc92872e112b2dded3a45f6608c94fd7cc7))
+* 移除不再使用的 eslint-define-config 依赖，优化配置文件 ([b1b1f7f](https://github.com/sincely/vite6-electron-vue3/commit/b1b1f7f93c1de415ba95ad3cab17e63bebe9b92e))
+* 移除全局错误处理逻辑，简化应用初始化代码 ([635c9ac](https://github.com/sincely/vite6-electron-vue3/commit/635c9aca349f83d1b8ecc503c74e7933e7f77846))
+* 移除全局页脚组件中的多余公司信息和链接，简化代码 ([45c7b72](https://github.com/sincely/vite6-electron-vue3/commit/45c7b726534433457acef13ed8f55ac1caaddcb8))
+* 移除设置对话框中的系统信息和相关链接，简化界面 ([60591e6](https://github.com/sincely/vite6-electron-vue3/commit/60591e6c534cf9eb2579e0364893de1e9521f5af))
+* 请求改造 ([9081282](https://github.com/sincely/vite6-electron-vue3/commit/90812821a43dba2a95457eae28ee9c0aad3d9938))
+
+### 🐞 Bug Fixes
+
+* 优化启动速度 ([c783dbd](https://github.com/sincely/vite6-electron-vue3/commit/c783dbd5bd5c61f3d155caff08662ac8fc9beebd))
+* 修复正式环境打包失败白屏问题 ([48aac8a](https://github.com/sincely/vite6-electron-vue3/commit/48aac8a752919cd042b82011d786346be5a732a5))
+* 修复结果页样式，确保内容垂直居中显示 ([5cbfd33](https://github.com/sincely/vite6-electron-vue3/commit/5cbfd33b1f64bfcdc66fc5c54dbd5dbe2624f3c3))
+* 修复配置轮询间隔和缓存控制，确保每次请求获取最新配置 ([77d214e](https://github.com/sincely/vite6-electron-vue3/commit/77d214e595ae19d94e0eb33ff1b8454a3e74d42a))
+* 更新 axios 依赖版本至 1.19.0 ([f6ea005](https://github.com/sincely/vite6-electron-vue3/commit/f6ea005663dd85259a018cf0fde33439f63d5037))
+* 更新Content-Security-Policy中的connect-src，添加localhost支持 ([ee3a3dd](https://github.com/sincely/vite6-electron-vue3/commit/ee3a3dd6b6b7741a3a4cd4706209cafbd6624679))
+* 渲染进程负责交互与参数传递，主进程负责真实请求与系统能力 ([ba7eade](https://github.com/sincely/vite6-electron-vue3/commit/ba7eade9a23b54290380605af92c52104ef0341a))
+* 设置请求头的 Content-Type 为 application/json;charset=UTF-8 ([3c169c0](https://github.com/sincely/vite6-electron-vue3/commit/3c169c0b645f38754599eb58b0a124cbb3b52f69))
+
+### ♻️ Code Refactoring
+
+* 修复登录页面优化 ([65d0f50](https://github.com/sincely/vite6-electron-vue3/commit/65d0f505e077d09a26a3be04b837575f205e7579))
+* 移除vue api 手动引入 ([a98f058](https://github.com/sincely/vite6-electron-vue3/commit/a98f058ecf11c221ec5d6a5f59ec8867249c82bd))
+
 ## [1.0.3](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.2...v1.0.3) (2026-08-13)
 
 ### ✨ Features
