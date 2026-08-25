@@ -308,7 +308,6 @@ import {
   Message,
   RefreshLeft
 } from '@element-plus/icons-vue'
-import PageHeader from '@/components/PageHeader/index.vue'
 import { useUserStore } from '@/store/modules/user'
 
 defineOptions({ name: 'profile' })

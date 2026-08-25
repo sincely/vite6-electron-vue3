@@ -105,12 +105,6 @@
 defineOptions({ name: 'system-role' })
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete } from '@element-plus/icons-vue'
-import AdvanceForm from '@/components/AdvanceForm/index.vue'
-import AdvanceTable from '@/components/AdvanceTable/index.vue'
-import DynamicSearchBar from '@/components/DynamicSearchBar/index.vue'
-import ModalDialog from '@/components/ModalDialog/index.vue'
-import PageHeader from '@/components/PageHeader/index.vue'
-import SvgIcon from '@/components/SvgIcon/index.vue'
 import { createRole, deleteRoles, getRoleList, updateRole } from '@/api/system'
 
 const tableRef = ref()

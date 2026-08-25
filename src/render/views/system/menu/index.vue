@@ -110,12 +110,6 @@
 defineOptions({ name: 'system-menu' })
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete, Plus } from '@element-plus/icons-vue'
-import AdvanceForm from '@/components/AdvanceForm/index.vue'
-import DynamicSearchBar from '@/components/DynamicSearchBar/index.vue'
-import ModalDialog from '@/components/ModalDialog/index.vue'
-import PageHeader from '@/components/PageHeader/index.vue'
-import SvgIcon from '@/components/SvgIcon/index.vue'
-import TreeTable from '@/components/TreeTable/index.vue'
 import { createMenu, deleteMenus, getMenuList, updateMenu } from '@/api/system'
 
 const tableRef = ref()

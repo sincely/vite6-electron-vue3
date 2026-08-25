@@ -175,7 +175,6 @@ import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
 import FastEnter from './modules/FastEnter.vue'
-import NotificationPanel from '@/components/NotificationPanel/index.vue'
 
 const appStore = useAppStore()
 const updateStore = useUpdateStore()

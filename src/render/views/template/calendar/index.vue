@@ -98,7 +98,6 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import PageHeader from '@/components/PageHeader/index.vue'
 
 defineOptions({ name: 'template-calendar' })
 
