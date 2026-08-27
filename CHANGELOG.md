@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.7](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.6...v1.0.7) (2026-08-27)
+
+### ✨ Features
+
+* 添加文件上传组件 ([e32561f](https://github.com/sincely/vite6-electron-vue3/commit/e32561f31f6ceefc7b70ae11e6b42ab7e6de4f5a))
+* 添加过渡容器组件 ([655d66e](https://github.com/sincely/vite6-electron-vue3/commit/655d66ebf2e665b8a57dd8cb5e845067e74c5839))
+* 移除视频播放器组件及相关路由 ([5d52d5c](https://github.com/sincely/vite6-electron-vue3/commit/5d52d5c6b77cc45694b50b64072d14960fce62f0))
+
 ## [1.0.6](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.3...v1.0.6) (2026-08-25)
 
 ### ✨ Features
