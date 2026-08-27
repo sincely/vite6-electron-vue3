@@ -33,11 +33,14 @@ export const useUserStore = defineStore('user', {
     // 登录
     async loginAction(params) {
       try {
-        const data = await login(params)
-        // Nitro mock 服务返回 accessToken 字段
-        this.setToken(data.accessToken || data.token)
+        // request() 返回主进程归一化的 { status, headers, data }，
+        // res.data 为后端业务信封 { code, data, error, message }，
+        // 业务本体位于 res.data.data。
+        const res = await login(params)
+        const payload = res?.data?.data
+        this.setToken(payload?.accessToken || payload?.token)
         await this.getUserInfoAction()
-        return data
+        return payload
       } catch (error) {
         return Promise.reject(error)
       }
@@ -46,11 +49,12 @@ export const useUserStore = defineStore('user', {
     // 获取用户信息
     async getUserInfoAction() {
       try {
-        const data = await getUserInfo()
-        this.userInfo = data
-        this.permissions = data.permissions || []
-        this.roles = data.roles || []
-        return data
+        const res = await getUserInfo()
+        const payload = res?.data?.data
+        this.userInfo = payload
+        this.permissions = payload?.permissions || []
+        this.roles = payload?.roles || []
+        return payload
       } catch (error) {
         return Promise.reject(error)
       }

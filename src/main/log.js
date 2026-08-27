@@ -16,7 +16,9 @@ logger.transports.file.resolvePathFn = () =>
 
 logger.transports.console.level = 'debug' // 控制台输出的日志等级
 logger.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}] {level}: {text}' // 自定义控制台输出的日志格式
+logger.transports.console.inspectOptions = { depth: null } // 完整展开嵌套对象，避免 [Object] 截断
 logger.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}.{ms} [{level}]: {text}' // 自定义文件日志格式
+logger.transports.file.inspectOptions = { depth: null } // 完整展开嵌套对象，避免 [Object] 截断
 logger.transports.file.level =
   process.env.NODE_ENV === 'development' ? false : 'info' // 设置日志写入文件的级别
 

@@ -297,18 +297,6 @@ ipcRenderer.on('show-main-loading', () => {
   showLoading()
 })
 
-// 镜像主进程 HTTP 拦截器日志到 DevTools console（带 %c 样式）
-ipcRenderer.on('http:log', (_event, payload) => {
-  const { level, message, css, data } = payload || {}
-  const fn =
-    level === 'error' ? console.error : level === 'warn' ? console.warn : console.log
-  if (data !== undefined) {
-    fn(`%c${message}`, css || '', data)
-  } else {
-    fn(`%c${message}`, css || '')
-  }
-})
-
 window.addEventListener('message', (ev) => {
   if (ev.data.payload === 'removeLoading') {
     hideLoading()
