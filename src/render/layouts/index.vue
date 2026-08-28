@@ -38,7 +38,7 @@
         <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧，固定显示) -->
         <Transition name="layout-fade-x">
           <div v-if="isTopMixed && !isFullscreen" class="layout-submenu">
-            <MixedSubmenu :parent-item="activeParentItem" />
+            <MixedSubmenu :parent-item="activeParentItem" collapsible />
           </div>
         </Transition>
 
