@@ -760,6 +760,17 @@ export const asyncRouteTree = [
         }
       },
       {
+        path: 'table-editable',
+        name: 'example-table-editable',
+        component: () => import('@/views/editableTable/index.vue'),
+        meta: {
+          title: '可编辑表格',
+          icon: 'notebook-pen',
+          group: '/examples',
+          keepAlive: true
+        }
+      },
+      {
         path: 'form',
         name: 'example-form-basic',
         component: () => import('@/views/examples/forms/basic.vue'),

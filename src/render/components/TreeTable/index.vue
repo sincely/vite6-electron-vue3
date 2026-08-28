@@ -227,8 +227,8 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { parseTime } from '@/utils/time'
-import ColumnSetting from '@/components/AdvanceTable/components/ColumnSetting.vue'
-import StyleSetting from '@/components/AdvanceTable/components/StyleSetting.vue'
+import ColumnSetting from '@/components/ColumnSetting/index.vue'
+import StyleSetting from '@/components/StyleSetting/index.vue'
 import DictTag from './DictTag.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { Icon } from '@iconify/vue'
@@ -592,7 +592,6 @@ defineExpose({
 .no-data img {
   width: 120px;
   opacity: 0.6;
-  animation: float-bounce 3s ease-in-out infinite;
 }
 
 .no-data p {

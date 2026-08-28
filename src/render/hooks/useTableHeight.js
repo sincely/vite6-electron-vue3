@@ -30,15 +30,31 @@ export function useTableHeight(bottomOffset = 60) {
     }, 100)
   }
 
+  // 监听表格容器尺寸变化：上方兄弟节点（如搜索栏展开/收起）改变会挤压容器，
+  // 使表格顶部位置下移/上移，需要重算高度，避免 max-height 沿用旧值把底部裁掉
+  let resizeObserver = null
+  const observeLayout = () => {
+    const el = tableRef.value?.$el || tableRef.value
+    const target = el?.parentElement
+    if (!target || typeof ResizeObserver === 'undefined') return
+    resizeObserver = new ResizeObserver(handleResize)
+    resizeObserver.observe(target)
+  }
+
   onMounted(() => {
     nextTick(() => {
       calcHeight()
+      observeLayout()
     })
     window.addEventListener('resize', handleResize)
   })
 
   onUnmounted(() => {
     window.removeEventListener('resize', handleResize)
+    if (resizeObserver) {
+      resizeObserver.disconnect()
+      resizeObserver = null
+    }
     if (resizeTimer) clearTimeout(resizeTimer)
   })
 

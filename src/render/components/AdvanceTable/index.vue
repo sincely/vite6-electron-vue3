@@ -6,43 +6,11 @@
         <slot name="toolbar-left" />
       </div>
       <div class="toolbar-right">
-        <Icon
-          icon="ri:refresh-line"
-          class="toolbar-icon"
-          :class="{ 'is-spinning': loading }"
-          width="18"
-          height="18"
-          @click="refresh"
-        />
+        <TableRefresh :loading="loading" @refresh="refresh" />
         <!-- 设置表格大小（点击箭头下拉） -->
-        <el-dropdown
-          trigger="click"
-          placement="bottom-end"
-          @command="handleTableSizeCommand"
-        >
-          <span class="toolbar-icon table-size-trigger" title="表格大小">
-            <Icon icon="ri:arrow-up-down-fill" width="18" height="18" />
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="small">紧凑</el-dropdown-item>
-              <el-dropdown-item command="default">默认</el-dropdown-item>
-              <el-dropdown-item command="large">宽松</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-
+        <TableSize v-model="tableSize" />
         <!-- 全屏切换 -->
-        <Icon
-          :icon="
-            isFullscreen ? 'ri:fullscreen-exit-line' : 'ri:fullscreen-line'
-          "
-          class="toolbar-icon"
-          width="18"
-          height="18"
-          :title="isFullscreen ? '退出全屏' : '全屏'"
-          @click="toggleFullscreen"
-        />
+        <TableFullscreen />
 
         <ColumnSetting v-model:columns="localColumns" />
         <StyleSetting
@@ -173,11 +141,13 @@
 </template>
 
 <script setup>
-import ColumnSetting from './components/ColumnSetting.vue'
-import StyleSetting from './components/StyleSetting.vue'
+import ColumnSetting from '@/components/ColumnSetting/index.vue'
+import StyleSetting from '@/components/StyleSetting/index.vue'
+import TableRefresh from '@/components/TableRefresh/index.vue'
+import TableSize from '@/components/TableSize/index.vue'
+import TableFullscreen from '@/components/TableFullscreen/index.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { promiseTimeout } from '@vueuse/core'
-import { Icon } from '@iconify/vue'
 // Props
 const props = defineProps({
   columns: {
@@ -258,14 +228,6 @@ watch(
   },
   { immediate: true }
 )
-
-function handleTableSizeCommand(val) {
-  tableSize.value = val
-}
-
-// 内容全屏由布局层统一管理（隐藏侧边栏/头部/标签栏，ESC 退出也在布局层处理），此处直接注入使用
-const toggleFullscreen = inject('toggleFullscreen', () => {})
-const isFullscreen = inject('isFullscreen', ref(false))
 
 // 合并配置
 const mergedConfig = computed(() => {
@@ -445,39 +407,6 @@ watch(
     display: flex;
     gap: 10px;
     align-items: center;
-
-    .table-size-trigger {
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .toolbar-icon {
-      width: 18px;
-      height: 18px;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-      &:hover {
-        color: var(--color-primary);
-        transform: scale(1.15);
-      }
-
-      &.is-spinning {
-        pointer-events: none;
-        animation: rotate 0.8s linear infinite;
-      }
-    }
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -489,7 +418,6 @@ watch(
 .no-data img {
   width: 120px;
   opacity: 0.6;
-  animation: float-bounce 3s ease-in-out infinite;
 }
 
 .no-data p {
