@@ -275,7 +275,6 @@ watch([visibleMenuItems, isTopMixed], () => nextTick(updateScrollState))
   align-items: center;
   min-width: 0;
   max-width: 100%;
-  height: 100%;
   margin-left: 24px;
   -webkit-app-region: no-drag;
 }
