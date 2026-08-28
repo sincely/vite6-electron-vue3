@@ -10,16 +10,21 @@
  *
  * 日志（仅主进程终端，不镜像到渲染端）：
  *   每个事件输出多行分桶日志——首行为概览（方法/URL/状态），后续每行一个字段
- *   （params/body/headers/message…），字段标签左对齐，对象值经 JSON.stringify 完整序列化。
+ *   （baseURL/timeout/params/body/headers…），字段标签左对齐，对象值完整序列化。
+ *   成功响应为绿色日志，错误响应为红色日志（ANSI 色码写文件前由 log.js 剥离）。
  *   请求 / 响应 / 错误三种事件共用同一格式，例如：
- *     [http] → GET /table/list
- *       params : {"pageNum":1,"pageSize":5}
- *       body   : {"name":"张三"}
- *       headers: {"Authorization":"Bearer eyJhbGciOi…"}
- *     [http] ← 200 GET /table/list
- *       body: {"code":0,"data":{"rows":[…],"total":100}}
- *     [http] ✗ 500 POST /login
- *       message: "timeout of 15000ms exceeded"
+ *     GET /table/list
+ *       baseURL     : http://localhost:5320/api
+ *       timeout     : 15000ms
+ *       responseType: json
+ *       isForm      : false
+ *       token       : eyJhbGciO…(172 chars)
+ *       params      : {"pageNum":1,"pageSize":5}
+ *       body        : -
+ *       headers     : {"Authorization":"Bearer eyJhbGciOi…"}
+ *     ✓ 200 GET /table/list        （绿色）
+ *       body   : {"code":0,"data":{"rows":[…],"total":100}}
+ *     ✗ 500 POST /login - timeout of 15000ms exceeded        （红色）
  *       body   : {"error":"…"}
  *
  * 协议（params 与 data 严格分桶）：
@@ -36,6 +41,10 @@ import axios from 'axios'
 import { inspect } from 'util'
 import logger from '../log'
 
+// 终端 ANSI 颜色：成功绿色 / 错误红色
+// 仅作用于终端输出，写入日志文件前由 log.js 的 hooks.logMessage 剥离
+const green = (text) => `\x1b[32m${text}\x1b[0m`
+const red = (text) => `\x1b[31m${text}\x1b[0m`
 const BASE_URL = process.env.VITE_SERVER_URL || 'http://localhost:5320/api'
 
 const service = axios.create({
@@ -102,12 +111,16 @@ service.interceptors.request.use((config) => {
     config.headers['Content-Type'] =
       'application/x-www-form-urlencoded;charset=UTF-8'
   }
-
-  // 终端日志：方法 + URL + 请求参数 + 请求体 + 请求头
-  logger.info(`[http] → ${method.toUpperCase()} ${config.url}`)
-  logger.info('  params :', readableBody(config.params))
-  logger.info('  body   :', readableBody(config.data))
-  logger.info('  headers:', readableBody(config.headers))
+  // 终端日志（绿色）：方法 + URL + 关键配置 + 请求参数 + 请求体 + 请求头
+  logger.info(green(`请求前参数: ${method.toUpperCase()} ${config.url}`))
+  logger.info(green('baseURL     :'), readableBody(config.baseURL))
+  logger.info(green('timeout     :'), `${config.timeout ?? 'default(15000)'}ms`)
+  logger.info(green('responseType:'), config.responseType || 'json')
+  logger.info(green('isForm      :'), String(Boolean(config.isForm)))
+  logger.info(green('token       :'), readableBody(config.token))
+  logger.info(green('params      :'), readableBody(config.params))
+  logger.info(green('body        :'), readableBody(config.data))
+  logger.info(green('headers     :'), readableBody(config.headers))
 
   return config
 })
@@ -115,8 +128,12 @@ service.interceptors.request.use((config) => {
 // ── 响应拦截器 ──────────────────────────────────────
 service.interceptors.response.use(
   (response) => {
-    logger.info(`[http] ← ${response.status} ${response.config.url}`)
-    logger.info('  response body:', readableBody(response.data))
+    // 成功：绿色日志
+    const okMethod = String(response.config.method || 'get').toUpperCase()
+    logger.info(
+      green(`响应成功 ✓: ${response.status} ${okMethod} ${response.config.url}`)
+    )
+    logger.info(green('body   :'), readableBody(response.data))
 
     return {
       status: response.status,
@@ -125,11 +142,16 @@ service.interceptors.response.use(
     }
   },
   (err) => {
+    // 错误：红色日志
     const status = err.response?.status
     const url = err.config?.url
-    logger.error(`[http] ✗ ${err.message} ${url ? `(${url})` : ''}`)
-    if (status != null) logger.error('  status :', status)
-    logger.error('  response body:', readableBody(err.response?.data))
+    const method = String(err.config?.method || 'get').toUpperCase()
+    logger.error(
+      red(
+        `响应失败 ✗ ${status ?? 'ERR'} ${method} ${url ?? '-'} - ${err.message}`
+      )
+    )
+    logger.error(red('body   :'), readableBody(err.response?.data))
 
     return Promise.reject(err)
   }

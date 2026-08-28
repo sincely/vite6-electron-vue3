@@ -25,4 +25,12 @@ logger.transports.file.level =
 // 设置日志文件最大大小为 5MB，超过该大小会自动滚动
 logger.transports.file.maxSize = 5 * 1024 * 1024 // 5MB
 
+// 剥离 ANSI 颜色码：彩色日志只进终端（console），写入日志文件前还原为纯文本
+logger.hooks.logMessage = (msg, transport) => {
+  if (transport === logger.transports.file && typeof msg === 'string') {
+    return msg.replace(/\u001b\[[0-9;]*m/g, '')
+  }
+  return msg
+}
+
 export default logger
