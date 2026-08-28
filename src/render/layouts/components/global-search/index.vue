@@ -57,7 +57,7 @@
               class="search-item__enter"
               width="14"
             />
-            <span class="search-item__path">{{ item.path }}</span>
+            <!-- <span class="search-item__path">{{ item.path }}</span> -->
           </div>
           <div v-if="!searchResult.length" class="search-empty">
             未找到相关菜单
