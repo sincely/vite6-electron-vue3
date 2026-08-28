@@ -304,6 +304,7 @@ const removeHistory = (index) => {
   display: flex;
   gap: 8px;
   align-items: center;
+  width: 160px;
   height: 32px;
   padding: 0 8px 0 10px;
   font-size: 12px;
