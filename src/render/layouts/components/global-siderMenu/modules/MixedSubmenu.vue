@@ -2,7 +2,7 @@
   <div
     v-if="parentItem && parentItem.children?.length"
     class="mixed-submenu"
-    :class="{ 'is-collapsed': MIXED_SUBMENU_COLLAPSIBLE && collapsed }"
+    :class="{ 'is-collapsed': collapseEnabled && collapsed }"
   >
     <!-- 裁剪层：折叠过渡期间以固定 180px 菜单整体向左滑出，避免内容被压缩换行 -->
     <div class="mixed-submenu-clip">
@@ -17,7 +17,7 @@
     </div>
     <!-- 收缩/展开把手：位于子菜单栏右缘，垂直居中 -->
     <button
-      v-if="MIXED_SUBMENU_COLLAPSIBLE"
+      v-if="collapseEnabled"
       type="button"
       class="mixed-submenu-toggle"
       :title="collapsed ? '展开子菜单' : '收起子菜单'"
@@ -49,8 +49,19 @@ const props = defineProps({
   parentItem: {
     type: Object,
     default: null
+  },
+  // 是否允许收缩/展开：仅 top-mixed 混合模式的布局层显式传入；
+  // 双列菜单（dual）第二列复用本组件，不传则不渲染把手、不可折叠
+  collapsible: {
+    type: Boolean,
+    default: false
   }
 })
+
+// 折叠功能最终启用 = 全局功能开关 && 使用方显式开启
+const collapseEnabled = computed(
+  () => MIXED_SUBMENU_COLLAPSIBLE && props.collapsible
+)
 
 const route = useRoute()
 
