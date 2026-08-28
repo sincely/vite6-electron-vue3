@@ -112,13 +112,6 @@ $transition: 0.3s cubic-bezier(0.22, 0.7, 0.2, 1);
   &.show-text {
     width: 80px;
   }
-
-  // 窄栏内 logo 水平居中、隐藏文字（文字隐藏逻辑在 GlobalLogo 内按布局模式处理）
-  :deep(.logo-block) {
-    justify-content: center;
-    padding-right: 0;
-    padding-left: 0;
-  }
 }
 
 .dual-menu-nav {
