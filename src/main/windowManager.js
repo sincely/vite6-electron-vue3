@@ -208,20 +208,17 @@ export function createLoginWindow() {
   }
 
   const win = new BrowserWindow({
-    // vben 风格左右分栏登录页（左侧表单 40% + 右侧品牌面板）所需的宽度；
-    // 允许用户在最小尺寸内缩窄窗口，此时品牌面板隐藏、表单面板自适应全宽
+    // vben 风格左右分栏登录页（左侧表单 40% + 右侧品牌面板）固定尺寸，
+    // 登录窗口不允许拉伸，始终保持完整的分栏布局
     width: 1000,
     height: 640,
-    minWidth: 480,
-    minHeight: 620,
     icon: getWindowIcon(),
     show: false,
     backgroundColor: getWindowBackgroundColor(),
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     frame: false,
-    // 允许缩窄至 minWidth：此时品牌面板隐藏、表单面板自适应全宽，与 vben 响应式行为一致
-    resizable: true,
+    resizable: false,
     center: true,
     maximizable: false, // 禁止最大化，从而禁止双击标题栏扩大
     webPreferences: {
