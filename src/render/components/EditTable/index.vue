@@ -72,6 +72,10 @@
           :filter-multiple="column.filterMultiple ?? true"
           show-overflow-tooltip
         >
+          <!-- 筛选图标 -->
+          <template #filter-icon>
+            <Icon icon="ri:filter-line" />
+          </template>
           <!-- 自定义表头（headerSlot 在列配置上，el-table 内部 column 对象不携带该字段） -->
           <template #header="scope">
             <template v-if="getColConfig(scope.column)?.headerSlot">
@@ -264,7 +268,13 @@
       </template>
 
       <!-- 操作列 -->
-      <el-table-column label="操作" width="90" align="center" fixed="right">
+      <el-table-column
+        v-if="showActionColumn"
+        label="操作"
+        width="90"
+        align="center"
+        fixed="right"
+      >
         <template #default="{ row, $index }">
           <div v-if="isEditing(row)" class="table-action">
             <el-button
@@ -313,19 +323,13 @@
         </div>
       </template>
     </el-table>
-
-    <!-- 底部添加按钮 -->
-    <div v-if="mergedConfig.showAdd" class="table-footer">
-      <el-button type="primary" plain class="add-btn" @click="handleAdd">
-        + 添加一行
-      </el-button>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { cloneDeep } from 'lodash-es'
 import { ElMessage } from 'element-plus'
+import { Icon } from '@iconify/vue'
 import { Edit, Delete, Check, Close } from '@element-plus/icons-vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { useDraggable } from 'vue-draggable-plus'
@@ -405,27 +409,48 @@ const mergedConfig = computed(() => {
 // 本地列状态（ColumnSetting 拖拽排序 / 显隐在其上修改后写回）
 const localColumns = ref([])
 
+// 操作列为模板内置列，不在宿主 columns 配置中；
+// 注入到设置列表以支持显示/隐藏切换（draggable: false —— 渲染位置固定在最右侧，不参与排序）
+const ACTION_COLUMN = {
+  prop: '__action__',
+  label: '操作',
+  fixed: 'right',
+  draggable: false
+}
+
 watch(
   () => props.columns,
   (newVal) => {
-    if (newVal) localColumns.value = [...newVal]
-    console.log('Columns updated:', localColumns.value)
+    if (!newVal) return
+    const cols = [...newVal]
+    if (!cols.some((c) => c.label === '操作')) {
+      cols.push({ ...ACTION_COLUMN })
+    }
+    localColumns.value = cols
   },
   { immediate: true }
 )
+
+// 操作列显隐：跟随 ColumnSetting 注入项的 show 状态
+const showActionColumn = computed(() => {
+  const col = localColumns.value.find((c) => c.prop === ACTION_COLUMN.prop)
+  return !col || col.show !== false
+})
 
 // 表格样式设置（StyleSetting 面板双向绑定），初始值取自 config.table
 const tableStyle = reactive({
   stripe: props.config.table?.stripe ?? true,
   border: props.config.table?.border ?? true,
-  headerBg: props.config.table?.headerBg ?? ''
+  headerBg: props.config.table?.headerBg ?? true
 })
 
-// 自定义表头背景 -> CSS 变量（为空时使用主题默认背景）
+// 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
-  return tableStyle.headerBg
-    ? { '--edit-table-header-bg': tableStyle.headerBg }
-    : {}
+  return {
+    '--edit-table-header-bg': tableStyle.headerBg
+      ? 'var(--color-bg-input)'
+      : 'transparent'
+  }
 })
 
 // 样式切换会影响列宽计算，重绘一次
@@ -446,6 +471,8 @@ const refresh = () => {}
 // 可见列（兼容 ColumnSetting 输出的 show 与历史 hide/hidden 字段）
 const visibleColumns = computed(() => {
   return localColumns.value.filter((col) => {
+    // 内置操作列在模板中单独渲染，不走列循环
+    if (col.prop === ACTION_COLUMN.prop) return false
     if (col.show === false) return false
     if (col.hide === true) return false
     if (col.hidden === true) return false
@@ -766,7 +793,33 @@ const deleteSelection = () => {
 // ---- 拖拽排序：vue-draggable-plus 绑定 el-table tbody，整行按住即拖 ----
 // 输入控件/按钮等交互区域已加入 filter，不参与拖拽起手的判定；
 // 库在 onUpdate 时已将 sortable 搬动的 DOM 归位并同步重排绑定的 tableData，
-// 行序最终由 Vue 依据数据（row-key）重渲染，onEnd 只需向宿主同步事件
+// 行序最终由 Vue 依据数据（row-key）重渲染，onEnd 只需向宿主同步事件。
+//
+// 说明：el-table 列数多（每列 min-width 160）且存在横向滚动条，<tr> 的实际
+// 渲染宽度 = 整张表格的内容总宽（远大于可视区）。默认走原生 HTML5 拖拽时，
+// 浏览器会把整个 <tr> 渲染成拖拽位图（无法用 CSS 控制），在固定列/左半部分
+// 拖拽时位图看上去“正常”，拖到右半部分时位图会铺满整张表宽 → “巨长”。
+// 这里用 setDragImage 把原生位图替换为一个不可见的 1×1 元素，让落点反馈
+// 交给 tbody 内的 sortable-ghost 占位行；该占位 <tr> 在横向滚动容器内
+// 会被容器 overflow 裁剪到可视区宽度，看起来就是一张普通行。
+let dragImageEl = null
+const getHiddenDragImage = () => {
+  if (dragImageEl && dragImageEl.isConnected) return dragImageEl
+  const el = document.createElement('div')
+  Object.assign(el.style, {
+    position: 'fixed',
+    top: '-9999px',
+    left: '-9999px',
+    width: '1px',
+    height: '1px',
+    opacity: '0',
+    pointerEvents: 'none'
+  })
+  document.body.appendChild(el)
+  dragImageEl = el
+  return el
+}
+
 const initRowDrag = () => {
   const tbody = tableRef.value?.$el?.querySelector(
     '.el-table__body-wrapper tbody'
@@ -780,6 +833,15 @@ const initRowDrag = () => {
     filter:
       'input, textarea, button, .el-button, .el-checkbox, .el-radio, .el-switch, .el-select, .el-date-editor, .el-input-number, .el-input__clear',
     preventOnFilter: false,
+    // 覆盖 el-table 横向滚动时整行被拍成“巨长”原生位图：把位图换成一个不可见 1×1 元素，
+    // 视觉反馈完全交给 tbody 内被裁剪到可视区宽度的 sortable-ghost 占位行。
+    setData: (dataTransfer) => {
+      try {
+        dataTransfer.setDragImage(getHiddenDragImage(), 0, 0)
+      } catch {
+        /* 极少数环境下 setDragImage 可能抛错，忽略即可 */
+      }
+    },
     onEnd: ({ oldIndex, newIndex }) => {
       if (oldIndex === newIndex) return
       emit('row-drag', { from: oldIndex, to: newIndex })
@@ -804,7 +866,9 @@ defineExpose({
   // 多选：读取选中 / 清空勾选 / 批量删除选中行
   getSelectionRows,
   clearSelection,
-  deleteSelection
+  deleteSelection,
+  // 程序化添加一行：与“添加一行”按钮同一逻辑（内部初始化新行并抛 add 事件，数据补全由宿主负责）
+  handleAdd
 })
 
 // 响应式数据
@@ -850,11 +914,25 @@ const tableSize = ref(props.config?.table?.size || 'small')
 }
 
 // 表头背景：支持 StyleSetting 通过 CSS 变量覆盖
-:deep(.el-table__header-wrapper .el-table__cell) {
+:deep(.el-table .el-table__header-wrapper .el-table__cell) {
   background: var(
     --edit-table-header-bg,
     var(--el-table-header-bg-color, var(--color-bg-content))
   );
+}
+
+// 筛选图标：覆盖 EP 默认的 --el-color-info 着色
+:deep(.el-table__column-filter-trigger i) {
+  color: var(--color-text-secondary);
+}
+
+// 触发器默认是 inline-block 按钮，基线对齐会让漏斗偏下；
+// 改为 inline-flex 内容居中 + vertical-align: middle 与表头文字光学中线对齐
+:deep(.el-table__column-filter-trigger) {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .table-footer {

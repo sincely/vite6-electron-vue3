@@ -191,13 +191,15 @@ const tableSize = ref(props.config?.table?.size || 'small')
 const tableStyle = reactive({
   stripe: props.config?.table?.stripe ?? true,
   border: props.config?.table?.border ?? true,
-  headerBg: props.config?.table?.headerBg ?? ''
+  headerBg: props.config?.table?.headerBg ?? true
 })
-// 自定义表头背景 -> CSS 变量（为空时使用主题默认背景）
+// 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
-  return tableStyle.headerBg
-    ? { '--smart-table-header-bg': tableStyle.headerBg }
-    : {}
+  return {
+    '--smart-table-header-bg': tableStyle.headerBg
+      ? 'var(--color-bg-input)'
+      : 'transparent'
+  }
 })
 const tableData = ref([])
 const total = ref(0)

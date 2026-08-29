@@ -32,11 +32,6 @@ const emit = defineEmits(['refresh'])
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  &:hover {
-    color: var(--color-primary);
-    transform: scale(1.15);
-  }
-
   &.is-spinning {
     pointer-events: none;
     animation: table-refresh-rotate 0.8s linear infinite;

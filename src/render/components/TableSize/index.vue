@@ -41,10 +41,5 @@ const handleCommand = (val) => {
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  &:hover {
-    color: var(--color-primary);
-    transform: scale(1.15);
-  }
 }
 </style>

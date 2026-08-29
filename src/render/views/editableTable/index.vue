@@ -22,9 +22,10 @@
       @sort-change="handleSortChange"
     >
       <template #toolbar-left>
-        <el-button type="danger" plain size="small" @click="handleBatchDelete">
+        <el-button type="danger" size="small" @click="handleBatchDelete">
           批量删除
         </el-button>
+        <el-button type="primary" size="small" @click="add">添加一行</el-button>
       </template>
       <!-- <template #nameHeader="{ column }">
         <span style="color: red">*</span>
@@ -33,7 +34,7 @@
     </EditTable>
   </div>
 </template>
-
+<!-- https://jishuzhan.net/article/1898945735052349442 -->
 <script setup>
 // 省市区联动数据源：省 -> 市 -> 区
 const REGION_MAP = {
@@ -443,6 +444,13 @@ const handleSelectionChange = (rows) => {
 const handleBatchDelete = () => {
   editTableRef.value?.deleteSelection()
   selectedCount.value = 0
+}
+
+//
+
+const add = () => {
+  editTableRef.value?.handleAdd()
+  // 新增行的 id 会在组件内部生成，写回时可通过 row.id 寻址
 }
 const handleDelete = (row, index) => {
   console.log('删除', row, index)

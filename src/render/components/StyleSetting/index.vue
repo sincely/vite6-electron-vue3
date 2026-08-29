@@ -28,12 +28,7 @@
         </div>
         <div class="setting-style-item">
           <span class="setting-style-label">表头背景</span>
-          <el-color-picker
-            v-model="localHeaderBg"
-            size="small"
-            show-alpha
-            :predefine="predefineColors"
-          />
+          <el-switch v-model="localHeaderBg" size="small" />
         </div>
       </div>
     </div>
@@ -54,10 +49,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  // 表头背景色（空字符串表示使用主题默认背景）
+  // 表头背景开关（开启时使用主题浅色/深色模式下的最佳背景色，不支持自定义颜色）
   headerBg: {
-    type: String,
-    default: ''
+    type: Boolean,
+    default: true
   }
 })
 
@@ -79,14 +74,10 @@ const localBorder = computed({
   get: () => props.border,
   set: (val) => emit('update:border', val)
 })
-// 空字符串 -> null（选择器显示为空），清除颜色时回传空字符串
 const localHeaderBg = computed({
-  get: () => props.headerBg || null,
-  set: (val) => emit('update:header-bg', val || '')
+  get: () => props.headerBg,
+  set: (val) => emit('update:header-bg', val)
 })
-
-// 表头背景预设色
-const predefineColors = ['#f8fafc', '#f1f5f9', '#e2e8f0', '#fafafa', '#f0f9ff']
 
 const reset = () => {
   emit('update:stripe', initialStyle.stripe)
