@@ -51,21 +51,6 @@ async function setupApp() {
         type: options.type || 'info'
       })
     })
-
-    // 开发模式：模拟完整更新流程（弹框 → 进度条 → 完成）
-    if (import.meta.env.DEV) {
-      setTimeout(() => {
-        updateStore.setCurrentVersion(updateStore.currentVersion || '1.0.3')
-        updateStore.setLatestVersion('1.0.6')
-        window.dispatchEvent(
-          new CustomEvent('update:available', {
-            detail: {
-              version: '1.0.6'
-            }
-          })
-        )
-      }, 1500)
-    }
   })
   app.config.performance = false
 }

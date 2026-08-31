@@ -1,5 +1,5 @@
 <template>
-  <div class="smart-table">
+  <div ref="smartTableRef" class="smart-table">
     <!-- 表格工具栏 -->
     <div class="table-toolbar">
       <div class="toolbar-left">
@@ -25,6 +25,7 @@
       ref="tableRef"
       v-loading="loading"
       :data="tableData"
+      :max-height="tableHeight"
       v-bind="mergedConfig.table"
       :stripe="tableStyle.stripe"
       :border="tableStyle.border"
@@ -32,6 +33,7 @@
       :style="headerBgCssVar"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
+      @header-dragend="handleHeaderDragend"
     >
       <!-- 多选列 (根据 config.selection 开启) -->
       <el-table-column
@@ -141,11 +143,6 @@
 </template>
 
 <script setup>
-import ColumnSetting from '@/components/ColumnSetting/index.vue'
-import StyleSetting from '@/components/StyleSetting/index.vue'
-import TableRefresh from '@/components/TableRefresh/index.vue'
-import TableSize from '@/components/TableSize/index.vue'
-import TableFullscreen from '@/components/TableFullscreen/index.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { promiseTimeout } from '@vueuse/core'
 // Props
@@ -209,6 +206,15 @@ const queryParams = reactive({
   ...props.params
 })
 const localColumns = ref([])
+const smartTableRef = ref(null)
+
+// 列宽自适应：列标识与初始配置的默认列宽
+// Element Plus 拖拽列宽时会把像素值写入内部 column.width，该列从此变成固定宽、
+// 不再参与剩余空间分配（源码以 width 是否为数字判断弹性列），导致容器变宽后
+// 表格右侧留白、无法重新自适应。这里记录每列的初始宽度配置，
+// 容器宽度变化时把拖拽产生的宽度还原，让 minWidth 列恢复弹性。
+const colKeyOf = (col) => col.prop || col.label
+const defaultWidths = {}
 
 // 初始化列配置
 watch(
@@ -216,10 +222,76 @@ watch(
   (newVal) => {
     if (newVal) {
       localColumns.value = [...newVal]
+      // 记录默认列宽（undefined 表示弹性列，仅有 minWidth）
+      Object.keys(defaultWidths).forEach((key) => delete defaultWidths[key])
+      newVal.forEach((col) => {
+        defaultWidths[colKeyOf(col)] = col.width
+      })
     }
   },
   { immediate: true, deep: true }
 )
+
+// 列宽拖拽结束：把新宽度回写到列配置，保持 prop 与表格内部状态一致
+// （整体替换列对象，避免污染页面传入的原始 columns 配置）
+function handleHeaderDragend(newWidth, _oldWidth, column) {
+  const key = column.property || column.label
+  const index = localColumns.value.findIndex((col) => colKeyOf(col) === key)
+  if (index === -1) return
+  const item = localColumns.value[index]
+  if (item.width === newWidth) return
+  localColumns.value.splice(index, 1, { ...item, width: newWidth })
+}
+
+// 还原拖拽产生的列宽为默认配置，恢复表格自适应能力
+function resetColumnWidths() {
+  let changed = false
+  const next = localColumns.value.map((col) => {
+    const key = colKeyOf(col)
+    if (!(key in defaultWidths)) return col
+    const defaultWidth = defaultWidths[key]
+    if (col.width === defaultWidth) return col
+    changed = true
+    return { ...col, width: defaultWidth }
+  })
+  if (changed) {
+    localColumns.value = next
+    nextTick(() => {
+      tableRef.value?.doLayout()
+    })
+  }
+}
+
+// 监听表格容器宽度变化（窗口缩放 / 全屏切换 / 侧边栏折叠等），
+// 宽度改变时还原拖拽列宽，让列重新自适应容器宽度
+let layoutObserver = null
+let lastContainerWidth = 0
+
+onMounted(() => {
+  nextTick(() => {
+    const el = smartTableRef.value
+    if (!el || typeof ResizeObserver === 'undefined') return
+    layoutObserver = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect?.width ?? 0
+      if (
+        lastContainerWidth &&
+        width &&
+        Math.abs(width - lastContainerWidth) >= 1
+      ) {
+        resetColumnWidths()
+      }
+      lastContainerWidth = width
+    })
+    layoutObserver.observe(el)
+  })
+})
+
+onUnmounted(() => {
+  if (layoutObserver) {
+    layoutObserver.disconnect()
+    layoutObserver = null
+  }
+})
 
 watch(
   [tableSize, () => tableStyle.stripe, () => tableStyle.border],
@@ -367,12 +439,14 @@ onMounted(() => {
 })
 
 // 监听外部 params 变更
+// flush: 'sync'：调用方可能「改 params 后立即 getList()」（如统计卡片筛选、重置），
+// 同步写入保证同一 tick 内的请求携带最新参数
 watch(
   () => props.params,
   (newVal) => {
     Object.assign(queryParams, newVal)
   },
-  { deep: true }
+  { deep: true, flush: 'sync' }
 )
 </script>
 

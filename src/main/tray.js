@@ -135,13 +135,8 @@ const getActiveWindow = () => {
 const toggleWindow = () => {
   const win = getActiveWindow()
   if (!win) return
-  if (win.isVisible()) {
-    win.hide()
-  } else {
-    if (win.isMinimized()) win.restore()
-    win.show()
-    win.focus()
-  }
+  win.show()
+  win.focus()
 }
 
 /**
@@ -181,12 +176,8 @@ const rebuildTrayMenu = () => {
         ]
       : []),
     {
-      label: isVisible ? '隐藏窗口' : '显示窗口',
+      label: '显示窗口',
       click: () => toggleWindow()
-    },
-    {
-      label: '打开主界面',
-      click: () => restoreMainWindow()
     },
     { type: 'separator' },
     {

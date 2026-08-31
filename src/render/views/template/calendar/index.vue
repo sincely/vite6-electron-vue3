@@ -38,13 +38,7 @@
       </ElCalendar>
     </div>
 
-    <!-- 事件编辑弹窗 -->
-    <ElDialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="600px"
-      @closed="resetForm"
-    >
+    <ModalDialog v-model="dialogVisible" :title="dialogTitle" width="600px">
       <ElForm :model="eventForm" label-width="80px">
         <ElFormItem label="活动标题" required>
           <ElInput v-model="eventForm.content" placeholder="请输入活动标题" />
@@ -83,16 +77,14 @@
         </ElFormItem>
       </ElForm>
       <template #footer>
-        <span class="dialog-footer">
-          <ElButton v-if="isEditing" type="danger" @click="handleDeleteEvent">
-            删除
-          </ElButton>
-          <ElButton type="primary" @click="handleSaveEvent">
-            {{ isEditing ? '更新' : '添加' }}
-          </ElButton>
-        </span>
+        <ElButton v-if="isEditing" type="danger" @click="handleDeleteEvent">
+          删除
+        </ElButton>
+        <ElButton type="primary" @click="handleSaveEvent">
+          {{ isEditing ? '更新' : '添加' }}
+        </ElButton>
       </template>
-    </ElDialog>
+    </ModalDialog>
   </div>
 </template>
 
@@ -195,6 +187,14 @@ const resetForm = () => {
 }
 
 /**
+ * ModalDialog 声明了 closed emit 但内部未转发，@closed 不会触发，
+ * 因此通过监听显隐状态，在弹窗关闭时（含点击遮罩 / ESC / 关闭按钮）重置表单
+ */
+watch(dialogVisible, (visible) => {
+  if (!visible) resetForm()
+})
+
+/**
  * 处理日历单元格点击事件，打开添加事件弹窗
  * @param {string} currentDay 点击的日期
  */
@@ -235,7 +235,6 @@ const handleSaveEvent = () => {
   }
 
   dialogVisible.value = false
-  resetForm()
 }
 
 /**
@@ -245,7 +244,6 @@ const handleDeleteEvent = () => {
   if (isEditing.value) {
     events.value.splice(editingEventIndex.value, 1)
     dialogVisible.value = false
-    resetForm()
   }
 }
 </script>

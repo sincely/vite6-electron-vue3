@@ -40,16 +40,16 @@
 import axios from 'axios'
 import { inspect } from 'util'
 import logger from '../log'
+import { httpConfig } from '../config/http'
 
 // 终端 ANSI 颜色：成功绿色 / 错误红色
 // 仅作用于终端输出，写入日志文件前由 log.js 的 hooks.logMessage 剥离
 const green = (text) => `\x1b[32m${text}\x1b[0m`
 const red = (text) => `\x1b[31m${text}\x1b[0m`
-const BASE_URL = process.env.VITE_SERVER_URL || 'http://localhost:5320/api'
 
 const service = axios.create({
-  baseURL: BASE_URL,
-  timeout: 15000
+  baseURL: httpConfig.baseURL,
+  timeout: httpConfig.timeout
 })
 
 // 把 URLSearchParams / FormData / Blob / ArrayBuffer 等不可读对象
@@ -96,25 +96,23 @@ service.interceptors.request.use((config) => {
   if (config.token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${config.token}`
   }
-
-  config.headers['Content-Type'] = 'application/json;charset=UTF-8'
   // isForm: 在主进程统一构造 URLSearchParams + 设置 Content-Type，
   // 渲染端只需要在 config 里写 isForm: true，普通对象照传。
-  if (config.isForm && config.data && typeof config.data === 'object') {
-    const params = new URLSearchParams()
-    for (const [k, v] of Object.entries(config.data)) {
-      if (v !== undefined && v !== null) {
-        params.append(k, String(v))
-      }
-    }
-    config.data = params
-    config.headers['Content-Type'] =
-      'application/x-www-form-urlencoded;charset=UTF-8'
+  if (config.isForm && config.data) {
+    const formData = new URLSearchParams(config.data)
+    config.data = formData
+    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+  } else {
+    // JSON 请求
+    config.headers['Content-Type'] = 'application/json'
   }
   // 终端日志（绿色）：方法 + URL + 关键配置 + 请求参数 + 请求体 + 请求头
   logger.info(green(`请求前参数: ${method.toUpperCase()} ${config.url}`))
   logger.info(green('baseURL     :'), readableBody(config.baseURL))
-  logger.info(green('timeout     :'), `${config.timeout ?? 'default(15000)'}ms`)
+  logger.info(
+    green('timeout     :'),
+    `${config.timeout ?? `default(${httpConfig.timeout})`}ms`
+  )
   logger.info(green('responseType:'), config.responseType || 'json')
   logger.info(green('isForm      :'), String(Boolean(config.isForm)))
   logger.info(green('token       :'), readableBody(config.token))
@@ -136,24 +134,28 @@ service.interceptors.response.use(
     logger.info(green('body   :'), readableBody(response.data))
 
     return {
-      status: response.status,
-      headers: response.headers,
-      data: response.data
+      code: response.status,
+      data: response.data,
+      message: '请求成功'
     }
   },
   (err) => {
     // 错误：红色日志
-    const status = err.response?.status
+    const code = err.response?.status
     const url = err.config?.url
     const method = String(err.config?.method || 'get').toUpperCase()
     logger.error(
       red(
-        `响应失败 ✗ ${status ?? 'ERR'} ${method} ${url ?? '-'} - ${err.message}`
+        `响应失败 ✗ ${code ?? 'ERR'} ${method} ${url ?? '-'} - ${err.message}`
       )
     )
     logger.error(red('body   :'), readableBody(err.response?.data))
 
-    return Promise.reject(err)
+    return {
+      code,
+      data: err.response?.data,
+      message: error.message || '网络异常'
+    }
   }
 )
 

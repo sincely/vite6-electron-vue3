@@ -6,7 +6,20 @@
       icon="template"
     />
 
-    <AdvanceTable :columns="columns" :func="getTableList" :config="config">
+    <!-- 搜索栏 -->
+    <DynamicSearchBar
+      :items="searchItems"
+      :params="searchParams"
+      @query="handleQuery"
+      @reset="handleReset"
+    />
+    <AdvanceTable
+      ref="tableRef"
+      :columns="columns"
+      :func="getTableList"
+      :config="config"
+      :params="searchParams"
+    >
       <template #statusCell="{ row }">
         <el-tag :type="statusTagType(row.status)" size="small" effect="light">
           {{ row.statusLabel }}
@@ -19,7 +32,7 @@
 <script setup>
 defineOptions({ name: 'example-table-basic' })
 import { getTableList } from '@/api/table'
-
+const tableRef = ref(null)
 // 列配置：prop 对应接口字段，slot 可自定义单元格渲染
 const columns = [
   { type: 'index', label: '序号', width: 70, align: 'center' },
@@ -37,6 +50,21 @@ const columns = [
   },
   { prop: 'joinDate', label: '入职日期', width: 170, sortable: true }
 ]
+// 事件处理
+function handleQuery() {
+  tableRef.value?.getList()
+}
+function handleReset() {
+  searchParams.status = ''
+  tableRef.value?.resetQuery()
+}
+
+// 搜索项
+const searchItems = [{ prop: 'name', label: '用户名', type: 'input' }]
+
+const searchParams = reactive({
+  name: ''
+})
 
 // 表格配置：rowKey 必传，其余保持默认（斑马纹、边框、分页）
 const config = {
