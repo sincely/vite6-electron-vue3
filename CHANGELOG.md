@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.8](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.7...v1.0.8) (2026-08-31)
+
+### ✨ Features
+
+* 为 MixedSubmenu 组件添加可折叠功能 ([00c82fe](https://github.com/sincely/vite6-electron-vue3/commit/00c82fea27bd30e0f05aca107bde01065e6f36c3))
+* 优化 logo 组件，添加窄栏形态支持，调整样式以居中显示图标 ([5b1f45e](https://github.com/sincely/vite6-electron-vue3/commit/5b1f45e8f9bb083d755e4674611f212a43d2e01b))
+* 优化搜索弹窗，调整输入框提示和结果展示，增加搜索历史标题 ([3b48bc1](https://github.com/sincely/vite6-electron-vue3/commit/3b48bc1d7f8db24adbd69324f5a1d9b638e9ea04))
+* 优化日志记录，添加 ANSI 颜色剥离功能，确保日志文件为纯文本 ([1484f3b](https://github.com/sincely/vite6-electron-vue3/commit/1484f3b54b81d8795ffcefdb39b3104c6e64bc77))
+* 固定登录窗口尺寸，禁止拉伸以保持分栏布局一致性 ([0992872](https://github.com/sincely/vite6-electron-vue3/commit/0992872e488912ce4ecb5d12a407fe5b644c77cb))
+* 更新 HTTP 代理日志格式，移除渲染端日志镜像，优化请求和响应处理 ([0d71f60](https://github.com/sincely/vite6-electron-vue3/commit/0d71f60ad23acc0d0dcb8689debc851b851646c9))
+* 更新 MixedSubmenu 组件以使用动态折叠状态，优化可折叠功能 ([0a6a9ef](https://github.com/sincely/vite6-electron-vue3/commit/0a6a9ef147147335777877afb2e5e9d6d5f322e6))
+* 注释掉搜索项路径显示，优化搜索结果展示 ([b872cd4](https://github.com/sincely/vite6-electron-vue3/commit/b872cd444333fbe40b46039a9de77fc28c696265))
+* 添加 HeatmapChart 图表类型支持 ([e900488](https://github.com/sincely/vite6-electron-vue3/commit/e90048842047bf0e3175368c6e817f73fee53d2a))
+* 添加主进程 HTTP 代理配置，优化 axios 请求设置，增强表格组件功能，更新日历事件弹窗样式 ([df89693](https://github.com/sincely/vite6-electron-vue3/commit/df896932f3f1911bf13099e23ee7af70ea22dc8a))
+* 添加子菜单收缩/展开功能，优化样式以提升用户体验 ([a949937](https://github.com/sincely/vite6-electron-vue3/commit/a949937588eb69286f5ff56ad86d359620d0ad3f))
+* 添加资产资源获取工具函数 ([1fd27e7](https://github.com/sincely/vite6-electron-vue3/commit/1fd27e7c2973afa7ae0aa028dfcc3a3272a6ed4e))
+* 添加问题反馈组件，支持用户提交反馈和建议 ([7bbaaf1](https://github.com/sincely/vite6-electron-vue3/commit/7bbaaf1ffad2e14b9eea2bd47988553bf726a43f))
+* 移除 global-header 和 global-topMenu 组件中的高度设置，优化布局 ([0505e4f](https://github.com/sincely/vite6-electron-vue3/commit/0505e4fca1e85cf42395611c87874b9ca72ff906))
+* 编辑表格功能提交 ([48b1cf3](https://github.com/sincely/vite6-electron-vue3/commit/48b1cf30899ffdb6da47d57f635c5d0224f07c6c))
+* 表格组件优化 ([7f17881](https://github.com/sincely/vite6-electron-vue3/commit/7f17881d739ded0b75292ad969eebc0bc3aca9fb))
+* 调整搜索历史项宽度以优化布局 ([d6107a1](https://github.com/sincely/vite6-electron-vue3/commit/d6107a17753604bd0dadcf406c9520348f7badd2))
+
 ## [1.0.7](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.6...v1.0.7) (2026-08-27)
 
 ### ✨ Features
