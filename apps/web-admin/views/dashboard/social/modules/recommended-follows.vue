@@ -7,7 +7,7 @@
       <el-link
         class="recommended-follows-more"
         type="primary"
-        :underline="false"
+        underline="never"
       >
         查看全部
       </el-link>
@@ -41,7 +41,6 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
 import avatar1 from '@/assets/images/avatar/avatar1.webp'
 import avatar2 from '@/assets/images/avatar/avatar2.webp'
 import avatar3 from '@/assets/images/avatar/avatar3.webp'

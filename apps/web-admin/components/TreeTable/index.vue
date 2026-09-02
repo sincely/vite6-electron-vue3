@@ -149,7 +149,7 @@
 
       <!-- 操作列 -->
       <el-table-column
-        v-if="mergedConfig.useAction"
+        v-if="mergedConfig.useAction && showActionColumn"
         label="操作"
         width="120"
         align="center"
@@ -225,11 +225,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { parseTime } from '@/utils/time'
-import ColumnSetting from '@/components/AdvanceTable/components/ColumnSetting.vue'
-import StyleSetting from '@/components/AdvanceTable/components/StyleSetting.vue'
+import ColumnSetting from '@/components/ColumnSetting/index.vue'
+import StyleSetting from '@/components/StyleSetting/index.vue'
 import DictTag from './DictTag.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { Icon } from '@iconify/vue'
@@ -288,25 +287,46 @@ const tableStyle = reactive({
   // 树形表格默认不使用斑马纹，层级关系更清晰
   stripe: props.config?.table?.stripe ?? false,
   border: props.config?.table?.border ?? true,
-  headerBg: props.config?.table?.headerBg ?? ''
+  headerBg: props.config?.table?.headerBg ?? true
 })
-// 自定义表头背景 -> CSS 变量（为空时使用主题默认背景）
+// 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
-  return tableStyle.headerBg
-    ? { '--smart-table-header-bg': tableStyle.headerBg }
-    : {}
+  return {
+    '--smart-table-header-bg': tableStyle.headerBg
+      ? 'var(--color-bg-input)'
+      : 'transparent'
+  }
 })
+
+// 操作列为模板内置列（config.useAction 开启时渲染），不在宿主 columns 配置中；
+// 注入到设置列表以支持显示/隐藏切换（draggable: false —— 渲染位置固定在最右侧，不参与排序）
+const ACTION_COLUMN = {
+  prop: '__action__',
+  label: '操作',
+  fixed: 'right',
+  draggable: false
+}
 
 // 初始化列配置
 watch(
   () => props.columns,
   (newVal) => {
-    if (newVal) {
-      localColumns.value = [...newVal]
+    if (!newVal) return
+    const cols = [...newVal]
+    const useAction = props.config?.useAction ?? false
+    if (useAction && !cols.some((c) => c.label === '操作')) {
+      cols.push({ ...ACTION_COLUMN })
     }
+    localColumns.value = cols
   },
   { immediate: true, deep: true }
 )
+
+// 操作列显隐：跟随 ColumnSetting 注入项的 show 状态
+const showActionColumn = computed(() => {
+  const col = localColumns.value.find((c) => c.prop === ACTION_COLUMN.prop)
+  return !col || col.show !== false
+})
 
 // 斑马纹/边框变更后重新布局
 watch(
@@ -349,6 +369,8 @@ const mergedConfig = computed(() => {
 // 可见列（支持 show/hide/hidden，同时避免重复渲染 selection 列）
 const visibleColumns = computed(() => {
   return localColumns.value.filter((col) => {
+    // 内置操作列在模板中单独渲染，不走列循环
+    if (col.prop === ACTION_COLUMN.prop) return false
     if (mergedConfig.value.selection && col.type === 'selection') {
       return false
     }
@@ -593,7 +615,6 @@ defineExpose({
 .no-data img {
   width: 120px;
   opacity: 0.6;
-  animation: float-bounce 3s ease-in-out infinite;
 }
 
 .no-data p {

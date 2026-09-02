@@ -13,7 +13,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import GlobalLogo from '../global-logo/index.vue'
 import SidebarMenu from './modules/Menu.vue'

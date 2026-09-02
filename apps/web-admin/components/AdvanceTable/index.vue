@@ -1,49 +1,16 @@
 <template>
-  <div class="smart-table">
+  <div ref="smartTableRef" class="smart-table">
     <!-- 表格工具栏 -->
     <div class="table-toolbar">
       <div class="toolbar-left">
         <slot name="toolbar-left" />
       </div>
       <div class="toolbar-right">
-        <slot name="toolbar" />
-        <Icon
-          icon="ri:refresh-line"
-          class="toolbar-icon"
-          :class="{ 'is-spinning': loading }"
-          width="18"
-          height="18"
-          @click="refresh"
-        />
+        <TableRefresh :loading="loading" @refresh="refresh" />
         <!-- 设置表格大小（点击箭头下拉） -->
-        <el-dropdown
-          trigger="click"
-          placement="bottom-end"
-          @command="handleTableSizeCommand"
-        >
-          <span class="toolbar-icon table-size-trigger" title="表格大小">
-            <Icon icon="ri:arrow-up-down-fill" width="18" height="18" />
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="small">紧凑</el-dropdown-item>
-              <el-dropdown-item command="default">默认</el-dropdown-item>
-              <el-dropdown-item command="large">宽松</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-
+        <TableSize v-model="tableSize" />
         <!-- 全屏切换 -->
-        <Icon
-          :icon="
-            isFullscreen ? 'ri:fullscreen-exit-line' : 'ri:fullscreen-line'
-          "
-          class="toolbar-icon"
-          width="18"
-          height="18"
-          :title="isFullscreen ? '退出全屏' : '全屏'"
-          @click="toggleFullscreen"
-        />
+        <TableFullscreen />
 
         <ColumnSetting v-model:columns="localColumns" />
         <StyleSetting
@@ -58,6 +25,7 @@
       ref="tableRef"
       v-loading="loading"
       :data="tableData"
+      :max-height="tableHeight"
       v-bind="mergedConfig.table"
       :stripe="tableStyle.stripe"
       :border="tableStyle.border"
@@ -65,6 +33,7 @@
       :style="headerBgCssVar"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
+      @header-dragend="handleHeaderDragend"
     >
       <!-- 多选列 (根据 config.selection 开启) -->
       <el-table-column
@@ -174,11 +143,8 @@
 </template>
 
 <script setup>
-import ColumnSetting from './components/ColumnSetting.vue'
-import StyleSetting from './components/StyleSetting.vue'
 import { useTableHeight } from '@/hooks/useTableHeight'
 import { promiseTimeout } from '@vueuse/core'
-import { Icon } from '@iconify/vue'
 // Props
 const props = defineProps({
   columns: {
@@ -222,13 +188,15 @@ const tableSize = ref(props.config?.table?.size || 'small')
 const tableStyle = reactive({
   stripe: props.config?.table?.stripe ?? true,
   border: props.config?.table?.border ?? true,
-  headerBg: props.config?.table?.headerBg ?? ''
+  headerBg: props.config?.table?.headerBg ?? true
 })
-// 自定义表头背景 -> CSS 变量（为空时使用主题默认背景）
+// 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
-  return tableStyle.headerBg
-    ? { '--smart-table-header-bg': tableStyle.headerBg }
-    : {}
+  return {
+    '--smart-table-header-bg': tableStyle.headerBg
+      ? 'var(--color-bg-input)'
+      : 'transparent'
+  }
 })
 const tableData = ref([])
 const total = ref(0)
@@ -238,6 +206,15 @@ const queryParams = reactive({
   ...props.params
 })
 const localColumns = ref([])
+const smartTableRef = ref(null)
+
+// 列宽自适应：列标识与初始配置的默认列宽
+// Element Plus 拖拽列宽时会把像素值写入内部 column.width，该列从此变成固定宽、
+// 不再参与剩余空间分配（源码以 width 是否为数字判断弹性列），导致容器变宽后
+// 表格右侧留白、无法重新自适应。这里记录每列的初始宽度配置，
+// 容器宽度变化时把拖拽产生的宽度还原，让 minWidth 列恢复弹性。
+const colKeyOf = (col) => col.prop || col.label
+const defaultWidths = {}
 
 // 初始化列配置
 watch(
@@ -245,10 +222,76 @@ watch(
   (newVal) => {
     if (newVal) {
       localColumns.value = [...newVal]
+      // 记录默认列宽（undefined 表示弹性列，仅有 minWidth）
+      Object.keys(defaultWidths).forEach((key) => delete defaultWidths[key])
+      newVal.forEach((col) => {
+        defaultWidths[colKeyOf(col)] = col.width
+      })
     }
   },
   { immediate: true, deep: true }
 )
+
+// 列宽拖拽结束：把新宽度回写到列配置，保持 prop 与表格内部状态一致
+// （整体替换列对象，避免污染页面传入的原始 columns 配置）
+function handleHeaderDragend(newWidth, _oldWidth, column) {
+  const key = column.property || column.label
+  const index = localColumns.value.findIndex((col) => colKeyOf(col) === key)
+  if (index === -1) return
+  const item = localColumns.value[index]
+  if (item.width === newWidth) return
+  localColumns.value.splice(index, 1, { ...item, width: newWidth })
+}
+
+// 还原拖拽产生的列宽为默认配置，恢复表格自适应能力
+function resetColumnWidths() {
+  let changed = false
+  const next = localColumns.value.map((col) => {
+    const key = colKeyOf(col)
+    if (!(key in defaultWidths)) return col
+    const defaultWidth = defaultWidths[key]
+    if (col.width === defaultWidth) return col
+    changed = true
+    return { ...col, width: defaultWidth }
+  })
+  if (changed) {
+    localColumns.value = next
+    nextTick(() => {
+      tableRef.value?.doLayout()
+    })
+  }
+}
+
+// 监听表格容器宽度变化（窗口缩放 / 全屏切换 / 侧边栏折叠等），
+// 宽度改变时还原拖拽列宽，让列重新自适应容器宽度
+let layoutObserver = null
+let lastContainerWidth = 0
+
+onMounted(() => {
+  nextTick(() => {
+    const el = smartTableRef.value
+    if (!el || typeof ResizeObserver === 'undefined') return
+    layoutObserver = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect?.width ?? 0
+      if (
+        lastContainerWidth &&
+        width &&
+        Math.abs(width - lastContainerWidth) >= 1
+      ) {
+        resetColumnWidths()
+      }
+      lastContainerWidth = width
+    })
+    layoutObserver.observe(el)
+  })
+})
+
+onUnmounted(() => {
+  if (layoutObserver) {
+    layoutObserver.disconnect()
+    layoutObserver = null
+  }
+})
 
 watch(
   [tableSize, () => tableStyle.stripe, () => tableStyle.border],
@@ -259,14 +302,6 @@ watch(
   },
   { immediate: true }
 )
-
-function handleTableSizeCommand(val) {
-  tableSize.value = val
-}
-
-// 内容全屏由布局层统一管理（隐藏侧边栏/头部/标签栏，ESC 退出也在布局层处理），此处直接注入使用
-const toggleFullscreen = inject('toggleFullscreen', () => {})
-const isFullscreen = inject('isFullscreen', ref(false))
 
 // 合并配置
 const mergedConfig = computed(() => {
@@ -396,22 +431,6 @@ function handleSizeChange(val) {
   getList()
 }
 
-// 链接点击
-function handleLinkClick(column, row) {
-  if (props.events?.onLinkClick) {
-    props.events.onLinkClick(column, row)
-  } else if (column.link?.name) {
-    // 路由跳转
-    router.push({
-      name: column.link.name,
-      params:
-        typeof column.link.params === 'function'
-          ? column.link.params(row)
-          : column.link.params
-    })
-  }
-}
-
 // 初始化
 onMounted(() => {
   if (mergedConfig.value.initResquest) {
@@ -420,12 +439,14 @@ onMounted(() => {
 })
 
 // 监听外部 params 变更
+// flush: 'sync'：调用方可能「改 params 后立即 getList()」（如统计卡片筛选、重置），
+// 同步写入保证同一 tick 内的请求携带最新参数
 watch(
   () => props.params,
   (newVal) => {
     Object.assign(queryParams, newVal)
   },
-  { deep: true }
+  { deep: true, flush: 'sync' }
 )
 </script>
 
@@ -462,39 +483,6 @@ watch(
     display: flex;
     gap: 10px;
     align-items: center;
-
-    .table-size-trigger {
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .toolbar-icon {
-      width: 18px;
-      height: 18px;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-      &:hover {
-        color: var(--color-primary);
-        transform: scale(1.15);
-      }
-
-      &.is-spinning {
-        pointer-events: none;
-        animation: rotate 0.8s linear infinite;
-      }
-    }
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -506,7 +494,6 @@ watch(
 .no-data img {
   width: 120px;
   opacity: 0.6;
-  animation: float-bounce 3s ease-in-out infinite;
 }
 
 .no-data p {

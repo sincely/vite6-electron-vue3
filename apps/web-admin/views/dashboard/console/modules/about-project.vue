@@ -4,8 +4,8 @@
       <div class="about-project-body">
         <div class="about-project-info">
           <h2>关于项目</h2>
-          <p>Lightning 是一款兼具设计美学与高效开发的桌面后台系统</p>
-          <p>使用了 Vue3、Vite、Electron、Element Plus 等前沿技术</p>
+          <p>Lightning 是一款兼具设计美学与高效开发的 Web 管理后台</p>
+          <p>使用了 Vue3、Vite、TypeScript、Element Plus 等前沿技术</p>
 
           <div class="about-project-links">
             <div
@@ -33,7 +33,7 @@ const linkList = [
   { label: 'Vue3 文档', url: 'https://cn.vuejs.org/' },
   { label: 'Element Plus', url: 'https://element-plus.org/zh-CN/' },
   { label: 'Vite 文档', url: 'https://cn.vitejs.dev/' },
-  { label: 'Electron', url: 'https://www.electronjs.org/' }
+  { label: 'Pinia', url: 'https://pinia.vuejs.org/zh/' }
 ]
 
 /**

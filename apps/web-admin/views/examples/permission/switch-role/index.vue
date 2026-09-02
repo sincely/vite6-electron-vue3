@@ -115,7 +115,6 @@
 
 <script setup>
 defineOptions({ name: 'example-switch-role' })
-import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
 

@@ -20,7 +20,20 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: viteEnv.VITE_MOCK_SERVER_URL || 'http://localhost:5320/api',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
+          rewrite: (path) => path.replace(/^\/api/, ''),
+          // '@' 别名指向项目根目录，源码模块在 URL 上表现为 /api/*.js
+          // （如 @/api/user.js → /api/user.js）。这类请求是浏览器加载的
+          // ES 模块，必须交给 vite 处理，不能被代理到 mock 服务，
+          // 否则整个模块图加载失败导致白屏。带扩展名的路径一律放行。
+          bypass(req) {
+            if (
+              /^\/api\/[^?]*\.(js|mjs|cjs|css|map|vue|ts|tsx|jsx|scss)(\?|$)/.test(
+                req.url
+              )
+            ) {
+              return req.url
+            }
+          }
         }
       }
     },
@@ -51,7 +64,6 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true,
       assetsInlineLimit: 4096,
       rollupOptions: {
-        external: ['electron'],
         treeshake: {
           propertyReadSideEffects: false,
           tryCatchDeoptimization: false

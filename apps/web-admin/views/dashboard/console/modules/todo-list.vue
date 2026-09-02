@@ -24,8 +24,6 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-
 /**
  * 待办事项列表
  * 记录每日工作任务及完成状态

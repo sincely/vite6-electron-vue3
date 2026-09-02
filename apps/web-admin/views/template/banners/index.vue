@@ -145,7 +145,6 @@
 </template>
 
 <script setup>
-import PageHeader from '@/components/PageHeader/index.vue'
 import icon2 from '@/assets/images/3d/icon2.webp'
 import icon3 from '@/assets/images/3d/icon3.webp'
 import icon4 from '@/assets/images/3d/icon4.webp'

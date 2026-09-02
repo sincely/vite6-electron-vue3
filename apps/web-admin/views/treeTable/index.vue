@@ -18,8 +18,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import TreeTable from '@/components/TreeTable/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const treeTableRef = ref()

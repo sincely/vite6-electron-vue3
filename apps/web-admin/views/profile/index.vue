@@ -298,7 +298,6 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Calendar,
@@ -309,7 +308,6 @@ import {
   Message,
   RefreshLeft
 } from '@element-plus/icons-vue'
-import PageHeader from '@/components/PageHeader/index.vue'
 import { useUserStore } from '@/store/modules/user'
 
 defineOptions({ name: 'profile' })

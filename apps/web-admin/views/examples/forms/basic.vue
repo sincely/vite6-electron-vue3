@@ -43,7 +43,6 @@
 
 <script setup>
 defineOptions({ name: 'example-form-basic' })
-import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 
 const formRef = ref(null)

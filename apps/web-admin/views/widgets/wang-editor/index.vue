@@ -223,7 +223,6 @@ const handleGetContent = () =&gt; {
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
 defineOptions({ name: 'WidgetsWangEditor' })

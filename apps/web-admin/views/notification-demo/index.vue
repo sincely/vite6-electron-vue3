@@ -1,9 +1,9 @@
 <template>
   <div class="notification-demo">
     <div class="demo-header">
-      <h1>🔔 Electron 通知系统演示</h1>
+      <h1>🔔 通知系统演示</h1>
       <p class="demo-subtitle">
-        支持原生 OS 通知 + 应用内 Toast，主进程 & 渲染进程均可使用
+        支持浏览器原生系统通知 + 应用内 Toast，未授权时自动降级为 Toast
       </p>
     </div>
 
@@ -99,19 +99,19 @@
         <template #header>
           <div class="card-header">
             <el-icon :size="20"><Connection /></el-icon>
-            <span>Preload API 调用</span>
+            <span>工具模块调用</span>
           </div>
         </template>
         <div class="btn-group">
           <el-button type="primary" :icon="Connection" @click="sendViaPreload">
-            window.notification.show()
+            notification.show()
           </el-button>
           <el-button :icon="Files" @click="sendViaImport">
             import { showNotification }
           </el-button>
         </div>
         <div class="code-hint">
-          <code>window.notification.show({ title, body, onClick })</code>
+          <code>notification.show({ title, body, onClick })</code>
         </div>
       </el-card>
 
@@ -126,9 +126,7 @@
         <div class="info-list">
           <div class="info-item">
             <span class="info-label">运行环境：</span>
-            <el-tag size="small" :type="isMain ? 'warning' : 'success'">
-              {{ isMain ? '主进程' : '渲染进程' }}
-            </el-tag>
+            <el-tag size="small" type="success">浏览器</el-tag>
           </div>
           <div class="info-item">
             <span class="info-label">原生通知支持：</span>
@@ -184,7 +182,6 @@
 
 <script setup>
 defineOptions({ name: 'notification-demo' })
-import { ref, computed } from 'vue'
 import {
   SuccessFilled,
   WarningFilled,
@@ -202,15 +199,13 @@ import {
   ChatDotRound
 } from '@element-plus/icons-vue'
 import { useNotificationStore } from '@/store/modules/notification'
-import {
+import notification, {
   showNotification,
-  isNativeNotificationSupported,
-  isMain as checkIsMain
-} from '../../../shared/notification'
+  isNativeNotificationSupported
+} from '@/utils/notification'
 
 const store = useNotificationStore()
 const nativeResult = ref(null)
-const isMain = checkIsMain()
 const nativeSupported = isNativeNotificationSupported()
 
 // ─── 基础通知类型 ─────────────────────────────────────
@@ -312,18 +307,14 @@ const sendCritical = async () => {
 
 // ─── Preload / Import 调用 ────────────────────────────
 const sendViaPreload = async () => {
-  if (window.notification) {
-    await window.notification.show({
-      title: 'Preload API',
-      body: '通过 window.notification.show() 发送的原生通知',
-      onClick: () => {
-        ElMessage.success('Preload API 通知被点击！')
-      }
-    })
-    ElMessage.success('已通过 Preload API 发送通知')
-  } else {
-    ElMessage.warning('window.notification 不可用')
-  }
+  await notification.show({
+    title: '默认导出 API',
+    body: '通过 notification.show() 发送的通知',
+    onClick: () => {
+      ElMessage.success('默认导出 API 通知被点击！')
+    }
+  })
+  ElMessage.success('已通过默认导出 API 发送通知')
 }
 
 const sendViaImport = async () => {

@@ -52,7 +52,6 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
 import { Search, MoreFilled } from '@element-plus/icons-vue'
 
 /**

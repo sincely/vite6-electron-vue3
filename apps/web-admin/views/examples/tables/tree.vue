@@ -58,7 +58,6 @@
 
 <script setup>
 defineOptions({ name: 'example-tree-table' })
-import { ref, reactive } from 'vue'
 import { getTableList } from '@/api/table'
 
 const treeRef = ref(null)

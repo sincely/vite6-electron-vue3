@@ -3,7 +3,6 @@
 </template>
 
 <script setup>
-import { computed, watch, nextTick, shallowRef } from 'vue'
 import { useTransition, TransitionPresets } from '@vueuse/core'
 
 defineOptions({ name: 'CountTo' })

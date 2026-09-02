@@ -254,7 +254,6 @@
 </template>
 
 <script setup>
-import PageHeader from '@/components/PageHeader/index.vue'
 import cover1 from '@/assets/images/cover/img1.webp'
 import cover2 from '@/assets/images/cover/img2.webp'
 import cover3 from '@/assets/images/cover/img3.webp'

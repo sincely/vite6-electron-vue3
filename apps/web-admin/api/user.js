@@ -9,7 +9,7 @@ export const login = (data) => {
   })
 }
 
-// 获取用户信息
+// 获取用户信息（token 由 request.js 自动从 userStore 注入）
 export const getUserInfo = () => {
   return request({
     url: '/user/info',

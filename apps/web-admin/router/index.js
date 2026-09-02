@@ -410,6 +410,17 @@ export const asyncRouteTree = [
           keepAlive: true,
           showBadge: true
         }
+      },
+      {
+        path: 'request-demo',
+        name: 'request-demo',
+        component: () => import('@/views/request-demo/index.vue'),
+        meta: {
+          title: '请求演示',
+          icon: 'webhook',
+          group: '/components',
+          keepAlive: true
+        }
       }
     ]
   },
@@ -448,23 +459,35 @@ export const asyncRouteTree = [
         }
       },
       {
+        path: 'file-upload',
+        name: 'widgets-file-upload',
+        component: () => import('@/views/widgets/file-upload/index.vue'),
+        meta: {
+          title: '文件上传',
+          icon: 'upload',
+          group: '/widgets',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'chunk-upload',
+        name: 'widgets-chunk-upload',
+        component: () => import('@/views/widgets/chunk-upload/index.vue'),
+        meta: {
+          title: '大文件上传',
+          icon: 'cloud-upload',
+          group: '/widgets',
+          keepAlive: true,
+          showTextBadge: 'New'
+        }
+      },
+      {
         path: 'excel',
         name: 'widgets-excel',
         component: () => import('@/views/widgets/excel/index.vue'),
         meta: {
           title: 'Excel 导入导出',
           icon: 'file-spreadsheet',
-          group: '/widgets',
-          keepAlive: true
-        }
-      },
-      {
-        path: 'video',
-        name: 'widgets-video',
-        component: () => import('@/views/widgets/video/index.vue'),
-        meta: {
-          title: '视频播放器',
-          icon: 'monitor-play',
           group: '/widgets',
           keepAlive: true
         }
@@ -478,6 +501,18 @@ export const asyncRouteTree = [
           icon: 'sigma',
           group: '/widgets',
           keepAlive: true
+        }
+      },
+      {
+        path: 'morph-container',
+        name: 'widgets-morph-container',
+        component: () => import('@/views/widgets/morph-container/index.vue'),
+        meta: {
+          title: '容器变形',
+          icon: 'layers-3',
+          group: '/widgets',
+          keepAlive: true,
+          showTextBadge: 'New'
         }
       },
       {
@@ -720,6 +755,17 @@ export const asyncRouteTree = [
         meta: {
           title: '高级表格',
           icon: 'table-2',
+          group: '/examples',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'table-editable',
+        name: 'example-table-editable',
+        component: () => import('@/views/editableTable/index.vue'),
+        meta: {
+          title: '可编辑表格',
+          icon: 'notebook-pen',
           group: '/examples',
           keepAlive: true
         }

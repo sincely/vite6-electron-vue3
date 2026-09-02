@@ -1,29 +1,22 @@
-/** 引入柱状图and折线图图表，图表后缀都为 Chart  */
+/** 引入项目实际使用的图表类型，图表后缀都为 Chart  */
 import {
   BarChart,
   CandlestickChart,
-  GaugeChart,
+  FunnelChart,
+  HeatmapChart,
   LineChart,
-  MapChart,
-  PictorialBarChart,
   PieChart,
   RadarChart,
   ScatterChart
 } from 'echarts/charts'
-// 引入提示框，标题，直角坐标系，数据集，内置数据转换器组件，组件后缀都为 Component
+// 引入项目实际使用的组件，组件后缀都为 Component
 import {
-  AriaComponent,
-  CalendarComponent,
   DataZoomComponent,
   GridComponent,
   LegendComponent,
-  MarkLineComponent,
-  ParallelComponent,
   PolarComponent,
   RadarComponent,
-  TimelineComponent,
   TitleComponent,
-  ToolboxComponent,
   TooltipComponent,
   VisualMapComponent
 } from 'echarts/components'
@@ -31,7 +24,7 @@ import {
 import * as echarts from 'echarts/core'
 // 标签自动布局，全局过渡动画等特性
 import { LabelLayout, UniversalTransition } from 'echarts/features'
-// 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
+// 引入 SVG 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { SVGRenderer } from 'echarts/renderers'
 // 注册必须的组件
 echarts.use([
@@ -40,25 +33,18 @@ echarts.use([
   TooltipComponent,
   GridComponent,
   PolarComponent,
-  AriaComponent,
-  ParallelComponent,
   BarChart,
   LineChart,
   PieChart,
-  MapChart,
   RadarChart,
-  GaugeChart,
   ScatterChart,
   CandlestickChart,
+  FunnelChart,
+  HeatmapChart,
   SVGRenderer,
-  PictorialBarChart,
   RadarComponent,
-  ToolboxComponent,
   DataZoomComponent,
   VisualMapComponent,
-  TimelineComponent,
-  CalendarComponent,
-  MarkLineComponent,
   LabelLayout,
   UniversalTransition
 ])

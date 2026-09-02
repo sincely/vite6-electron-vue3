@@ -10,7 +10,7 @@
     <div class="scroll-list">
       <!-- 基础用法 -->
       <TextScroll
-        text="Lightning 是一款兼具设计美学与高效开发的桌面应用 <a target='_blank' href='https://www.electronjs.org/'>访问 Electron 官网</a> 了解更多"
+        text="Lightning 是一款兼具设计美学与高效开发的管理后台 <a target='_blank' href='https://cn.vuejs.org/'>访问 Vue 官网</a> 了解更多"
         showClose
       />
 

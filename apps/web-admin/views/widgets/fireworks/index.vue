@@ -54,7 +54,6 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue'
 import eventBus from '@/utils/eventBus'
 import bp from '@/assets/images/ceremony/hb.png'
 import sd from '@/assets/images/ceremony/sd.png'

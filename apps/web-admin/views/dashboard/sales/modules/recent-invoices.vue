@@ -81,7 +81,6 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
 import { Search, MoreFilled } from '@element-plus/icons-vue'
 import avatar1 from '@/assets/images/avatar/avatar1.webp'
 import avatar2 from '@/assets/images/avatar/avatar2.webp'

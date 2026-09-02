@@ -47,7 +47,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
 import drawLogo from '@/assets/images/draw/draw1.png'
 
 defineOptions({ name: 'WidgetsQrcode' })

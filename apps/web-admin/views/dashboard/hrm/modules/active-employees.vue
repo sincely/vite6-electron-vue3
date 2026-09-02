@@ -4,7 +4,7 @@
       <div class="dash-header">
         <h4>在职人员</h4>
       </div>
-      <el-link class="active-employees-more" type="primary" :underline="false">
+      <el-link class="active-employees-more" type="primary" underline="never">
         查看全部 →
       </el-link>
     </template>

@@ -302,8 +302,6 @@
 </template>
 
 <script setup>
-import PageHeader from '@/components/PageHeader/index.vue'
-
 defineOptions({ name: 'template-charts' })
 
 /**

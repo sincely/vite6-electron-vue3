@@ -9,13 +9,15 @@
         height="14px"
       />
       <span class="search-trigger__text">搜索</span>
-      <span class="search-trigger__kbd">Ctrl K</span>
+      <span class="search-trigger__kbd">
+        {{ isMacPlatform ? '⌘' : 'Ctrl' }} K
+      </span>
     </button>
 
     <!-- 搜索弹窗 -->
     <ElDialog
       v-model="visible"
-      :width="600"
+      :width="640"
       :show-close="false"
       :lock-scroll="false"
       append-to-body
@@ -27,7 +29,7 @@
         ref="searchInputRef"
         v-model="keyword"
         class="search-input"
-        placeholder="搜索菜单..."
+        placeholder="搜索页面名称或路径"
       >
         <template #prefix>
           <SvgIcon icon-class="search" width="15px" height="15px" />
@@ -39,56 +41,65 @@
         </template>
       </ElInput>
 
-      <ElScrollbar ref="scrollbarRef" class="search-body" max-height="360px">
-        <!-- 搜索结果 -->
-        <template v-if="trimmedKeyword">
-          <div
-            v-for="(item, index) in searchResult"
-            :key="item.path"
-            class="search-item"
-            :class="{ 'is-active': activeIndex === index }"
-            @click="goTo(item)"
-            @mouseenter="handleMouseEnter(index)"
-          >
-            <span class="search-item__title">{{ item.title }}</span>
-            <Icon
-              v-show="activeIndex === index"
-              icon="lucide:corner-down-left"
-              class="search-item__enter"
-              width="14"
-            />
-            <span class="search-item__path">{{ item.path }}</span>
-          </div>
-          <div v-if="!searchResult.length" class="search-empty">
-            未找到相关菜单
-          </div>
-        </template>
+      <ElScrollbar ref="scrollbarRef" class="search-body" max-height="380px">
+        <p v-if="showHistoryTitle" class="search-history-title">搜索历史</p>
 
-        <!-- 搜索历史 -->
-        <template v-else-if="searchStore.searchHistory.length">
-          <p class="search-history-title">搜索历史</p>
-          <div
-            v-for="(item, index) in searchStore.searchHistory"
-            :key="item.path"
-            class="search-item"
-            :class="{ 'is-active': activeIndex === index }"
-            @click="goTo(item)"
-            @mouseenter="handleMouseEnter(index)"
-          >
-            <span class="search-item__title">{{ item.title }}</span>
-            <span class="search-item__path">{{ item.path }}</span>
-            <span
-              class="search-item__remove"
-              title="删除记录"
-              @click.stop="removeHistory(index)"
-            >
-              <SvgIcon icon-class="close" width="12px" height="12px" />
-            </span>
+        <!-- 搜索结果 / 搜索历史 -->
+        <div
+          v-for="(item, index) in displayList"
+          :key="item.path"
+          class="search-item"
+          :class="{ 'is-active': activeIndex === index }"
+          @click="goTo(item)"
+          @mouseenter="handleMouseEnter(index)"
+        >
+          <div class="search-item__main">
+            <p class="search-item__title">
+              <template v-for="(seg, si) in highlight(item.title)" :key="si">
+                <mark v-if="seg.hit" class="search-item__mark">
+                  {{ seg.text }}
+                </mark>
+                <span v-else>{{ seg.text }}</span>
+              </template>
+            </p>
+            <p class="search-item__path">
+              <template v-for="(crumb, ci) in breadcrumbOf(item)" :key="ci">
+                <span v-if="ci" class="search-item__sep">/</span>
+                <span class="search-item__crumb">
+                  <template v-for="(seg, si) in highlight(crumb)" :key="si">
+                    <mark v-if="seg.hit" class="search-item__mark">
+                      {{ seg.text }}
+                    </mark>
+                    <span v-else>{{ seg.text }}</span>
+                  </template>
+                </span>
+              </template>
+            </p>
           </div>
-        </template>
+          <Icon
+            v-show="activeIndex === index"
+            icon="lucide:corner-down-left"
+            class="search-item__enter"
+            width="15"
+          />
+          <span
+            v-if="!trimmedKeyword"
+            class="search-item__remove"
+            title="删除记录"
+            @click.stop="removeHistory(index)"
+          >
+            <SvgIcon icon-class="close" width="12px" height="12px" />
+          </span>
+        </div>
 
-        <!-- 无关键字且无历史 -->
-        <div v-else class="search-empty">输入关键字搜索菜单</div>
+        <!-- 空状态 -->
+        <div v-if="!displayList.length" class="search-empty">
+          {{
+            trimmedKeyword
+              ? '未找到相关菜单'
+              : '可搜索页面名称或路径，快速定位菜单'
+          }}
+        </div>
       </ElScrollbar>
 
       <template #footer>
@@ -101,7 +112,10 @@
           </div>
           <div class="search-footer__item">
             <span class="search-footer__key">
-              <Icon icon="ri:arrow-up-down-fill" width="12" />
+              <Icon icon="lucide:chevron-up" width="12" />
+            </span>
+            <span class="search-footer__key">
+              <Icon icon="lucide:chevron-down" width="12" />
             </span>
             <span>切换</span>
           </div>
@@ -117,7 +131,7 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import { asyncRoutes } from '@/router'
+import { asyncRouteTree } from '@/router'
 import { useSearchStore } from '@/store/modules/search'
 import { useUserStore } from '@/store/modules/user'
 
@@ -135,60 +149,125 @@ const isKeyboardNavigating = ref(false)
 
 const trimmedKeyword = computed(() => keyword.value.trim().toLowerCase())
 
-// 菜单数据源：扁平化路由中可搜索的菜单项
+// 拼接路由完整路径（与 router/index.js 的扁平化规则保持一致）
+const joinRoutePath = (parentPath, routePath) => {
+  if (!routePath) return parentPath || '/'
+  if (routePath.startsWith('/')) return routePath
+  return `${parentPath}/${routePath}`.replace(/\/+/g, '/')
+}
+
+// 菜单数据源：递归路由树，收集可搜索菜单项及其面包屑链路
 const menuList = computed(() => {
-  const map = new Map()
+  const list = []
 
-  asyncRoutes.forEach((route) => {
-    const title = route.meta?.title
-    const path = route.path
+  const walk = (routes, parentPath, ancestors) => {
+    routes.forEach((route) => {
+      const path = joinRoutePath(parentPath, route.path)
+      const title = route.meta?.title
+      const chain = title ? [...ancestors, title] : ancestors
 
-    if (!title || !path) return
-    if (route.meta?.noLayout) return
-    if (!route.name) return
-    // 页面可见性：过滤当前角色无权访问的路由
-    const roles = route.meta?.roles
-    if (
-      roles?.length &&
-      !roles.some((role) => userStore.roles.includes(role))
-    ) {
-      return
-    }
+      if (title && route.name && !route.meta?.noLayout) {
+        // 页面可见性：过滤当前角色无权访问的路由
+        const roles = route.meta?.roles
+        const roleAllowed =
+          !roles?.length || roles.some((role) => userStore.roles.includes(role))
 
-    if (!map.has(path)) {
-      map.set(path, { title, path })
-    }
-  })
+        if (roleAllowed && !list.some((item) => item.path === path)) {
+          list.push({ title, path, breadcrumb: chain })
+        }
+      }
 
-  return Array.from(map.values())
+      if (route.children?.length) {
+        walk(route.children, path, chain)
+      }
+    })
+  }
+
+  walk(asyncRouteTree, '', [])
+  return list
 })
 
-// 搜索结果
+const menuPathMap = computed(
+  () => new Map(menuList.value.map((item) => [item.path, item]))
+)
+
+// 匹配评分：标题前缀 > 标题包含 > 面包屑包含 > 路径包含，未命中为 Infinity
+const matchScore = (item, kw) => {
+  const title = item.title.toLowerCase()
+  if (title.startsWith(kw)) return 0
+  if (title.includes(kw)) return 1
+  if (item.breadcrumb.some((crumb) => crumb.toLowerCase().includes(kw))) {
+    return 2
+  }
+  if (item.path.toLowerCase().includes(kw)) return 3
+  return Infinity
+}
+
+// 搜索结果（按匹配评分升序）
 const searchResult = computed(() => {
   const kw = trimmedKeyword.value
   if (!kw) return []
 
-  return menuList.value.filter((item) => {
-    return (
-      item.title.toLowerCase().includes(kw) ||
-      item.path.toLowerCase().includes(kw)
-    )
-  })
+  return menuList.value
+    .map((item) => ({ item, score: matchScore(item, kw) }))
+    .filter(({ score }) => score !== Infinity)
+    .sort((a, b) => a.score - b.score)
+    .map(({ item }) => item)
 })
 
-// 当前激活列表（参与键盘导航）：有关键字为搜索结果，否则为历史记录
-const activeList = computed(() => {
+// 当前展示列表：有关键字为搜索结果，否则为历史记录
+const displayList = computed(() => {
   return trimmedKeyword.value ? searchResult.value : searchStore.searchHistory
 })
+
+const showHistoryTitle = computed(
+  () => !trimmedKeyword.value && searchStore.searchHistory.length > 0
+)
+
+// 将文本按关键字拆分为高亮/普通片段
+const highlight = (text) => {
+  const kw = trimmedKeyword.value
+  if (!kw || !text) return [{ text, hit: false }]
+
+  const segments = []
+  const lower = text.toLowerCase()
+  let cursor = 0
+  let index = lower.indexOf(kw)
+
+  while (index !== -1) {
+    if (index > cursor) {
+      segments.push({ text: text.slice(cursor, index), hit: false })
+    }
+    segments.push({ text: text.slice(index, index + kw.length), hit: true })
+    cursor = index + kw.length
+    index = lower.indexOf(kw, cursor)
+  }
+
+  segments.push({ text: text.slice(cursor), hit: false })
+  return segments
+}
+
+// 面包屑：结果项自带链路；历史记录按 path 回填，兜底为标题本身
+const breadcrumbOf = (item) => {
+  if (item.breadcrumb?.length) return item.breadcrumb
+  return menuPathMap.value.get(item.path)?.breadcrumb ?? [item.title]
+}
 
 watch(trimmedKeyword, () => {
   activeIndex.value = 0
 })
 
 // 全局快捷键与弹窗内按键操作
+// 浏览器端无主进程平台探测，Mac 用 ⌘、其余用 Ctrl，二者同时监听
+const isMacPlatform =
+  typeof navigator !== 'undefined' && /Mac/i.test(navigator.userAgent)
+
 useEventListener(document, 'keydown', (event) => {
-  // Ctrl + K 打开搜索弹窗
-  if (event.ctrlKey && event.key.toLowerCase() === 'k') {
+  // Ctrl/Cmd + K 打开搜索弹窗
+  if (
+    (isMacPlatform ? event.metaKey : event.ctrlKey) &&
+    event.key.toLowerCase() === 'k'
+  ) {
     event.preventDefault()
     if (!visible.value) openDialog()
     return
@@ -225,17 +304,18 @@ const handleClose = () => {
 }
 
 const highlightPrev = () => {
-  if (!activeList.value.length) return
+  if (!displayList.value.length) return
   setKeyboardNavigating()
   activeIndex.value =
-    (activeIndex.value - 1 + activeList.value.length) % activeList.value.length
+    (activeIndex.value - 1 + displayList.value.length) %
+    displayList.value.length
   scrollToActiveItem()
 }
 
 const highlightNext = () => {
-  if (!activeList.value.length) return
+  if (!displayList.value.length) return
   setKeyboardNavigating()
-  activeIndex.value = (activeIndex.value + 1) % activeList.value.length
+  activeIndex.value = (activeIndex.value + 1) % displayList.value.length
   scrollToActiveItem()
 }
 
@@ -276,7 +356,7 @@ const scrollToActiveItem = () => {
 }
 
 const selectActive = () => {
-  const item = activeList.value[activeIndex.value]
+  const item = displayList.value[activeIndex.value]
   if (item) goTo(item)
 }
 
@@ -301,6 +381,7 @@ const removeHistory = (index) => {
   display: flex;
   gap: 8px;
   align-items: center;
+  width: 160px;
   height: 32px;
   padding: 0 8px 0 10px;
   font-size: 12px;
@@ -401,18 +482,22 @@ const removeHistory = (index) => {
   }
 
   .search-body {
+    min-height: 240px;
     margin-top: 12px;
+  }
+
+  .search-history-title {
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: var(--color-text-muted);
   }
 
   .search-item {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     align-items: center;
-    height: 44px;
-    padding: 0 12px;
+    padding: 10px 14px;
     margin-top: 8px;
-    font-size: 13px;
-    color: var(--color-text-primary);
     cursor: pointer;
     background: color-mix(in srgb, var(--color-bg-input), transparent 40%);
     border-radius: var(--radius-md);
@@ -420,27 +505,48 @@ const removeHistory = (index) => {
       background 0.15s ease,
       color 0.15s ease;
 
-    &:first-child {
+    &:first-of-type {
       margin-top: 0;
     }
 
+    &__main {
+      flex: 1;
+      min-width: 0;
+    }
+
     &__title {
+      margin: 0;
       overflow: hidden;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    &__enter {
-      flex-shrink: 0;
-      margin-left: auto;
-    }
-
     &__path {
-      flex-shrink: 0;
-      margin-left: auto;
+      margin: 4px 0 0;
+      overflow: hidden;
       font-size: 12px;
       color: var(--color-text-muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__sep {
+      margin: 0 6px;
+      color: var(--color-text-muted);
+    }
+
+    &__mark {
+      padding: 0 2px;
+      color: #1f2937;
+      background: #f5df7a;
+      border-radius: 3px;
+    }
+
+    &__enter {
+      flex-shrink: 0;
     }
 
     &__remove {
@@ -450,7 +556,6 @@ const removeHistory = (index) => {
       justify-content: center;
       width: 20px;
       height: 20px;
-      margin-left: 4px;
       color: var(--color-text-muted);
       border-radius: 50%;
       transition: all 0.15s ease;
@@ -462,25 +567,27 @@ const removeHistory = (index) => {
     }
 
     &.is-active {
-      color: #fff;
       background: color-mix(in srgb, var(--color-primary), transparent 20%);
 
+      .search-item__title {
+        color: #fff;
+      }
+
       .search-item__path,
+      .search-item__sep,
       .search-item__remove {
         color: rgb(255 255 255 / 75%);
+      }
+
+      .search-item__mark {
+        color: #1f2937;
       }
     }
   }
 
-  .search-history-title {
-    margin: 0 0 8px;
-    font-size: 12px;
-    color: var(--color-text-muted);
-  }
-
   .search-empty {
-    padding: 32px 0;
-    font-size: 13px;
+    padding: 72px 0;
+    font-size: 14px;
     color: var(--color-text-muted);
     text-align: center;
   }

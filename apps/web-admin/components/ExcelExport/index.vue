@@ -16,7 +16,6 @@
 </template>
 
 <script setup>
-import { ref, computed, readonly, nextTick } from 'vue'
 import * as XLSX from 'xlsx'
 import FileSaver from 'file-saver'
 import { Loading } from '@element-plus/icons-vue'

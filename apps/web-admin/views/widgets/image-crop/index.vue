@@ -31,7 +31,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import demoImage from '@/assets/images/cover/img1.webp'
 

@@ -228,12 +228,24 @@
 
                   <div class="setting-section">
                     <h3 class="section-title">界面显示</h3>
-                    <div class="setting-item">
+                    <div
+                      class="setting-item"
+                      :class="{ 'is-disabled': !isSidebarCollapseEnabled }"
+                    >
                       <div class="item-info">
                         <span class="item-label">侧边栏折叠</span>
-                        <span class="item-desc">默认折叠侧边栏菜单</span>
+                        <span class="item-desc">
+                          {{
+                            isSidebarCollapseEnabled
+                              ? '默认折叠侧边栏菜单'
+                              : '仅在左侧菜单模式下可用'
+                          }}
+                        </span>
                       </div>
-                      <el-switch v-model="appStore.sidebarCollapsed" />
+                      <el-switch
+                        v-model="appStore.sidebarCollapsed"
+                        :disabled="!isSidebarCollapseEnabled"
+                      />
                     </div>
 
                     <div class="setting-item">
@@ -567,6 +579,132 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- About Settings -->
+                <div
+                  v-else-if="currentTab === 'about'"
+                  key="about"
+                  class="tab-pane"
+                >
+                  <!-- Hero Section -->
+                  <div class="about-hero">
+                    <div class="about-hero__glow" aria-hidden="true" />
+                    <div class="about-hero__logo">
+                      <img
+                        src="@/assets/bar/app.png"
+                        class="about-hero__logo-img"
+                        alt="Logo"
+                      />
+                    </div>
+                    <div class="about-hero__info">
+                      <h3 class="about-hero__name">Lightning</h3>
+                      <p class="about-hero__desc">高效、智能的桌面工作台</p>
+                    </div>
+                    <div class="about-hero__version">
+                      <span class="version-badge">
+                        <span class="version-badge__dot"></span>
+                        v{{ appVersion }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Update Section -->
+                  <div class="about-update">
+                    <div class="about-update__card">
+                      <div class="about-update__header">
+                        <div class="about-update__icon">
+                          <SvgIcon
+                            v-if="updateCheckState === 'checking'"
+                            icon-class="loading"
+                            class="is-spinning"
+                          />
+                          <SvgIcon
+                            v-else-if="updateCheckState === 'available'"
+                            icon-class="rocket"
+                          />
+                          <SvgIcon
+                            v-else-if="updateCheckState === 'up-to-date'"
+                            icon-class="success"
+                          />
+                          <SvgIcon
+                            v-else-if="
+                              updateCheckState === 'error' ||
+                              updateCheckState === 'force'
+                            "
+                            icon-class="warning"
+                          />
+                          <SvgIcon v-else icon-class="update" />
+                        </div>
+                        <div class="about-update__text">
+                          <span class="about-update__title">
+                            {{ updateCheckTitle }}
+                          </span>
+                          <span class="about-update__subtitle">
+                            {{ updateCheckSubtitle }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        v-if="
+                          updateCheckState === 'available' &&
+                          latestVersionDisplay
+                        "
+                        class="about-update__versions"
+                      >
+                        <div class="ver-pill ver-pill--current">
+                          <span class="ver-pill__label">当前</span>
+                          <span class="ver-pill__value">v{{ appVersion }}</span>
+                        </div>
+                        <SvgIcon
+                          icon-class="arrow-right"
+                          class="ver-pill__arrow"
+                        />
+                        <div class="ver-pill ver-pill--latest">
+                          <span class="ver-pill__label">最新</span>
+                          <span class="ver-pill__value">
+                            v{{ latestVersionDisplay }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="about-update__action">
+                        <button
+                          v-if="
+                            updateCheckState === 'available' ||
+                            updateCheckState === 'force'
+                          "
+                          class="update-action-btn update-action-btn--primary"
+                          @click="handleStartUpdate"
+                        >
+                          <SvgIcon icon-class="download" />
+                          <span>立即更新</span>
+                        </button>
+                        <button
+                          v-else
+                          class="update-action-btn"
+                          :class="{
+                            'update-action-btn--loading':
+                              updateCheckState === 'checking'
+                          }"
+                          :disabled="updateCheckState === 'checking'"
+                          @click="handleCheckUpdate"
+                        >
+                          <SvgIcon
+                            v-if="updateCheckState === 'checking'"
+                            icon-class="loading"
+                            class="is-spinning"
+                          />
+                          <SvgIcon v-else icon-class="update" />
+                          <span>{{ updateCheckBtnText }}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="about-copyright">
+                    Copyright © 2024 Lightning Team. All rights reserved.
+                  </div>
+                </div>
               </Transition>
             </div>
           </div>
@@ -645,6 +783,10 @@ const contentWidthValue = computed({
   get: () => appStore.contentWidthValue,
   set: (val) => appStore.setContentWidthValue(val)
 })
+
+// 侧边栏折叠开关仅在左侧菜单模式下有意义（顶部/顶部混合/双列菜单均无折叠侧边栏），
+// 与 global-header 的 showSidebarToggle 逻辑保持一致
+const isSidebarCollapseEnabled = computed(() => appStore.layoutMode === 'left')
 
 console.log(visible.value)
 
@@ -906,6 +1048,14 @@ const handleClose = () => {
 
   &:hover {
     border-color: var(--color-border-hover);
+  }
+
+  &.is-disabled {
+    opacity: 0.6;
+
+    .item-desc {
+      color: var(--color-text-muted);
+    }
   }
 
   .item-info {
@@ -1183,6 +1333,365 @@ const handleClose = () => {
       font-weight: 500;
       color: var(--color-primary);
     }
+  }
+}
+
+/* About Page */
+.about-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px 28px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary), transparent 92%) 0%,
+    color-mix(in srgb, var(--brand-accent), transparent 90%) 50%,
+    color-mix(in srgb, var(--color-primary), transparent 95%) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 80%);
+  border-radius: 16px;
+
+  &__glow {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    pointer-events: none;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-primary), transparent 70%) 0%,
+      transparent 70%
+    );
+    border-radius: 999px;
+  }
+
+  &__logo {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 16px;
+    background: var(--color-bg-window);
+    border: 2px solid color-mix(in srgb, var(--color-primary), transparent 60%);
+    border-radius: 20px;
+    box-shadow:
+      0 8px 24px -6px color-mix(in srgb, var(--color-primary), transparent 70%),
+      0 0 0 4px color-mix(in srgb, var(--color-primary), transparent 92%);
+
+    &-img {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__info {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  &__name {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: 0.3px;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  &__version {
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+  }
+}
+
+.version-badge {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-bg-window);
+  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 60%);
+  border-radius: 20px;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-success);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--color-success);
+  }
+}
+
+/* Update Card */
+.about-update {
+  margin-bottom: 24px;
+
+  &__card {
+    padding: 18px 20px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: var(--color-border-hover);
+    }
+  }
+
+  &__header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  &__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 88%);
+    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 70%);
+    border-radius: 12px;
+
+    :deep(.svg-icon) {
+      font-size: 20px;
+    }
+
+    :deep(.is-spinning) {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  &__versions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    margin: 14px 0;
+    background: color-mix(in srgb, var(--color-bg-hover), transparent 30%);
+    border: 1px solid var(--color-border-light);
+    border-radius: 10px;
+  }
+
+  &__action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+}
+
+.ver-pill {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+
+  &__label {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  &__value {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    color: var(--color-text-secondary);
+  }
+
+  &--current &__value {
+    color: var(--color-text-secondary);
+  }
+
+  &--latest &__value {
+    color: var(--color-primary);
+  }
+}
+
+.update-action-btn {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  background: var(--color-bg-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &--primary {
+    color: #fff;
+    background: linear-gradient(
+      100deg,
+      var(--color-primary) 0%,
+      var(--brand-accent-alt) 100%
+    );
+    border-color: transparent;
+    box-shadow: 0 4px 12px -4px
+      color-mix(in srgb, var(--color-primary), transparent 40%);
+
+    &:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 6px 16px -4px
+        color-mix(in srgb, var(--color-primary), transparent 30%);
+    }
+  }
+
+  &--loading {
+    :deep(.is-spinning) {
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+/* About Links */
+.about-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.about-link-item {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--color-bg-card);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+
+    .about-link-item__arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  &__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    color: var(--color-primary);
+    background: var(--brand-accent-soft);
+    border-radius: 10px;
+
+    :deep(.svg-icon) {
+      font-size: 18px;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: all 0.2s;
+    transform: translateX(-4px);
+  }
+}
+
+.about-copyright {
+  padding-top: 16px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  border-top: 1px solid var(--color-border-light);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 

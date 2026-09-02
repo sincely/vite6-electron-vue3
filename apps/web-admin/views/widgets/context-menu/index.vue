@@ -29,7 +29,6 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 
 defineOptions({ name: 'WidgetsContextMenu' })

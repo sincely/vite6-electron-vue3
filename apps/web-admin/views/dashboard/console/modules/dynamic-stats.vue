@@ -26,8 +26,6 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-
 /**
  * 用户动态列表
  * 记录用户的关注、发文、提问、兑换等各类活动
@@ -41,7 +39,7 @@ const list = reactive([
   {
     username: '何小荷',
     type: '发表文章',
-    target: 'Vue3 + Vite + Electron 项目实战笔记'
+    target: 'Vue3 + Vite 项目实战笔记'
   },
   {
     username: '中小鱼',
@@ -51,7 +49,7 @@ const list = reactive([
   {
     username: '何小荷',
     type: '发表文章',
-    target: 'Vue3 + Vite + Electron 项目实战笔记'
+    target: 'Vue3 + Vite 项目实战笔记'
   },
   {
     username: '誶誶淰',

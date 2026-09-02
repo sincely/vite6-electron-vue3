@@ -23,6 +23,8 @@
           class="top-menu-item"
           :class="{ active: isParentActive(item) }"
           @click="handleNav(item)"
+          @mouseenter="onItemEnter"
+          @mouseleave="onItemLeave"
         >
           <Icon
             v-if="item.icon"
@@ -127,7 +129,6 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
@@ -172,6 +173,39 @@ const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 const SCROLL_STEP = 200 // 每次点击箭头滚动的像素距离
 
+// 二级菜单边界对齐：悬停时计算居中偏移并夹取到 .top-menu 可视范围内，
+// 避免首个/末个一级菜单的下拉被 overflow-x: clip 横向截断
+const hoveredItemEl = ref(null)
+
+const positionSubmenu = (itemEl) => {
+  const submenu = itemEl && itemEl.querySelector('.top-submenu')
+  const menu = menuNavRef.value
+  if (!submenu || !menu) return
+  const subWidth = submenu.offsetWidth
+  if (!subWidth) return
+  const itemRect = itemEl.getBoundingClientRect()
+  const menuRect = menu.getBoundingClientRect()
+  const itemLeftInMenu = itemRect.left - menuRect.left
+  let leftPx = (itemRect.width - subWidth) / 2 // 居中偏移
+  const minLeft = -itemLeftInMenu // 不越过菜单左边界
+  const maxLeft = menu.clientWidth - itemLeftInMenu - subWidth // 不越过右边界
+  if (leftPx < minLeft) leftPx = minLeft
+  else if (leftPx > maxLeft) leftPx = maxLeft
+  submenu.style.left = `${leftPx}px`
+  submenu.style.transform = 'translateY(10px)'
+}
+
+const onItemEnter = (e) => {
+  const el = e.currentTarget
+  if (!el.querySelector('.top-submenu')) return // 无二级菜单不处理
+  hoveredItemEl.value = el
+  positionSubmenu(el)
+}
+
+const onItemLeave = () => {
+  hoveredItemEl.value = null
+}
+
 const updateScrollState = () => {
   const el = menuNavRef.value
   if (!el) return
@@ -189,6 +223,9 @@ const updateScrollState = () => {
 
   canScrollLeft.value = scrollLeft.value > 4
   canScrollRight.value = scrollLeft.value < maxScroll - 4
+
+  // 滚动或尺寸变化后，重新对齐当前展开的二级菜单
+  if (hoveredItemEl.value) positionSubmenu(hoveredItemEl.value)
 }
 
 const scrollByDir = (dir) => {
@@ -238,7 +275,6 @@ watch([visibleMenuItems, isTopMixed], () => nextTick(updateScrollState))
   align-items: center;
   min-width: 0;
   max-width: 100%;
-  height: 100%;
   margin-left: 24px;
   -webkit-app-region: no-drag;
 }
@@ -341,7 +377,9 @@ watch([visibleMenuItems, isTopMixed], () => nextTick(updateScrollState))
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   opacity: 0;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translate(-50%, 10px);
 
   // 增加隐形感应区，防止鼠标移出时下拉菜单消失过快

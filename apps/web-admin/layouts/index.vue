@@ -33,12 +33,12 @@
         </GlobalHeader>
       </Transition>
 
-      <!-- 内容主体区域（可能包含子菜单栏） -->
+      <!-- 内容主体区域（可能��含子菜单栏） -->
       <div class="layout-body">
         <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧，固定显示) -->
         <Transition name="layout-fade-x">
           <div v-if="isTopMixed && !isFullscreen" class="layout-submenu">
-            <MixedSubmenu :parent-item="activeParentItem" />
+            <MixedSubmenu :parent-item="activeParentItem" collapsible />
           </div>
         </Transition>
 
@@ -70,6 +70,8 @@
   </div>
   <!-- 聊天窗口（Lightning Bot） -->
   <ChatBot />
+  <!-- 问题反馈（吸附内容区右侧；显示由组件内部开关 PROBLEM_FEEDBACK_ENABLED 控制） -->
+  <ProblemFeedback />
   <!-- 全局水印 -->
   <Watermark />
   <!-- 礼花/烟花特效（全局注册，触发时机由 config/festival.js 控制） -->
@@ -86,10 +88,10 @@ import GlobalTagsView from './components/global-tagsView/index.vue'
 import GlobalBreadcrumb from './components/global-breadcrumb/index.vue'
 import MixedSubmenu from './components/global-siderMenu/modules/MixedSubmenu.vue'
 import DualMenu from './components/global-dualMenu/index.vue'
+import ProblemFeedback from '@/components/ProblemFeedback/index.vue'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { findTopLevelParent } from '@/config/menu'
-import { computed, ref, provide, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const appStore = useAppStore()

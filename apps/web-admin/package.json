@@ -13,6 +13,7 @@
     "@iconify/json": "^2.2.513",
     "@iconify/vue": "^5.0.1",
     "@vueuse/core": "^14.2.1",
+    "hash-wasm": "^4.12.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.8.4",

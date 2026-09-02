@@ -56,7 +56,7 @@
             @click="handleUserAction(item.action)"
           >
             <span class="header-user-menu__item-icon">
-              <component :is="item.icon" />
+              <Icon :icon="item.icon" width="16" height="16" />
             </span>
             <span class="header-user-menu__item-label">
               {{ item.label }}
@@ -74,7 +74,7 @@
             @click="handleUserAction(item.action)"
           >
             <span class="header-user-menu__item-icon">
-              <component :is="item.icon" />
+              <Icon :icon="item.icon" width="16" height="16" />
             </span>
             <span class="header-user-menu__item-label">
               {{ item.label }}
@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
@@ -102,18 +102,18 @@ const userDropdownRef = ref(null)
 const avatarLoadFailed = ref(false)
 
 const primaryUserActions = [
-  { action: 'center', label: '个人中心', icon: 'User' },
-  { action: 'profile', label: '设置', icon: 'setting' },
-  { action: 'lock', label: '锁屏', icon: 'Lock' },
-  { action: 'docs', label: '文档', icon: 'Document' },
-  { action: 'help', label: '问题 & 帮助', icon: 'QuestionFilled' }
+  { action: 'center', label: '个人中心', icon: 'lucide:user' },
+  { action: 'profile', label: '设置', icon: 'lucide:settings' },
+  { action: 'lock', label: '锁屏', icon: 'lucide:lock' },
+  { action: 'docs', label: '文档', icon: 'lucide:file-text' },
+  { action: 'help', label: '问题 & 帮助', icon: 'ri:question-line' }
 ]
 
 const secondaryUserActions = [
   {
     action: 'logout',
     label: '退出登录',
-    icon: 'SwitchButton',
+    icon: 'lucide:log-out',
     shortcut: '⌥ Q',
     danger: true
   }

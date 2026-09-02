@@ -33,7 +33,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useChartTheme } from '@/hooks/useChartTheme'
 
 const { getThemeColors, tooltipBase, onThemeChange } = useChartTheme()

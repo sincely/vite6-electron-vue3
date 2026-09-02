@@ -1,209 +1,206 @@
 <template>
-  <div class="login-container">
-    <CustomTitleBar class="login-titlebar" />
+  <AuthLayout>
+    <div class="forgot-password">
+      <AuthTitle>
+        {{ stepTitle }}
+        <template #desc>{{ stepDesc }}</template>
+      </AuthTitle>
 
-    <div class="login-content">
-      <div class="login-card">
-        <!-- Logo / Branding Area -->
-        <div class="login-header">
-          <div class="logo-wrapper">
-            <img src="@/assets/bar/app.png" alt="Logo" class="app-logo" />
+      <!-- 步骤指示器 -->
+      <div v-if="currentStep < 2" class="step-indicator">
+        <div
+          v-for="(step, index) in steps"
+          :key="step.label"
+          class="step-node"
+          :class="{
+            active: currentStep === index,
+            done: currentStep > index
+          }"
+        >
+          <div class="step-circle">
+            <svg-icon
+              v-if="currentStep > index"
+              icon-class="check"
+              width="14px"
+              height="14px"
+            />
+            <span v-else>{{ index + 1 }}</span>
           </div>
-          <h1 class="app-title">找回密码</h1>
-          <p class="app-subtitle">验证身份并重置您的密码</p>
-        </div>
-
-        <!-- Step Indicator -->
-        <div class="step-indicator">
+          <span class="step-label">{{ step.label }}</span>
           <div
-            v-for="(step, index) in steps"
-            :key="index"
-            class="step-node"
-            :class="{
-              active: currentStep === index,
-              done: currentStep > index
-            }"
-          >
-            <div class="step-circle">
-              <svg-icon
-                v-if="currentStep > index"
-                iconClass="check"
-                width="14px"
-                height="14px"
-              />
-              <span v-else>{{ index + 1 }}</span>
-            </div>
-            <span class="step-label">{{ step.label }}</span>
-            <div
-              v-if="index < steps.length - 1"
-              class="step-line"
-              :class="{ filled: currentStep > index }"
-            ></div>
-          </div>
-        </div>
-
-        <!-- Dynamic Content -->
-        <div class="login-form-wrapper">
-          <transition name="fade-slide" mode="out-in">
-            <!-- Step 0: 验证身份 -->
-            <div v-if="currentStep === 0" key="verify" class="step-content">
-              <el-form
-                ref="verifyFormRef"
-                :model="verifyForm"
-                :rules="verifyRules"
-                class="login-form"
-                label-position="top"
-                hide-required-asterisk
-              >
-                <el-form-item prop="phone" label="手机号码">
-                  <el-input
-                    v-model="verifyForm.phone"
-                    placeholder="请输入手机号码"
-                    :prefix-icon="Iphone"
-                    class="custom-input"
-                  />
-                </el-form-item>
-
-                <el-form-item prop="code" label="验证码">
-                  <div class="code-input-group">
-                    <el-input
-                      v-model="verifyForm.code"
-                      placeholder="请输入验证码"
-                      :prefix-icon="Key"
-                      class="custom-input code-input"
-                      maxlength="6"
-                    />
-                    <el-button
-                      class="code-btn"
-                      :disabled="counting || !isPhoneValid"
-                      @click="sendCode"
-                    >
-                      {{ counting ? `${countdown}s 后重发` : '获取验证码' }}
-                    </el-button>
-                  </div>
-                </el-form-item>
-
-                <el-form-item class="submit-item">
-                  <el-button
-                    :class="{ 'submit-btn': true, 'is-loading': loading }"
-                    :loading="loading"
-                    @click="nextStep"
-                  >
-                    {{ loading ? '验证中...' : '下一步' }}
-                  </el-button>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- Step 1: 设置新密码 -->
-            <div v-else-if="currentStep === 1" key="reset" class="step-content">
-              <el-form
-                ref="resetFormRef"
-                :model="resetForm"
-                :rules="resetRules"
-                class="login-form"
-                label-position="top"
-                hide-required-asterisk
-              >
-                <el-form-item prop="password" label="新密码">
-                  <el-input
-                    v-model="resetForm.password"
-                    placeholder="请输入新密码"
-                    :type="showPassword ? 'text' : 'password'"
-                    :prefix-icon="Lock"
-                    class="custom-input"
-                  >
-                    <template #suffix>
-                      <span
-                        class="password-toggle"
-                        @click="showPassword = !showPassword"
-                      >
-                        <svg-icon
-                          :iconClass="showPassword ? 'open-eye' : 'close-eye'"
-                          width="16px"
-                          height="16px"
-                        />
-                      </span>
-                    </template>
-                  </el-input>
-                </el-form-item>
-
-                <el-form-item prop="confirmPassword" label="确认密码">
-                  <el-input
-                    v-model="resetForm.confirmPassword"
-                    placeholder="请再次输入新密码"
-                    :type="showConfirm ? 'text' : 'password'"
-                    :prefix-icon="Lock"
-                    class="custom-input"
-                  >
-                    <template #suffix>
-                      <span
-                        class="password-toggle"
-                        @click="showConfirm = !showConfirm"
-                      >
-                        <svg-icon
-                          :iconClass="showConfirm ? 'open-eye' : 'close-eye'"
-                          width="16px"
-                          height="16px"
-                        />
-                      </span>
-                    </template>
-                  </el-input>
-                </el-form-item>
-
-                <!-- 密码强度指示器 -->
-                <div class="password-strength">
-                  <div class="strength-bars">
-                    <div
-                      v-for="i in 4"
-                      :key="i"
-                      class="strength-bar"
-                      :class="{ filled: passwordStrength >= i }"
-                    ></div>
-                  </div>
-                  <span class="strength-text">{{ strengthLabel }}</span>
-                </div>
-
-                <el-form-item class="submit-item">
-                  <el-button
-                    :class="{ 'submit-btn': true, 'is-loading': loading }"
-                    :loading="loading"
-                    @click="submitReset"
-                  >
-                    {{ loading ? '提交中...' : '确认重置' }}
-                  </el-button>
-                </el-form-item>
-              </el-form>
-            </div>
-
-            <!-- Step 2: 完成 -->
-            <div v-else key="success" class="step-content success-content">
-              <div class="success-icon">
-                <svg-icon iconClass="success" width="64px" height="64px" />
-              </div>
-              <h2 class="success-title">密码重置成功</h2>
-              <p class="success-desc">请使用新密码重新登录</p>
-              <el-button class="submit-btn" @click="goLogin">
-                返回登录
-              </el-button>
-            </div>
-          </transition>
-        </div>
-
-        <!-- Footer / Copyright -->
-        <div class="login-footer">
-          <span class="back-link" @click="goLogin">← 返回登录</span>
+            v-if="index < steps.length - 1"
+            class="step-line"
+            :class="{ filled: currentStep > index }"
+          ></div>
         </div>
       </div>
+
+      <transition name="fade-slide" mode="out-in">
+        <!-- Step 0: 验证身份 -->
+        <div v-if="currentStep === 0" key="verify" class="step-content">
+          <el-form
+            ref="verifyFormRef"
+            :model="verifyForm"
+            :rules="verifyRules"
+            class="login-form"
+            label-position="top"
+            hide-required-asterisk
+            @submit.prevent
+          >
+            <el-form-item prop="phone" label="手机号码">
+              <el-input
+                v-model="verifyForm.phone"
+                placeholder="请输入手机号码"
+                :prefix-icon="Iphone"
+                class="custom-input"
+                maxlength="11"
+              />
+            </el-form-item>
+
+            <el-form-item prop="code" label="验证码">
+              <div class="code-input-group">
+                <el-input
+                  v-model="verifyForm.code"
+                  placeholder="请输入验证码"
+                  :prefix-icon="Key"
+                  class="custom-input code-input"
+                  maxlength="6"
+                />
+                <el-button
+                  class="code-btn"
+                  :disabled="counting || !isPhoneValid"
+                  @click="sendCode"
+                >
+                  {{ counting ? `${countdown}s 后重发` : '获取验证码' }}
+                </el-button>
+              </div>
+            </el-form-item>
+
+            <el-form-item class="submit-item">
+              <el-button
+                type="primary"
+                class="submit-btn"
+                :loading="loading"
+                @click="nextStep"
+              >
+                {{ loading ? '验证中...' : '下一步' }}
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- Step 1: 设置新密码 -->
+        <div v-else-if="currentStep === 1" key="reset" class="step-content">
+          <el-form
+            ref="resetFormRef"
+            :model="resetForm"
+            :rules="resetRules"
+            class="login-form"
+            label-position="top"
+            hide-required-asterisk
+            @submit.prevent
+          >
+            <el-form-item prop="password" label="新密码">
+              <el-input
+                v-model="resetForm.password"
+                placeholder="请输入新密码"
+                :type="showPassword ? 'text' : 'password'"
+                :prefix-icon="Lock"
+                class="custom-input"
+              >
+                <template #suffix>
+                  <span
+                    class="password-toggle"
+                    @click="showPassword = !showPassword"
+                  >
+                    <svg-icon
+                      :icon-class="showPassword ? 'open-eye' : 'close-eye'"
+                      width="16px"
+                      height="16px"
+                    />
+                  </span>
+                </template>
+              </el-input>
+            </el-form-item>
+
+            <el-form-item prop="confirmPassword" label="确认密码">
+              <el-input
+                v-model="resetForm.confirmPassword"
+                placeholder="请再次输入新密码"
+                :type="showConfirm ? 'text' : 'password'"
+                :prefix-icon="Lock"
+                class="custom-input"
+              >
+                <template #suffix>
+                  <span
+                    class="password-toggle"
+                    @click="showConfirm = !showConfirm"
+                  >
+                    <svg-icon
+                      :icon-class="showConfirm ? 'open-eye' : 'close-eye'"
+                      width="16px"
+                      height="16px"
+                    />
+                  </span>
+                </template>
+              </el-input>
+            </el-form-item>
+
+            <!-- 密码强度指示器 -->
+            <div class="password-strength">
+              <div class="strength-bars">
+                <div
+                  v-for="i in 4"
+                  :key="i"
+                  class="strength-bar"
+                  :class="{ filled: passwordStrength >= i }"
+                ></div>
+              </div>
+              <span class="strength-text">{{ strengthLabel }}</span>
+            </div>
+
+            <el-form-item class="submit-item">
+              <el-button
+                type="primary"
+                class="submit-btn"
+                :loading="loading"
+                @click="submitReset"
+              >
+                {{ loading ? '提交中...' : '确认重置' }}
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- Step 2: 完成 -->
+        <div v-else key="success" class="step-content success-content">
+          <div class="success-icon">
+            <svg-icon icon-class="success" width="62px" height="62px" />
+          </div>
+          <h2 class="success-title">密码重置成功</h2>
+          <p class="success-desc">请使用新密码重新登录</p>
+          <el-button type="primary" class="submit-btn" @click="goLogin">
+            返回登录
+          </el-button>
+        </div>
+      </transition>
+
+      <!-- 返回链接 -->
+      <div v-if="currentStep < 2" class="back-row">
+        <span class="back-link" @click="goLogin">← 返回登录</span>
+      </div>
     </div>
-  </div>
+  </AuthLayout>
 </template>
 
 <script setup>
 import { Iphone, Lock, Key } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import CustomTitleBar from './components/CustomTitleBar.vue'
+import AuthLayout from './components/AuthLayout.vue'
+import AuthTitle from './components/AuthTitle.vue'
+
+defineOptions({ name: 'ForgotPassword' })
 
 const router = useRouter()
 
@@ -214,10 +211,29 @@ const showConfirm = ref(false)
 
 const steps = [{ label: '验证身份' }, { label: '设置密码' }, { label: '完成' }]
 
+const stepTitle = computed(() => {
+  const map = {
+    0: '忘记密码? 🤦🏻‍♂️',
+    1: '设置新密码',
+    2: '密码重置成功'
+  }
+  return map[currentStep.value]
+})
+
+const stepDesc = computed(() => {
+  const map = {
+    0: '输入您的手机号码，我们将向您发送重置密码的验证码',
+    1: '请为您的账户设置一个新密码',
+    2: '您的密码已成功重置'
+  }
+  return map[currentStep.value]
+})
+
 // ─── Step 0: 验证身份 ─────────────────────────────
 const verifyFormRef = ref()
 const counting = ref(false)
 const countdown = ref(60)
+let timer = null
 
 const verifyForm = reactive({
   phone: '',
@@ -235,7 +251,7 @@ const verifyRules = reactive({
   ],
   code: [
     { required: true, message: '请输入验证码', trigger: 'blur' },
-    { len: 6, message: '验证码为6位数字', trigger: 'blur' }
+    { len: 6, message: '验证码为 6 位数字', trigger: 'blur' }
   ]
 })
 
@@ -249,11 +265,12 @@ const sendCode = () => {
   counting.value = true
   countdown.value = 60
   ElMessage.success('验证码已发送，请查收短信')
-  const timer = setInterval(() => {
-    countdown.value--
+  timer = setInterval(() => {
+    countdown.value -= 1
     if (countdown.value <= 0) {
       counting.value = false
       clearInterval(timer)
+      timer = null
     }
   }, 1000)
 }
@@ -303,10 +320,10 @@ const passwordStrength = computed(() => {
   const pwd = resetForm.password
   if (!pwd) return 0
   let strength = 0
-  if (pwd.length >= 6) strength++
-  if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++
-  if (/\d/.test(pwd)) strength++
-  if (/[^a-zA-Z\d]/.test(pwd)) strength++
+  if (pwd.length >= 6) strength += 1
+  if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength += 1
+  if (/\d/.test(pwd)) strength += 1
+  if (/[^a-zA-Z\d]/.test(pwd)) strength += 1
   return strength
 })
 
@@ -334,111 +351,16 @@ const submitReset = async () => {
 const goLogin = () => {
   router.push('/login')
 }
+
+onBeforeUnmount(() => {
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <style lang="scss" scoped>
-.login-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--color-bg-window);
-  background-image: var(--app-bg-gradient);
-
-  // 装饰性背景光斑
-  &::before {
-    position: absolute;
-    top: -20%;
-    left: -10%;
-    width: 600px;
-    height: 600px;
-    content: '';
-    background: radial-gradient(
-      circle,
-      var(--brand-accent-soft) 0%,
-      transparent 70%
-    );
-    filter: blur(80px);
-    opacity: 0.6;
-    animation: float 10s ease-in-out infinite alternate;
-  }
-
-  &::after {
-    position: absolute;
-    right: -10%;
-    bottom: -20%;
-    width: 500px;
-    height: 500px;
-    content: '';
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-success), transparent 85%) 0%,
-      transparent 70%
-    );
-    filter: blur(60px);
-    opacity: 0.5;
-    animation: float 12s ease-in-out infinite alternate-reverse;
-  }
-}
-
-.login-titlebar {
-  position: relative;
-  z-index: 10;
-}
-
-.login-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-card {
-  display: flex;
-  flex-direction: column;
-  width: 360px;
-  height: 500px;
-}
-
-.login-header {
-  margin-bottom: 16px;
-  text-align: center;
-
-  .logo-wrapper {
-    display: inline-flex;
-    padding: 8px;
-    margin-bottom: 10px;
-    background: linear-gradient(
-      135deg,
-      var(--color-bg-card),
-      var(--color-bg-hover)
-    );
-    border-radius: 12px;
-    box-shadow: var(--shadow-sm);
-
-    .app-logo {
-      width: 40px;
-      height: 40px;
-    }
-  }
-
-  .app-title {
-    margin-bottom: 2px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--color-text-primary);
-    letter-spacing: -0.5px;
-  }
-
-  .app-subtitle {
-    font-size: 12px;
-    color: var(--color-text-secondary);
-  }
+.forgot-password {
+  width: 100%;
+  animation: fade-up 0.4s ease-out;
 }
 
 // ─── 步骤指示器 ─────────────────────────────────────
@@ -518,23 +440,14 @@ const goLogin = () => {
   }
 }
 
-.login-form-wrapper {
-  flex: 1;
-  width: 100%;
-}
-
 .step-content {
   width: 100%;
-  height: 100%;
-  animation: fade-up 0.4s ease-out;
 }
 
 // ─── 表单样式 ───────────────────────────────────────
 .login-form {
-  padding: 0 16px;
-
   :deep(.el-form-item) {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   }
 
   :deep(.el-form-item__label) {
@@ -547,10 +460,10 @@ const goLogin = () => {
 
 .custom-input {
   :deep(.el-input__wrapper) {
-    height: 44px;
+    height: 38px;
     padding: 0 14px;
     background-color: var(--color-bg-input);
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 0 0 1px var(--color-border) inset;
     transition: all 0.2s ease;
 
@@ -593,13 +506,13 @@ const goLogin = () => {
   .code-btn {
     flex-shrink: 0;
     width: 110px;
-    height: 44px;
+    height: 38px;
     padding: 0;
     font-size: 13px;
     color: var(--color-primary);
     background: var(--color-bg-input);
     border: 1px solid var(--color-border);
-    border-radius: 10px;
+    border-radius: 8px;
     transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
@@ -633,7 +546,7 @@ const goLogin = () => {
 .password-strength {
   display: flex;
   align-items: center;
-  margin: -8px 0 18px;
+  margin: -6px 0 18px;
 
   .strength-bars {
     display: flex;
@@ -681,14 +594,21 @@ const goLogin = () => {
 
 .submit-btn {
   width: 100%;
-  height: 40px;
+  height: 38px;
   font-size: 15px;
   font-weight: 600;
-  color: aliceblue;
+  color: #fff;
   letter-spacing: 1px;
-  background: #007bff;
+  background: var(--color-primary);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-glow-primary);
+
+  &:hover,
+  &:focus {
+    background: var(--color-primary-dark, var(--color-primary));
+    filter: brightness(1.05);
+  }
 }
 
 // ─── 成功页 ─────────────────────────────────────────
@@ -697,18 +617,14 @@ const goLogin = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
+  padding: 12px 0;
   text-align: center;
 
   .success-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 64px;
-    height: 64px;
     margin-bottom: 16px;
-    color: #fff;
-    border-radius: 50%;
     animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
@@ -730,13 +646,13 @@ const goLogin = () => {
   }
 }
 
-// ─── 底部 ───────────────────────────────────────────
-.login-footer {
-  margin-top: 20px;
-  font-size: 12px;
+// ─── 返回链接 ───────────────────────────────────────
+.back-row {
+  margin-top: 14px;
   text-align: center;
 
   .back-link {
+    font-size: 13px;
     color: var(--color-text-muted);
     cursor: pointer;
     transition: color 0.2s;
@@ -748,14 +664,19 @@ const goLogin = () => {
 }
 
 // ─── 动画 ───────────────────────────────────────────
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  100% {
-    transform: translateY(-20px);
-  }
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
 @keyframes fade-up {
@@ -780,20 +701,5 @@ const goLogin = () => {
     opacity: 1;
     transform: scale(1);
   }
-}
-
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateX(-20px);
 }
 </style>

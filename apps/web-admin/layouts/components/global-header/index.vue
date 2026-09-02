@@ -89,7 +89,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import { useNotificationStore } from '@/store/modules/notification'
 import { useChatStore } from '@/store/modules/chat'
@@ -97,7 +96,6 @@ import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
 import FastEnter from './modules/FastEnter.vue'
-import NotificationPanel from '@/components/NotificationPanel/index.vue'
 
 const appStore = useAppStore()
 const noticeStore = useNotificationStore()
@@ -149,6 +147,10 @@ const toggleIcon = computed(() =>
 const handleToggleClick = () => {
   appStore.toggleSidebar()
 }
+
+onBeforeUnmount(() => {
+  if (refreshTimer) clearTimeout(refreshTimer)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -192,7 +194,6 @@ const handleToggleClick = () => {
     display: flex;
     gap: 6px;
     align-items: center;
-    height: 100%;
     margin-left: auto;
   }
 }

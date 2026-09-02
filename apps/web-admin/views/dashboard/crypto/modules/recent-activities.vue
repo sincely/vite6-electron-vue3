@@ -4,7 +4,7 @@
       <div class="dash-header">
         <h4>最近动态</h4>
       </div>
-      <el-link class="crypto-activities-more" type="primary" :underline="false">
+      <el-link class="crypto-activities-more" type="primary" underline="never">
         查看全部
       </el-link>
     </template>

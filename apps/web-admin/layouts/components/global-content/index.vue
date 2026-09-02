@@ -24,7 +24,6 @@
 import { animates } from '@/settings/animateSetting'
 import { useAppStore } from '@/store/modules/app'
 import { useTagsViewStore } from '@/store/modules/tagsView'
-import BackTop from '@/components/BackTop/index.vue'
 
 const route = useRoute()
 const appStore = useAppStore()

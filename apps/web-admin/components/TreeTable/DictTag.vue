@@ -6,9 +6,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { ElTag } from 'element-plus'
-
 const props = defineProps({
   value: {
     type: [String, Number, Boolean],

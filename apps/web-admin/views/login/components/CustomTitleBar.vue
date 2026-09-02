@@ -1,41 +1,83 @@
 <template>
   <div class="custom-title-bar">
-    <div v-if="showTabs" class="tabs">
-      <button
-        v-for="item in actionTab"
-        :key="item.value"
-        :class="{ active: activeTab === item.value }"
-        @click="switchTab(item.value)"
+    <div class="window-controls">
+      <!-- vben 认证页布局切换：图标按钮 + 单选下拉菜单（居左 / 居中 / 居右） -->
+      <el-dropdown
+        v-if="showLayoutToggle"
+        trigger="click"
+        popper-class="auth-layout-popper"
+        @command="setAuthPanelLayout"
       >
-        {{ item.label }}
+        <button
+          type="button"
+          class="control-btn layout-icon-btn"
+          title="切换登录页布局"
+          aria-haspopup="menu"
+          aria-label="切换登录页布局"
+        >
+          <Icon :icon="activeLayoutIcon" width="16" height="16" />
+        </button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="item in AUTH_PANEL_LAYOUTS"
+              :key="item.value"
+              :command="item.value"
+              :class="{ 'is-active-layout': authPanelLayout === item.value }"
+            >
+              <span class="layout-menu-item">
+                <Icon :icon="item.icon" width="15" height="15" />
+                <span>{{ item.label }}</span>
+                <svg-icon
+                  v-if="authPanelLayout === item.value"
+                  icon-class="check"
+                  width="14px"
+                  height="14px"
+                  class="layout-check"
+                />
+              </span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
+      <!-- 主题切换（复刻 vben 登录页右上角工具栏） -->
+      <button
+        v-if="showThemeToggle"
+        type="button"
+        class="control-btn"
+        title="切换主题"
+        @click="appStore.toggleThemeWithTransition($event)"
+      >
+        <SvgIcon
+          :icon-class="appStore.isDark ? 'sun' : 'moon'"
+          width="16px"
+          height="16px"
+        />
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-const emit = defineEmits(['update:active-tab'])
-const activeTab = ref('account')
+import { Icon } from '@iconify/vue'
+import { useAppStore } from '@/store/modules/app'
+import {
+  AUTH_PANEL_LAYOUTS,
+  useAuthPanelLayout
+} from '../composables/useAuthPanelLayout'
 
-const showTabs = ref(false)
+defineOptions({ name: 'CustomTitleBar' })
 
-const switchTab = (tab) => {
-  activeTab.value = tab
-  emit('update:active-tab', tab)
-}
+// 找回密码等页面同样悬浮展示，可关闭主题切换或布局切换
+defineProps({
+  showThemeToggle: { type: Boolean, default: true },
+  showLayoutToggle: { type: Boolean, default: true }
+})
 
-const actionTab = ref([
-  {
-    label: '账号登录',
-    value: 'account',
-    active: true
-  },
-  {
-    label: '扫码登录',
-    value: 'qrcode',
-    active: true
-  }
-])
+const appStore = useAppStore()
+const { activeLayoutIcon, authPanelLayout, setAuthPanelLayout } =
+  useAuthPanelLayout()
 </script>
 
 <style lang="scss" scoped>
@@ -43,42 +85,62 @@ const actionTab = ref([
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
-  height: 50px;
+  height: 40px;
   background-color: transparent;
-  border-bottom: 1px solid var(--color-border);
 }
 
-.tabs {
+.window-controls {
   display: flex;
-  gap: 10px;
+  gap: 4px;
+  align-items: center;
+  padding-right: 10px;
 
-  button {
-    position: relative;
-    padding: 5px 10px;
-    font-size: 16px;
-    color: var(--color-text-secondary);
+  .control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: var(--color-text-primary);
     cursor: pointer;
     background: none;
     border: none;
+    border-radius: 6px;
+    transition: background-color 0.2s;
 
-    &.active {
-      font-weight: bold;
-      color: var(--color-text-primary);
-
-      &::after {
-        position: absolute;
-        bottom: -5px;
-        left: 50%;
-        width: 20px;
-        height: 3px;
-        content: '';
-        background-color: var(--color-primary);
-        border-radius: 2px;
-        transform: translateX(-50%);
-      }
+    &:hover {
+      background-color: rgb(128 128 128 / 18%);
     }
   }
+}
+
+.layout-icon-btn {
+  // 与主题切换按钮一致的图标按钮外观（vben SUIIconButton）
+  display: inline-flex;
+}
+
+// el-dropdown 弹出层传送到 body，须用 popper-class + 全局选择器
+:global(.auth-layout-popper .el-dropdown-menu__item) {
+  padding: 6px 16px;
+}
+
+:global(.auth-layout-popper .layout-menu-item) {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 96px;
+}
+
+:global(.auth-layout-popper .layout-menu-item .layout-check) {
+  margin-left: auto;
+  color: var(--color-primary);
+}
+
+:global(.auth-layout-popper .el-dropdown-menu__item.is-active-layout) {
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--brand-accent-soft);
 }
 </style>

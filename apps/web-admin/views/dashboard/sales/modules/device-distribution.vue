@@ -7,7 +7,7 @@
       <el-link
         class="device-distribution-more"
         type="primary"
-        :underline="false"
+        underline="never"
       >
         查看报告 →
       </el-link>
@@ -33,7 +33,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useChartTheme } from '@/hooks/useChartTheme'
 
 const { tooltipBase, onThemeChange } = useChartTheme()
