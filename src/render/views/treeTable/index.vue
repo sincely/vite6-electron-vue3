@@ -1,23 +1,32 @@
 <template>
-  <TreeTable
-    ref="treeTableRef"
-    :columns="columns"
-    :func="getTreeList"
-    :config="{
-      table: {
-        rowKey: 'id',
-        defaultExpandAll: true
-      },
-      notPagination: false,
-      useAction: true
-    }"
-    @edit="handleEdit"
-    @add="handleAdd"
-    @delete="handleDelete"
-  />
+  <div class="tree-table-page">
+    <PageHeader
+      title="树表格"
+      subtitle="TreeTable 组件演示：层级数据展示、展开收起与节点增删"
+      icon="list-tree"
+    />
+
+    <TreeTable
+      ref="treeTableRef"
+      :columns="columns"
+      :func="getTreeList"
+      :config="{
+        table: {
+          rowKey: 'id',
+          defaultExpandAll: true
+        },
+        notPagination: false,
+        useAction: true
+      }"
+      @edit="handleEdit"
+      @add="handleAdd"
+      @delete="handleDelete"
+    />
+  </div>
 </template>
 
 <script setup>
+defineOptions({ name: 'example-table-tree' })
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const treeTableRef = ref()
@@ -234,3 +243,20 @@ const flattenTree = (items) => {
   return result
 }
 </script>
+
+<style lang="scss" scoped>
+.tree-table-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+  padding: 4px;
+}
+
+.tree-table-page :deep(.smart-table) {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+</style>

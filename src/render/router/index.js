@@ -771,6 +771,17 @@ export const asyncRouteTree = [
         }
       },
       {
+        path: 'table-tree',
+        name: 'example-table-tree',
+        component: () => import('@/views/treeTable/index.vue'),
+        meta: {
+          title: '树表格',
+          icon: 'list-tree',
+          group: '/examples',
+          keepAlive: true
+        }
+      },
+      {
         path: 'form',
         name: 'example-form-basic',
         component: () => import('@/views/examples/forms/basic.vue'),
