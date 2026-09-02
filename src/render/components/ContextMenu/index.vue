@@ -1,8 +1,21 @@
 <!-- 右键菜单 -->
 <template>
-  <div class="context-menu-wrapper">
+  <Teleport to="body">
     <Transition name="context-menu" @before-enter="onBeforeEnter">
-      <div v-show="visible" :style="menuStyle" class="context-menu">
+      <div
+        v-if="visible"
+        ref="menuElement"
+        :class="[
+          'context-menu',
+          {
+            'context-menu--submenu-left': submenuDirection === 'left',
+            'context-menu--submenu-up': submenuVertical === 'up'
+          }
+        ]"
+        :style="menuStyle"
+        @click.stop
+        @contextmenu.prevent.stop
+      >
         <ul class="context-menu__list" :style="menuListStyle">
           <template v-for="item in menuItems" :key="item.key">
             <!-- 普通菜单项 -->
@@ -75,7 +88,7 @@
         </ul>
       </div>
     </Transition>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -112,17 +125,29 @@ const emit = defineEmits(['select', 'show', 'hide'])
 
 const visible = ref(false)
 const position = ref({ x: 0, y: 0 })
+const menuElement = ref()
+const submenuDirection = ref('right')
+const submenuVertical = ref('down')
+const lastTrigger = ref(null)
 
 // 用于清理定时器和事件监听器
 let showTimer = null
 let eventListenersAdded = false
+
+const hasSubmenu = computed(() =>
+  props.menuItems.some(
+    (item) => Array.isArray(item.children) && item.children.length > 0
+  )
+)
 
 const menuStyle = computed(() => ({
   position: 'fixed',
   left: `${position.value.x}px`,
   top: `${position.value.y}px`,
   zIndex: 2000,
-  width: `${props.menuWidth}px`
+  width: `${Math.max(1, props.menuWidth)}px`,
+  maxWidth: `calc(100vw - ${props.boundaryDistance * 2}px)`,
+  borderRadius: `${props.borderRadius}px`
 }))
 
 const menuListStyle = computed(() => ({
@@ -136,6 +161,7 @@ const menuItemStyle = computed(() => ({
 
 const submenuListStyle = computed(() => ({
   minWidth: `${props.submenuWidth}px`,
+  maxWidth: `calc(100vw - ${props.boundaryDistance * 2}px)`,
   padding: `${props.menuPadding}px 0`,
   borderRadius: `${props.borderRadius}px`
 }))
@@ -152,46 +178,50 @@ const calculateMenuHeight = () => {
   return totalHeight
 }
 
-// 位置计算：优先显示在鼠标右下侧，空间不足时翻转
-const calculatePosition = (e) => {
+// 位置计算：优先显示在鼠标右下侧，空间不足时翻转。
+// 预留子菜单宽度，避免子菜单出现在屏幕外。
+const calculatePosition = (e, measuredSize = {}) => {
   const screenWidth = window.innerWidth
   const screenHeight = window.innerHeight
-  const menuHeight = calculateMenuHeight()
+  const boundary = props.boundaryDistance
+  const menuWidth = Math.min(
+    measuredSize.width || props.menuWidth,
+    Math.max(1, screenWidth - boundary * 2)
+  )
+  const menuHeight = Math.min(
+    measuredSize.height || calculateMenuHeight(),
+    Math.max(1, screenHeight - boundary * 2)
+  )
+  const submenuWidth = hasSubmenu.value ? props.submenuWidth : 0
 
   let x = e.clientX
   let y = e.clientY
 
-  if (x + props.menuWidth > screenWidth - props.boundaryDistance) {
-    x = Math.max(props.boundaryDistance, x - props.menuWidth)
+  const canOpenRight = x + menuWidth + submenuWidth <= screenWidth - boundary
+  submenuDirection.value = canOpenRight ? 'right' : 'left'
+  if (!canOpenRight) {
+    x -= menuWidth
   }
 
-  if (y + menuHeight > screenHeight - props.boundaryDistance) {
-    y = Math.max(
-      props.boundaryDistance,
-      screenHeight - menuHeight - props.boundaryDistance
-    )
+  const canOpenDown = y + menuHeight <= screenHeight - boundary
+  submenuVertical.value = canOpenDown ? 'down' : 'up'
+  if (!canOpenDown) {
+    y = screenHeight - menuHeight - boundary
   }
 
-  x = Math.max(
-    props.boundaryDistance,
-    Math.min(x, screenWidth - props.menuWidth - props.boundaryDistance)
-  )
-  y = Math.max(
-    props.boundaryDistance,
-    Math.min(y, screenHeight - menuHeight - props.boundaryDistance)
-  )
+  x = Math.max(boundary, Math.min(x, screenWidth - menuWidth - boundary))
+  y = Math.max(boundary, Math.min(y, screenHeight - menuHeight - boundary))
 
   return { x, y }
 }
 
 const handleDocumentClick = (e) => {
-  const menuElement = document.querySelector('.context-menu')
-  if (menuElement && menuElement.contains(e.target)) return
+  if (menuElement.value?.contains(e.target)) return
   hide()
 }
 
-const handleDocumentContextmenu = () => {
-  hide()
+const handleDocumentContextmenu = (e) => {
+  if (!menuElement.value?.contains(e.target)) hide()
 }
 
 const handleKeydown = (e) => {
@@ -214,8 +244,21 @@ const removeEventListeners = () => {
   eventListenersAdded = false
 }
 
+const refreshPosition = () => {
+  if (!visible.value || !lastTrigger.value) return
+  const rect = menuElement.value?.getBoundingClientRect()
+  position.value = calculatePosition(lastTrigger.value, {
+    width: rect?.width,
+    height: rect?.height
+  })
+}
+
 /** 在鼠标位置显示菜单 */
 const show = (e) => {
+  if (!e || typeof e.clientX !== 'number' || typeof e.clientY !== 'number') {
+    return
+  }
+
   e.preventDefault()
   e.stopPropagation()
 
@@ -224,9 +267,16 @@ const show = (e) => {
     showTimer = null
   }
 
-  position.value = calculatePosition(e)
+  lastTrigger.value = {
+    clientX: e.clientX,
+    clientY: e.clientY
+  }
+  position.value = calculatePosition(lastTrigger.value)
   visible.value = true
   emit('show')
+
+  // v-if 首次挂载后再用真实尺寸修正位置，解决长标签、字体缩放和窗口边缘场景。
+  nextTick(refreshPosition)
 
   // 延迟添加事件监听器，避免立即触发关闭
   showTimer = window.setTimeout(() => {
@@ -236,9 +286,10 @@ const show = (e) => {
 }
 
 const hide = () => {
-  if (!visible.value) return
+  if (!visible.value && !showTimer) return
 
   visible.value = false
+  lastTrigger.value = null
   emit('hide')
 
   if (showTimer) {
@@ -267,6 +318,9 @@ onUnmounted(() => {
   }
 })
 
+useEventListener(window, 'resize', refreshPosition)
+useEventListener(window, 'scroll', hide, true)
+
 defineExpose({
   show,
   hide,
@@ -276,7 +330,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .context-menu {
-  overflow: hidden;
+  overflow: visible;
   background-color: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: v-bind('props.borderRadius + "px"');
@@ -378,11 +432,30 @@ defineExpose({
     display: none;
     width: max-content;
     min-width: max-content;
+    max-width: calc(100vw - 20px);
     margin: 0;
     list-style: none;
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-lg);
+  }
+
+  &--submenu-left {
+    .context-menu__submenu {
+      right: 100%;
+      left: auto;
+    }
+
+    .context-menu__item--submenu:hover .context-menu__arrow {
+      transform: rotate(180deg);
+    }
+  }
+
+  &--submenu-up {
+    .context-menu__submenu {
+      top: auto;
+      bottom: 0;
+    }
   }
 }
 
