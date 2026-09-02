@@ -2,7 +2,7 @@
   <div class="log-container">
     <PageHeader
       title="可编辑表格"
-      subtitle="EditTable 组件演示：行内编辑、表单校验、增删改、列筛选、行多选与拖拽排序"
+      subtitle="EditTable 组件演示：行内编辑、表单校验、增删改、列筛选与行多选"
       icon="edit"
     />
 
@@ -12,7 +12,7 @@
       ref="editTableRef"
       :data="filteredData"
       :columns="columns"
-      :config="{ selection: true, dragSort: true, showSummary: true }"
+      :config="{ selection: true }"
       @update:data="handleDataUpdate"
       @save="handleSave"
       @delete="handleDelete"
@@ -141,9 +141,6 @@ const columns = [
     type: 'money',
     width: 160,
     required: true,
-    // 参与底部汇总行求和；展示格式默认 ￥ + 千分位 + 两位小数，
-    // 可通过 componentProps: { prefix, decimals, thousand } 调整
-    summary: true,
     rules: [
       { required: true, message: '请输入金额', trigger: 'blur' },
       { type: 'number', min: 0, message: '金额不能为负', trigger: 'blur' }
@@ -432,7 +429,7 @@ const handleCellChange = ({ prop, value, row, index }) => {
   console.log('单元格变化', prop, value, '行', index, row)
 }
 
-// ---- 行多选 + 拖拽排序（config.selection / config.dragSort 开启）----
+// ---- 行多选（config.selection 开启）----
 const editTableRef = ref(null)
 const selectedCount = ref(0)
 
