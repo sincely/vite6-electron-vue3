@@ -1,0 +1,454 @@
+import { defineConfig, loadEnv } from 'vite'
+import { resolve } from 'path'
+import { execSync } from 'child_process'
+import createVitePlugins from './build/plugins/index.js'
+import { proxyServer } from './build/config/proxy.js'
+import electron from 'vite-plugin-electron/simple'
+import pkg from './package.json' with { type: 'json' }
+import fs from 'fs'
+
+// 构建时获取 git 提交哈希和构建日期
+const getGitCommitHash = () => {
+  try {
+    return execSync('git rev-parse HEAD').toString().trim()
+  } catch {
+    return 'unknown'
+  }
+}
+
+const getBuildDate = () => {
+  return new Date().toISOString()
+}
+
+const __COMMIT_HASH__ = JSON.stringify(getGitCommitHash())
+const __BUILD_DATE__ = JSON.stringify(getBuildDate())
+
+export default defineConfig(({ mode, command }) => {
+  const viteEnv = loadEnv(mode, process.cwd())
+  console.log('viteEnv:', viteEnv)
+  const isServe = command === 'serve'
+  const isBuild = command === 'build'
+  const sourcemap = isServe
+  // 不预构建 element-plus/es 整库入口，避免 .vite/deps/element-plus_es.js 过大；
+  // 组件按需 import 由 unplugin-vue-components + ElementPlusResolver 自动完成，
+  // Vite 自身的 ESM transform 会按需处理子模块。仅组件 CSS 仍预构建，
+  // 防止 unplugin 首次 import 新组件时触发"重新优化依赖"导致整页 reload。
+  const optimizeDepsElementPlusIncludes = []
+  fs.readdirSync('node_modules/element-plus/es/components').forEach(
+    (dirname) => {
+      if (
+        fs.existsSync(
+          `node_modules/element-plus/es/components/${dirname}/style/css.mjs`
+        )
+      ) {
+        optimizeDepsElementPlusIncludes.push(
+          `element-plus/es/components/${dirname}/style/css`
+        )
+      }
+    }
+  )
+  return defineConfig({
+    base: viteEnv.VITE_BASE_URL,
+    server: {
+      port: 3200, // 指定服务器端口
+      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined,
+      warmup: {
+        clientFiles: [
+          './src/render/components/**/*.vue',
+          './src/render/views/**/*.vue'
+        ]
+      }
+    },
+    build: {
+      // oxc minifier 配置（Vite 8 默认就是 oxc，这里显式声明并传入 MinifyOptions）
+      // 等价于原 terserOptions 的关键配置；passes / pure_funcs / reduce_funcs 在 oxc 中没有对应项
+      rolldownOptions: {
+        output: {
+          minify: {
+            compress: {
+              dropConsole: true, // 移除所有 console.* 调用
+              dropDebugger: true // 移除 debugger; 语句
+              // unused: true（默认）对应原 reduce_funcs
+              // oxc 不支持 passes / pure_funcs；dropConsole 已覆盖原 pure_funcs 列表
+            },
+            mangle: {
+              toplevel: true // 混淆顶级作用域名称（默认开启）
+            },
+            codegen: {
+              removeWhitespace: true, // 移除空白
+              legalComments: 'none' // 移除所有 legal comments（等价于原 format.comments: false）
+            }
+          }
+        }
+      },
+      reportCompressedSize: false, // 关闭压缩计算，加快构建速度
+      sourcemap,
+      chunkSizeWarningLimit: 4000,
+      minify: 'oxc',
+      cssCodeSplit: true, // 启用 CSS 代码分割
+      assetsInlineLimit: 4096, // 小于 4kb 的资源内联为 base64
+      rollupOptions: {
+        // 渲染进程是浏览器环境，排除 electron，避免其内部的
+        // fs / child_process / path 等 Node 内置模块被打包而产生
+        // "externalized for browser compatibility" 警告
+        external: ['electron'],
+        treeshake: {
+          propertyReadSideEffects: false
+        },
+        output: {
+          manualChunks(id) {
+            // Vue 核心
+            if (
+              id.includes('node_modules/vue/') ||
+              id.includes('node_modules/@vue/') ||
+              id.includes('node_modules/vue-router/') ||
+              id.includes('node_modules/pinia/')
+            ) {
+              return 'vue-vendor'
+            }
+            // Element Plus 组件不强制合包：
+            // 统一打成一个 chunk 会导致登录窗口（入口）静态依赖整个 element-plus，
+            // 即使登录页只用到少量组件也要全量加载执行。
+            // 移除后由 Rollup 自动拆分，登录链路只加载实际引用的组件。
+            // Element Plus 图标
+            if (id.includes('node_modules/@element-plus/icons-vue/')) {
+              return 'element-icons'
+            }
+            // ECharts 图表库
+            if (id.includes('node_modules/echarts/')) {
+              return 'echarts'
+            }
+            // 工具库
+            if (
+              id.includes('node_modules/axios/') ||
+              id.includes('node_modules/dayjs/') ||
+              id.includes('node_modules/lodash-es/')
+            ) {
+              return 'utils-vendor'
+            }
+            // qrcode
+            if (id.includes('node_modules/qrcode/')) {
+              return 'qrcode'
+            }
+          },
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames(assetInfo) {
+            const info = assetInfo.name.split('.')
+            const ext = info[info.length - 1]
+            if (/png|jpe?g|gif|tiff|bmp|ico|webp|svg/i.test(ext)) {
+              return `images/[name]-[hash][extname]`
+            } else if (/woff|woff2|eot|ttf|otf/i.test(ext)) {
+              return `fonts/[name]-[hash][extname]`
+            } else if (ext === 'css') {
+              return `css/[name]-[hash][extname]`
+            } else {
+              return `assets/[name]-[hash][extname]`
+            }
+          }
+        }
+      }
+    },
+    resolve: {
+      alias: {
+        '@': resolve(import.meta.dirname, './src/render'),
+        '@shared': resolve(import.meta.dirname, './src/shared'),
+        '@/styles': resolve(import.meta.dirname, 'src/render/styles'),
+        '@/router': resolve(import.meta.dirname, 'src/render/router'),
+        '@/views': resolve(import.meta.dirname, 'src/render/views'),
+        '@/components': resolve(import.meta.dirname, 'src/render/components'),
+        '@/utils': resolve(import.meta.dirname, 'src/render/utils'),
+        '@/assets': resolve(import.meta.dirname, 'src/render/assets'),
+        '@/icons': resolve(import.meta.dirname, 'src/render/icons')
+      },
+      // 导入时想要省略的扩展名列表
+      // 不建议使用.vue 影响IDE和类型支持
+      // 在Vite中,不建议(实测还是可以配置的)忽略自定义扩展名，因为会影响IDE和类型支持。因此需要完整书写
+      extensions: ['.mjs', '.js', '.json', 'vue'] // 默认支持
+    },
+    css: {
+      preprocessorOptions: {
+        // 指定传递给css预处理器的选项
+        // sass variable and mixin
+        scss: {
+          api: 'modern-compiler',
+          additionalData: `
+            @use "@/styles/variables.scss" as *;
+            @use "@/styles/mixin.scss" as *;
+            @use "@/styles/element/index.scss" as *;
+          `
+        }
+      }
+    },
+    plugins: [
+      electron({
+        main: {
+          // Shortcut of `build.lib.entry`
+          entry: 'src/main/index.js',
+          onstart({ startup }) {
+            if (process.env.VSCODE_DEBUG) {
+              console.log('[startup] Electron App')
+            } else {
+              startup()
+            }
+          },
+          vite: {
+            define: {
+              // 将 .env 文件中的 VITE_* 变量注入主进程（Node.js 不读取 VITE_ 前缀变量）
+              'process.env.VITE_UPDATE_URL': JSON.stringify(
+                viteEnv.VITE_UPDATE_URL
+              ),
+              'process.env.VITE_API_BASE_URL': JSON.stringify(
+                viteEnv.VITE_API_BASE_URL
+              ),
+              'process.env.VITE_SERVER_URL': JSON.stringify(
+                viteEnv.VITE_SERVER_URL
+              ),
+              'process.env.VITE_USE_MOCK': JSON.stringify(
+                viteEnv.VITE_USE_MOCK
+              ),
+              'process.env.VITE_MOCK_LOGIN': JSON.stringify(
+                viteEnv.VITE_MOCK_LOGIN
+              ),
+              __COMMIT_HASH__,
+              __BUILD_DATE__
+            },
+            build: {
+              sourcemap,
+              minify: isBuild ? 'terser' : false,
+              terserOptions: isBuild
+                ? {
+                    compress: {
+                      drop_console: true,
+                      drop_debugger: true,
+                      passes: 2
+                    },
+                    mangle: true,
+                    format: { comments: false }
+                  }
+                : undefined,
+              outDir: 'dist-electron/main',
+              rollupOptions: {
+                // Some third-party Node.js libraries may not be built correctly by Vite, especially `C/C++` addons,
+                // we can use `external` to exclude them to ensure they work correctly.
+                // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
+                // Of course, this is not absolute, just this way is relatively simple. :)
+                external: Object.keys(
+                  'dependencies' in pkg ? pkg.dependencies : {}
+                ),
+                treeshake: {
+                  moduleSideEffects: 'no-external'
+                }
+              }
+            }
+          }
+        },
+        preload: {
+          // Shortcut of `build.rollupOptions.input`.
+          // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
+          input: 'src/preload/index.mjs',
+          vite: {
+            build: {
+              sourcemap: sourcemap ? 'inline' : undefined, // #332
+              minify: isBuild ? 'terser' : false,
+              terserOptions: isBuild
+                ? {
+                    compress: {
+                      drop_console: true,
+                      drop_debugger: true,
+                      passes: 2
+                    },
+                    mangle: true,
+                    format: { comments: false }
+                  }
+                : undefined,
+              outDir: 'dist-electron/preload',
+              rollupOptions: {
+                external: Object.keys(
+                  'dependencies' in pkg ? pkg.dependencies : {}
+                ),
+                treeshake: {
+                  moduleSideEffects: 'no-external'
+                }
+              }
+            }
+          }
+        },
+        // Ployfill the Electron and Node.js API for Renderer process.
+        // If you want use Node.js in Renderer process, the `nodeIntegration` needs to be enabled in the Main process.
+        // See 👉 https://github.com/electron-vite/vite-plugin-electron-renderer
+        renderer: {}
+      }),
+      ...createVitePlugins()
+    ],
+    optimizeDeps: {
+      include: [
+        ...optimizeDepsElementPlusIncludes,
+        // ─── 登录窗口首屏关键路径依赖 ───────────────────────────────
+        // Vite dev server 冷启动时按 ESM 拓扑 transform 每个依赖项，
+        // 把以下首屏必经依赖提前预构建到 .vite/deps/，避免登录窗口首启
+        // 触发瀑布流式 transform，造成 ready-to-show 显著延迟
+        'vue',
+        'vue-router',
+        'pinia',
+        'pinia-plugin-persistedstate',
+        'mitt', // eventBus
+        'dayjs', // 时间处理
+        // ─── 懒加载路由/组件才会用到的大依赖 ───────────────────────
+        'echarts/core',
+        'echarts/charts',
+        'echarts/components',
+        'echarts/features',
+        'echarts/renderers',
+        // 锁屏密码哈希仅引入 hash-wasm 的 SHA-256，按需懒加载即可，
+        // 无需预构建；LockScreen 首次访问时由 Vite 二次优化。
+        'qrcode',
+        '@vueuse/core'
+      ]
+    }
+  })
+})
+
+
+
+
+{
+  "name": "lightning",
+  "version": "1.0.6",
+  "type": "module",
+  "main": "dist-electron/main/index.js",
+  "engines": {
+    "node": ">=22.20.0"
+  },
+  "description": "A Vite6 Electron Vue3 project",
+  "author": "chengzhou",
+  "scripts": {
+    "dev": "concurrently -k \"npm run backend:dev\" \"npm run dev:win\"",
+    "dev:win": "node scripts/pre-dev.js && vite --mode development",
+    "dev:mac": "vite --mode development",
+    "build:dev": "vite build --mode development",
+    "build:test": "vite build --mode test",
+    "build:prod": "vite build --mode production",
+    "build-win:dev": "npm run clean && vite build --mode development && electron-builder --win",
+    "build-win:test": "npm run clean && vite build --mode test && electron-builder --win",
+    "build-win:prod": "npm run clean && vite build --mode production && electron-builder --win",
+    "build-mac:dev": "npm run clean && vite build --mode development && electron-builder --mac",
+    "build-mac:test": "npm run clean && vite build --mode test && electron-builder --mac",
+    "build-mac:prod": "npm run clean && vite build --mode production && electron-builder --mac",
+    "build-linux:dev": "npm run clean && vite build --mode development && electron-builder --linux",
+    "build-linux:test": "npm run clean && vite build --mode test && electron-builder --linux ",
+    "build-linux:prod": "npm run clean && vite build --mode production && electron-builder --linux",
+    "website:dev": "pnpm -C src/website dev",
+    "website:build": "pnpm -C src/website build",
+    "website:preview": "pnpm -C src/website preview",
+    "web-admin:dev": "pnpm -C src/web-admin dev",
+    "web-admin:build": "pnpm -C src/web-admin build",
+    "web-admin:preview": "pnpm -C src/web-admin preview",
+    "web-admin:stack": "concurrently -k -n backend,web-admin -c blue,green \"pnpm -C apps/backend start\" \"pnpm web-admin:dev\"",
+    "check-config": "electron-builder --dir --config",
+    "clean": "rimraf dist dist-electron",
+    "analyze:size": "esno ./scripts/analyze-build-size.js",
+    "electron:postinstall": "electron-builder install-app-deps",
+    "lint": "npm run eslint:fix && npm run prettier:fix && npm run stylelint:fix",
+    "lint:check": "npm run eslint:check && npm run prettier:check && npm run stylelint:check",
+    "eslint:fix": "eslint \"**/*.{vue,js}\" --fix",
+    "eslint:check": "eslint \"**/*.{vue,js}\"",
+    "prettier:fix": "prettier --write \"**/*.{js,vue,scss,css,html,json,md}\"",
+    "prettier:check": "prettier --check \"**/*.{js,vue,scss,css,html,json,md}\"",
+    "stylelint:fix": "stylelint \"src/render/**/*.{vue,scss,css}\" --fix",
+    "stylelint:check": "stylelint \"src/render/**/*.{vue,css,scss}\"",
+    "manual:release": "node ./scripts/release.js",
+    "release": "release-it",
+    "release:dry-run": "release-it --dry-run",
+    "release:changelog": "release-it --only-changelog",
+    "release:github": "release-it --ci --github.release",
+    "release:patch": "release-it patch",
+    "release:minor": "release-it minor",
+    "release:major": "release-it major",
+    "release:alpha": "release-it --preRelease=alpha",
+    "release:beta": "release-it --preRelease=beta",
+    "dir-tree": "esno ./scripts/dir-tree",
+    "build:icons": "esno ./scripts/build-icons",
+    "lint-staged": "lint-staged",
+    "prepare": "husky install",
+    "backend:dev": "cd apps/backend && nitro dev"
+  },
+  "dependencies": {
+    "axios": "1.19.0",
+    "electron-log": "5.4.4",
+    "electron-updater": "6.6.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "18.6.1",
+    "@commitlint/config-conventional": "18.6.1",
+    "@element-plus/icons-vue": "2.3.2",
+    "@eslint/js": "8.57.0",
+    "@iconify/json": "2.2.513",
+    "@iconify/vue": "5.0.1",
+    "@release-it/conventional-changelog": "10.0.4",
+    "@vitejs/plugin-vue": "6.0.7",
+    "@vueuse/core": "14.2.1",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
+    "concurrently": "9.2.1",
+    "conventional-changelog-conventionalcommits": "9.1.0",
+    "dayjs": "1.11.10",
+    "directory-tree": "3.5.1",
+    "dmg-license": "1.0.11",
+    "hash-wasm": "4.12.0",
+    "echarts": "5.4.3",
+    "electron": "42.2.0",
+    "electron-builder": "25.1.8",
+    "element-plus": "2.11.9",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "5.1.3",
+    "eslint-plugin-vue": "9.18.1",
+    "esno": "4.7.0",
+    "file-saver": "^2.0.5",
+    "fs-extra": "11.3.3",
+    "husky": "8.0.3",
+    "inquirer": "13.2.2",
+    "lint-staged": "13.3.0",
+    "lodash-es": "4.17.21",
+    "md5": "2.3.0",
+    "mitt": "^3.0.1",
+    "nprogress": "0.2.0",
+    "pinia": "2.3.1",
+    "pinia-plugin-persistedstate": "3.2.3",
+    "png-to-ico": "^3.0.1",
+    "postcss": "8.4.33",
+    "postcss-html": "1.5.0",
+    "postcss-scss": "4.0.9",
+    "prettier": "3.6.2",
+    "qrcode": "1.5.4",
+    "release-it": "19.2.4",
+    "rimraf": "5.0.1",
+    "sass": "1.90.0",
+    "sharp": "0.33.5",
+    "stylelint": "16.8.2",
+    "stylelint-config-html": "1.1.0",
+    "stylelint-config-recess-order": "4.6.0",
+    "stylelint-config-recommended-scss": "14.1.0",
+    "stylelint-config-recommended-vue": "1.5.0",
+    "stylelint-config-standard": "36.0.1",
+    "stylelint-config-standard-scss": "13.1.0",
+    "stylelint-order": "6.0.4",
+    "stylelint-scss": "6.11.0",
+    "terser": "5.24.0",
+    "treeify": "1.1.0",
+    "unplugin-auto-import": "19.3.0",
+    "unplugin-vue-components": "28.8.0",
+    "vite": "8.2.2",
+    "vite-plugin-electron": "1.1.1",
+    "vite-plugin-svg-icons": "2.0.1",
+    "vite-svg-loader": "5.1.1",
+    "vue": "3.5.30",
+    "vue-draggable-plus": "^0.6.1",
+    "vue-eslint-parser": "9.4.2",
+    "vue-img-cutter": "^3.1.1",
+    "vue-router": "4.5.1",
+    "xgplayer": "^3.0.26",
+    "xlsx": "^0.18.5"
+  }
+}
