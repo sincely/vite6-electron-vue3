@@ -119,13 +119,8 @@ watch(
     // 显式 width: 100% 撑出可用宽度后，max-width 裁剪与 margin auto 居中恢复生效
     width: 100%;
     max-width: var(--content-fixed-width, 1200px);
-    padding: 16px 24px;
     margin-right: auto;
     margin-left: auto;
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
   }
 }
 </style>
