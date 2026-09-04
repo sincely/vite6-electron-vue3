@@ -8,6 +8,8 @@
         v-bind="cutterProps"
         class="img-cutter"
         @cutDown="cutDownImg"
+        @error="handleError"
+        @onChooseImg="handleChooseImg"
         @onPrintImg="cutterPrintImg"
         @onImageLoadComplete="handleImageLoadComplete"
         @onImageLoadError="handleImageLoadError"
@@ -17,10 +19,10 @@
           <ElButton type="primary" plain>选择图片</ElButton>
         </template>
         <template #cancel>
-          <ElButton type="danger" plain>清除</ElButton>
+          <ElButton type="danger" plain @click="requestClear">清除</ElButton>
         </template>
         <template #confirm>
-          <div></div>
+          <ElButton type="success" plain>确认裁剪</ElButton>
         </template>
       </ImgCutter>
     </div>
@@ -54,6 +56,7 @@
 
 <script setup>
 import ImgCutter from 'vue-img-cutter'
+import 'vue-img-cutter/vue-img-cutter.css'
 
 defineOptions({ name: 'ImageCutter' })
 
@@ -82,10 +85,16 @@ defineOptions({ name: 'ImageCutter' })
  * @property {boolean} previewMode 是否预览模式
  * @property {boolean} tool 是否显示工具栏
  * @property {string} toolBgc 工具栏背景色
+ * @property {string} rate 裁剪框比例，例如 16:9
+ * @property {string} accept 允许选择的文件类型
  */
 const props = defineProps({
   imgUrl: { type: String, default: '' },
   isModal: { type: Boolean, default: false },
+  showChooseBtn: { type: Boolean, default: true },
+  lockScroll: { type: Boolean, default: true },
+  label: { type: String, default: '选择图片' },
+  modalTitle: { type: String, default: '图片裁剪' },
   tool: { type: Boolean, default: true },
   toolBgc: { type: String, default: '#fff' },
   title: { type: String, default: '' },
@@ -95,44 +104,100 @@ const props = defineProps({
   boxHeight: { type: Number, default: 458 },
   cutWidth: { type: Number, default: 470 },
   cutHeight: { type: Number, default: 270 },
+  rate: { type: String, default: '' },
   sizeChange: { type: Boolean, default: true },
   moveAble: { type: Boolean, default: true },
   imgMove: { type: Boolean, default: true },
   scaleAble: { type: Boolean, default: true },
   originalGraph: { type: Boolean, default: true },
   crossOrigin: { type: Boolean, default: true },
+  crossOriginHeader: { type: String, default: 'anonymous' },
+  cuttingOriginal: { type: Boolean, default: false },
   fileType: { type: String, default: 'png' },
   quality: { type: Number, default: 0.9 },
+  accept: {
+    type: String,
+    default: 'image/gif, image/jpeg, image/png, image/webp'
+  },
   watermarkText: { type: String, default: '' },
   watermarkFontSize: { type: Number, default: 20 },
+  watermarkTextFont: { type: String, default: '' },
   watermarkColor: { type: String, default: '#ffffff' },
+  watermarkTextColor: { type: String, default: '' },
+  watermarkTextX: { type: Number, default: 0.95 },
+  watermarkTextY: { type: Number, default: 0.95 },
+  smallToUpload: { type: Boolean, default: false },
   saveCutPosition: { type: Boolean, default: true },
-  previewMode: { type: Boolean, default: true }
+  previewMode: { type: Boolean, default: true },
+  toolBoxOverflow: { type: Boolean, default: true },
+  doNotDisplayCopyright: { type: Boolean, default: true },
+  index: { type: [String, Number], default: null },
+  afterChooseImg: { type: Function, default: null }
 })
 
 const emit = defineEmits([
   'update:imgUrl',
   'error',
+  'choose',
+  'clear',
+  'cut',
+  'print',
   'imageLoadComplete',
   'imageLoadError'
 ])
 
 const temImgPath = ref('')
 const imgCutterModal = ref()
+const latestResult = ref(null)
+let latestInternalResult = ''
+let initRequestId = 0
+let clearRequested = false
 
-// 整合所有 ImgCutter 的 props（水印字段需按其要求的大写命名透传）
+// ImgCutter 的水印参数使用大写字段名，不能直接使用包装组件的字段名。
 const cutterProps = computed(() => ({
-  ...props,
+  isModal: props.isModal,
+  showChooseBtn: props.showChooseBtn,
+  lockScroll: props.lockScroll,
+  label: props.label,
+  modalTitle: props.modalTitle,
+  tool: props.tool,
+  toolBgc: props.toolBgc,
+  boxWidth: props.boxWidth,
+  boxHeight: props.boxHeight,
+  cutWidth: props.cutWidth,
+  cutHeight: props.cutHeight,
+  rate: props.rate || null,
+  sizeChange: props.sizeChange,
+  moveAble: props.moveAble,
+  imgMove: props.imgMove,
+  scaleAble: props.scaleAble,
+  originalGraph: props.originalGraph,
+  crossOrigin: props.crossOrigin,
+  crossOriginHeader: props.crossOriginHeader,
+  CuttingOriginal: props.cuttingOriginal,
+  fileType: props.fileType,
+  quality: props.quality,
+  accept: props.accept,
+  smallToUpload: props.smallToUpload,
+  saveCutPosition: props.saveCutPosition,
+  previewMode: props.previewMode,
+  toolBoxOverflow: props.toolBoxOverflow,
+  DoNotDisplayCopyright: props.doNotDisplayCopyright,
+  index: props.index,
+  afterChooseImg: props.afterChooseImg,
   WatermarkText: props.watermarkText,
-  WatermarkFontSize: props.watermarkFontSize,
-  WatermarkColor: props.watermarkColor
+  WatermarkTextFont:
+    props.watermarkTextFont || `${props.watermarkFontSize}px Sans-serif`,
+  WatermarkTextColor: props.watermarkTextColor || props.watermarkColor,
+  WatermarkTextX: props.watermarkTextX,
+  WatermarkTextY: props.watermarkTextY
 }))
 
 // 图片预加载
 function preloadImage(url) {
   return new Promise((resolve, reject) => {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
+    if (props.crossOrigin) img.crossOrigin = props.crossOriginHeader
     img.onload = () => resolve()
     img.onerror = reject
     img.src = url
@@ -142,15 +207,20 @@ function preloadImage(url) {
 // 初始化裁剪器
 async function initImgCutter() {
   if (!props.imgUrl) return
+  const requestId = ++initRequestId
+  const imageUrl = props.imgUrl
+
   try {
-    await preloadImage(props.imgUrl)
+    await preloadImage(imageUrl)
+    await nextTick()
+    if (requestId !== initRequestId || imageUrl !== props.imgUrl) return
+
     imgCutterModal.value?.handleOpen({
-      name: '封面图片',
-      src: props.imgUrl
+      name: '图片',
+      src: imageUrl
     })
   } catch (error) {
     emit('error', error)
-    console.error('图片加载失败:', error)
   }
 }
 
@@ -164,21 +234,55 @@ onMounted(() => {
 watch(
   () => props.imgUrl,
   (newVal) => {
-    if (newVal) {
-      temImgPath.value = newVal
-      initImgCutter()
+    if (newVal === latestInternalResult) {
+      latestInternalResult = ''
+      return
     }
+
+    initRequestId += 1
+    if (!newVal) {
+      temImgPath.value = ''
+      latestResult.value = null
+      imgCutterModal.value?.handleClose()
+      return
+    }
+
+    temImgPath.value = newVal
+    initImgCutter()
   }
 )
 
 // 实时预览
 function cutterPrintImg(result) {
+  if (!result?.dataURL) return
   temImgPath.value = result.dataURL
+  latestResult.value = result
+  emit('print', result)
 }
 
 // 裁剪完成
 function cutDownImg(result) {
+  if (!result?.dataURL) return
+  temImgPath.value = result.dataURL
+  latestResult.value = result
+  latestInternalResult = result.dataURL
   emit('update:imgUrl', result.dataURL)
+  emit('cut', result)
+}
+
+// 选择新图片
+function handleChooseImg(result) {
+  emit('choose', result)
+}
+
+// 标记用户主动点击清除，避免把确认裁剪时内部的 clearAll 误判为清除操作。
+function requestClear() {
+  clearRequested = true
+}
+
+// 捕获文件类型、读取失败和无图片等通用错误
+function handleError(error) {
+  emit('error', error)
 }
 
 // 图片加载完成
@@ -188,21 +292,33 @@ function handleImageLoadComplete(result) {
 
 // 图片加载失败
 function handleImageLoadError(error) {
-  emit('error', error)
   emit('imageLoadError', error)
 }
 
 // 清除所有
 function handleClearAll() {
+  const shouldEmitClear = clearRequested
+  clearRequested = false
   temImgPath.value = ''
+  latestResult.value = null
+  latestInternalResult = ''
+  if (shouldEmitClear) {
+    emit('update:imgUrl', '')
+    emit('clear')
+  }
 }
 
 // 下载图片
 function downloadImg() {
+  if (!temImgPath.value) return
   const a = document.createElement('a')
   a.href = temImgPath.value
-  a.download = 'image.png'
+  a.download =
+    latestResult.value?.fileName || `image.${props.fileType || 'png'}`
+  a.rel = 'noopener'
+  document.body.appendChild(a)
   a.click()
+  a.remove()
 }
 </script>
 

@@ -8,21 +8,46 @@
   >
     <!-- 侧边栏 (left) -->
     <Transition name="layout-fade-x">
-      <div v-if="!isTopMenu && !isDual && !isFullscreen" class="layout-sidebar">
+      <div
+        v-if="!isTopMenu && !isDual"
+        class="layout-sidebar"
+        :class="{
+          'is-fullscreen-hidden': isFullscreen,
+          'is-sidebar-collapsed': appStore.sidebarCollapsed
+        }"
+        :aria-hidden="isFullscreen"
+        :inert="isFullscreen"
+      >
         <GlobalSiderMenu />
       </div>
     </Transition>
 
     <!-- 双列菜单 (dual 模式：一级菜单窄栏 + 子菜单列) -->
     <Transition name="layout-fade-x">
-      <DualMenu v-if="isDual && !isFullscreen" />
+      <div
+        v-if="isDual"
+        class="layout-dual-menu"
+        :class="{
+          'is-fullscreen-hidden': isFullscreen,
+          'is-dual-menu-show-text': appStore.dualMenuShowText
+        }"
+        :aria-hidden="isFullscreen"
+        :inert="isFullscreen"
+      >
+        <DualMenu />
+      </div>
     </Transition>
 
     <!-- 右侧主区域 -->
     <div class="layout-main">
       <!-- 标题栏 / 窗口控制 -->
-      <Transition name="layout-fade-y">
-        <GlobalHeader v-if="!isFullscreen">
+      <div
+        class="layout-header"
+        :class="{ 'is-fullscreen-hidden': isFullscreen }"
+        :aria-hidden="isFullscreen"
+        :inert="isFullscreen"
+      >
+        <GlobalHeader>
           <!-- 面包屑（参照 art-design-pro）：仅侧边/双列菜单布局显示，顶部菜单模式不显示 -->
           <template v-if="!isTopMenu && appStore.breadCrumb" #center>
             <GlobalBreadcrumb />
@@ -31,13 +56,19 @@
             <GlobalSearch />
           </template>
         </GlobalHeader>
-      </Transition>
+      </div>
 
       <!-- 内容主体区域（可能��含子菜单栏） -->
       <div class="layout-body">
         <!-- 子菜单栏 (top-mixed 模式，位于内容区左侧，固定显示) -->
         <Transition name="layout-fade-x">
-          <div v-if="isTopMixed && !isFullscreen" class="layout-submenu">
+          <div
+            v-if="isTopMixed"
+            class="layout-submenu"
+            :class="{ 'is-fullscreen-hidden': isFullscreen }"
+            :aria-hidden="isFullscreen"
+            :inert="isFullscreen"
+          >
             <MixedSubmenu :parent-item="activeParentItem" collapsible />
           </div>
         </Transition>
@@ -46,7 +77,18 @@
         <div class="layout-body-content">
           <!-- 多标签导航（内容全屏时隐藏，腾出完整可视空间） -->
           <Transition name="layout-fade-y">
-            <GlobalTagsView v-if="appStore.tagsView && !isFullscreen" />
+            <div
+              v-if="appStore.tagsView"
+              class="layout-tags"
+              :class="{
+                'is-fullscreen-hidden': isFullscreen,
+                'is-tags-google': appStore.tagsViewStyle === 'google'
+              }"
+              :aria-hidden="isFullscreen"
+              :inert="isFullscreen"
+            >
+              <GlobalTagsView />
+            </div>
           </Transition>
 
           <!-- 页面内容（路由视图 + 过渡 + 加载） -->
@@ -68,6 +110,8 @@
       </div>
     </Transition>
   </div>
+  <!-- 更新弹框 -->
+  <UpdateDialog />
   <!-- 聊天窗口（Lightning Bot） -->
   <ChatBot />
   <!-- 问题反馈（吸附内容区右侧；显示由组件内部开关 PROBLEM_FEEDBACK_ENABLED 控制） -->
@@ -149,6 +193,8 @@ provide('isFullscreen', isFullscreen)
 
 <style lang="scss" scoped>
 .layout-container {
+  $layout-transition: 0.36s cubic-bezier(0.22, 0.7, 0.2, 1);
+
   position: relative;
   display: flex;
   gap: 0;
@@ -161,12 +207,137 @@ provide('isFullscreen', isFullscreen)
   .layout-sidebar {
     position: relative;
     z-index: 3;
+    flex: 0 0 var(--layout-sidebar-width, var(--sidebar-width));
+    width: var(--layout-sidebar-width, var(--sidebar-width));
+    min-width: 0;
+    overflow: hidden;
+    opacity: 1;
+    transition:
+      flex-basis $layout-transition,
+      width $layout-transition,
+      opacity 0.24s ease,
+      transform $layout-transition;
+    transform: translateX(0);
+    will-change: width, flex-basis, opacity, transform;
+
+    &.is-sidebar-collapsed {
+      --layout-sidebar-width: var(--sidebar-collapsed-width);
+    }
+
+    &.is-fullscreen-hidden {
+      flex-basis: 0;
+      width: 0;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+  }
+
+  .layout-dual-menu {
+    position: relative;
+    z-index: 3;
+    flex: 0 0 244px;
+    width: 244px;
+    min-width: 0;
+    overflow: hidden;
+    opacity: 1;
+    transition:
+      flex-basis $layout-transition,
+      width $layout-transition,
+      opacity 0.24s ease,
+      transform $layout-transition;
+    transform: translateX(0);
+    will-change: width, flex-basis, opacity, transform;
+
+    &.is-dual-menu-show-text {
+      flex-basis: 260px;
+      width: 260px;
+    }
+
+    &.is-fullscreen-hidden {
+      flex-basis: 0;
+      width: 0;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(-12px);
+    }
   }
 
   .layout-submenu {
     position: relative;
     z-index: 2;
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 180px;
+    overflow: hidden;
+    opacity: 1;
+    transition:
+      max-width $layout-transition,
+      opacity 0.24s ease,
+      transform $layout-transition;
+    transform: translateX(0);
+    will-change: max-width, opacity, transform;
+
+    &.is-fullscreen-hidden {
+      max-width: 0;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+  }
+
+  .layout-header {
+    position: relative;
+    z-index: 10;
+    flex: 0 0 var(--titlebar-height);
+    height: var(--titlebar-height);
+    min-height: 0;
+    overflow: visible;
+    opacity: 1;
+    transition:
+      flex-basis $layout-transition,
+      height $layout-transition,
+      opacity 0.24s ease,
+      transform $layout-transition;
+    transform: translateY(0);
+    will-change: height, flex-basis, opacity, transform;
+
+    &.is-fullscreen-hidden {
+      flex-basis: 0;
+      height: 0;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  .layout-tags {
+    --layout-tags-height: 38px;
+
+    flex: 0 0 var(--layout-tags-height);
+    height: var(--layout-tags-height);
+    min-height: 0;
+    overflow: hidden;
+    opacity: 1;
+    transition:
+      flex-basis $layout-transition,
+      height $layout-transition,
+      opacity 0.24s ease,
+      transform $layout-transition;
+    transform: translateY(0);
+    will-change: height, flex-basis, opacity, transform;
+
+    &.is-tags-google {
+      --layout-tags-height: 40px;
+    }
+
+    &.is-fullscreen-hidden {
+      flex-basis: 0;
+      height: 0;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-8px);
+    }
   }
 
   .layout-main {

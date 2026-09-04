@@ -8,8 +8,9 @@
     />
 
     <ElCard class="page-card">
-      <div class="trigger-area">
-        <ElButton @contextmenu.prevent="showMenu">右键触发菜单</ElButton>
+      <div class="trigger-area" @contextmenu.prevent="showMenu">
+        <ElButton>右键触发菜单</ElButton>
+        <span class="trigger-tip">也可以在此区域的空白处点击右键</span>
         <p v-if="lastAction" class="last-action">最近操作：{{ lastAction }}</p>
       </div>
     </ElCard>
@@ -149,6 +150,16 @@ const onMenuHide = () => {
   flex-direction: column;
   gap: 12px;
   align-items: flex-start;
+  justify-content: center;
+  min-height: 120px;
+  padding: 24px;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+
+  .trigger-tip {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
 
   .last-action {
     margin: 0;
