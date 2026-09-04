@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.9](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.8...v1.0.9) (2026-09-04)
+
+### ✨ Features
+
+* 优化全屏模式下的布局，调整侧边栏、双列菜单和标签导航的显示与隐藏逻辑 ([c0330ad](https://github.com/sincely/vite6-electron-vue3/commit/c0330adaf9654f5e8ec077f82252784a03c1b45c))
+* 优化右键菜单触发区域，添加提示信息和样式调整 ([ba05eee](https://github.com/sincely/vite6-electron-vue3/commit/ba05eee6ef6f9e08a997939ad1f48cec357decf0))
+* 优化样式，移除固定宽度模式下的内边距和背景样式 ([5ba4b45](https://github.com/sincely/vite6-electron-vue3/commit/5ba4b45f3067e0e1b4a7fd55300a511adf4f0eae))
+* 更新 electron-builder 配置，添加忽略 husky、dist/dev 和 docs 目录 ([e40ca7e](https://github.com/sincely/vite6-electron-vue3/commit/e40ca7efba501d9c98d9cc75664ba1fabe7f3549))
+* 更新 ESLint 和 Prettier 配置，限制检查范围至 src/render 目录 ([954cdb9](https://github.com/sincely/vite6-electron-vue3/commit/954cdb907fafebbcefc09f855789d8413e5a0d04))
+* 更新可编辑表格组件，简化副标题和配置，移除汇总行功能 ([9eb979e](https://github.com/sincely/vite6-electron-vue3/commit/9eb979e52547ca50bfadaf454f407636cdfbbae1))
+* 添加树表格组件，优化页面布局和样式 ([acd7eeb](https://github.com/sincely/vite6-electron-vue3/commit/acd7eeb191fdd8df5b3198f3d1d4796a18acbd20))
+* 移除子菜单收缩/展开功能及相关样式，简化组件结构 ([bfcabb2](https://github.com/sincely/vite6-electron-vue3/commit/bfcabb24f840a9c3d9ea18d5622f1ed358a8fc24))
+* 移除深链支持相关代码，简化应用初始化流程 ([d5040ec](https://github.com/sincely/vite6-electron-vue3/commit/d5040ecd5e5156328bd07457229ea479c69c28f6))
+* 调整内容容器宽度，修改定宽模式下的具体宽度值为1200px，并优化样式以适应布局 ([ebbdf40](https://github.com/sincely/vite6-electron-vue3/commit/ebbdf40acd69a67280fdf66a8ae528a17045cc98))
+
+### 🔧 Chores
+
+* 提交版本迁移参考文件 ([6a221ab](https://github.com/sincely/vite6-electron-vue3/commit/6a221ab07fb85cabf493dc945805d2e1ee5bac09))
+* 移除不再使用的视频播放器组件及相关依赖 ([fbc4e2f](https://github.com/sincely/vite6-electron-vue3/commit/fbc4e2f21c0cd8024a46c4149cb095be4a857f80))
+
+### ♻️ Code Refactoring
+
+* 迁移 pc端 admin 模板 ([7f98b6f](https://github.com/sincely/vite6-electron-vue3/commit/7f98b6f97a06c9838a54c991e54e1a347f812974))
+
 ## [1.0.8](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.7...v1.0.8) (2026-08-31)
 
 ### ✨ Features
