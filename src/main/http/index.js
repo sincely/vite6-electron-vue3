@@ -166,7 +166,7 @@ service.interceptors.response.use(
  *   - GET/HEAD/DELETE：通常只传 params；传 data 会发出警告
  *   - POST/PUT/PATCH：通常传 data；params 仍可附加为 URL 查询串
  */
-export async function handleHttpRequest(event, config = {}) {
+export async function httpRequest(event, config = {}) {
   const {
     url,
     method: rawMethod,
@@ -195,4 +195,4 @@ export async function handleHttpRequest(event, config = {}) {
   })
 }
 
-export default { handleHttpRequest }
+export default { httpRequest }

@@ -6,12 +6,12 @@
  *
  * 渲染进程只传「普通对象」，由主进程负责真实 HTTP 调用。
  */
-import { handleHttpRequest } from '../http'
+import { httpRequest } from '../http'
 
 export default [
   {
     channel: 'http:request',
     type: 'handle',
-    handler: handleHttpRequest
+    handler: httpRequest
   }
 ]
