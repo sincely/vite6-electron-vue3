@@ -73,6 +73,28 @@
           </div>
         </Transition>
 
+        <!-- 二级菜单伸缩把手（top-mixed 模式且设置中启用伸缩功能时显示，
+             吸附在子菜单栏右缘，收起后停靠在最左侧） -->
+        <button
+          v-if="showSubmenuCollapseHandle"
+          class="submenu-collapse-handle"
+          :class="{ 'is-collapsed': appStore.mixedSubmenuCollapsed }"
+          :title="
+            appStore.mixedSubmenuCollapsed ? '展开二级菜单' : '收起二级菜单'
+          "
+          @click="appStore.toggleMixedSubmenuCollapsed()"
+        >
+          <Icon
+            :icon="
+              appStore.mixedSubmenuCollapsed
+                ? 'lucide:chevron-right'
+                : 'lucide:chevron-left'
+            "
+            width="13px"
+            height="13px"
+          />
+        </button>
+
         <!-- 内容列 -->
         <div class="layout-body-content">
           <!-- 多标签导航（内容全屏时隐藏，腾出完整可视空间） -->
@@ -149,6 +171,16 @@ const isDual = computed(() => appStore.layoutMode === 'dual')
 
 // 根据当前路由计算激活的一级菜单项
 const activeParentItem = computed(() => findTopLevelParent(route.path))
+
+// 二级菜单伸缩把手显示条件：top-mixed 模式 + 设置中启用伸缩功能 +
+// 当前一级菜单存在二级菜单列（与 MixedSubmenu 的渲染条件一致），内容全屏时隐藏
+const showSubmenuCollapseHandle = computed(
+  () =>
+    isTopMixed.value &&
+    appStore.mixedSubmenuCollapsible &&
+    !!activeParentItem.value?.children?.length &&
+    !isFullscreen.value
+)
 
 // 内容全屏状态管理（布局内最大化，非浏览器 Fullscreen API）
 const isFullscreen = ref(false)
@@ -362,10 +394,53 @@ provide('isFullscreen', isFullscreen)
   }
 
   .layout-body {
+    position: relative; // 二级菜单伸缩把手的定位基准
     display: flex;
     flex: 1;
     min-height: 0;
     overflow: hidden;
+  }
+
+  /* 二级菜单伸缩把手：吸附在子菜单栏（180px）右缘的悬浮小条，
+     收起后随左边缘滑动停靠到最左侧，left 过渡与 .mixed-submenu 宽度过渡同步 */
+  .submenu-collapse-handle {
+    position: absolute;
+    top: 50%;
+    left: 180px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 48px;
+    padding: 0;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    background: var(--sidebar-surface-bg);
+    border: 1px solid var(--color-border);
+    border-left: none;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: 2px 0 6px rgb(0 0 0 / 6%);
+    transition:
+      left 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+    transform: translateY(-50%);
+
+    &.is-collapsed {
+      left: 0;
+    }
+
+    &:hover {
+      color: var(--color-primary);
+      background: var(--color-bg-hover);
+      border-color: var(--color-border-light);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.94);
+    }
   }
 
   .layout-body-content {

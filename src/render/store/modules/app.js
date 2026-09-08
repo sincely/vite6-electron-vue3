@@ -15,6 +15,8 @@ export const useAppStore = defineStore('app', {
     layoutMode: 'left', // 布局模式：left | top | top-mixed | dual
     dualMenuShowText: false, // 双列模式下第一列是否显示菜单文字
     sidebarCollapsed: false, // 侧边栏是否折叠
+    mixedSubmenuCollapsible: true, // 顶部混合模式下是否启用二级菜单伸缩/展开功能（设置开关）
+    mixedSubmenuCollapsed: false, // 顶部混合模式下二级菜单当前是否处于收起状态
     footerVisible: true, // 是否显示底部状态栏
     footerHeight: 26, // 底部状态栏高度（px）
     tagsView: true, // 是否显示多标签导航
@@ -273,6 +275,16 @@ export const useAppStore = defineStore('app', {
     // 设置侧边栏折叠状态
     setSidebarCollapsed(val) {
       this.sidebarCollapsed = val
+    },
+    // 设置顶部混合模式二级菜单伸缩功能的启用状态；
+    // 关闭功能时复位收起状态，避免二级菜单停留在不可见的收起态
+    setMixedSubmenuCollapsible(val) {
+      this.mixedSubmenuCollapsible = !!val
+      if (!val) this.mixedSubmenuCollapsed = false
+    },
+    // 切换顶部混合模式二级菜单的收起/展开
+    toggleMixedSubmenuCollapsed() {
+      this.mixedSubmenuCollapsed = !this.mixedSubmenuCollapsed
     },
     // 设置底部栏显示状态
     setFooterVisible(val) {

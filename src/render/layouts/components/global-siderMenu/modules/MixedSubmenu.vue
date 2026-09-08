@@ -20,7 +20,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { Icon } from '@iconify/vue'
+import { useAppStore } from '@/store/modules/app'
 import { findMenuPath } from '@/config/menu'
 import MixedMenuItem from './MixedMenuItem.vue'
 
@@ -28,10 +28,22 @@ const props = defineProps({
   parentItem: {
     type: Object,
     default: null
+  },
+  // 是否允许伸缩（仅 top-mixed 布局传入；dual 布局复用时保持固定展开）
+  collapsible: {
+    type: Boolean,
+    default: false
   }
 })
 
 const route = useRoute()
+const appStore = useAppStore()
+
+// 伸缩功能启用：布局允许 + 设置开关开启；收起状态由布局层的把手按钮切换
+const collapseEnabled = computed(
+  () => props.collapsible && appStore.mixedSubmenuCollapsible
+)
+const collapsed = computed(() => appStore.mixedSubmenuCollapsed)
 
 // 子级分组的展开状态（递归节点通过 inject 共享）
 const expandedIds = ref([])

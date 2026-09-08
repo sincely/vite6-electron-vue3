@@ -255,6 +255,26 @@
                       />
                     </div>
 
+                    <div
+                      class="setting-item"
+                      :class="{ 'is-disabled': !isMixedCollapseEnabled }"
+                    >
+                      <div class="item-info">
+                        <span class="item-label">二级菜单伸缩</span>
+                        <span class="item-desc">
+                          {{
+                            isMixedCollapseEnabled
+                              ? '允许收起/展开顶部混合模式的二级菜单栏'
+                              : '仅在顶部菜单混合模式下可用'
+                          }}
+                        </span>
+                      </div>
+                      <el-switch
+                        v-model="mixedSubmenuCollapsible"
+                        :disabled="!isMixedCollapseEnabled"
+                      />
+                    </div>
+
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">显示底部状态栏</span>
@@ -754,6 +774,11 @@ const footerVisible = computed({
   set: (val) => appStore.setFooterVisible(val)
 })
 
+const mixedSubmenuCollapsible = computed({
+  get: () => appStore.mixedSubmenuCollapsible,
+  set: (val) => appStore.setMixedSubmenuCollapsible(val)
+})
+
 const tagsVisible = computed({
   get: () => appStore.tagsView,
   set: (val) => appStore.setTagsView(val)
@@ -807,6 +832,11 @@ const contentWidthValue = computed({
 // 侧边栏折叠开关仅在左侧菜单模式下有意义（顶部/顶部混合/双列菜单均无折叠侧边栏），
 // 与 global-header 的 showSidebarToggle 逻辑保持一致
 const isSidebarCollapseEnabled = computed(() => appStore.layoutMode === 'left')
+
+// 二级菜单伸缩开关仅在顶部菜单混合模式下有意义（其余布局无该二级菜单栏）
+const isMixedCollapseEnabled = computed(
+  () => appStore.layoutMode === 'top-mixed'
+)
 
 console.log(visible.value)
 
