@@ -65,7 +65,11 @@ const ICON_PLAN = {
       // 用户菜单下拉
       'user', // 个人中心
       'file-text', // 文档
-      'log-out' // 退出登录
+      'log-out', // 退出登录
+      // 锁屏
+      'lock-open', // 解锁
+      'calendar', // 日期
+      'corner-down-left' // 返回
     ]
   },
   ri: {
