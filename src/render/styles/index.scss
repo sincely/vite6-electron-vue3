@@ -30,9 +30,6 @@
 .glass-card {
   background: var(--glass-surface);
   backdrop-filter: blur(16px);
-
-  // border: 1px solid var(--glass-surface-border);
-  // box-shadow: var(--glass-shadow-soft);
 }
 
 @keyframes fade-up {
@@ -348,26 +345,17 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: DMSans, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
   color: var(--color-text-primary);
   background-color: var(--color-bg-window);
   background-image: var(--app-bg-gradient);
   text-rendering: geometricprecision;
   -webkit-font-smoothing: antialiased;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
 }
 
 #app {
   width: 100%;
   height: 100%;
 }
-
-// ::selection {
-//   color: #fff;
-//   background: color-mix(in srgb, var(--brand-accent), black 10%);
-// }
 
 /* 主题切换过渡动画（View Transition 圆形扩散，参考 art-design-pro）
  * --theme-vt-x / --theme-vt-y / --theme-vt-r 由 utils/themeTransition.js 按点击坐标写入。
