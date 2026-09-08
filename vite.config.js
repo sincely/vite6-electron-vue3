@@ -38,11 +38,11 @@ export default defineConfig(({ mode, command }) => {
     (dirname) => {
       if (
         fs.existsSync(
-          `node_modules/element-plus/es/components/${dirname}/style/css.mjs`
+          `node_modules/element-plus/es/components/${dirname}/style/index.mjs`
         )
       ) {
         optimizeDepsElementPlusIncludes.push(
-          `element-plus/es/components/${dirname}/style/css`
+          `element-plus/es/components/${dirname}/style/index`
         )
       }
     }
