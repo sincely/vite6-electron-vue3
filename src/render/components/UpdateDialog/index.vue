@@ -549,7 +549,7 @@ onMounted(() => {
   onRemoveLoading = (event) => {
     if (event.data?.payload === 'loadingFinished') {
       loadingFinished = true
-      checkAndShowDialog()
+      // checkAndShowDialog()
     }
   }
   window.addEventListener('message', onRemoveLoading)
@@ -559,7 +559,7 @@ onMounted(() => {
   setTimeout(() => {
     if (!loadingFinished) {
       loadingFinished = true
-      checkAndShowDialog()
+      // checkAndShowDialog()
     }
   }, 4500)
 
