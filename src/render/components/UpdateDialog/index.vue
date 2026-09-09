@@ -549,7 +549,7 @@ onMounted(() => {
   onRemoveLoading = (event) => {
     if (event.data?.payload === 'loadingFinished') {
       loadingFinished = true
-      // checkAndShowDialog()
+      checkAndShowDialog()
     }
   }
   window.addEventListener('message', onRemoveLoading)
@@ -559,7 +559,7 @@ onMounted(() => {
   setTimeout(() => {
     if (!loadingFinished) {
       loadingFinished = true
-      // checkAndShowDialog()
+      checkAndShowDialog()
     }
   }, 4500)
 
@@ -598,7 +598,7 @@ onMounted(() => {
     downloadSpeed.value = 0
     clearProgressTimer()
     clearCompleteTimer()
-    if (wasUpdating && !visible.value && !isForce.value) {
+    if (wasUpdating && !visible.value && !isForce.value && loadingFinished) {
       visible.value = true
     }
   }
@@ -628,11 +628,18 @@ onMounted(() => {
     rolloutInfo.value = info // 记录灰度信息（stagingPercentage / rolloutMode）
     resetDownloadState()
     if (updateStore.autoDownload) {
-      visible.value = true
+      // 远程 autoDownload=true 时主进程会立即开始下载；
+      // UI 立即进入下载态（标题栏进度条即可正常推进），但弹窗延后到首屏
+      // loading 结束后再展示，避免每次冷启动直接遮挡主界面。
       isUpdating.value = true
+      if (loadingFinished) {
+        visible.value = true
+      }
       return
     }
-    // checkAndShowDialog()
+    if (loadingFinished) {
+      checkAndShowDialog()
+    }
   }
 
   /**
