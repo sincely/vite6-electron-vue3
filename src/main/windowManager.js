@@ -182,7 +182,10 @@ export function closeMainWindow() {
 }
 
 // 创建登录窗口
-export function createLoginWindow() {
+// skipSplash=true 时跳过 index.html 的预挂载启动层（#app-splash）。
+// 适用场景：会话内从主窗口退出登录后回到登录页（用户已经看过首屏动画，无需再展示）。
+// 冷启动（应用首次启动到登录页）保持默认行为，仍展示 splash 提升首屏观感。
+export function createLoginWindow({ skipSplash = false } = {}) {
   if (loginWindowId) {
     const win = windows.get(loginWindowId)
     if (win && !win.isDestroyed()) {
@@ -233,8 +236,10 @@ export function createLoginWindow() {
   const windowId = win.id
   loginWindowId = windowId
   windows.set(windowId, win)
-  // 加载登录页面
-  loadHash(win, 'login')
+  // 加载登录页面；skipSplash 通过 hash query 传给渲染层，
+  // App.vue 据此判断是否需要立即移除 #app-splash 而非保底展示 2s
+  const hash = skipSplash ? 'login?__skipSplash=1' : 'login'
+  loadHash(win, hash)
 
   // 设置窗口事件（登录窗口不自动显示，由 ready-to-show 决定显示；
   // 已登录场景由 'toMain' IPC 在主进程里设置 _skipShow 并隐藏）

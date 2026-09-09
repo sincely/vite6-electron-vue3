@@ -55,7 +55,9 @@ export default [
       // 避免 createLoginWindow 复用旧窗口导致登录窗口不可见。
       // closeLoginWindow 会清理 loginWindowId，createLoginWindow 之后会创建全新可见窗口。
       closeLoginWindow()
-      const loginWin = createLoginWindow()
+      // skipSplash: 会话内退出登录场景，用户刚看过首屏动画，无需再展示启动层；
+      // 冷启动场景由应用初始入口走 createLoginWindow()，不受此影响。
+      const loginWin = createLoginWindow({ skipSplash: true })
       // 等登录窗口 ready-to-show 后再关闭主窗口，原因同上
       if (loginWin.isVisible()) {
         closeMainWindow()
