@@ -728,8 +728,8 @@ watch(
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
-  background: var(--color-bg-input);
-  border: 1px solid transparent;
+  background: var(--color-bg-box);
+  border: 1px solid var(--color-box-border);
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
 
