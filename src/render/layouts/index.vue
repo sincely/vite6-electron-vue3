@@ -412,7 +412,7 @@ provide('isFullscreen', isFullscreen)
     align-items: center;
     justify-content: center;
     width: 15px;
-    height: 48px;
+    height: 60px;
     padding: 0;
     color: var(--color-text-muted);
     cursor: pointer;
