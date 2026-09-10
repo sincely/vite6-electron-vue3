@@ -23,7 +23,7 @@ export default [
     handler: async () => {
       logger.info('[ipc] 手动触发检查更新')
       await refreshUpdateConfig() // 检查前先刷新远端配置（同步 eligible/禁用列表）
-      checkForUpdates() // 走门控检查（eligible=false 或版本被禁用时按策略处理）
+      checkForUpdates({ manual: true }) // 手动检查：已是最新版本时弹窗告知用户
     }
   },
   // 用户确认后开始下载全量包

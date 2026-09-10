@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, dialog } from 'electron'
 import logger from './log'
 import { getAutoUpdater } from './autoUpdater'
 import createNotification from './notification'
@@ -85,15 +85,39 @@ function notifyUpdateReady(payload) {
 // ─── 检查更新（带门控与节流）─────────────────────────────────────
 
 let lastCheckTime = 0 // 上次发起检查的时间戳（聚焦节流用）
+let manualCheckPending = false // 本次检查是否由用户手动触发（菜单/托盘/设置页）
+
+/**
+ * 手动检查更新且已是最新版本时的弹窗提示
+ * 自动检查（启动/聚焦触发）保持静默，不打扰用户
+ */
+function showUpToDateDialog(version) {
+  const options = {
+    type: 'info',
+    title: '检查更新',
+    message: `当前版本已是最新版本 (v${version})`,
+    buttons: ['确定'],
+    defaultId: 0
+  }
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    dialog.showMessageBox(mainWindow, options)
+  } else {
+    dialog.showMessageBox(options)
+  }
+}
 
 /**
  * 带门控的检查更新
  * - eligible=false 时禁止检查（跳过）
  * - 当前版本被远端禁用时推送强制升级信号（仍继续检查）
  * - fromFocus=true 时受最小检查间隔节流
+ * - manual=true 表示用户手动触发，已是最新版本时弹窗告知
  * 供启动检查、窗口聚焦、手动检查（ipc/update.js）共用
  */
-export async function checkForUpdates({ fromFocus = false } = {}) {
+export async function checkForUpdates({
+  fromFocus = false,
+  manual = false
+} = {}) {
   const config = getUpdateConfig()
   const autoUpdater = await getAutoUpdater()
 
@@ -122,6 +146,7 @@ export async function checkForUpdates({ fromFocus = false } = {}) {
     sendToRenderer('force-update', { currentVersion })
   }
 
+  manualCheckPending = manual // 标记本次检查来源，决定"已是最新"是否弹窗反馈
   lastCheckTime = Date.now()
   autoUpdater.checkForUpdates()
 }
@@ -187,13 +212,18 @@ export const initUpdater = async (win) => {
   })
 
   autoUpdater.on('update-not-available', (info) => {
-    logger.info(
-      `当前已是最新版本 ${info?.version || autoUpdater.currentVersion.version}`
-    )
+    const version = info?.version || autoUpdater.currentVersion.version
+    logger.info(`当前已是最新版本 ${version}`)
     sendToRenderer('update-not-available', info)
+    // 手动检查（菜单/托盘/设置页）：弹窗告知已是最新版本；自动检查保持静默
+    if (manualCheckPending) {
+      manualCheckPending = false
+      showUpToDateDialog(version)
+    }
   })
 
   autoUpdater.on('update-available', (info) => {
+    manualCheckPending = false // 发现新版本时由更新弹窗接管反馈
     const payload = buildUpdatePayload(info)
     const rolloutText =
       typeof payload.stagingPercentage === 'number'
@@ -230,6 +260,7 @@ export const initUpdater = async (win) => {
   })
 
   autoUpdater.on('error', (error) => {
+    manualCheckPending = false // 检查失败不再弹"已是最新"提示
     logger.error('更新出错：', error.message)
     sendToRenderer('update-error', error.message)
     clearBackgroundProgress() // 出错时清理任务栏进度与托盘提示

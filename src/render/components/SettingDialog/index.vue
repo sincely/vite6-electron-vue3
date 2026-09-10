@@ -20,7 +20,7 @@
                 :class="{ active: currentTab === tab.id }"
                 @click="currentTab = tab.id"
               >
-                <!-- <SvgIcon :icon-class="tab.icon" class="menu-icon" /> -->
+                <Icon :icon="tab.icon" class="menu-icon" />
                 <span>{{ tab.label }}</span>
               </div>
             </div>
@@ -613,14 +613,13 @@
                   key="about"
                   class="tab-pane"
                 >
-                  <!-- Hero Section -->
-                  <div class="about-hero">
-                    <div class="about-hero__glow" aria-hidden="true" />
-                    <div class="about-hero__logo">
+                  <!-- Identity -->
+                  <div class="about-identity">
+                    <div class="about-identity__logo">
                       <img
                         src="@/assets/bar/app.png"
-                        class="about-hero__logo-img"
-                        alt="Logo"
+                        class="about-identity__logo-img"
+                        alt="Lightning 图标"
                       />
                     </div>
                     <div class="about-hero__info">
@@ -638,61 +637,13 @@
                   <!-- Update Section -->
                   <div class="about-update">
                     <div class="about-update__card">
-                      <div class="about-update__header">
-                        <div class="about-update__icon">
-                          <SvgIcon
-                            v-if="updateCheckState === 'checking'"
-                            icon-class="loading"
-                            class="is-spinning"
-                          />
-                          <SvgIcon
-                            v-else-if="updateCheckState === 'available'"
-                            icon-class="rocket"
-                          />
-                          <SvgIcon
-                            v-else-if="updateCheckState === 'up-to-date'"
-                            icon-class="success"
-                          />
-                          <SvgIcon
-                            v-else-if="
-                              updateCheckState === 'error' ||
-                              updateCheckState === 'force'
-                            "
-                            icon-class="warning"
-                          />
-                          <SvgIcon v-else icon-class="update" />
-                        </div>
-                        <div class="about-update__text">
-                          <span class="about-update__title">
-                            {{ updateCheckTitle }}
+                      <div class="about-update__info">
+                        <span class="about-update__label">当前版本</span>
+                        <span class="about-update__version-row">
+                          <span class="about-update__version">
+                            {{ appVersion }}
                           </span>
-                          <span class="about-update__subtitle">
-                            {{ updateCheckSubtitle }}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div
-                        v-if="
-                          updateCheckState === 'available' &&
-                          latestVersionDisplay
-                        "
-                        class="about-update__versions"
-                      >
-                        <div class="ver-pill ver-pill--current">
-                          <span class="ver-pill__label">当前</span>
-                          <span class="ver-pill__value">v{{ appVersion }}</span>
-                        </div>
-                        <SvgIcon
-                          icon-class="arrow-right"
-                          class="ver-pill__arrow"
-                        />
-                        <div class="ver-pill ver-pill--latest">
-                          <span class="ver-pill__label">最新</span>
-                          <span class="ver-pill__value">
-                            v{{ latestVersionDisplay }}
-                          </span>
-                        </div>
+                        </span>
                       </div>
 
                       <div class="about-update__action">
@@ -719,10 +670,17 @@
                         >
                           <SvgIcon
                             v-if="updateCheckState === 'checking'"
-                            icon-class="loading"
+                            icon-class="refresh"
                             class="is-spinning"
+                            width="16px"
+                            height="16px"
                           />
-                          <SvgIcon v-else icon-class="update" />
+                          <SvgIcon
+                            v-else
+                            icon-class="refresh"
+                            width="16px"
+                            height="16px"
+                          />
                           <span>{{ updateCheckBtnText }}</span>
                         </button>
                       </div>
@@ -742,6 +700,7 @@
 </template>
 
 <script setup>
+import { Icon } from '@iconify/vue'
 import { animates } from '@/settings/animateSetting'
 import { appPresetColors } from '@/settings/designSetting'
 import { useAppStore } from '@/store/modules/app'
@@ -843,10 +802,10 @@ console.log(visible.value)
 const appVersion = pkg.version
 
 const tabs = [
-  { id: 'general', label: '常规设置', icon: 'settings' },
-  { id: 'profile', label: '个人资料', icon: 'user' },
-  { id: 'appearance', label: '外观显示', icon: 'appearance' },
-  { id: 'about', label: '关于软件', icon: 'info' }
+  { id: 'general', label: '常规设置', icon: 'lucide:settings' },
+  { id: 'profile', label: '个人资料', icon: 'lucide:circle-user-round' },
+  { id: 'appearance', label: '外观显示', icon: 'lucide:palette' },
+  { id: 'about', label: '关于软件', icon: 'lucide:info' }
 ]
 
 const currentTab = ref('general')
@@ -928,41 +887,35 @@ const updateCheckState = ref('idle') // idle | checking | up-to-date | available
 const latestVersionDisplay = ref('')
 const lastCheckTime = ref('')
 
-const updateCheckTitle = computed(() => {
+// 运行时环境信息（preload 经 contextBridge 暴露；纯浏览器环境下兜底为空对象）
+const runtimeVersions = window.versions || {}
+
+const platformLabel = computed(() => {
+  const platformMap = { darwin: 'macOS', win32: 'Windows', linux: 'Linux' }
+  return (
+    platformMap[runtimeVersions.platform] || runtimeVersions.platform || '未知'
+  )
+})
+
+// 版本号旁的状态标签文案：仅非空闲态展示
+const updateStateText = computed(() => {
   switch (updateCheckState.value) {
     case 'checking':
-      return '正在检查更新...'
+      return '检查中'
     case 'available':
-      return '发现新版本'
+      return latestVersionDisplay.value
+        ? `新版本 v${latestVersionDisplay.value}`
+        : '发现新版本'
     case 'up-to-date':
-      return '已是最新版本'
+      return '已是最新'
     case 'error':
-      return '检查更新失败'
+      return '检查失败'
     case 'paused':
       return '更新已暂停'
     case 'force':
-      return '需要强制升级'
+      return '需强制升级'
     default:
-      return '软件更新'
-  }
-})
-
-const updateCheckSubtitle = computed(() => {
-  switch (updateCheckState.value) {
-    case 'checking':
-      return '正在连接更新服务器'
-    case 'available':
-      return '新版本已发布，点击立即更新'
-    case 'up-to-date':
-      return `已经是最新版本 v${appVersion}${lastCheckTime.value ? `，上次检查：${lastCheckTime.value}` : ''}`
-    case 'error':
-      return '网络连接异常，请稍后再试'
-    case 'paused':
-      return '更新通道暂未开放，请稍后再试'
-    case 'force':
-      return '当前版本已停止支持，请立即升级'
-    default:
-      return '点击检查是否有新版本可用'
+      return ''
   }
 })
 
@@ -1149,7 +1102,8 @@ const handleClose = () => {
   }
 
   .menu-icon {
-    font-size: 16px;
+    flex-shrink: 0;
+    font-size: 17px;
   }
 }
 
@@ -1526,104 +1480,77 @@ const handleClose = () => {
 }
 
 /* About Page */
-.about-hero {
-  position: relative;
+.about-identity {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 24px 28px;
-  margin-bottom: 24px;
-  overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-primary), transparent 92%) 0%,
-    color-mix(in srgb, var(--brand-accent), transparent 90%) 50%,
-    color-mix(in srgb, var(--color-primary), transparent 95%) 100%
-  );
-  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 80%);
-  border-radius: 16px;
-
-  &__glow {
-    position: absolute;
-    top: -40px;
-    right: -40px;
-    width: 160px;
-    height: 160px;
-    pointer-events: none;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-primary), transparent 70%) 0%,
-      transparent 70%
-    );
-    border-radius: 999px;
-  }
+  padding: 8px 0 28px;
+  text-align: center;
 
   &__logo {
-    position: relative;
-    z-index: 1;
     display: grid;
     place-items: center;
-    width: 72px;
-    height: 72px;
-    margin-bottom: 16px;
-    background: var(--color-bg-window);
-    border: 2px solid color-mix(in srgb, var(--color-primary), transparent 60%);
-    border-radius: 20px;
-    box-shadow:
-      0 8px 24px -6px color-mix(in srgb, var(--color-primary), transparent 70%),
-      0 0 0 4px color-mix(in srgb, var(--color-primary), transparent 92%);
+    width: 68px;
+    height: 68px;
+    margin-bottom: 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-box-border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
 
     &-img {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
     }
   }
 
-  &__info {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-  }
-
   &__name {
-    margin: 0 0 4px;
-    font-size: 22px;
+    margin: 0;
+    font-size: 20px;
     font-weight: 700;
     color: var(--color-text-primary);
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
   }
 
-  &__desc {
-    margin: 0;
+  &__tagline {
+    margin: 5px 0 0;
     font-size: 13px;
     color: var(--color-text-secondary);
   }
-
-  &__version {
-    position: relative;
-    z-index: 1;
-    margin-top: 12px;
-  }
 }
 
-.version-badge {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-  padding: 4px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-primary);
-  background: var(--color-bg-window);
-  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 60%);
-  border-radius: 20px;
+/* 运行时规格表：标签左、等宽值右，发丝线分隔 */
+.about-spec {
+  margin: 0 0 28px;
 
-  &__dot {
-    width: 6px;
-    height: 6px;
-    background: var(--color-success);
-    border-radius: 50%;
-    box-shadow: 0 0 6px var(--color-success);
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 2px;
+
+    & + & {
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    &:last-child {
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    dt {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-family:
+        ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas,
+        monospace;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text-secondary);
+    }
   }
 }
 
@@ -1632,139 +1559,128 @@ const handleClose = () => {
   margin-bottom: 24px;
 
   &__card {
-    padding: 18px 20px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
     background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-light);
     border-radius: 14px;
-    transition: border-color 0.2s;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
-      border-color: var(--color-border-hover);
+      border-color: var(--color-border);
+      box-shadow: var(--shadow-sm);
     }
   }
 
-  &__header {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-  }
-
-  &__icon {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary), transparent 88%);
-    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 70%);
-    border-radius: 12px;
-
-    :deep(.svg-icon) {
-      font-size: 20px;
-    }
-
-    :deep(.is-spinning) {
-      animation: spin 1s linear infinite;
-    }
-  }
-
-  &__text {
+  &__info {
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
     min-width: 0;
   }
 
-  &__title {
+  &__label {
     font-size: 14px;
     font-weight: 600;
     color: var(--color-text-primary);
   }
 
-  &__subtitle {
-    font-size: 12px;
-    color: var(--color-text-secondary);
+  &__version-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
 
-  &__versions {
-    display: flex;
-    gap: 12px;
+  &__version {
+    font-size: 16px;
+    color: var(--color-text-primary);
+  }
+
+  &__status {
+    display: inline-flex;
+    gap: 4px;
     align-items: center;
-    justify-content: center;
-    padding: 12px 16px;
-    margin: 14px 0;
-    background: color-mix(in srgb, var(--color-bg-hover), transparent 30%);
-    border: 1px solid var(--color-border-light);
-    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+
+    :deep(.svg-icon) {
+      font-size: 12px;
+    }
+
+    :deep(.is-spinning) {
+      animation: spin 1s linear infinite;
+    }
+
+    &.is-checking,
+    &.is-available {
+      color: var(--color-primary);
+      background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    }
+
+    &.is-up-to-date {
+      color: var(--color-success);
+      background: color-mix(in srgb, var(--color-success), transparent 90%);
+    }
+
+    &.is-error {
+      color: var(--color-danger);
+      background: color-mix(in srgb, var(--color-danger), transparent 90%);
+    }
+
+    &.is-force,
+    &.is-paused {
+      color: var(--color-warning);
+      background: color-mix(in srgb, var(--color-warning), transparent 90%);
+    }
   }
 
   &__action {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 14px;
-  }
-}
-
-.ver-pill {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-  align-items: center;
-
-  &__label {
-    font-size: 11px;
-    color: var(--color-text-muted);
-    letter-spacing: 0.3px;
-  }
-
-  &__value {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-
-  &__arrow {
     flex-shrink: 0;
-    color: var(--color-text-secondary);
-  }
-
-  &--current &__value {
-    color: var(--color-text-secondary);
-  }
-
-  &--latest &__value {
-    color: var(--color-primary);
   }
 }
 
 .update-action-btn {
   display: inline-flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
-  height: 34px;
-  padding: 0 18px;
-  font-size: 13px;
+  height: 32px;
+  padding: 0 22px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--color-bg-window);
   cursor: pointer;
-  background: var(--color-bg-hover);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
+  background: var(--color-text-primary);
+  border: none;
+  border-radius: 999px;
   transition: all 0.2s ease;
 
+  :deep(.svg-icon) {
+    font-size: 16px;
+  }
+
   &:hover:not(:disabled) {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    opacity: 0.92;
     transform: translateY(-1px);
   }
 
   &:disabled {
     cursor: not-allowed;
     opacity: 0.7;
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-primary), transparent 50%);
+    outline-offset: 2px;
   }
 
   &--primary {
@@ -1867,11 +1783,29 @@ const handleClose = () => {
 }
 
 .about-copyright {
+  position: relative;
   padding-top: 16px;
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;
-  border-top: 1px solid var(--color-border-light);
+  letter-spacing: 0.2px;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 70%;
+    height: 1px;
+    content: '';
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-border) 30%,
+      var(--color-border) 70%,
+      transparent
+    );
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes spin {

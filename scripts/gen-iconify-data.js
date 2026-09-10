@@ -69,7 +69,11 @@ const ICON_PLAN = {
       // 锁屏
       'lock-open', // 解锁
       'calendar', // 日期
-      'corner-down-left' // 返回
+      'corner-down-left', // 返回
+      // 设置弹窗侧边栏页签
+      'circle-user-round', // 个人资料
+      'palette', // 外观显示
+      'info' // 关于软件
     ]
   },
   ri: {
