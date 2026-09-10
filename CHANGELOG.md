@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.10](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.9...v1.0.10) (2026-09-10)
+
+### ✨ Features
+
+* 添加树表格组件，优化右键菜单触发区域，更新布局样式 ([163afd8](https://github.com/sincely/vite6-electron-vue3/commit/163afd8d4542242e756aff8ebe434fbfff02f793))
+* 添加锁屏功能，支持密码解锁和实时钟表显示，优化界面交互 ([e6ddcf3](https://github.com/sincely/vite6-electron-vue3/commit/e6ddcf3ba5f658d2cb65221c78e9f1349e6e883c))
+* 添加顶部混合模式下的二级菜单伸缩功能，支持收起/展开状态切换 ([d2e9511](https://github.com/sincely/vite6-electron-vue3/commit/d2e9511c1f4f5f395d7bfd557fdfba63ba2025f5))
+
+### 🐞 Bug Fixes
+
+* 优化加载完成后弹窗显示逻辑，避免遮挡主界面 ([7c940e5](https://github.com/sincely/vite6-electron-vue3/commit/7c940e57fde3ff8b241e0bc5c91a89ecca2948bb))
+* 优化登录窗口创建逻辑，支持会话内跳过启动层展示 ([4a65a64](https://github.com/sincely/vite6-electron-vue3/commit/4a65a64847359ccd9da98f3d4319417e267c2dc5))
+* 更新 element-plus 组件样式导入路径 ([6835d91](https://github.com/sincely/vite6-electron-vue3/commit/6835d91c5fd6d546780cbf8e975a96485bd19c3c))
+* 更新标签视图样式，调整背景和边框颜色 ([0ecf750](https://github.com/sincely/vite6-electron-vue3/commit/0ecf750209ed592e266f75690bef4128874a9eda))
+* 注释掉加载完成时的弹窗显示逻辑，避免不必要的调用 ([45df736](https://github.com/sincely/vite6-electron-vue3/commit/45df73610728c1f7ea3d3a978cba84d991458b93))
+* 移除多余的背景色变量，优化主题样式 ([c8d7846](https://github.com/sincely/vite6-electron-vue3/commit/c8d7846051be0190d58849b1ae9c6dbf9beb7ab7))
+* 调整组件高度和主题样式变量，优化界面显示 ([e41550c](https://github.com/sincely/vite6-electron-vue3/commit/e41550c462092f0383c96be65fd29052e50bf86c))
+
+### ♻️ Code Refactoring
+
+* 移除 pc端源码 ([ed70f63](https://github.com/sincely/vite6-electron-vue3/commit/ed70f63b685bb373fac15fd6c4872197ab7fb44f))
+* 移除多余的样式和注释，优化代码整洁性 ([bf50aef](https://github.com/sincely/vite6-electron-vue3/commit/bf50aefee6282148af69c902f5cb25482e9c1f3e))
+* 重命名 HTTP 请求处理函数，统一命名为 httpRequest ([165add4](https://github.com/sincely/vite6-electron-vue3/commit/165add4f3584e7ad62b9a931820813ed4a446406))
+
+### 🤖 Continuous Integration
+
+* 同步 pnpm-lockfile 并在 release 流程启用 --frozen-lockfile ([e9d0b1d](https://github.com/sincely/vite6-electron-vue3/commit/e9d0b1d1b5f20b6652daf6145a486e3b8ea5d5f0))
+
 ## [1.0.9](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.8...v1.0.9) (2026-09-04)
 
 ### ✨ Features
