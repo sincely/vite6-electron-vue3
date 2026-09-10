@@ -47,7 +47,12 @@
         type="button"
         class="control-btn"
         title="切换主题"
-        @click="appStore.toggleThemeWithTransition($event)"
+        @click="
+          appStore.toggleThemeWithTransition(
+            $event,
+            appStore.isDark ? 'light' : 'dark'
+          )
+        "
       >
         <SvgIcon
           :icon-class="appStore.isDark ? 'sun' : 'moon'"
