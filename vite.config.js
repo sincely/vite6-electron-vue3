@@ -51,13 +51,7 @@ export default defineConfig(({ mode, command }) => {
     base: viteEnv.VITE_BASE_URL,
     server: {
       port: 3200, // 指定服务器端口
-      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined,
-      warmup: {
-        clientFiles: [
-          './src/render/components/**/*.vue',
-          './src/render/views/**/*.vue'
-        ]
-      }
+      proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined
     },
     build: {
       // 传递给Terser的更多 minify 选项。
