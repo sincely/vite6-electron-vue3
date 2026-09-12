@@ -17,7 +17,7 @@ QoderWork 的更新链路：**远端配置门控（eligible 开关 + 禁用版�
 - 配置 URL：`${UPDATE_URL}/update-config.json`
 - 配置结构：
   ```json
-  { "schemaVersion": 1, "eligible": true, "disabledClientVersions": [], "autoDownload": true, "checkOnFocus": true, "minCheckIntervalMinutes": 30 }
+  { "schemaVersion": 1, "eligible": true, "disabledClientVersions": [], "autoDownload": true, "checkOnFocus": true }
   ```
 - API：
   - `getUpdateConfig()`：返回内存缓存
@@ -35,7 +35,7 @@ QoderWork 的更新链路：**远端配置门控（eligible 开关 + 禁用版�
      - `eligible=false` → 跳过检查更新，记日志 + 推送 `update-config`（UI 显示"更新已暂停"）
      - 当前版本命中 `disabledClientVersions` → 推送 `force-update` 事件，**同时继续**检查更新（强制升级需要拿到新版本）
      - 正常 → 检查更新
-- 触发时机：保留启动检查（did-finish-load）+ **新增 `win.on('focus')` 窗口聚焦检查**（对齐 QoderWork，带节流 `minCheckIntervalMinutes` 默认 30 分钟防频繁请求）
+- 触发时机：保留启动检查（did-finish-load）+ **新增 `win.on('focus')` 窗口聚焦检查**（对齐 QoderWork）
 - `autoUpdater.autoDownload = config.autoDownload`（true 时发现新版本自动下载）
 - `update-available` payload 增加 `rolloutMode`（`stagingPercentage` 存在 → `'batch'`，否则 `'full'`）
 - 新增推送频道：`update-config`（配置变化）、`force-update`（强制升级）

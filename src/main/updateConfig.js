@@ -7,8 +7,7 @@ const DEFAULT_CONFIG = Object.freeze({
   eligible: true, // 更新资格总开关：false 时禁止检查更新
   disabledClientVersions: [], // 禁用版本列表：命中则强制升级，支持精确("1.0.1")与前缀("1.0")
   autoDownload: false, // 是否自动下载（兜底保持用户确认后再下载）
-  checkOnFocus: true, // 窗口聚焦时是否检查更新
-  minCheckIntervalMinutes: 30 // 聚焦触发的最小检查间隔（分钟），防频繁请求
+  checkOnFocus: true // 窗口聚焦时是否检查更新
 })
 
 // 配置轮询间隔
@@ -56,12 +55,7 @@ function normalizeConfig(raw) {
     checkOnFocus:
       typeof raw.checkOnFocus === 'boolean'
         ? raw.checkOnFocus
-        : DEFAULT_CONFIG.checkOnFocus,
-    minCheckIntervalMinutes:
-      typeof raw.minCheckIntervalMinutes === 'number' &&
-      raw.minCheckIntervalMinutes > 0
-        ? raw.minCheckIntervalMinutes
-        : DEFAULT_CONFIG.minCheckIntervalMinutes
+        : DEFAULT_CONFIG.checkOnFocus
   }
 }
 

@@ -105,8 +105,7 @@
      "eligible": true,
      "disabledClientVersions": [],
      "autoDownload": true,
-     "checkOnFocus": true,
-     "minCheckIntervalMinutes": 30
+     "checkOnFocus": true
    }
    ```
 
@@ -250,7 +249,6 @@ server {
 | `disabledClientVersions` | string[] | `[]` | 禁用版本列表。命中则强制升级弹窗不可跳过，支持精确（`"1.0.1"`）与前缀（`"1.0"`） |
 | `autoDownload` | boolean | false | 发现新版本后是否自动下载（true 对齐 QoderWork），false 时用户点击"立即更新"后才下载 |
 | `checkOnFocus` | boolean | true | 窗口聚焦时是否自动检查更新 |
-| `minCheckIntervalMinutes` | number | 30 | 聚焦触发的最小检查间隔（分钟），防止频繁请求 |
 
 ### 逐字段详细说明
 
@@ -299,30 +297,22 @@ server {
 #### `checkOnFocus` — 窗口聚焦自动检查
 
 - **作用**：主窗口每次获得焦点时是否自动执行一次更新检查（对齐 QoderWork 的 "Window focused - checking for updates"）
-- **代码逻辑**：`win.on('focus')` 时若 `checkOnFocus=true` 则调用 `checkForUpdates({ fromFocus: true })`
+- **代码逻辑**：`win.on('focus')` 时若 `checkOnFocus=true` 则调用 `checkForUpdates()`
 - **典型场景**：桌面工具应用用户长时间挂着 → `true` 保证回到窗口能拿到新版本；多窗口频繁切换怕请求多 → `false`
-- **注意事项**：聚焦检查受 `minCheckIntervalMinutes` 节流，不会每次聚焦都发请求
-
-#### `minCheckIntervalMinutes` — 聚焦检查节流间隔
-
-- **作用**：限制"窗口聚焦触发的检查"最小间隔，避免频繁聚焦导致频繁请求
-- **代码逻辑**：仅对 `fromFocus=true` 生效；距上次检查不足该间隔则跳过；**启动检查、手动检查不受节流**
-- **注意事项**：值设为 `0` 或负数时回退默认值 `30`
 
 ### 字段优先级
 
 ```text
 checkForUpdates() 执行顺序：
   ① eligible=false        → return（总开关，跳过一切）
-  ② fromFocus 且未到间隔   → return（节流）
-  ③ 命中 disabledList     → 推送 force-update（仍继续检查）
-  ④ autoUpdater.checkForUpdates()
+  ② 命中 disabledList     → 推送 force-update（仍继续检查）
+  ③ autoUpdater.checkForUpdates()
         └─ autoDownload=true → 自动下载
 ```
 
 - `eligible` 是总闸，`false` 时其他字段全部失效
 - `disabledClientVersions` 触发强制升级，语义是"必须升"
-- `autoDownload` / `checkOnFocus` / `minCheckIntervalMinutes` 控制体验细节
+- `autoDownload` / `checkOnFocus` 控制体验细节
 
 ### 完整示例
 
@@ -332,12 +322,11 @@ checkForUpdates() 执行顺序：
   "eligible": true,
   "disabledClientVersions": ["1.0.0"],
   "autoDownload": true,
-  "checkOnFocus": true,
-  "minCheckIntervalMinutes": 10
+  "checkOnFocus": true
 }
 ```
 
-含义：更新通道开放；1.0.0 版本用户必须升级；其他用户发现新版本自动下载；窗口聚焦每 10 分钟最多自动检查一次。
+含义：更新通道开放；1.0.0 版本用户必须升级；其他用户发现新版本自动下载；窗口聚焦时自动检查更新。
 
 ### 更新时机
 
@@ -375,7 +364,7 @@ checkForUpdates() 执行顺序：
 | 触发点 | 说明 |
 | --- | --- |
 | 主窗口加载完成 | 启动时自动检查一次 |
-| 主窗口聚焦 | 每次聚焦检查（受 `checkOnFocus` 控制 + `minCheckIntervalMinutes` 节流） |
+| 主窗口聚焦 | 每次聚焦检查（受 `checkOnFocus` 控制） |
 | 用户手动 | 设置页"关于软件"→ 检查更新；菜单"检查更新" |
 
 ---
@@ -483,8 +472,7 @@ releaseDate: '2026-08-07T00:00:00.000Z'
   "eligible": true,
   "disabledClientVersions": [],
   "autoDownload": true,
-  "checkOnFocus": true,
-  "minCheckIntervalMinutes": 30
+  "checkOnFocus": true
 }
 ```
 
