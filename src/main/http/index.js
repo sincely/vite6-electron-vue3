@@ -154,7 +154,7 @@ service.interceptors.response.use(
     return {
       code,
       data: err.response?.data,
-      message: error.message || '网络异常'
+      message: err.message || '网络异常'
     }
   }
 )
