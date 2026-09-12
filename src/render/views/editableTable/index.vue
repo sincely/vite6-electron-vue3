@@ -22,10 +22,8 @@
       @sort-change="handleSortChange"
     >
       <template #toolbar-left>
-        <el-button type="danger" size="small" @click="handleBatchDelete">
-          批量删除
-        </el-button>
-        <el-button type="primary" size="small" @click="add">添加一行</el-button>
+        <el-button type="danger" @click="handleBatchDelete">批量删除</el-button>
+        <el-button type="primary" @click="add">添加一行</el-button>
       </template>
       <!-- <template #nameHeader="{ column }">
         <span style="color: red">*</span>

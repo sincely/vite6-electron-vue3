@@ -22,15 +22,13 @@
       @selection-change="handleSelectionChange"
     >
       <template #toolbar-left>
-        <div class="toolbar-buttons">
-          <el-button type="primary" @click="handleCreate">
-            <SvgIcon icon-class="plus" width="14px" height="14px" />
-            <span>新增用户</span>
-          </el-button>
-          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-            批量删除
-          </el-button>
-        </div>
+        <el-button type="primary" @click="handleCreate">
+          <SvgIcon icon-class="plus" width="14px" height="14px" />
+          <span>新增用户</span>
+        </el-button>
+        <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
+          批量删除
+        </el-button>
       </template>
 
       <template #gender="{ row }">
@@ -444,12 +442,6 @@ onMounted(() => {
   gap: 16px;
   height: 100%;
   padding: 4px;
-}
-
-.toolbar-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
 }
 
 .role-cell {

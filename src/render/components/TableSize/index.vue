@@ -20,7 +20,7 @@ const props = defineProps({
   // 表格尺寸：small / default / large（v-model）
   modelValue: {
     type: String,
-    default: 'small'
+    default: 'default'
   }
 })
 

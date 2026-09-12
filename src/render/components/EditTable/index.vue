@@ -873,7 +873,7 @@ defineExpose({
 
 // 响应式数据
 const loading = ref(false)
-const tableSize = ref(props.config?.table?.size || 'small')
+const tableSize = ref(props.config?.table?.size || 'default')
 </script>
 
 <style scoped lang="scss">
@@ -902,13 +902,13 @@ const tableSize = ref(props.config?.table?.size || 'small')
 
   .toolbar-left {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+    gap: 6px;
+    align-items: center;
   }
 
   .toolbar-right {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
   }
 }
