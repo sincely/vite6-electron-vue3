@@ -393,16 +393,19 @@ const handleSubmit = async () => {
   const valid = await formRef.value?.validate()
   if (!valid) return
 
-  if (isEdit.value) {
-    await updateUser(formModel.value)
-    ElMessage.success('用户信息已更新')
-  } else {
-    await createUser(formModel.value)
-    ElMessage.success('用户创建成功')
+  try {
+    if (isEdit.value) {
+      await updateUser(formModel.value)
+      ElMessage.success('用户信息已更新')
+    } else {
+      await createUser(formModel.value)
+      ElMessage.success('用户创建成功')
+    }
+    dialogVisible.value = false
+    tableRef.value?.getList()
+  } catch (error) {
+    ElMessage.error(error?.message || '保存失败')
   }
-
-  dialogVisible.value = false
-  tableRef.value?.getList()
 }
 
 const handleDeleteByIds = async (ids) => {
@@ -416,10 +419,14 @@ const handleDeleteByIds = async (ids) => {
   } catch {
     return
   }
-  await deleteUsers({ ids })
-  ElMessage.success('删除成功')
-  selectedIds.value = []
-  tableRef.value?.getList()
+  try {
+    await deleteUsers({ ids })
+    ElMessage.success('删除成功')
+    selectedIds.value = []
+    tableRef.value?.getList()
+  } catch (error) {
+    ElMessage.error(error?.message || '删除失败')
+  }
 }
 
 const handleDelete = (row) => {

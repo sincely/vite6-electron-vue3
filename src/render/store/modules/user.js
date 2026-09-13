@@ -33,11 +33,7 @@ export const useUserStore = defineStore('user', {
     // 登录
     async loginAction(params) {
       try {
-        // request() 返回主进程归一化的 { status, headers, data }，
-        // res.data 为后端业务信封 { code, data, error, message }，
-        // 业务本体位于 res.data.data。
-        const res = await login(params)
-        const payload = res?.data?.data
+        const payload = await login(params)
         this.setToken(payload?.accessToken || payload?.token)
         await this.getUserInfoAction()
         return payload
@@ -49,8 +45,7 @@ export const useUserStore = defineStore('user', {
     // 获取用户信息
     async getUserInfoAction() {
       try {
-        const res = await getUserInfo()
-        const payload = res?.data?.data
+        const payload = await getUserInfo()
         this.userInfo = payload
         this.permissions = payload?.permissions || []
         this.roles = payload?.roles || []

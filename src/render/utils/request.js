@@ -1,21 +1,12 @@
 /**
  * 渲染进程请求模块
  *
- * 只负责把请求参数透传给主进程 axios 代理，由主进程统一处理：
- *   - baseURL / token 注入 / 表单构造
- *   - 二进制响应回传（ArrayBuffer → Blob）
- *   - 错误归一化（status / code / data）
- *
- * 返回主进程归一化结果 { status, headers, data }，其中 data 为后端响应体
- * （约定为 { code, data, error, message }）—— 由调用方决定如何剥层使用。
- *
- * token 注入：默认从 useUserStore().token 自动注入；调用方可在 config.token 显式覆盖。
- * 渲染端不做：loading / toast / 401 刷新 / 取消去重 —— 由调用方决定。
- *
- * @example
- * import request from '@/utils/request'
- * const result = await request({ url: '/user/info', method: 'get' })
- * // result = { status, headers, data: { code, data, error, message } }
+ * 只负责把请求参数透传给主进程 axios 代理；并在此处统一拆业务信封，
+ * 主进程代理只做通用 HTTP 转发，返回 { code: <HTTP status>, data: <后端响应体>, message }。
+ * 后端约定的业务信封 { code, data, error, message } 由本模块识别：
+ *   - 业务成功（code === 0）：resolve 业务本体（envelope.data）
+ *   - 业务失败（code !== 0）：reject 一个 Error（带 message）
+ *   - HTTP 失败 / 超时：reject 主进程抛出的错误
  */
 
 import { toRaw } from 'vue'
@@ -23,6 +14,26 @@ import { useUserStore } from '@/store/modules/user'
 
 function genRequestId() {
   return `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+}
+
+/**
+ * 业务信封拆层：
+ *   - 识别带 code 字段的对象视为业务信封
+ *   - code === 0 → 返回业务本体（envelope.data）
+ *   - 其他 → 抛带 message 的 Error，并把 businessCode / businessData 挂到 err 上便于调用方诊断
+ *   - 非业务信封（后端直返非标准结构 / 第三方接口）原样透传
+ */
+function unwrapBusinessEnvelope(body) {
+  if (body && typeof body === 'object' && 'code' in body) {
+    if (body.code === 0) {
+      return body.data ?? null
+    } else {
+      const err = new Error(body.message || '业务请求失败')
+      err.businessCode = body.code
+      err.businessData = body.data
+      throw err
+    }
+  }
 }
 
 /**
@@ -37,13 +48,13 @@ function genRequestId() {
  * @param {number} [config.timeout]    超时时间（ms）
  * @param {string} [config.token]      显式覆盖 Bearer token（默认读 userStore.token）
  * @param {string} [config.requestId]  取消标识（不传时自动生成）
- * @returns {Promise<{status, headers, dataType, data, mimeType?, filename?}>}
+ * @returns {Promise<any>} 业务本体（envelope 已剥层）
  */
 async function request(config = {}) {
   const userStore = useUserStore()
   // Vue reactive() 返回的 Proxy 无法被 Electron IPC 结构化克隆，
   // toRaw 仅剥离 Proxy 包装，保留原始数据结构（Date / 嵌套对象等不变）。
-  return window.request.send({
+  const result = await window.request.send({
     url: config.url,
     method: (config.method || 'get').toLowerCase(),
     params: toRaw(config.params),
@@ -55,6 +66,7 @@ async function request(config = {}) {
     token: config.token !== undefined ? config.token : userStore.token,
     requestId: config.requestId || genRequestId()
   })
+  return unwrapBusinessEnvelope(result?.data)
 }
 
 export default request

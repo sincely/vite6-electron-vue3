@@ -1,28 +1,32 @@
-import { setResponseStatus } from 'h3';
+import { setResponseStatus } from 'h3'
 
 export function useResponseSuccess(data) {
   return {
     code: 0,
     data,
-    error: null,
-    message: 'ok',
-  };
+    message: 'ok'
+  }
 }
 
-export function usePageResponseSuccess(page, pageSize, list, { message = 'ok' } = {}) {
+export function usePageResponseSuccess(
+  page,
+  pageSize,
+  list,
+  { message = 'ok' } = {}
+) {
   const pageData = pagination(
     Number.parseInt(`${page}`),
     Number.parseInt(`${pageSize}`),
-    list,
-  );
+    list
+  )
 
   return {
     ...useResponseSuccess({
       items: pageData,
-      total: list.length,
+      total: list.length
     }),
-    message,
-  };
+    message
+  }
 }
 
 export function useResponseError(message, error = null) {
@@ -30,27 +34,27 @@ export function useResponseError(message, error = null) {
     code: -1,
     data: null,
     error,
-    message,
-  };
+    message
+  }
 }
 
 export function forbiddenResponse(event, message = 'Forbidden Exception') {
-  setResponseStatus(event, 403);
-  return useResponseError(message, message);
+  setResponseStatus(event, 403)
+  return useResponseError(message, message)
 }
 
 export function unAuthorizedResponse(event) {
-  setResponseStatus(event, 401);
-  return useResponseError('Unauthorized Exception', 'Unauthorized Exception');
+  setResponseStatus(event, 401)
+  return useResponseError('Unauthorized Exception', 'Unauthorized Exception')
 }
 
 export function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export function pagination(pageNo, pageSize, array) {
-  const offset = (pageNo - 1) * Number(pageSize);
+  const offset = (pageNo - 1) * Number(pageSize)
   return offset + Number(pageSize) >= array.length
     ? array.slice(offset)
-    : array.slice(offset, offset + Number(pageSize));
+    : array.slice(offset, offset + Number(pageSize))
 }

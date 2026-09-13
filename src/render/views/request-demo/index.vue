@@ -228,24 +228,12 @@ const record = (key, ok, payload, error) => {
   }
 }
 
-// ─── 响应解包 ─────────────────────────────────────
-// request 返回的是 axios 原始响应 { status, headers, data }，
-// data 又是后端的业务信封 { code, data, error, message }，
-// 这里连续拆两层，把真正的业务数据交给面板展示。
-const unwrapBiz = (result) => {
-  const body = result?.data
-  if (body && typeof body === 'object' && 'code' in body) {
-    return body.data ?? body.result ?? null
-  }
-  return body
-}
-
 // ─── 请求处理 ─────────────────────────────────────
+// request() 已统一拆业务信封，await 后直接拿到业务本体
 const handleJsonLogin = async () => {
   loading.json = true
   try {
-    const result = await loginByJson(jsonForm)
-    const biz = unwrapBiz(result)
+    const biz = await loginByJson(jsonForm)
     if (biz?.accessToken) userStore.setToken(biz.accessToken)
     record('json', true, biz)
     ElMessage.success('JSON 登录成功')
@@ -260,8 +248,7 @@ const handleJsonLogin = async () => {
 const handleFormLogin = async () => {
   loading.form = true
   try {
-    const result = await loginByForm(formPayload)
-    const biz = unwrapBiz(result)
+    const biz = await loginByForm(formPayload)
     if (biz?.accessToken) userStore.setToken(biz.accessToken)
     record('form', true, biz)
     ElMessage.success('表单登录成功')
@@ -276,8 +263,7 @@ const handleFormLogin = async () => {
 const handleList = async () => {
   loading.list = true
   try {
-    const result = await getTableList(queryForm)
-    const biz = unwrapBiz(result)
+    const biz = await getTableList(queryForm)
     record('list', true, biz)
     ElMessage.success(`查询到 ${biz?.total ?? 0} 条数据`)
   } catch (err) {
@@ -296,8 +282,7 @@ const handleUserInfo = async () => {
   }
   loading.info = true
   try {
-    const result = await getUserInfo(userStore.token)
-    const biz = unwrapBiz(result)
+    const biz = await getUserInfo(userStore.token)
     record('info', true, biz)
     ElMessage.success(`已获取：${biz?.username || biz?.name || '当前用户'}`)
   } catch (err) {

@@ -2,11 +2,13 @@
  * 主进程 HTTP 代理（带拦截器 · 终端日志）
  *
  * 职责：接收渲染进程通过 IPC 传来的请求配置，调用 axios 发起真实 HTTP，返回响应。
+ * 本文件保持通用 HTTP 代理语义，不感知业务信封形状 —— 信封拆层由渲染端
+ * utils/request.js 统一处理（避免主进程耦合后端业务协议）。
  *
  * 拦截器：
  *   - 请求：注入 Authorization（Bearer token）与 Content-Type，按 isForm 构造表单
- *   - 响应：统一归一化为 { status, headers, data }
- *   - 响应失败：原样 reject（由调用方处理）
+ *   - 响应：统一归一化为 { code, data, message }，其中 data 为后端响应体原值
+ *   - 响应失败：原样返回（由调用方处理）
  *
  * 日志（仅主进程终端，不镜像到渲染端）：
  *   每个事件输出多行分桶日志——首行为概览（方法/URL/状态），后续每行一个字段
@@ -34,8 +36,8 @@
  *     data,     // → 作为请求体发送（POST/PUT/PATCH）
  *     headers, isForm, responseType, timeout, token
  *   }
- *   返回 = { status, headers, data }
- *   抛错：axios 原始错误
+ *   返回 = { code: <HTTP status>, data: <后端响应体>, message }
+ *   抛错：HTTP 失败 / 超时透传 axios 错误
  */
 import axios from 'axios'
 import { inspect } from 'util'
