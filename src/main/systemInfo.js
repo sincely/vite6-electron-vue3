@@ -22,8 +22,7 @@ export function getSystemInfo() {
     }
   })
 
-  const isAppleSilicon =
-    arch === 'arm64' || cpus.some((item) => item.model.includes('Apple'))
+  const isAppleSilicon = arch === 'arm64' || cpus.some((item) => item.model.includes('Apple'))
 
   return {
     arch,

@@ -17,9 +17,7 @@
         />
         <!-- 全屏切换 -->
         <Icon
-          :icon="
-            isFullscreen ? 'ri:fullscreen-exit-line' : 'ri:fullscreen-line'
-          "
+          :icon="isFullscreen ? 'ri:fullscreen-exit-line' : 'ri:fullscreen-line'"
           class="toolbar-icon"
           width="18"
           height="18"
@@ -48,24 +46,11 @@
       @selection-change="handleSelectionChange"
     >
       <!-- 多选列 (根据 config.selection 开启) -->
-      <el-table-column
-        v-if="mergedConfig.selection"
-        type="selection"
-        width="55"
-        :reserve-selection="true"
-      />
+      <el-table-column v-if="mergedConfig.selection" type="selection" width="55" :reserve-selection="true" />
 
-      <template
-        v-for="column in visibleColumns"
-        :key="column.prop || column.label"
-      >
+      <template v-for="column in visibleColumns" :key="column.prop || column.label">
         <!-- selection / index 列 -->
-        <el-table-column
-          v-if="column.type === 'selection'"
-          type="selection"
-          fixed
-          :width="column.width || 55"
-        />
+        <el-table-column v-if="column.type === 'selection'" type="selection" fixed :width="column.width || 55" />
         <el-table-column
           v-else-if="column.type === 'index'"
           type="index"
@@ -100,21 +85,13 @@
               :index="$index"
             />
             <!-- 字典标签 -->
-            <DictTag
-              v-else-if="column.dict"
-              :value="getSafeValue(row, column.prop)"
-              :options="column.dict"
-            />
+            <DictTag v-else-if="column.dict" :value="getSafeValue(row, column.prop)" :options="column.dict" />
             <!-- 时间格式化 -->
             <span v-else-if="column.date">
               {{ formatDate(row[column.prop], column.dateFormat) }}
             </span>
             <!-- 链接 -->
-            <el-link
-              v-else-if="column.link"
-              type="primary"
-              @click="handleLinkClick(column, row)"
-            >
+            <el-link v-else-if="column.link" type="primary" @click="handleLinkClick(column, row)">
               {{ row[column.prop] }}
             </el-link>
             <!-- formatter 格式化 -->
@@ -127,21 +104,10 @@
 
           <!-- 表头提示 -->
           <template #header>
-            <slot
-              v-if="column.headerSlot"
-              :name="column.headerSlot"
-              :column="column"
-            />
+            <slot v-if="column.headerSlot" :name="column.headerSlot" :column="column" />
             <span v-else>{{ column.label }}</span>
-            <el-tooltip
-              v-if="column.tip"
-              :content="column.tip.content"
-              placement="top"
-            >
-              <i
-                class="el-icon-question"
-                style="margin-left: 4px; color: #999"
-              ></i>
+            <el-tooltip v-if="column.tip" :content="column.tip.content" placement="top">
+              <i class="el-icon-question" style="margin-left: 4px; color: #999"></i>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -156,29 +122,10 @@
         fixed="right"
       >
         <template #default="{ row, $index }">
-          <slot
-            v-if="$slots['action']"
-            name="action"
-            :row="row"
-            :index="$index"
-          />
+          <slot v-if="$slots['action']" name="action" :row="row" :index="$index" />
           <div v-else class="table-action">
-            <el-button
-              link
-              type="primary"
-              size="small"
-              :icon="Edit"
-              title="编辑"
-              @click="handleEdit(row, $index)"
-            />
-            <el-button
-              link
-              type="success"
-              size="small"
-              :icon="Plus"
-              title="新增"
-              @click="handleAdd(row, $index)"
-            />
+            <el-button link type="primary" size="small" :icon="Edit" title="编辑" @click="handleEdit(row, $index)" />
+            <el-button link type="success" size="small" :icon="Plus" title="新增" @click="handleAdd(row, $index)" />
             <el-popconfirm
               title="确认删除？"
               confirm-button-text="确认"
@@ -186,13 +133,7 @@
               @confirm="handleDelete(row, $index)"
             >
               <template #reference>
-                <el-button
-                  link
-                  type="danger"
-                  size="small"
-                  :icon="Delete"
-                  title="删除"
-                />
+                <el-button link type="danger" size="small" :icon="Delete" title="删除" />
               </template>
             </el-popconfirm>
           </div>
@@ -260,13 +201,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits([
-  'selection-change',
-  'row-click',
-  'edit',
-  'delete',
-  'add'
-])
+const emit = defineEmits(['selection-change', 'row-click', 'edit', 'delete', 'add'])
 
 // Expose
 const { tableHeight, tableRef, calcHeight } = useTableHeight() // 动态计算表格高度，底部留白 80px
@@ -292,9 +227,7 @@ const tableStyle = reactive({
 // 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
   return {
-    '--smart-table-header-bg': tableStyle.headerBg
-      ? 'var(--color-bg-input)'
-      : 'transparent'
+    '--smart-table-header-bg': tableStyle.headerBg ? 'var(--color-bg-input)' : 'transparent'
   }
 })
 
@@ -462,9 +395,7 @@ const isFullscreen = inject('isFullscreen', ref(false))
 // 排序变更
 const handleSortChange = ({ prop, order }) => {
   if (mergedConfig.value.sort) {
-    const sort = order
-      ? { prop, order: order === 'ascending' ? 'asc' : 'desc' }
-      : null
+    const sort = order ? { prop, order: order === 'ascending' ? 'asc' : 'desc' } : null
     if (props.events?.onSortChange) {
       props.events.onSortChange(queryParams, sort)
     }
@@ -491,10 +422,7 @@ const handleLinkClick = (column, row) => {
     // 路由跳转
     router.push({
       name: column.link.name,
-      params:
-        typeof column.link.params === 'function'
-          ? column.link.params(row)
-          : column.link.params
+      params: typeof column.link.params === 'function' ? column.link.params(row) : column.link.params
     })
   }
 }

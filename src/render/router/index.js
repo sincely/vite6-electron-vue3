@@ -700,8 +700,7 @@ export const asyncRouteTree = [
           {
             path: 'switch-role',
             name: 'example-switch-role',
-            component: () =>
-              import('@/views/examples/permission/switch-role/index.vue'),
+            component: () => import('@/views/examples/permission/switch-role/index.vue'),
             meta: {
               title: '切换角色',
               icon: 'user-round',
@@ -712,8 +711,7 @@ export const asyncRouteTree = [
           {
             path: 'button-auth',
             name: 'example-button-auth',
-            component: () =>
-              import('@/views/examples/permission/button-auth/index.vue'),
+            component: () => import('@/views/examples/permission/button-auth/index.vue'),
             meta: {
               title: '按钮权限',
               icon: 'shield-check',
@@ -724,8 +722,7 @@ export const asyncRouteTree = [
           {
             path: 'page-visibility',
             name: 'example-page-visibility',
-            component: () =>
-              import('@/views/examples/permission/page-visibility/index.vue'),
+            component: () => import('@/views/examples/permission/page-visibility/index.vue'),
             meta: {
               title: '页面可见性',
               icon: 'eye',
@@ -907,11 +904,7 @@ export const asyncRoutes = flattenRoutes(asyncRouteTree)
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [
-    ...constantRoutes,
-    ...asyncRouteTree,
-    { path: '/:pathMatch(.*)*', redirect: '/desktop' }
-  ],
+  routes: [...constantRoutes, ...asyncRouteTree, { path: '/:pathMatch(.*)*', redirect: '/desktop' }],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -953,10 +946,7 @@ router.beforeEach(async (to, _from, next) => {
     }
     // 页面可见性：声明了 meta.roles 的路由仅允许对应角色访问
     const requiredRoles = to.meta?.roles
-    if (
-      requiredRoles?.length &&
-      !requiredRoles.some((role) => userStore.roles.includes(role))
-    ) {
+    if (requiredRoles?.length && !requiredRoles.some((role) => userStore.roles.includes(role))) {
       ElMessage.warning('当前角色无权访问该页面')
       next({ path: '/desktop' })
       return

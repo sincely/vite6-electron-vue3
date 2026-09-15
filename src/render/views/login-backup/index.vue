@@ -15,19 +15,11 @@
 
         <!-- Login Mode Switcher -->
         <div class="login-tabs">
-          <div
-            class="tab-item"
-            :class="{ active: activeTab === 'account' }"
-            @click="updateActiveTab('account')"
-          >
+          <div class="tab-item" :class="{ active: activeTab === 'account' }" @click="updateActiveTab('account')">
             <span class="tab-text">账号登录</span>
             <div v-if="activeTab === 'account'" class="active-indicator"></div>
           </div>
-          <div
-            class="tab-item"
-            :class="{ active: activeTab === 'qrcode' }"
-            @click="updateActiveTab('qrcode')"
-          >
+          <div class="tab-item" :class="{ active: activeTab === 'qrcode' }" @click="updateActiveTab('qrcode')">
             <span class="tab-text">扫码登录</span>
             <div v-if="activeTab === 'qrcode'" class="active-indicator"></div>
           </div>
@@ -53,9 +45,7 @@
 import CustomTitleBar from './components/CustomTitleBar.vue'
 import AccountLogin from './components/AccountLogin.vue'
 // 扫码登录为次要功能，异步加载避免 qrcode 库进入登录首屏
-const QRCodeLogin = defineAsyncComponent(
-  () => import('./components/QRCodeLogin.vue')
-)
+const QRCodeLogin = defineAsyncComponent(() => import('./components/QRCodeLogin.vue'))
 
 const activeTab = ref('account')
 
@@ -92,11 +82,7 @@ const updateActiveTab = (tab) => {
     height: 360px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-primary), transparent 70%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-primary), transparent 70%) 0%, transparent 70%);
     border-radius: 999px;
   }
 
@@ -108,11 +94,7 @@ const updateActiveTab = (tab) => {
     height: 300px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--brand-accent), transparent 75%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--brand-accent), transparent 75%) 0%, transparent 70%);
     border-radius: 999px;
   }
 }
@@ -146,11 +128,7 @@ const updateActiveTab = (tab) => {
     display: inline-flex;
     padding: 8px;
     margin-bottom: 10px;
-    background: linear-gradient(
-      135deg,
-      var(--color-bg-card),
-      var(--color-bg-hover)
-    );
+    background: linear-gradient(135deg, var(--color-bg-card), var(--color-bg-hover));
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
 

@@ -91,12 +91,7 @@ function buildOptions() {
     series: [
       {
         type: 'candlestick',
-        data: props.data.map((item) => [
-          item.open,
-          item.close,
-          item.low,
-          item.high
-        ]),
+        data: props.data.map((item) => [item.open, item.close, item.low, item.high]),
         itemStyle: {
           color: upColor,
           color0: downColor,
@@ -138,17 +133,9 @@ const rebuild = () => {
   options.value = buildOptions()
 }
 onThemeChange(rebuild)
-watch(
-  () => [
-    props.data,
-    props.colors,
-    props.showDataZoom,
-    props.dataZoomStart,
-    props.dataZoomEnd
-  ],
-  rebuild,
-  { deep: true }
-)
+watch(() => [props.data, props.colors, props.showDataZoom, props.dataZoomStart, props.dataZoomEnd], rebuild, {
+  deep: true
+})
 </script>
 
 <style lang="scss" scoped>

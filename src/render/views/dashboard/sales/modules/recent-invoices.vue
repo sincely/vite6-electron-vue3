@@ -5,11 +5,7 @@
         <h4>最近发票</h4>
       </div>
       <div class="recent-invoices-tools">
-        <el-select
-          v-model="status"
-          class="recent-invoices-select"
-          size="default"
-        >
+        <el-select v-model="status" class="recent-invoices-select" size="default">
           <el-option label="全部状态" value="" />
           <el-option label="已支付" value="已支付" />
           <el-option label="待处理" value="待处理" />
@@ -48,12 +44,7 @@
         <el-table-column label="商品" width="120">
           <template #default="{ row }">
             <div class="recent-invoices-products">
-              <img
-                v-for="(img, i) in row.products"
-                :key="i"
-                :src="img"
-                alt="商品"
-              />
+              <img v-for="(img, i) in row.products" :key="i" :src="img" alt="商品" />
             </div>
           </template>
         </el-table-column>
@@ -72,9 +63,7 @@
         </el-table-column>
       </el-table>
       <div class="recent-invoices-footer">
-        <span class="recent-invoices-total">
-          当前显示 {{ filteredList.length }} 条，共 {{ invoices.length }} 条
-        </span>
+        <span class="recent-invoices-total">当前显示 {{ filteredList.length }} 条，共 {{ invoices.length }} 条</span>
       </div>
     </template>
   </card>

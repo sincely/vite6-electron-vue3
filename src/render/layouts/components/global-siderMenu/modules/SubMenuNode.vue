@@ -2,27 +2,13 @@
   <a
     class="sidebar-item sidebar-item-child"
     :class="{ 'sidebar-item-active': isActive }"
-    :style="
-      depth > 2 ? { paddingLeft: `${42 + (depth - 2) * 14}px` } : undefined
-    "
+    :style="depth > 2 ? { paddingLeft: `${42 + (depth - 2) * 14}px` } : undefined"
     @click="handleClick"
   >
-    <Icon
-      v-if="item.icon"
-      :icon="`lucide:${item.icon}`"
-      class="sidebar-child-icon"
-      width="14px"
-      height="14px"
-    />
+    <Icon v-if="item.icon" :icon="`lucide:${item.icon}`" class="sidebar-child-icon" width="14px" height="14px" />
     <span v-else class="sidebar-child-dot"></span>
     <span class="sidebar-label">{{ item.label }}</span>
-    <Icon
-      v-if="item.link"
-      icon="lucide:arrow-up-right"
-      class="sidebar-external-icon"
-      width="12px"
-      height="12px"
-    />
+    <Icon v-if="item.link" icon="lucide:arrow-up-right" class="sidebar-external-icon" width="12px" height="12px" />
     <span v-if="item.showBadge" class="menu-badge"></span>
     <span v-else-if="item.showTextBadge" class="menu-text-badge">
       {{ item.showTextBadge }}
@@ -38,18 +24,9 @@
   </a>
 
   <!-- 子级分组：递归渲染更深层级（文件名即组件名，支持模板内自引用） -->
-  <div
-    v-if="item.children?.length"
-    class="sidebar-submenu"
-    :class="{ 'sidebar-submenu-open': isExpanded }"
-  >
+  <div v-if="item.children?.length" class="sidebar-submenu" :class="{ 'sidebar-submenu-open': isExpanded }">
     <div class="sidebar-submenu-inner">
-      <SubMenuNode
-        v-for="child in item.children"
-        :key="child.id"
-        :item="child"
-        :depth="depth + 1"
-      />
+      <SubMenuNode v-for="child in item.children" :key="child.id" :item="child" :depth="depth + 1" />
     </div>
   </div>
 </template>
@@ -87,8 +64,7 @@ const handleClick = () => {
     toggleExpand(props.item.id, props.depth)
     return
   }
-  if (props.item.link && !props.item.iframe)
-    return openExternalLink(props.item.link)
+  if (props.item.link && !props.item.iframe) return openExternalLink(props.item.link)
   router.push(props.item.route).catch(() => {})
 }
 </script>

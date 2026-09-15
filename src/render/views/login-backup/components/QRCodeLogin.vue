@@ -7,10 +7,7 @@
 
         <!-- Status Overlays -->
         <transition name="fade">
-          <div
-            v-if="qrCodeStatus !== 'waiting' && qrCodeStatus !== 'scanned'"
-            class="status-overlay"
-          >
+          <div v-if="qrCodeStatus !== 'waiting' && qrCodeStatus !== 'scanned'" class="status-overlay">
             <div class="status-content">
               <svg-icon
                 v-if="qrCodeStatus === 'confirmed'"
@@ -38,11 +35,7 @@
                 {{ statusText }}
               </p>
 
-              <button
-                v-if="['expired', 'cancelled'].includes(qrCodeStatus)"
-                class="refresh-btn"
-                @click="onRefresh"
-              >
+              <button v-if="['expired', 'cancelled'].includes(qrCodeStatus)" class="refresh-btn" @click="onRefresh">
                 点击刷新
               </button>
             </div>

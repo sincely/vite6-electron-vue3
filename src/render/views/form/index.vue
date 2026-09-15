@@ -1,10 +1,6 @@
 <template>
   <div class="log-container">
-    <PageHeader
-      title="系统日志"
-      subtitle="查看系统操作记录和运行状态"
-      icon="cpu"
-    >
+    <PageHeader title="系统日志" subtitle="查看系统操作记录和运行状态" icon="cpu">
       <template #actions>
         <el-input
           v-model="searchKeyword"
@@ -39,9 +35,7 @@
 
       <template #footer>
         <el-button @click="dialogVisible = false">关闭</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          导出记录
-        </el-button>
+        <el-button type="primary" @click="dialogVisible = false">导出记录</el-button>
       </template>
     </ModalDialog>
   </div>
@@ -93,9 +87,7 @@ const handleClose = () => {
 const queryActionSuggestions = (queryString, callback) => {
   const keyword = queryString.trim().toLowerCase()
   const results = keyword
-    ? actionSuggestions.filter((item) =>
-        item.value.toLowerCase().includes(keyword)
-      )
+    ? actionSuggestions.filter((item) => item.value.toLowerCase().includes(keyword))
     : actionSuggestions
   callback(results)
 }

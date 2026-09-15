@@ -2,21 +2,13 @@
   <div class="top-menu-container">
     <!-- 左滚动箭头 -->
     <transition name="scroll-arrow">
-      <button
-        v-show="canScrollLeft"
-        class="scroll-arrow scroll-arrow-left"
-        title="向左滚动"
-        @click="scrollByDir(-1)"
-      >
+      <button v-show="canScrollLeft" class="scroll-arrow scroll-arrow-left" title="向左滚动" @click="scrollByDir(-1)">
         <Icon icon="lucide:chevron-left" width="16px" height="16px" />
       </button>
     </transition>
 
     <nav ref="menuNavRef" class="top-menu">
-      <div
-        class="top-menu-inner"
-        :style="{ transform: `translateX(-${scrollLeft}px)` }"
-      >
+      <div class="top-menu-inner" :style="{ transform: `translateX(-${scrollLeft}px)` }">
         <div
           v-for="item in mainItems"
           :key="item.id"
@@ -26,13 +18,7 @@
           @mouseenter="onItemEnter"
           @mouseleave="onItemLeave"
         >
-          <Icon
-            v-if="item.icon"
-            :icon="`lucide:${item.icon}`"
-            class="menu-icon"
-            width="16px"
-            height="16px"
-          />
+          <Icon v-if="item.icon" :icon="`lucide:${item.icon}`" class="menu-icon" width="16px" height="16px" />
           <span>{{ item.label }}</span>
           <span v-if="item.showBadge" class="menu-badge"></span>
           <span v-else-if="item.showTextBadge" class="menu-text-badge">
@@ -116,12 +102,7 @@
 
     <!-- 右滚动箭头 -->
     <transition name="scroll-arrow">
-      <button
-        v-show="canScrollRight"
-        class="scroll-arrow scroll-arrow-right"
-        title="向右滚动"
-        @click="scrollByDir(1)"
-      >
+      <button v-show="canScrollRight" class="scroll-arrow scroll-arrow-right" title="向右滚动" @click="scrollByDir(1)">
         <Icon icon="lucide:chevron-right" width="16px" height="16px" />
       </button>
     </transition>
@@ -140,9 +121,7 @@ const router = useRouter()
 const appStore = useAppStore()
 
 const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
-const mainItems = computed(() =>
-  visibleMenuItems.value.filter((item) => !item.footer)
-)
+const mainItems = computed(() => visibleMenuItems.value.filter((item) => !item.footer))
 
 // 任一层级后代激活时，一级菜单保持高亮
 const isParentActive = (item) => containsRoute(item, route.path)

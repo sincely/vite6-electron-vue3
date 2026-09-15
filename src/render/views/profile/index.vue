@@ -1,11 +1,7 @@
 <!-- 个人中心：资料卡 + 基本信息 / 偏好设置 / 账号安全 / 最近动态 -->
 <template>
   <div class="profile-page">
-    <PageHeader
-      title="个人中心"
-      subtitle="管理你的个人资料、偏好与账号安全"
-      icon="user"
-    />
+    <PageHeader title="个人中心" subtitle="管理你的个人资料、偏好与账号安全" icon="user" />
 
     <!-- 资料卡 -->
     <div class="profile-hero">
@@ -52,9 +48,7 @@
           </div>
         </div>
         <div class="profile-hero__actions">
-          <el-button type="primary" :icon="EditPen" @click="scrollToForm">
-            编辑资料
-          </el-button>
+          <el-button type="primary" :icon="EditPen" @click="scrollToForm">编辑资料</el-button>
         </div>
       </div>
       <div class="profile-hero__stats">
@@ -81,12 +75,7 @@
           <div class="profile-card__section">
             <span class="profile-card__section-label">擅长技能</span>
             <div class="profile-tags">
-              <el-tag
-                v-for="skill in skills"
-                :key="skill"
-                class="profile-tag"
-                round
-              >
+              <el-tag v-for="skill in skills" :key="skill" class="profile-tag" round>
                 {{ skill }}
               </el-tag>
             </div>
@@ -94,18 +83,10 @@
           <div class="profile-card__section">
             <span class="profile-card__section-label">角色权限</span>
             <div class="profile-tags">
-              <el-tag
-                v-for="role in userStore.roles"
-                :key="role"
-                type="success"
-                class="profile-tag"
-                round
-              >
+              <el-tag v-for="role in userStore.roles" :key="role" type="success" class="profile-tag" round>
                 {{ role }}
               </el-tag>
-              <span v-if="!userStore.roles.length" class="profile-card__empty">
-                暂无角色
-              </span>
+              <span v-if="!userStore.roles.length" class="profile-card__empty">暂无角色</span>
             </div>
           </div>
         </div>
@@ -115,11 +96,7 @@
             <el-icon><Lock /></el-icon>
             账号安全
           </h3>
-          <div
-            v-for="item in securityItems"
-            :key="item.key"
-            class="security-item"
-          >
+          <div v-for="item in securityItems" :key="item.key" class="security-item">
             <div class="security-item__icon" :style="{ background: item.bg }">
               <el-icon :color="item.color">
                 <component :is="item.icon" />
@@ -134,15 +111,7 @@
               v-model="securityState[item.key]"
               @change="handleSecurityChange(item)"
             />
-            <el-button
-              v-else
-              text
-              type="primary"
-              size="small"
-              @click="handleChangePassword"
-            >
-              修改
-            </el-button>
+            <el-button v-else text type="primary" size="small" @click="handleChangePassword">修改</el-button>
           </div>
         </div>
       </ElCol>
@@ -162,11 +131,7 @@
                 <ElRow :gutter="16">
                   <ElCol :xs="24" :sm="12">
                     <el-form-item label="昵称" prop="nickname">
-                      <el-input
-                        v-model="profileForm.nickname"
-                        placeholder="请输入昵称"
-                        maxlength="20"
-                      />
+                      <el-input v-model="profileForm.nickname" placeholder="请输入昵称" maxlength="20" />
                     </el-form-item>
                   </ElCol>
                   <ElCol :xs="24" :sm="12">
@@ -176,10 +141,7 @@
                   </ElCol>
                   <ElCol :xs="24" :sm="12">
                     <el-form-item label="邮箱" prop="email">
-                      <el-input
-                        v-model="profileForm.email"
-                        placeholder="请输入邮箱"
-                      />
+                      <el-input v-model="profileForm.email" placeholder="请输入邮箱" />
                     </el-form-item>
                   </ElCol>
                   <ElCol :xs="24" :sm="12">
@@ -189,20 +151,12 @@
                   </ElCol>
                   <ElCol :xs="24" :sm="12">
                     <el-form-item label="所在地区">
-                      <el-input
-                        v-model="profileForm.city"
-                        placeholder="如：浙江 · 杭州"
-                        maxlength="20"
-                      />
+                      <el-input v-model="profileForm.city" placeholder="如：浙江 · 杭州" maxlength="20" />
                     </el-form-item>
                   </ElCol>
                   <ElCol :xs="24" :sm="12">
                     <el-form-item label="职位">
-                      <el-input
-                        v-model="profileForm.job"
-                        placeholder="如：前端工程师"
-                        maxlength="20"
-                      />
+                      <el-input v-model="profileForm.job" placeholder="如：前端工程师" maxlength="20" />
                     </el-form-item>
                   </ElCol>
                   <ElCol :span="24">
@@ -219,43 +173,27 @@
                   </ElCol>
                 </ElRow>
                 <el-form-item>
-                  <el-button
-                    type="primary"
-                    :loading="saving"
-                    :icon="Check"
-                    @click="handleSaveProfile"
-                  >
+                  <el-button type="primary" :loading="saving" :icon="Check" @click="handleSaveProfile">
                     保存修改
                   </el-button>
-                  <el-button :icon="RefreshLeft" @click="handleResetProfile">
-                    重置
-                  </el-button>
+                  <el-button :icon="RefreshLeft" @click="handleResetProfile">重置</el-button>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
 
             <el-tab-pane label="偏好设置" name="preference">
               <div class="preference-list">
-                <div
-                  v-for="item in preferenceItems"
-                  :key="item.key"
-                  class="preference-item"
-                >
+                <div v-for="item in preferenceItems" :key="item.key" class="preference-item">
                   <div class="preference-item__meta">
                     <span class="preference-item__label">{{ item.label }}</span>
                     <span class="preference-item__desc">{{ item.desc }}</span>
                   </div>
-                  <el-switch
-                    v-model="preferenceState[item.key]"
-                    @change="handlePreferenceChange(item)"
-                  />
+                  <el-switch v-model="preferenceState[item.key]" @change="handlePreferenceChange(item)" />
                 </div>
                 <div class="preference-item">
                   <div class="preference-item__meta">
                     <span class="preference-item__label">界面语言</span>
-                    <span class="preference-item__desc">
-                      选择应用内显示的语言
-                    </span>
+                    <span class="preference-item__desc">选择应用内显示的语言</span>
                   </div>
                   <el-select
                     v-model="preferenceState.language"
@@ -299,15 +237,7 @@
 
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  Calendar,
-  Check,
-  EditPen,
-  Iphone,
-  Location,
-  Message,
-  RefreshLeft
-} from '@element-plus/icons-vue'
+import { Calendar, Check, EditPen, Iphone, Location, Message, RefreshLeft } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/modules/user'
 
 defineOptions({ name: 'profile' })
@@ -347,9 +277,7 @@ const userEmail = computed(() => {
   if (userStore.userInfo?.email) return userStore.userInfo.email
   return `${username.value}@lightning.app`
 })
-const userBadge = computed(() =>
-  userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'PRO'
-)
+const userBadge = computed(() => (userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'PRO'))
 const joinDate = '2023-06-18'
 
 const stats = [
@@ -545,13 +473,7 @@ const handleLanguageChange = () => {
 
   &__banner {
     height: 120px;
-    background:
-      radial-gradient(
-        ellipse at 80% 20%,
-        rgb(255 255 255 / 25%),
-        transparent 50%
-      ),
-      var(--gradient-primary);
+    background: radial-gradient(ellipse at 80% 20%, rgb(255 255 255 / 25%), transparent 50%), var(--gradient-primary);
   }
 
   &__body {

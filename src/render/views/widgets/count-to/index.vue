@@ -1,11 +1,7 @@
 <!-- 组件中心 - 数字滚动 -->
 <template>
   <div class="count-to-page">
-    <PageHeader
-      title="数字滚动"
-      subtitle="基于 VueUse useTransition 的高性能数字滚动动画组件"
-      icon="gauge"
-    />
+    <PageHeader title="数字滚动" subtitle="基于 VueUse useTransition 的高性能数字滚动动画组件" icon="gauge" />
 
     <!-- 基础用法 -->
     <h1 class="page-title">基础用法</h1>
@@ -16,13 +12,7 @@
     <!-- 带前缀后缀 -->
     <h1 class="page-title">带前缀后缀</h1>
     <div class="count-box">
-      <CountTo
-        :target="20000"
-        :duration="2500"
-        prefix="¥"
-        suffix="元"
-        :decimals="2"
-      />
+      <CountTo :target="20000" :duration="2500" prefix="¥" suffix="元" :decimals="2" />
     </div>
 
     <!-- 小数点和分隔符 -->
@@ -35,21 +25,10 @@
     <h1 class="page-title">动画效果对比</h1>
     <ElCard class="page-card">
       <ElRow :gutter="20">
-        <ElCol
-          v-for="easing in easingTypes"
-          :key="easing.type"
-          :xs="12"
-          :sm="8"
-          :md="4"
-          class="easing-col"
-        >
+        <ElCol v-for="easing in easingTypes" :key="easing.type" :xs="12" :sm="8" :md="4" class="easing-col">
           <div class="easing-name">{{ easing.name }}</div>
           <div class="count-box count-box--sm">
-            <CountTo
-              :target="easingTarget"
-              :duration="3000"
-              :easing="easing.type"
-            />
+            <CountTo :target="easingTarget" :duration="3000" :easing="easing.type" />
           </div>
         </ElCol>
       </ElRow>

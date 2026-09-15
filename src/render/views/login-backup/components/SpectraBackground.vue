@@ -36,10 +36,7 @@ const props = defineProps({
   palette: {
     type: String,
     default: 'ocean',
-    validator: (v) =>
-      ['ocean', 'original', 'klein', 'violet-lime', 'chrome', 'plus'].includes(
-        v
-      )
+    validator: (v) => ['ocean', 'original', 'klein', 'violet-lime', 'chrome', 'plus'].includes(v)
   },
   /** 全屏模式 — 流体分布更均匀，适合做页面背景 */
   fullscreen: { type: Boolean, default: true },
@@ -562,9 +559,7 @@ function animate(ts) {
   const delta = lastTs ? Math.min((ts - lastTs) / 1000, 0.05) : 0
   lastTs = ts
 
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  ).matches
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   animTime += delta * (reducedMotion ? 0.05 : 1)
 
   // 平滑插值
@@ -574,11 +569,7 @@ function animate(ts) {
 
   // 更新 uniform
   gl.uniform1f(uniforms.uTime, animTime)
-  gl.uniform2f(
-    uniforms.uResolution,
-    canvasRef.value.width,
-    canvasRef.value.height
-  )
+  gl.uniform2f(uniforms.uResolution, canvasRef.value.width, canvasRef.value.height)
   gl.uniform2f(uniforms.uPointer, smoothedPointer.x, smoothedPointer.y)
   gl.uniform1f(uniforms.uHover, smoothedHover)
   gl.uniform1f(uniforms.uSpeed, props.speed)
@@ -661,7 +652,6 @@ onBeforeUnmount(() => {
   background:
     radial-gradient(circle at 82% 24%, rgb(151 45 235 / 86%), transparent 31%),
     radial-gradient(circle at 72% 72%, rgb(18 221 242 / 82%), transparent 36%),
-    radial-gradient(circle at 61% 50%, rgb(31 90 255 / 72%), transparent 45%),
-    #fff;
+    radial-gradient(circle at 61% 50%, rgb(31 90 255 / 72%), transparent 45%), #fff;
 }
 </style>

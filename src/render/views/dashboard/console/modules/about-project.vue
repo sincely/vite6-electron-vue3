@@ -8,12 +8,7 @@
           <p>使用了 Vue3、Vite、Electron、Element Plus 等前沿技术</p>
 
           <div class="about-project-links">
-            <div
-              v-for="link in linkList"
-              :key="link.label"
-              class="about-project-link"
-              @click="goPage(link.url)"
-            >
+            <div v-for="link in linkList" :key="link.label" class="about-project-link" @click="goPage(link.url)">
               <span>{{ link.label }}</span>
               <el-icon><ArrowRight /></el-icon>
             </div>

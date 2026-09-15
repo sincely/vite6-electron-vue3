@@ -15,9 +15,7 @@ function componentToHex(c) {
 }
 
 function rgbToHex(rgb) {
-  return `#${componentToHex(rgb.r)}${componentToHex(rgb.g)}${componentToHex(
-    rgb.b
-  )}`
+  return `#${componentToHex(rgb.r)}${componentToHex(rgb.g)}${componentToHex(rgb.b)}`
 }
 
 function mix(color, mixColor, weight) {

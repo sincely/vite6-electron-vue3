@@ -11,10 +11,7 @@
 
         <!-- 状态遮罩 -->
         <transition name="fade">
-          <div
-            v-if="qrCodeStatus !== 'waiting' && qrCodeStatus !== 'scanned'"
-            class="status-overlay"
-          >
+          <div v-if="qrCodeStatus !== 'waiting' && qrCodeStatus !== 'scanned'" class="status-overlay">
             <div class="status-content">
               <svg-icon
                 v-if="qrCodeStatus === 'confirmed'"
@@ -58,9 +55,7 @@
     <p class="prompt">扫码后点击「确认」，即可完成登录</p>
 
     <!-- vben：返回按钮 -->
-    <el-button class="outline-btn" @click="emit('switch', 'account')">
-      返回账号登录
-    </el-button>
+    <el-button class="outline-btn" @click="emit('switch', 'account')">返回账号登录</el-button>
   </div>
 </template>
 

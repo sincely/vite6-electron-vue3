@@ -27,20 +27,7 @@ const { getThemeColors, tooltipBase, onThemeChange } = useChartTheme()
 const data = [50, 25, 40, 20, 70, 35, 65, 30, 35, 20, 40, 44]
 
 // X 轴月份标签
-const xAxisData = [
-  '1月',
-  '2月',
-  '3月',
-  '4月',
-  '5月',
-  '6月',
-  '7月',
-  '8月',
-  '9月',
-  '10月',
-  '11月',
-  '12月'
-]
+const xAxisData = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
 
 const lineOption = ref({})
 

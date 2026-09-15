@@ -8,18 +8,8 @@
     </div>
 
     <div class="providers">
-      <el-tooltip
-        v-for="provider in providers"
-        :key="provider.name"
-        :content="provider.tooltip"
-        placement="top"
-      >
-        <button
-          type="button"
-          class="provider-btn"
-          :aria-label="provider.tooltip"
-          @click="handleProvider(provider)"
-        >
+      <el-tooltip v-for="provider in providers" :key="provider.name" :content="provider.tooltip" placement="top">
+        <button type="button" class="provider-btn" :aria-label="provider.tooltip" @click="handleProvider(provider)">
           <SvgIcon :icon-class="provider.icon" width="22px" height="22px" />
         </button>
       </el-tooltip>

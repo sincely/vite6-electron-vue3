@@ -4,26 +4,17 @@
       <div class="dash-header">
         <h4>热销商品</h4>
       </div>
-      <el-link class="hot-products-more" type="primary" underline="never">
-        查看全部 →
-      </el-link>
+      <el-link class="hot-products-more" type="primary" underline="never">查看全部 →</el-link>
     </template>
     <template #content>
       <el-scrollbar height="320px">
-        <div
-          v-for="item in products"
-          :key="item.name"
-          class="hot-products-item"
-        >
+        <div v-for="item in products" :key="item.name" class="hot-products-item">
           <img class="hot-products-img" :src="item.image" alt="product" />
           <div class="hot-products-main">
             <div class="hot-products-name">{{ item.name }}</div>
             <div class="hot-products-meta">
               <span class="hot-products-price">¥{{ item.price }}</span>
-              <span
-                class="hot-products-stock"
-                :class="item.inStock ? 'is-success' : 'is-danger'"
-              >
+              <span class="hot-products-stock" :class="item.inStock ? 'is-success' : 'is-danger'">
                 • {{ item.inStock ? '库存充足' : '暂时缺货' }}
               </span>
             </div>

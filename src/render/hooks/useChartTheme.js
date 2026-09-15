@@ -13,11 +13,7 @@ export function useChartTheme() {
 
   // 读取 CSS 变量（每次调用都是最新值）
   function c(name, fallback = '') {
-    return (
-      getComputedStyle(document.documentElement)
-        .getPropertyValue(name)
-        .trim() || fallback
-    )
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback
   }
 
   function getThemeColors() {
@@ -170,9 +166,7 @@ export function useChartTheme() {
   function getTooltipStyle(trigger = 'axis', customOptions = {}) {
     return {
       trigger,
-      backgroundColor: isDark.value
-        ? 'rgba(0, 0, 0, 0.8)'
-        : 'rgba(255, 255, 255, 0.9)',
+      backgroundColor: isDark.value ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
       borderColor: isDark.value ? '#333' : '#ddd',
       borderWidth: 1,
       textStyle: {
@@ -233,11 +227,7 @@ export function useChartTheme() {
   }
 
   /** 根据图例位置计算 grid 配置 */
-  function getGridWithLegend(
-    showLegend,
-    legendPosition = 'bottom',
-    baseGrid = {}
-  ) {
+  function getGridWithLegend(showLegend, legendPosition = 'bottom', baseGrid = {}) {
     const defaultGrid = {
       top: 15,
       right: 15,

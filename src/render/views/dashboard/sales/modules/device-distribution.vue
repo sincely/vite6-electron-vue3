@@ -4,26 +4,13 @@
       <div class="dash-header">
         <h4>访客设备分布</h4>
       </div>
-      <el-link
-        class="device-distribution-more"
-        type="primary"
-        underline="never"
-      >
-        查看报告 →
-      </el-link>
+      <el-link class="device-distribution-more" type="primary" underline="never">查看报告 →</el-link>
     </template>
     <template #content>
       <chart :options="donutOption" height="220px" />
       <div class="device-distribution-legend">
-        <div
-          v-for="item in devices"
-          :key="item.label"
-          class="device-distribution-legend-item"
-        >
-          <span
-            class="device-distribution-legend-dot"
-            :style="{ background: item.color }"
-          ></span>
+        <div v-for="item in devices" :key="item.label" class="device-distribution-legend-item">
+          <span class="device-distribution-legend-dot" :style="{ background: item.color }"></span>
           <span class="device-distribution-legend-label">{{ item.label }}</span>
           <span class="device-distribution-legend-value">{{ item.value }}</span>
         </div>

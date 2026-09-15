@@ -20,15 +20,8 @@
         </div>
       </div>
       <div class="employee-structure-legend">
-        <div
-          v-for="item in segments"
-          :key="item.label"
-          class="employee-structure-legend-item"
-        >
-          <span
-            class="employee-structure-legend-dot"
-            :style="{ background: item.color }"
-          ></span>
+        <div v-for="item in segments" :key="item.label" class="employee-structure-legend-item">
+          <span class="employee-structure-legend-dot" :style="{ background: item.color }"></span>
           <span class="employee-structure-legend-label">{{ item.label }}</span>
           <span class="employee-structure-legend-value">{{ item.value }}</span>
         </div>

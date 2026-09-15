@@ -34,11 +34,7 @@
         </el-table-column>
         <el-table-column label="进度" width="240">
           <template #default="{ row }">
-            <el-progress
-              :percentage="row.pro"
-              :color="row.color"
-              :stroke-width="4"
-            />
+            <el-progress :percentage="row.pro" :color="row.color" :stroke-width="4" />
           </template>
         </el-table-column>
       </el-table>

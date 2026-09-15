@@ -16,9 +16,7 @@ function checkPermission(el, binding) {
 
   if (Array.isArray(value)) {
     if (value.length > 0) {
-      const hasPermission = value.some((permission) =>
-        userStore.hasPermission(permission)
-      )
+      const hasPermission = value.some((permission) => userStore.hasPermission(permission))
       if (!hasPermission) {
         el.parentNode?.removeChild(el)
       }

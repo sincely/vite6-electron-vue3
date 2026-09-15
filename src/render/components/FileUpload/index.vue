@@ -46,18 +46,8 @@
       </template>
     </ElUpload>
 
-    <TransitionGroup
-      v-if="fileList.length"
-      name="file-upload-list"
-      tag="ul"
-      class="file-upload__list"
-    >
-      <li
-        v-for="file in fileList"
-        :key="file.uid"
-        class="file-upload__item"
-        :class="[`is-${file.status || 'ready'}`]"
-      >
+    <TransitionGroup v-if="fileList.length" name="file-upload-list" tag="ul" class="file-upload__list">
+      <li v-for="file in fileList" :key="file.uid" class="file-upload__item" :class="[`is-${file.status || 'ready'}`]">
         <button
           v-if="isImageFile(file)"
           class="file-upload__thumb"
@@ -66,11 +56,7 @@
           :disabled="!canPreview(file)"
           @click="handlePreview(file)"
         >
-          <img
-            v-if="getPreviewUrl(file)"
-            :src="getPreviewUrl(file)"
-            :alt="file.name"
-          />
+          <img v-if="getPreviewUrl(file)" :src="getPreviewUrl(file)" :alt="file.name" />
           <el-icon v-else><Picture /></el-icon>
         </button>
         <div v-else class="file-upload__file-icon">
@@ -82,25 +68,11 @@
             {{ file.name }}
           </div>
           <div v-if="file.status === 'uploading'" class="file-upload__progress">
-            <ElProgress
-              :percentage="file.percentage || 0"
-              :stroke-width="6"
-              :show-text="false"
-            />
+            <ElProgress :percentage="file.percentage || 0" :stroke-width="6" :show-text="false" />
             <span>{{ Math.round(file.percentage || 0) }}%</span>
           </div>
-          <div
-            v-else-if="file.status === 'error'"
-            class="file-upload__status is-error"
-          >
-            上传失败，可删除后重试
-          </div>
-          <div
-            v-else-if="file.status === 'success'"
-            class="file-upload__status is-success"
-          >
-            上传成功
-          </div>
+          <div v-else-if="file.status === 'error'" class="file-upload__status is-error">上传失败，可删除后重试</div>
+          <div v-else-if="file.status === 'success'" class="file-upload__status is-success">上传成功</div>
         </div>
 
         <div class="file-upload__actions">
@@ -113,13 +85,7 @@
           >
             <el-icon><View /></el-icon>
           </ElButton>
-          <ElButton
-            link
-            type="danger"
-            title="删除"
-            :disabled="uploadProps.disabled"
-            @click="handleRemoveClick(file)"
-          >
+          <ElButton link type="danger" title="删除" :disabled="uploadProps.disabled" @click="handleRemoveClick(file)">
             <el-icon><Delete /></el-icon>
           </ElButton>
         </div>
@@ -139,14 +105,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { ElImageViewer, ElMessage } from 'element-plus'
-import {
-  Delete,
-  Document,
-  Picture,
-  Upload,
-  UploadFilled,
-  View
-} from '@element-plus/icons-vue'
+import { Delete, Document, Picture, Upload, UploadFilled, View } from '@element-plus/icons-vue'
 
 import { cloneFileList } from './helpers'
 import { getResponseUrl, isImageFile, releaseObjectUrl } from './file-url'
@@ -218,17 +177,12 @@ const getConfigOption = (key, fallback) => {
 
 const resolvedMultiple = computed(() => !!getConfigOption('multiple', false))
 const resolvedLimit = computed(() => {
-  const limit = Number(
-    getConfigOption('limit', props.uploadConfig.maxNumberOfFiles || 0)
-  )
+  const limit = Number(getConfigOption('limit', props.uploadConfig.maxNumberOfFiles || 0))
   const normalizedLimit = Number.isFinite(limit) && limit > 0 ? limit : 0
   return resolvedMultiple.value ? normalizedLimit : 1
 })
 const resolvedFileTypes = computed(() => {
-  const value = getConfigOption(
-    'fileTypes',
-    props.uploadConfig.allowedFileTypes || []
-  )
+  const value = getConfigOption('fileTypes', props.uploadConfig.allowedFileTypes || [])
   if (Array.isArray(value)) return value.filter(Boolean)
   return String(value || '')
     .split(/[\s,]+/)
@@ -246,28 +200,15 @@ const resolvedAccept = computed(() => {
     .join(',')
 })
 const resolvedMaxSize = computed(() => {
-  const maxSize = getConfigOption(
-    'maxSize',
-    props.uploadConfig.maxFileSize || 0
-  )
+  const maxSize = getConfigOption('maxSize', props.uploadConfig.maxFileSize || 0)
   const normalizedMaxSize = Number(maxSize)
-  return Number.isFinite(normalizedMaxSize) && normalizedMaxSize > 0
-    ? normalizedMaxSize
-    : 0
+  return Number.isFinite(normalizedMaxSize) && normalizedMaxSize > 0 ? normalizedMaxSize : 0
 })
 const resolvedShowPreview = computed(() => getConfigOption('showPreview', true))
-const resolvedBeforeUpload = computed(
-  () => props.beforeUpload || props.uploadConfig.beforeUpload
-)
-const resolvedBeforeRemove = computed(
-  () => props.beforeRemove || props.uploadConfig.beforeRemove
-)
-const resolvedHttpRequest = computed(
-  () => props.httpRequest || props.uploadConfig.httpRequest
-)
-const resolvedResponseUrlKey = computed(() =>
-  getConfigOption('responseUrlKey', 'url')
-)
+const resolvedBeforeUpload = computed(() => props.beforeUpload || props.uploadConfig.beforeUpload)
+const resolvedBeforeRemove = computed(() => props.beforeRemove || props.uploadConfig.beforeRemove)
+const resolvedHttpRequest = computed(() => props.httpRequest || props.uploadConfig.httpRequest)
+const resolvedResponseUrlKey = computed(() => getConfigOption('responseUrlKey', 'url'))
 
 const uploadProps = computed(() => {
   const passThroughConfig = { ...props.uploadConfig }
@@ -303,9 +244,7 @@ const uploadProps = computed(() => {
     autoUpload: getConfigOption('autoUpload', true),
     disabled: !!getConfigOption('disabled', false),
     listType: getConfigOption('listType', 'text'),
-    ...(resolvedHttpRequest.value
-      ? { httpRequest: resolvedHttpRequest.value }
-      : {})
+    ...(resolvedHttpRequest.value ? { httpRequest: resolvedHttpRequest.value } : {})
   }
 })
 
@@ -316,14 +255,11 @@ const presentationProps = computed(() => ({
 }))
 
 const canChooseMore = computed(
-  () =>
-    !uploadProps.value.disabled &&
-    (resolvedLimit.value === 0 || fileList.value.length < resolvedLimit.value)
+  () => !uploadProps.value.disabled && (resolvedLimit.value === 0 || fileList.value.length < resolvedLimit.value)
 )
 
 // 给 file-url 模块绑定组件实例的对象 URL 表 + 响应式 responseUrlKey
-const getResponseUrlForFile = (file) =>
-  getResponseUrl(file?.response, resolvedResponseUrlKey.value)
+const getResponseUrlForFile = (file) => getResponseUrl(file?.response, resolvedResponseUrlKey.value)
 
 const getPreviewUrl = (file) => {
   if (!file) return ''
@@ -348,28 +284,15 @@ const getPreviewUrl = (file) => {
 }
 
 const previewableFiles = computed(() =>
-  fileList.value.filter(
-    (file) =>
-      isImageFile(file, resolvedResponseUrlKey.value) && getPreviewUrl(file)
-  )
+  fileList.value.filter((file) => isImageFile(file, resolvedResponseUrlKey.value) && getPreviewUrl(file))
 )
-const previewImageUrls = computed(() =>
-  previewableFiles.value.map((file) => getPreviewUrl(file))
-)
+const previewImageUrls = computed(() => previewableFiles.value.map((file) => getPreviewUrl(file)))
 
 const canPreview = (file) =>
-  !!resolvedShowPreview.value &&
-  isImageFile(file, resolvedResponseUrlKey.value) &&
-  !!getPreviewUrl(file)
+  !!resolvedShowPreview.value && isImageFile(file, resolvedResponseUrlKey.value) && !!getPreviewUrl(file)
 
 const syncFromModelValue = (value) => {
-  fileList.value = syncFromModel(
-    value,
-    fileList.value,
-    resolvedLimit.value,
-    objectUrlMap,
-    resolvedResponseUrlKey.value
-  )
+  fileList.value = syncFromModel(value, fileList.value, resolvedLimit.value, objectUrlMap, resolvedResponseUrlKey.value)
 }
 
 const emitModelValue = (files = fileList.value) => {
@@ -381,11 +304,7 @@ const showError = (message) => {
 }
 
 const handleBeforeUpload = async (rawFile) => {
-  const validationMessage = validateFile(
-    rawFile,
-    resolvedFileTypes.value,
-    resolvedMaxSize.value
-  )
+  const validationMessage = validateFile(rawFile, resolvedFileTypes.value, resolvedMaxSize.value)
   if (validationMessage) {
     showError(validationMessage)
     emit('validate-error', rawFile, validationMessage)
@@ -462,17 +381,13 @@ const clearFiles = () => {
 const handlePreview = (file) => {
   emit('preview', file)
   if (!canPreview(file)) return
-  const index = previewableFiles.value.findIndex(
-    (previewFile) => previewFile.uid === file.uid
-  )
+  const index = previewableFiles.value.findIndex((previewFile) => previewFile.uid === file.uid)
   previewIndex.value = index > -1 ? index : 0
   previewVisible.value = true
 }
 
 const handleExceed = (files, uploadFiles) => {
-  const message = resolvedLimit.value
-    ? `最多只能上传 ${resolvedLimit.value} 个文件`
-    : '文件数量超出限制'
+  const message = resolvedLimit.value ? `最多只能上传 ${resolvedLimit.value} 个文件` : '文件数量超出限制'
   showError(message)
   emit('exceed', files, uploadFiles)
 }

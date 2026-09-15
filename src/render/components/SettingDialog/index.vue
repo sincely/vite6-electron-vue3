@@ -37,19 +37,13 @@
 
             <div class="content-body">
               <Transition name="fade-slide" mode="out-in">
-                <div
-                  v-if="currentTab === 'general'"
-                  key="general"
-                  class="tab-pane"
-                >
+                <div v-if="currentTab === 'general'" key="general" class="tab-pane">
                   <div class="setting-section">
                     <h3 class="section-title">启动</h3>
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">开机自启</span>
-                        <span class="item-desc">
-                          跟随系统启动自动运行应用程序
-                        </span>
+                        <span class="item-desc">跟随系统启动自动运行应用程序</span>
                       </div>
                       <el-switch v-model="autoLaunch" />
                     </div>
@@ -78,11 +72,7 @@
                 </div>
 
                 <!-- Profile / Personal Info -->
-                <div
-                  v-else-if="currentTab === 'profile'"
-                  key="profile"
-                  class="tab-pane"
-                >
+                <div v-else-if="currentTab === 'profile'" key="profile" class="tab-pane">
                   <!-- Avatar Section -->
                   <div class="profile-avatar-section">
                     <div class="avatar-container">
@@ -98,11 +88,7 @@
                           {{ userInitial }}
                         </span>
                         <div class="avatar-overlay">
-                          <el-upload
-                            :show-file-list="false"
-                            accept="image/*"
-                            :before-upload="handleAvatarUpload"
-                          >
+                          <el-upload :show-file-list="false" accept="image/*" :before-upload="handleAvatarUpload">
                             <button class="avatar-edit-btn" type="button">
                               <SvgIcon icon-class="edit" />
                               <span>更换头像</span>
@@ -130,10 +116,7 @@
                           <span class="info-label">姓名</span>
                           <span class="info-value">{{ displayName }}</span>
                         </div>
-                        <SvgIcon
-                          icon-class="chevron-right"
-                          class="info-arrow"
-                        />
+                        <SvgIcon icon-class="chevron-right" class="info-arrow" />
                       </div>
                       <div class="profile-info-item">
                         <div class="info-icon">
@@ -143,10 +126,7 @@
                           <span class="info-label">手机号</span>
                           <span class="info-value">{{ userPhone }}</span>
                         </div>
-                        <SvgIcon
-                          icon-class="chevron-right"
-                          class="info-arrow"
-                        />
+                        <SvgIcon icon-class="chevron-right" class="info-arrow" />
                       </div>
                       <div class="profile-info-item">
                         <div class="info-icon">
@@ -156,21 +136,14 @@
                           <span class="info-label">邮箱</span>
                           <span class="info-value">{{ userEmail }}</span>
                         </div>
-                        <SvgIcon
-                          icon-class="chevron-right"
-                          class="info-arrow"
-                        />
+                        <SvgIcon icon-class="chevron-right" class="info-arrow" />
                       </div>
                     </div>
                   </div>
 
                   <!-- Logout -->
                   <div class="setting-section">
-                    <button
-                      class="logout-btn"
-                      type="button"
-                      @click="handleLogout"
-                    >
+                    <button class="logout-btn" type="button" @click="handleLogout">
                       <SvgIcon icon-class="exitscreen" />
                       <span>退出登录</span>
                     </button>
@@ -178,20 +151,14 @@
                 </div>
 
                 <!-- Appearance Settings -->
-                <div
-                  v-else-if="currentTab === 'appearance'"
-                  key="appearance"
-                  class="tab-pane"
-                >
+                <div v-else-if="currentTab === 'appearance'" key="appearance" class="tab-pane">
                   <div class="setting-section">
                     <h3 class="section-title">主题模式</h3>
                     <div class="theme-options">
                       <div
                         class="theme-card"
                         :class="{ active: appStore.theme === 'light' }"
-                        @click="
-                          appStore.toggleThemeWithTransition($event, 'light')
-                        "
+                        @click="appStore.toggleThemeWithTransition($event, 'light')"
                       >
                         <div class="theme-preview light">
                           <div class="preview-sidebar"></div>
@@ -205,9 +172,7 @@
                       <div
                         class="theme-card"
                         :class="{ active: appStore.theme === 'dark' }"
-                        @click="
-                          appStore.toggleThemeWithTransition($event, 'dark')
-                        "
+                        @click="appStore.toggleThemeWithTransition($event, 'dark')"
                       >
                         <div class="theme-preview dark">
                           <div class="preview-sidebar"></div>
@@ -221,9 +186,7 @@
                       <div
                         class="theme-card"
                         :class="{ active: appStore.theme === 'auto' }"
-                        @click="
-                          appStore.toggleThemeWithTransition($event, 'auto')
-                        "
+                        @click="appStore.toggleThemeWithTransition($event, 'auto')"
                       >
                         <div class="theme-preview auto">
                           <div class="preview-split"></div>
@@ -235,30 +198,17 @@
 
                   <div class="setting-section">
                     <h3 class="section-title">界面显示</h3>
-                    <div
-                      class="setting-item"
-                      :class="{ 'is-disabled': !isSidebarCollapseEnabled }"
-                    >
+                    <div class="setting-item" :class="{ 'is-disabled': !isSidebarCollapseEnabled }">
                       <div class="item-info">
                         <span class="item-label">侧边栏折叠</span>
                         <span class="item-desc">
-                          {{
-                            isSidebarCollapseEnabled
-                              ? '默认折叠侧边栏菜单'
-                              : '仅在左侧菜单模式下可用'
-                          }}
+                          {{ isSidebarCollapseEnabled ? '默认折叠侧边栏菜单' : '仅在左侧菜单模式下可用' }}
                         </span>
                       </div>
-                      <el-switch
-                        v-model="appStore.sidebarCollapsed"
-                        :disabled="!isSidebarCollapseEnabled"
-                      />
+                      <el-switch v-model="appStore.sidebarCollapsed" :disabled="!isSidebarCollapseEnabled" />
                     </div>
 
-                    <div
-                      class="setting-item"
-                      :class="{ 'is-disabled': !isMixedCollapseEnabled }"
-                    >
+                    <div class="setting-item" :class="{ 'is-disabled': !isMixedCollapseEnabled }">
                       <div class="item-info">
                         <span class="item-label">二级菜单伸缩</span>
                         <span class="item-desc">
@@ -269,10 +219,7 @@
                           }}
                         </span>
                       </div>
-                      <el-switch
-                        v-model="mixedSubmenuCollapsible"
-                        :disabled="!isMixedCollapseEnabled"
-                      />
+                      <el-switch v-model="mixedSubmenuCollapsible" :disabled="!isMixedCollapseEnabled" />
                     </div>
 
                     <div class="setting-item">
@@ -306,9 +253,7 @@
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">显示全局刷新按钮</span>
-                        <span class="item-desc">
-                          在标题栏显示刷新当前页面按钮
-                        </span>
+                        <span class="item-desc">在标题栏显示刷新当前页面按钮</span>
                       </div>
                       <el-switch v-model="refreshBtnVisible" />
                     </div>
@@ -316,9 +261,7 @@
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">显示快速入口</span>
-                        <span class="item-desc">
-                          在标题栏显示快速入口按钮（九宫格面板）
-                        </span>
+                        <span class="item-desc">在标题栏显示快速入口按钮（九宫格面板）</span>
                       </div>
                       <el-switch v-model="fastEnterVisible" />
                     </div>
@@ -326,9 +269,7 @@
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">显示全局面包屑导航</span>
-                        <span class="item-desc">
-                          在标题栏显示当前页面的层级路径
-                        </span>
+                        <span class="item-desc">在标题栏显示当前页面的层级路径</span>
                       </div>
                       <el-switch v-model="breadCrumbVisible" />
                     </div>
@@ -336,9 +277,7 @@
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">顶部进度条</span>
-                        <span class="item-desc">
-                          页面切换时在顶部显示加载进度条（跟随主题色）
-                        </span>
+                        <span class="item-desc">页面切换时在顶部显示加载进度条（跟随主题色）</span>
                       </div>
                       <el-switch v-model="showNProgress" />
                     </div>
@@ -346,9 +285,7 @@
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">全局水印</span>
-                        <span class="item-desc">
-                          在界面上显示水印标识，防止截图泄密
-                        </span>
+                        <span class="item-desc">在界面上显示水印标识，防止截图泄密</span>
                       </div>
                       <el-switch v-model="watermarkVisible" />
                     </div>
@@ -356,9 +293,7 @@
                     <div v-if="footerVisible" class="setting-item">
                       <div class="item-info">
                         <span class="item-label">底部高度</span>
-                        <span class="item-desc">
-                          设置底部状态栏高度（20 - 80px）
-                        </span>
+                        <span class="item-desc">设置底部状态栏高度（20 - 80px）</span>
                       </div>
                       <el-input-number
                         v-model="footerHeight"
@@ -381,20 +316,10 @@
                     <div v-if="appStore.transitionEnabled" class="setting-item">
                       <div class="item-info">
                         <span class="item-label">页面切换动画类型</span>
-                        <span class="item-desc">
-                          选择页面切换时使用的动画效果
-                        </span>
+                        <span class="item-desc">选择页面切换时使用的动画效果</span>
                       </div>
-                      <el-select
-                        v-model="appStore.transitionType"
-                        style="width: 140px"
-                      >
-                        <el-option
-                          v-for="item in animates"
-                          :key="item.value"
-                          :label="item.text"
-                          :value="item.value"
-                        />
+                      <el-select v-model="appStore.transitionType" style="width: 140px">
+                        <el-option v-for="item in animates" :key="item.value" :label="item.text" :value="item.value" />
                       </el-select>
                     </div>
 
@@ -412,9 +337,7 @@
                     <div v-if="contentWidth === 'fixed'" class="setting-item">
                       <div class="item-info">
                         <span class="item-label">定宽宽度</span>
-                        <span class="item-desc">
-                          设置内容区域的固定宽度（800 - 1920px）
-                        </span>
+                        <span class="item-desc">设置内容区域的固定宽度（800 - 1920px）</span>
                       </div>
                       <el-input-number
                         v-model="contentWidthValue"
@@ -505,9 +428,7 @@
                     <div class="setting-item preset-color-item">
                       <div class="item-info">
                         <span class="item-label">预设主题色</span>
-                        <span class="item-desc">
-                          点击下方色块快速切换主色，配套信息色/成功/警告/错误色保持不变
-                        </span>
+                        <span class="item-desc">点击下方色块快速切换主色，配套信息色/成功/警告/错误色保持不变</span>
                       </div>
                       <div class="preset-color-list">
                         <button
@@ -516,19 +437,14 @@
                           type="button"
                           class="preset-color-dot"
                           :class="{
-                            active:
-                              themeColors.primary?.toLowerCase() ===
-                              color.toLowerCase()
+                            active: themeColors.primary?.toLowerCase() === color.toLowerCase()
                           }"
                           :style="{ background: color }"
                           :aria-label="`选择主题色 ${color}`"
                           @click="handleSelectPresetColor(color)"
                         >
                           <SvgIcon
-                            v-show="
-                              themeColors.primary?.toLowerCase() ===
-                              color.toLowerCase()
-                            "
+                            v-show="themeColors.primary?.toLowerCase() === color.toLowerCase()"
                             icon-class="check"
                             class="preset-color-dot__icon"
                           />
@@ -540,34 +456,18 @@
                       <div class="item-info">
                         <span class="item-label">应用推荐算法的颜色</span>
                       </div>
-                      <el-switch
-                        v-model="themeColors.useAlgorithm"
-                        @change="updateThemeColor"
-                      />
+                      <el-switch v-model="themeColors.useAlgorithm" @change="updateThemeColor" />
                     </div>
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">主色</span>
                       </div>
-                      <el-color-picker
-                        v-model="themeColors.primary"
-                        @change="updateThemeColor"
-                      />
+                      <el-color-picker v-model="themeColors.primary" @change="updateThemeColor" />
                     </div>
                     <div class="setting-item">
-                      <div
-                        class="item-info"
-                        style="
-                          flex-direction: row;
-                          gap: 8px;
-                          align-items: center;
-                        "
-                      >
+                      <div class="item-info" style="flex-direction: row; gap: 8px; align-items: center">
                         <span class="item-label">信息色</span>
-                        <el-checkbox
-                          v-model="themeColors.infoFollowPrimary"
-                          @change="updateThemeColor"
-                        >
+                        <el-checkbox v-model="themeColors.infoFollowPrimary" @change="updateThemeColor">
                           跟随主色
                         </el-checkbox>
                       </div>
@@ -581,46 +481,29 @@
                       <div class="item-info">
                         <span class="item-label">成功色</span>
                       </div>
-                      <el-color-picker
-                        v-model="themeColors.success"
-                        @change="updateThemeColor"
-                      />
+                      <el-color-picker v-model="themeColors.success" @change="updateThemeColor" />
                     </div>
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">警告色</span>
                       </div>
-                      <el-color-picker
-                        v-model="themeColors.warning"
-                        @change="updateThemeColor"
-                      />
+                      <el-color-picker v-model="themeColors.warning" @change="updateThemeColor" />
                     </div>
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">错误色</span>
                       </div>
-                      <el-color-picker
-                        v-model="themeColors.error"
-                        @change="updateThemeColor"
-                      />
+                      <el-color-picker v-model="themeColors.error" @change="updateThemeColor" />
                     </div>
                   </div>
                 </div>
 
                 <!-- About Settings -->
-                <div
-                  v-else-if="currentTab === 'about'"
-                  key="about"
-                  class="tab-pane"
-                >
+                <div v-else-if="currentTab === 'about'" key="about" class="tab-pane">
                   <!-- Identity -->
                   <div class="about-identity">
                     <div class="about-identity__logo">
-                      <img
-                        src="@/assets/bar/app.png"
-                        class="about-identity__logo-img"
-                        alt="Lightning 图标"
-                      />
+                      <img src="@/assets/bar/app.png" class="about-identity__logo-img" alt="Lightning 图标" />
                     </div>
                     <div class="about-hero__info">
                       <h3 class="about-hero__name">Lightning</h3>
@@ -648,10 +531,7 @@
 
                       <div class="about-update__action">
                         <button
-                          v-if="
-                            updateCheckState === 'available' ||
-                            updateCheckState === 'force'
-                          "
+                          v-if="updateCheckState === 'available' || updateCheckState === 'force'"
                           class="update-action-btn update-action-btn--primary"
                           @click="handleStartUpdate"
                         >
@@ -662,8 +542,7 @@
                           v-else
                           class="update-action-btn"
                           :class="{
-                            'update-action-btn--loading':
-                              updateCheckState === 'checking'
+                            'update-action-btn--loading': updateCheckState === 'checking'
                           }"
                           :disabled="updateCheckState === 'checking'"
                           @click="handleCheckUpdate"
@@ -675,20 +554,13 @@
                             width="16px"
                             height="16px"
                           />
-                          <SvgIcon
-                            v-else
-                            icon-class="refresh"
-                            width="16px"
-                            height="16px"
-                          />
+                          <SvgIcon v-else icon-class="refresh" width="16px" height="16px" />
                           <span>{{ updateCheckBtnText }}</span>
                         </button>
                       </div>
                     </div>
                   </div>
-                  <div class="about-copyright">
-                    Copyright © 2024 Lightning Team. All rights reserved.
-                  </div>
+                  <div class="about-copyright">Copyright © 2024 Lightning Team. All rights reserved.</div>
                 </div>
               </Transition>
             </div>
@@ -793,9 +665,7 @@ const contentWidthValue = computed({
 const isSidebarCollapseEnabled = computed(() => appStore.layoutMode === 'left')
 
 // 二级菜单伸缩开关仅在顶部菜单混合模式下有意义（其余布局无该二级菜单栏）
-const isMixedCollapseEnabled = computed(
-  () => appStore.layoutMode === 'top-mixed'
-)
+const isMixedCollapseEnabled = computed(() => appStore.layoutMode === 'top-mixed')
 
 console.log(visible.value)
 
@@ -809,9 +679,7 @@ const tabs = [
 ]
 
 const currentTab = ref('general')
-const currentTabLabel = computed(
-  () => tabs.find((t) => t.id === currentTab.value)?.label
-)
+const currentTabLabel = computed(() => tabs.find((t) => t.id === currentTab.value)?.label)
 
 const themeColors = ref({
   ...appStore.themeColors
@@ -841,23 +709,13 @@ const form = ref({
 
 // Profile tab data
 const displayName = computed(
-  () =>
-    userStore.userInfo?.nickname ||
-    userStore.userInfo?.name ||
-    userStore.userInfo?.username ||
-    'Admin'
+  () => userStore.userInfo?.nickname || userStore.userInfo?.name || userStore.userInfo?.username || 'Admin'
 )
 
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
-const userPhone = computed(
-  () => userStore.userInfo?.phone || userStore.userInfo?.mobile || '138****8888'
-)
-const userEmail = computed(
-  () => userStore.userInfo?.email || 'admin@lightning.app'
-)
-const userRole = computed(() =>
-  userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'ADMIN'
-)
+const userPhone = computed(() => userStore.userInfo?.phone || userStore.userInfo?.mobile || '138****8888')
+const userEmail = computed(() => userStore.userInfo?.email || 'admin@lightning.app')
+const userRole = computed(() => (userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'ADMIN'))
 
 const avatarLoadFailed = ref(false)
 const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
@@ -892,9 +750,7 @@ const runtimeVersions = window.versions || {}
 
 const platformLabel = computed(() => {
   const platformMap = { darwin: 'macOS', win32: 'Windows', linux: 'Linux' }
-  return (
-    platformMap[runtimeVersions.platform] || runtimeVersions.platform || '未知'
-  )
+  return platformMap[runtimeVersions.platform] || runtimeVersions.platform || '未知'
 })
 
 // 版本号旁的状态标签文案：仅非空闲态展示
@@ -903,9 +759,7 @@ const updateStateText = computed(() => {
     case 'checking':
       return '检查中'
     case 'available':
-      return latestVersionDisplay.value
-        ? `新版本 v${latestVersionDisplay.value}`
-        : '发现新版本'
+      return latestVersionDisplay.value ? `新版本 v${latestVersionDisplay.value}` : '发现新版本'
     case 'up-to-date':
       return '已是最新'
     case 'error':
@@ -1055,11 +909,7 @@ const handleClose = () => {
   width: 32px;
   height: 32px;
   color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--brand-accent)
-  );
+  background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
   border-radius: 8px;
 }
 
@@ -1350,8 +1200,7 @@ const handleClose = () => {
   &.active {
     .theme-preview {
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-primary), transparent 80%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary), transparent 80%);
     }
 
     .theme-label {
@@ -1468,8 +1317,7 @@ const handleClose = () => {
   &.active {
     .layout-preview {
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 2px
-        color-mix(in srgb, var(--color-primary), transparent 80%);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary), transparent 80%);
     }
 
     .layout-label {
@@ -1544,9 +1392,7 @@ const handleClose = () => {
 
     dd {
       margin: 0;
-      font-family:
-        ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas,
-        monospace;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace;
       font-size: 12px;
       font-variant-numeric: tabular-nums;
       color: var(--color-text-secondary);
@@ -1685,19 +1531,13 @@ const handleClose = () => {
 
   &--primary {
     color: #fff;
-    background: linear-gradient(
-      100deg,
-      var(--color-primary) 0%,
-      var(--brand-accent-alt) 100%
-    );
+    background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
     border-color: transparent;
-    box-shadow: 0 4px 12px -4px
-      color-mix(in srgb, var(--color-primary), transparent 40%);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary), transparent 40%);
 
     &:hover {
       filter: brightness(1.08);
-      box-shadow: 0 6px 16px -4px
-        color-mix(in srgb, var(--color-primary), transparent 30%);
+      box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary), transparent 30%);
     }
   }
 
@@ -1797,13 +1637,7 @@ const handleClose = () => {
     width: 70%;
     height: 1px;
     content: '';
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--color-border) 30%,
-      var(--color-border) 70%,
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, var(--color-border) 30%, var(--color-border) 70%, transparent);
     transform: translateX(-50%);
   }
 }
@@ -1878,11 +1712,7 @@ const handleClose = () => {
   font-size: 32px;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--brand-accent)
-  );
+  background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
 }
 
 .avatar-overlay {

@@ -1,10 +1,10 @@
 import { defineConfig, loadEnv } from 'vite'
 import { resolve } from 'path'
 import { execSync } from 'child_process'
-import createVitePlugins from './build/plugins'
-import { proxyServer } from './build/config/proxy'
+import createVitePlugins from './build/plugins/index.js'
+import { proxyServer } from './build/config/proxy.js'
 import electron from 'vite-plugin-electron/simple'
-import pkg from './package.json'
+import pkg from './package.json' with { type: 'json' }
 import fs from 'fs'
 
 // 构建时获取 git 提交哈希和构建日期
@@ -34,19 +34,11 @@ export default defineConfig(({ mode, command }) => {
   // Vite 自身的 ESM transform 会按需处理子模块。仅组件 CSS 仍预构建，
   // 防止 unplugin 首次 import 新组件时触发"重新优化依赖"导致整页 reload。
   const optimizeDepsElementPlusIncludes = []
-  fs.readdirSync('node_modules/element-plus/es/components').forEach(
-    (dirname) => {
-      if (
-        fs.existsSync(
-          `node_modules/element-plus/es/components/${dirname}/style/index.mjs`
-        )
-      ) {
-        optimizeDepsElementPlusIncludes.push(
-          `element-plus/es/components/${dirname}/style/index`
-        )
-      }
+  fs.readdirSync('node_modules/element-plus/es/components').forEach((dirname) => {
+    if (fs.existsSync(`node_modules/element-plus/es/components/${dirname}/style/index.mjs`)) {
+      optimizeDepsElementPlusIncludes.push(`element-plus/es/components/${dirname}/style/index`)
     }
-  )
+  })
   return defineConfig({
     base: viteEnv.VITE_BASE_URL,
     server: {
@@ -54,43 +46,35 @@ export default defineConfig(({ mode, command }) => {
       proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined
     },
     build: {
-      // 传递给Terser的更多 minify 选项。
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-          pure_funcs: [
-            'console.log',
-            'console.info',
-            'console.debug',
-            'console.warn'
-          ],
-          passes: 3, // 多次压缩，体积更小
-          reduce_funcs: true // 减小函数体积
-        },
-        mangle: {
-          toplevel: true // 混淆顶级变量和函数名
-        },
-        format: {
-          comments: false // 移除所有注释
-        }
-      },
-      reportCompressedSize: false, // 关闭压缩计算，加快构建速度
-      sourcemap,
-      chunkSizeWarningLimit: 4000,
-      minify: 'terser',
-      cssCodeSplit: true, // 启用 CSS 代码分割
-      assetsInlineLimit: 4096, // 小于 4kb 的资源内联为 base64
-      rollupOptions: {
+      // Vite 8 使用 rolldownOptions；rollupOptions 已弃用，且当两者同时存在时
+      // rollupOptions 会被静默忽略（Vite 内部为 `rolldownOptions ??= rollupOptions`），
+      // 因此这里统一合并到 rolldownOptions，避免配置失效。
+      rolldownOptions: {
         // 渲染进程是浏览器环境，排除 electron，避免其内部的
         // fs / child_process / path 等 Node 内置模块被打包而产生
         // "externalized for browser compatibility" 警告
         external: ['electron'],
         treeshake: {
-          propertyReadSideEffects: false,
-          tryCatchDeoptimization: false
+          propertyReadSideEffects: false
         },
         output: {
+          // oxc minifier 配置（Vite 8 默认就是 oxc，这里显式声明并传入 MinifyOptions）
+          // 等价于原 terserOptions 的关键配置；passes / pure_funcs / reduce_funcs 在 oxc 中没有对应项
+          minify: {
+            compress: {
+              dropConsole: true, // 移除所有 console.* 调用
+              dropDebugger: true // 移除 debugger; 语句
+              // unused: true（默认）对应原 reduce_funcs
+              // oxc 不支持 passes / pure_funcs；dropConsole 已覆盖原 pure_funcs 列表
+            },
+            mangle: {
+              toplevel: true // 混淆顶级作用域名称（默认开启）
+            },
+            codegen: {
+              removeWhitespace: true, // 移除空白
+              legalComments: 'none' // 移除所有 legal comments（等价于原 format.comments: false）
+            }
+          },
           manualChunks(id) {
             // Vue 核心
             if (
@@ -140,22 +124,30 @@ export default defineConfig(({ mode, command }) => {
             } else {
               return `assets/[name]-[hash][extname]`
             }
-          },
-          compact: true // 压缩生成代码的空白字符
+          }
+        },
+        checks: {
+          pluginTimings: false
         }
-      }
+      },
+      reportCompressedSize: false, // 关闭压缩计算，加快构建速度
+      sourcemap,
+      chunkSizeWarningLimit: 4000,
+      minify: 'oxc',
+      cssCodeSplit: true, // 启用 CSS 代码分割
+      assetsInlineLimit: 4096 // 小于 4kb 的资源内联为 base64
     },
     resolve: {
       alias: {
-        '@': resolve(__dirname, './src/render'),
-        '@shared': resolve(__dirname, './src/shared'),
-        '@/styles': resolve(__dirname, 'src/render/styles'),
-        '@/router': resolve(__dirname, 'src/render/router'),
-        '@/views': resolve(__dirname, 'src/render/views'),
-        '@/components': resolve(__dirname, 'src/render/components'),
-        '@/utils': resolve(__dirname, 'src/render/utils'),
-        '@/assets': resolve(__dirname, 'src/render/assets'),
-        '@/icons': resolve(__dirname, 'src/render/icons')
+        '@': resolve(import.meta.dirname, './src/render'),
+        '@shared': resolve(import.meta.dirname, './src/shared'),
+        '@/styles': resolve(import.meta.dirname, 'src/render/styles'),
+        '@/router': resolve(import.meta.dirname, 'src/render/router'),
+        '@/views': resolve(import.meta.dirname, 'src/render/views'),
+        '@/components': resolve(import.meta.dirname, 'src/render/components'),
+        '@/utils': resolve(import.meta.dirname, 'src/render/utils'),
+        '@/assets': resolve(import.meta.dirname, 'src/render/assets'),
+        '@/icons': resolve(import.meta.dirname, 'src/render/icons')
       },
       // 导入时想要省略的扩展名列表
       // 不建议使用.vue 影响IDE和类型支持
@@ -191,21 +183,11 @@ export default defineConfig(({ mode, command }) => {
           vite: {
             define: {
               // 将 .env 文件中的 VITE_* 变量注入主进程（Node.js 不读取 VITE_ 前缀变量）
-              'process.env.VITE_UPDATE_URL': JSON.stringify(
-                viteEnv.VITE_UPDATE_URL
-              ),
-              'process.env.VITE_API_BASE_URL': JSON.stringify(
-                viteEnv.VITE_API_BASE_URL
-              ),
-              'process.env.VITE_SERVER_URL': JSON.stringify(
-                viteEnv.VITE_SERVER_URL
-              ),
-              'process.env.VITE_USE_MOCK': JSON.stringify(
-                viteEnv.VITE_USE_MOCK
-              ),
-              'process.env.VITE_MOCK_LOGIN': JSON.stringify(
-                viteEnv.VITE_MOCK_LOGIN
-              ),
+              'process.env.VITE_UPDATE_URL': JSON.stringify(viteEnv.VITE_UPDATE_URL),
+              'process.env.VITE_API_BASE_URL': JSON.stringify(viteEnv.VITE_API_BASE_URL),
+              'process.env.VITE_SERVER_URL': JSON.stringify(viteEnv.VITE_SERVER_URL),
+              'process.env.VITE_USE_MOCK': JSON.stringify(viteEnv.VITE_USE_MOCK),
+              'process.env.VITE_MOCK_LOGIN': JSON.stringify(viteEnv.VITE_MOCK_LOGIN),
               __COMMIT_HASH__,
               __BUILD_DATE__
             },
@@ -224,14 +206,12 @@ export default defineConfig(({ mode, command }) => {
                   }
                 : undefined,
               outDir: 'dist-electron/main',
-              rollupOptions: {
+              rolldownOptions: {
                 // Some third-party Node.js libraries may not be built correctly by Vite, especially `C/C++` addons,
                 // we can use `external` to exclude them to ensure they work correctly.
                 // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
                 // Of course, this is not absolute, just this way is relatively simple. :)
-                external: Object.keys(
-                  'dependencies' in pkg ? pkg.dependencies : {}
-                ),
+                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
                 treeshake: {
                   moduleSideEffects: 'no-external'
                 }
@@ -240,8 +220,8 @@ export default defineConfig(({ mode, command }) => {
           }
         },
         preload: {
-          // Shortcut of `build.rollupOptions.input`.
-          // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
+          // Shortcut of `build.rolldownOptions.input`.
+          // Preload scripts may contain Web assets, so use the `build.rolldownOptions.input` instead `build.lib.entry`.
           input: 'src/preload/index.mjs',
           vite: {
             build: {
@@ -259,10 +239,8 @@ export default defineConfig(({ mode, command }) => {
                   }
                 : undefined,
               outDir: 'dist-electron/preload',
-              rollupOptions: {
-                external: Object.keys(
-                  'dependencies' in pkg ? pkg.dependencies : {}
-                ),
+              rolldownOptions: {
+                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
                 treeshake: {
                   moduleSideEffects: 'no-external'
                 }
@@ -296,9 +274,8 @@ export default defineConfig(({ mode, command }) => {
         'echarts/components',
         'echarts/features',
         'echarts/renderers',
-        // 锁屏密码 AES 加密仅引入子模块，需预构建避免首次访问触发二次优化
-        'crypto-js/aes',
-        'crypto-js/enc-utf8',
+        // 锁屏密码哈希仅引入 hash-wasm 的 SHA-256，按需懒加载即可，
+        // 无需预构建；LockScreen 首次访问时由 Vite 二次优化。
         'qrcode',
         '@vueuse/core'
       ]

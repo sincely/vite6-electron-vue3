@@ -9,9 +9,7 @@
       <div class="price-stats-hero">
         <span class="price-stats-hero-label">比特币美元价值</span>
         <span class="price-stats-hero-value">$98,420.00</span>
-        <span class="price-stats-hero-change text-up">
-          上涨 +1,112.00（1.14%） 今日
-        </span>
+        <span class="price-stats-hero-change text-up">上涨 +1,112.00（1.14%） 今日</span>
       </div>
       <div class="price-stats-grid">
         <div v-for="item in stats" :key="item.label" class="price-stats-item">

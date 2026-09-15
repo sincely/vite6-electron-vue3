@@ -12,14 +12,7 @@
 
     <div class="pricing-page__plans">
       <ElRow :gutter="20" justify="center">
-        <ElCol
-          v-for="plan in pricingPlans"
-          :key="plan.type"
-          :xs="24"
-          :sm="12"
-          :md="6"
-          class="plan-col"
-        >
+        <ElCol v-for="plan in pricingPlans" :key="plan.type" :xs="24" :sm="12" :md="6" class="plan-col">
           <div class="plan-card">
             <div class="plan-card__head">
               <h3 class="plan-card__title">{{ plan.title }}</h3>
@@ -31,15 +24,8 @@
             </div>
 
             <div class="plan-card__features">
-              <div
-                v-for="(feature, index) in plan.features"
-                :key="index"
-                class="plan-card__feature"
-              >
-                <el-icon
-                  class="plan-card__feature-icon"
-                  :class="feature.available ? 'is-available' : 'is-unavailable'"
-                >
+              <div v-for="(feature, index) in plan.features" :key="index" class="plan-card__feature">
+                <el-icon class="plan-card__feature-icon" :class="feature.available ? 'is-available' : 'is-unavailable'">
                   <Check v-if="feature.available" />
                   <Close v-else />
                 </el-icon>
@@ -48,13 +34,7 @@
             </div>
 
             <div class="plan-card__action">
-              <ElButton
-                type="primary"
-                class="plan-card__buy"
-                @click="handleBuy(plan)"
-              >
-                立即购买
-              </ElButton>
+              <ElButton type="primary" class="plan-card__buy" @click="handleBuy(plan)">立即购买</ElButton>
             </div>
           </div>
         </ElCol>

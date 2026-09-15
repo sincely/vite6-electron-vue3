@@ -111,10 +111,7 @@ service.interceptors.request.use((config) => {
   // 终端日志（绿色）：方法 + URL + 关键配置 + 请求参数 + 请求体 + 请求头
   logger.info(green(`请求前参数: ${method.toUpperCase()} ${config.url}`))
   logger.info(green('baseURL     :'), readableBody(config.baseURL))
-  logger.info(
-    green('timeout     :'),
-    `${config.timeout ?? `default(${httpConfig.timeout})`}ms`
-  )
+  logger.info(green('timeout     :'), `${config.timeout ?? `default(${httpConfig.timeout})`}ms`)
   logger.info(green('responseType:'), config.responseType || 'json')
   logger.info(green('isForm      :'), String(Boolean(config.isForm)))
   logger.info(green('token       :'), readableBody(config.token))
@@ -130,9 +127,7 @@ service.interceptors.response.use(
   (response) => {
     // 成功：绿色日志
     const okMethod = String(response.config.method || 'get').toUpperCase()
-    logger.info(
-      green(`响应成功 ✓: ${response.status} ${okMethod} ${response.config.url}`)
-    )
+    logger.info(green(`响应成功 ✓: ${response.status} ${okMethod} ${response.config.url}`))
     logger.info(green('body   :'), readableBody(response.data))
 
     return {
@@ -146,11 +141,7 @@ service.interceptors.response.use(
     const code = err.response?.status
     const url = err.config?.url
     const method = String(err.config?.method || 'get').toUpperCase()
-    logger.error(
-      red(
-        `响应失败 ✗ ${code ?? 'ERR'} ${method} ${url ?? '-'} - ${err.message}`
-      )
-    )
+    logger.error(red(`响应失败 ✗ ${code ?? 'ERR'} ${method} ${url ?? '-'} - ${err.message}`))
     logger.error(red('body   :'), readableBody(err.response?.data))
 
     return {

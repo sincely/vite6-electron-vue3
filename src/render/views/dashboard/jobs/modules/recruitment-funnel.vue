@@ -7,11 +7,7 @@
     </template>
     <template #content>
       <div class="recruitment-funnel-stats">
-        <div
-          v-for="item in stages"
-          :key="item.label"
-          class="recruitment-funnel-stats-item"
-        >
+        <div v-for="item in stages" :key="item.label" class="recruitment-funnel-stats-item">
           <span class="recruitment-funnel-stats-label">{{ item.label }}</span>
           <span class="recruitment-funnel-stats-value">{{ item.value }}</span>
         </div>

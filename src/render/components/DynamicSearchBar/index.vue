@@ -1,13 +1,6 @@
 <template>
   <div class="search-bar glass-card">
-    <el-form
-      ref="formRef"
-      :model="localParams"
-      :inline="true"
-      label-width="80px"
-      size="default"
-      class="search-form"
-    >
+    <el-form ref="formRef" :model="localParams" :inline="true" label-width="80px" size="default" class="search-form">
       <!-- 显示项 -->
       <template v-for="item in displayedItems" :key="item.prop">
         <el-form-item :label="item.label" class="search-item">
@@ -29,12 +22,7 @@
             clearable
             @change="handleSearch"
           >
-            <el-option
-              v-for="opt in item.component.options"
-              :key="opt.value"
-              :label="opt.label"
-              :value="opt.value"
-            />
+            <el-option v-for="opt in item.component.options" :key="opt.value" :label="opt.label" :value="opt.value" />
           </el-select>
           <!-- date-picker -->
           <el-date-picker
@@ -58,17 +46,9 @@
 
       <!-- 操作按钮 -->
       <el-form-item class="search-actions">
-        <el-button type="primary" :icon="Search" @click="handleSearch">
-          查询
-        </el-button>
+        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
         <el-button :icon="RefreshRight" @click="resetAll">重置</el-button>
-        <el-button
-          v-if="items.length > 3"
-          type="primary"
-          link
-          class="expand-btn"
-          @click="toggleExpand"
-        >
+        <el-button v-if="items.length > 3" type="primary" link class="expand-btn" @click="toggleExpand">
           {{ isExpanded ? '收起' : '展开' }}
           <SvgIcon
             :icon-class="isExpanded ? 'chevron-up' : 'chevron-down'"
@@ -177,8 +157,7 @@ const vHasPermi = {
 // 兼容 mock 场景下的超级权限和精确权限
 const checkPermission = (permi) => {
   const userPermi = userStore.permissions || []
-  const hasAllPermission =
-    userPermi.includes('*:*:*') || userPermi.includes('*') || !userPermi.length
+  const hasAllPermission = userPermi.includes('*:*:*') || userPermi.includes('*') || !userPermi.length
 
   if (hasAllPermission) {
     return true

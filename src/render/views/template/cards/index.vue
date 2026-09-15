@@ -1,41 +1,18 @@
 <!-- 模板中心 - 卡片：统计 / 进度 / 图表 / 数据列表 / 图片卡片 -->
 <template>
   <div class="template-cards-page">
-    <PageHeader
-      title="卡片"
-      subtitle="统计、进度、图表、列表与图片卡片示例"
-      icon="template"
-    />
+    <PageHeader title="卡片" subtitle="统计、进度、图表、列表与图片卡片示例" icon="template" />
 
     <h1 class="page-title">统计卡片（文字）</h1>
     <ElRow :gutter="20">
-      <ElCol
-        v-for="card in statsCards"
-        :key="card.id"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
-        <StatsCard
-          :icon="card.icon"
-          :title="card.title"
-          :description="card.description"
-          :color="card.color"
-        />
+      <ElCol v-for="card in statsCards" :key="card.id" :xs="24" :sm="12" :md="6" class="page-col">
+        <StatsCard :icon="card.icon" :title="card.title" :description="card.description" :color="card.color" />
       </ElCol>
     </ElRow>
 
     <h1 class="page-title">统计卡片（数字滚动）</h1>
     <ElRow :gutter="20">
-      <ElCol
-        v-for="card in statsCards"
-        :key="card.id"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
+      <ElCol v-for="card in statsCards" :key="card.id" :xs="24" :sm="12" :md="6" class="page-col">
         <StatsCard
           :icon="card.icon"
           :count="card.count"
@@ -49,14 +26,7 @@
 
     <h1 class="page-title">统计卡片（自定义样式）</h1>
     <ElRow :gutter="20">
-      <ElCol
-        v-for="card in statsCards"
-        :key="card.id"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
+      <ElCol v-for="card in statsCards" :key="card.id" :xs="24" :sm="12" :md="6" class="page-col">
         <StatsCard
           :icon="card.icon"
           :title="card.title"
@@ -69,38 +39,15 @@
 
     <h1 class="page-title">进度卡片</h1>
     <ElRow :gutter="20">
-      <ElCol
-        v-for="card in progressCards"
-        :key="card.id"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
-        <ProgressCard
-          :percentage="card.percentage"
-          :title="card.title"
-          :color="card.color"
-        />
+      <ElCol v-for="card in progressCards" :key="card.id" :xs="24" :sm="12" :md="6" class="page-col">
+        <ProgressCard :percentage="card.percentage" :title="card.title" :color="card.color" />
       </ElCol>
     </ElRow>
 
     <h1 class="page-title">进度卡片（icon）</h1>
     <ElRow :gutter="20">
-      <ElCol
-        v-for="card in progressCards"
-        :key="card.id"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
-        <ProgressCard
-          :percentage="card.percentage"
-          :title="card.title"
-          :color="card.color"
-          :icon="card.icon"
-        />
+      <ElCol v-for="card in progressCards" :key="card.id" :xs="24" :sm="12" :md="6" class="page-col">
+        <ProgressCard :percentage="card.percentage" :title="card.title" :color="card.color" :icon="card.icon" />
       </ElCol>
     </ElRow>
 
@@ -203,11 +150,7 @@
     <h1 class="page-title">数据列表卡片</h1>
     <ElRow :gutter="20">
       <ElCol :xs="24" :sm="12" :lg="8" class="page-col">
-        <DataListCard
-          :list="dataList"
-          title="待办事项"
-          subtitle="今日待处理任务"
-        />
+        <DataListCard :list="dataList" title="待办事项" subtitle="今日待处理任务" />
       </ElCol>
       <ElCol :xs="24" :sm="12" :lg="8" class="page-col">
         <DataListCard
@@ -220,24 +163,13 @@
         />
       </ElCol>
       <ElCol :xs="24" :sm="12" :lg="8" class="page-col">
-        <TimelineListCard
-          :list="timelineData"
-          title="最近交易"
-          subtitle="2024年12月20日"
-        />
+        <TimelineListCard :list="timelineData" title="最近交易" subtitle="2024年12月20日" />
       </ElCol>
     </ElRow>
 
     <h1 class="page-title">图片卡片</h1>
     <ElRow :gutter="20">
-      <ElCol
-        v-for="card in imageCards"
-        :key="card.id"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
+      <ElCol v-for="card in imageCards" :key="card.id" :xs="24" :sm="12" :md="6" class="page-col">
         <ImageCard
           :image-url="card.imageUrl"
           :title="card.title"

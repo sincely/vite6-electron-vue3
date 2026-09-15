@@ -8,11 +8,7 @@
 
     <!-- 示例一：基础用法（≤3 项全部展示） -->
     <div class="section-title">基础示例（3 个搜索项）</div>
-    <DynamicSearchBar
-      :items="basicItems"
-      :params="basicParams"
-      :table-ref="basicTableRef"
-    />
+    <DynamicSearchBar :items="basicItems" :params="basicParams" :table-ref="basicTableRef" />
     <AdvanceTable
       ref="basicTableRef"
       :columns="basicColumns"
@@ -22,14 +18,8 @@
     />
 
     <!-- 示例二：完整用法（>3 项自动折叠，展开/收起切换） -->
-    <div class="section-title">
-      完整示例（6 个搜索项，点击「展开」查看全部）
-    </div>
-    <DynamicSearchBar
-      :items="fullItems"
-      :params="fullParams"
-      :table-ref="fullTableRef"
-    />
+    <div class="section-title">完整示例（6 个搜索项，点击「展开」查看全部）</div>
+    <DynamicSearchBar :items="fullItems" :params="fullParams" :table-ref="fullTableRef" />
     <AdvanceTable
       ref="fullTableRef"
       :columns="basicColumns"

@@ -4,17 +4,11 @@
       <div class="dash-header">
         <h4>最近动态</h4>
       </div>
-      <el-link class="recent-activities-more" type="primary" underline="never">
-        查看全部 →
-      </el-link>
+      <el-link class="recent-activities-more" type="primary" underline="never">查看全部 →</el-link>
     </template>
     <template #content>
       <el-scrollbar height="320px">
-        <div
-          v-for="(item, index) in activities"
-          :key="index"
-          class="recent-activities-item"
-        >
+        <div v-for="(item, index) in activities" :key="index" class="recent-activities-item">
           <div class="recent-activities-time">
             <span class="recent-activities-day">{{ item.day }}</span>
             <span class="recent-activities-clock">{{ item.clock }}</span>

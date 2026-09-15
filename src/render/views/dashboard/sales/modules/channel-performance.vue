@@ -7,19 +7,13 @@
     </template>
     <template #content>
       <el-scrollbar height="360px">
-        <div
-          v-for="item in channels"
-          :key="item.name"
-          class="channel-performance-item"
-        >
+        <div v-for="item in channels" :key="item.name" class="channel-performance-item">
           <div class="channel-performance-main">
             <div class="channel-performance-name">{{ item.name }}</div>
             <div class="channel-performance-type">{{ item.type }}</div>
           </div>
           <div class="channel-performance-tail">
-            <span :class="item.up ? 'text-up' : 'text-down'">
-              {{ item.up ? '↑' : '↓' }} {{ item.trend }}
-            </span>
+            <span :class="item.up ? 'text-up' : 'text-down'">{{ item.up ? '↑' : '↓' }} {{ item.trend }}</span>
             <span class="channel-performance-value">{{ item.value }}</span>
           </div>
         </div>

@@ -1,10 +1,5 @@
 <template>
-  <el-popover
-    placement="bottom-end"
-    trigger="click"
-    width="300"
-    popper-class="column-setting-popover"
-  >
+  <el-popover placement="bottom-end" trigger="click" width="300" popper-class="column-setting-popover">
     <template #reference>
       <span class="column-setting-trigger" title="列设置">
         <Icon icon="ri:align-right" width="18" height="18" />
@@ -13,11 +8,7 @@
 
     <div class="column-setting">
       <div class="setting-header">
-        <el-checkbox
-          v-model="checkAll"
-          :indeterminate="isIndeterminate"
-          @change="handleCheckAllChange"
-        >
+        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
           列展示/排序
         </el-checkbox>
         <div class="header-actions">
@@ -43,10 +34,7 @@
           @dragend="dragEnd"
           @drop="drop($event, index)"
         >
-          <div
-            class="drag-icon"
-            :title="isDragDisabled(element) ? '固定列，不可拖拽' : ''"
-          >
+          <div class="drag-icon" :title="isDragDisabled(element) ? '固定列，不可拖拽' : ''">
             <Icon
               v-if="!isDragDisabled(element)"
               icon="ri:drag-move-2-fill"
@@ -54,13 +42,7 @@
               width="14"
               height="14"
             />
-            <Icon
-              v-else
-              icon="ri:unpin-line"
-              class="pin-icon"
-              width="14"
-              height="14"
-            />
+            <Icon v-else icon="ri:unpin-line" class="pin-icon" width="14" height="14" />
           </div>
           <el-checkbox v-model="element.show" @change="handleCheckChange">
             {{ element.label }}
@@ -169,8 +151,7 @@ watch(
       // 计算全选状态但不触发 emit，防止循环
       const checkedCount = list.value.filter((item) => item.show).length
       checkAll.value = checkedCount === list.value.length
-      isIndeterminate.value =
-        checkedCount > 0 && checkedCount < list.value.length
+      isIndeterminate.value = checkedCount > 0 && checkedCount < list.value.length
     }
   },
   { immediate: true, deep: true }

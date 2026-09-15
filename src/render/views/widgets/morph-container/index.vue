@@ -1,10 +1,6 @@
 <template>
   <div class="morph-page">
-    <PageHeader
-      title="容器变形"
-      subtitle="7 种可复用的容器形态过渡，点击任意示例查看动效"
-      icon="layers-3"
-    >
+    <PageHeader title="容器变形" subtitle="7 种可复用的容器形态过渡，点击任意示例查看动效" icon="layers-3">
       <template #actions>
         <ElButton plain @click="toggleAll">
           <Icon icon="lucide:play" width="15" />
@@ -19,9 +15,7 @@
       <div class="morph-hero__content">
         <span class="morph-hero__eyebrow">MOTION SYSTEM / 07</span>
         <h1>让容器自己讲述状态变化</h1>
-        <p>
-          从一个圆点，到一张信息卡；从紧凑态，到完整工作区。每一个形变都保持内容连续与空间秩序。
-        </p>
+        <p>从一个圆点，到一张信息卡；从紧凑态，到完整工作区。每一个形变都保持内容连续与空间秩序。</p>
         <div class="morph-hero__meta">
           <span>
             <i class="meta-dot meta-dot--blue"></i>
@@ -56,22 +50,14 @@
     </div>
 
     <section class="morph-grid">
-      <article
-        v-for="demo in demos"
-        :key="demo.key"
-        class="morph-demo-card"
-        :class="`morph-demo-card--${demo.key}`"
-      >
+      <article v-for="demo in demos" :key="demo.key" class="morph-demo-card" :class="`morph-demo-card--${demo.key}`">
         <div class="morph-demo-card__heading">
           <div class="morph-demo-card__number">{{ demo.number }}</div>
           <div class="morph-demo-card__title">
             <h2>{{ demo.title }}</h2>
             <p>{{ demo.description }}</p>
           </div>
-          <span
-            class="morph-demo-card__status"
-            :class="{ 'is-active': states[demo.key] }"
-          >
+          <span class="morph-demo-card__status" :class="{ 'is-active': states[demo.key] }">
             {{ states[demo.key] ? '展开' : '紧凑' }}
           </span>
         </div>
@@ -86,14 +72,7 @@
           <span>{{ demo.detail }}</span>
           <button type="button" @click="states[demo.key] = !states[demo.key]">
             {{ states[demo.key] ? '收回' : '展开' }}
-            <Icon
-              :icon="
-                states[demo.key]
-                  ? 'lucide:arrow-up-right'
-                  : 'lucide:arrow-down-right'
-              "
-              width="14"
-            />
+            <Icon :icon="states[demo.key] ? 'lucide:arrow-up-right' : 'lucide:arrow-down-right'" width="14" />
           </button>
         </div>
       </article>
@@ -101,10 +80,7 @@
 
     <div class="morph-page__note">
       <Icon icon="lucide:info" width="16" aria-hidden="true" />
-      <span>
-        交互提示：点击容器、卡片底部按钮或按 Enter / Space
-        都可以触发状态切换。当前操作：{{ lastAction }}
-      </span>
+      <span>交互提示：点击容器、卡片底部按钮或按 Enter / Space 都可以触发状态切换。当前操作：{{ lastAction }}</span>
     </div>
   </div>
 </template>
@@ -184,9 +160,7 @@ const states = reactive({
 })
 
 const lastAction = ref('等待你的操作')
-const expandedCount = computed(
-  () => Object.values(states).filter(Boolean).length
-)
+const expandedCount = computed(() => Object.values(states).filter(Boolean).length)
 
 const toggleAll = () => {
   const shouldExpand = expandedCount.value < demos.length
@@ -233,11 +207,7 @@ const markLastAction = (title, key) => {
     inset: 0;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
-      circle at 48% 20%,
-      rgb(255 255 255 / 8%),
-      transparent 35%
-    );
+    background: radial-gradient(circle at 48% 20%, rgb(255 255 255 / 8%), transparent 35%);
   }
 }
 
@@ -439,11 +409,7 @@ const markLastAction = (title, key) => {
     transform 0.25s ease;
 
   &:hover {
-    border-color: color-mix(
-      in srgb,
-      var(--brand-accent),
-      var(--color-border) 62%
-    );
+    border-color: color-mix(in srgb, var(--brand-accent), var(--color-border) 62%);
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
   }

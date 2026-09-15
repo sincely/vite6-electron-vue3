@@ -4,17 +4,11 @@
       <div class="dash-header">
         <h4>在职人员</h4>
       </div>
-      <el-link class="active-employees-more" type="primary" underline="never">
-        查看全部 →
-      </el-link>
+      <el-link class="active-employees-more" type="primary" underline="never">查看全部 →</el-link>
     </template>
     <template #content>
       <el-scrollbar height="360px">
-        <div
-          v-for="item in employees"
-          :key="item.name"
-          class="active-employees-item"
-        >
+        <div v-for="item in employees" :key="item.name" class="active-employees-item">
           <el-avatar :src="item.avatar" :size="40" />
           <div class="active-employees-main">
             <div class="active-employees-name">

@@ -1,10 +1,5 @@
 <template>
-  <el-backtop
-    :right="right"
-    :bottom="bottom"
-    :visibility-height="visibilityHeight"
-    :target="target"
-  >
+  <el-backtop :right="right" :bottom="bottom" :visibility-height="visibilityHeight" :target="target">
     <div class="back-top-btn">
       <SvgIcon icon-class="backTop" width="16px" height="16px" />
     </div>

@@ -1,21 +1,13 @@
 <!-- 统计卡片：文字 / 数字滚动两种模式，plainIcon 为自定义样式模式 -->
 <template>
-  <div
-    class="stats-card"
-    :class="{ 'stats-card--plain': plainIcon }"
-    :style="cardStyle"
-  >
+  <div class="stats-card" :class="{ 'stats-card--plain': plainIcon }" :style="cardStyle">
     <div v-if="icon" class="stats-card__icon" :style="iconBoxStyle">
       <el-icon :size="plainIcon ? 30 : 20">
         <component :is="icon" />
       </el-icon>
     </div>
     <div class="stats-card__body">
-      <p
-        v-if="title"
-        class="stats-card__title"
-        :style="plainIcon ? { color } : {}"
-      >
+      <p v-if="title" class="stats-card__title" :style="plainIcon ? { color } : {}">
         {{ title }}
       </p>
       <CountTo

@@ -1,10 +1,6 @@
 <template>
   <div class="crypto-tickers">
-    <card
-      v-for="item in tickers"
-      :key="item.symbol"
-      class="crypto-tickers-card"
-    >
+    <card v-for="item in tickers" :key="item.symbol" class="crypto-tickers-card">
       <template #content>
         <div class="crypto-tickers-top">
           <span
@@ -16,9 +12,7 @@
           >
             {{ item.icon }}
           </span>
-          <span :class="item.up ? 'text-up' : 'text-down'">
-            {{ item.up ? '↑' : '↓' }} {{ item.trend }}
-          </span>
+          <span :class="item.up ? 'text-up' : 'text-down'">{{ item.up ? '↑' : '↓' }} {{ item.trend }}</span>
         </div>
         <div class="crypto-tickers-value">{{ item.value }}</div>
         <div class="crypto-tickers-label">{{ item.symbol }}</div>

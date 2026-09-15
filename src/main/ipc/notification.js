@@ -101,11 +101,7 @@ export default [
 
           notif.once('failed', (_event, error) => {
             if (!sender.isDestroyed()) {
-              sender.send(
-                'native-notification-failed',
-                notifId,
-                error?.message || 'unknown'
-              )
+              sender.send('native-notification-failed', notifId, error?.message || 'unknown')
             }
           })
         }

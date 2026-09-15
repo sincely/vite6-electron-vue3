@@ -49,10 +49,7 @@ const EL_TYPES = ['success', 'warning', 'info', 'error']
  */
 export const showToast = (options, fallbackType) => {
   // 兼容简写：showToast('正文内容', 'error')
-  const opts =
-    typeof options === 'string'
-      ? { message: options, type: fallbackType }
-      : { ...options }
+  const opts = typeof options === 'string' ? { message: options, type: fallbackType } : { ...options }
 
   const {
     title = '通知',
@@ -71,10 +68,7 @@ export const showToast = (options, fallbackType) => {
   // 3. 自定义类型（如 celebrate）渲染为 SvgIcon
   const isStandardType = EL_TYPES.includes(type)
   const resolvedIcon =
-    icon ??
-    (isStandardType
-      ? undefined
-      : h(SvgIcon, { iconClass: type, width: '25px', height: '25px' }))
+    icon ?? (isStandardType ? undefined : h(SvgIcon, { iconClass: type, width: '25px', height: '25px' }))
 
   return ElNotification({
     title,
@@ -91,13 +85,9 @@ export const showToast = (options, fallbackType) => {
 }
 
 // ─── 便捷方法 ─────────────────────────────────────────────────────────────
-showToast.success = (message, options = {}) =>
-  showToast({ ...options, message, type: 'success' })
-showToast.warning = (message, options = {}) =>
-  showToast({ ...options, message, type: 'warning' })
-showToast.error = (message, options = {}) =>
-  showToast({ ...options, message, type: 'error' })
-showToast.info = (message, options = {}) =>
-  showToast({ ...options, message, type: 'info' })
+showToast.success = (message, options = {}) => showToast({ ...options, message, type: 'success' })
+showToast.warning = (message, options = {}) => showToast({ ...options, message, type: 'warning' })
+showToast.error = (message, options = {}) => showToast({ ...options, message, type: 'error' })
+showToast.info = (message, options = {}) => showToast({ ...options, message, type: 'info' })
 
 export default showToast

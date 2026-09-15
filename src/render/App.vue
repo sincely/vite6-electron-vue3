@@ -38,10 +38,7 @@ onMounted(() => {
   // 主进程在退出登录流程中创建新登录窗口时会带上 ?__skipSplash=1，
   // 表示用户刚看过首屏动画，会话内回到登录页无需再展示。命中时立即移除 splash，
   // 并清掉 hash 中的标记避免污染路由（刷新或分享链接时仍按冷启动走正常 splash 流程）。
-  const skipSplash =
-    new URLSearchParams(location.hash.split('?')[1] || '').get(
-      '__skipSplash'
-    ) === '1'
+  const skipSplash = new URLSearchParams(location.hash.split('?')[1] || '').get('__skipSplash') === '1'
   if (skipSplash) {
     const cleanHash = location.hash.split('?')[0] || '#/login'
     history.replaceState(null, '', cleanHash)

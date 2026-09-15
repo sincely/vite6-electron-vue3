@@ -85,17 +85,13 @@ function buildOptions() {
         itemStyle: {
           color: computedColor,
           shadowBlur: 6,
-          shadowColor: isDark.value
-            ? 'rgba(255, 255, 255, 0.1)'
-            : 'rgba(0, 0, 0, 0.1)',
+          shadowColor: isDark.value ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
           shadowOffsetY: 2
         },
         emphasis: {
           itemStyle: {
             shadowBlur: 12,
-            shadowColor: isDark.value
-              ? 'rgba(255, 255, 255, 0.2)'
-              : 'rgba(0, 0, 0, 0.2)'
+            shadowColor: isDark.value ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
           },
           scale: true
         },

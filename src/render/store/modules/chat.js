@@ -21,19 +21,13 @@ const BOT_REPLIES = [
   '可以试试在「常规设置」里开启开机自启，日常使用会方便很多。',
   '没问题，更多功能还在持续迭代中，敬请期待！'
 ]
-const CONTACT_REPLIES = [
-  '好的，收到！',
-  '嗯嗯，我稍后详细回复你。',
-  '没问题，等我一下。',
-  '了解了，晚点同步你进展。'
-]
+const CONTACT_REPLIES = ['好的，收到！', '嗯嗯，我稍后详细回复你。', '没问题，等我一下。', '了解了，晚点同步你进展。']
 
 let messageSeed = 100
 const replyIndexMap = {}
 const replyTimers = {}
 
-const formatTime = () =>
-  new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+const formatTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
 // 联系人列表（机器人固定在首位）
 // lastTimestamp 与 lastTime 文案对应，用于"按时间排序"
@@ -133,8 +127,7 @@ const buildMessagesMap = () => ({
     {
       id: 3,
       sender: BOT_NAME,
-      content:
-        '好的，我来为您介绍系统的主要功能。首先，您可以通过左侧菜单访问不同的功能模块...',
+      content: '好的，我来为您介绍系统的主要功能。首先，您可以通过左侧菜单访问不同的功能模块...',
       time: '10:02',
       isMe: false
     },
@@ -148,8 +141,7 @@ const buildMessagesMap = () => ({
     {
       id: 5,
       sender: BOT_NAME,
-      content:
-        '当然可以。数据分析模块可以帮助您实时监控关键指标，并生成详细的报表...',
+      content: '当然可以。数据分析模块可以帮助您实时监控关键指标，并生成详细的报表...',
       time: '10:06',
       isMe: false
     },
@@ -163,8 +155,7 @@ const buildMessagesMap = () => ({
     {
       id: 7,
       sender: BOT_NAME,
-      content:
-        '您可以先创建一个项目，然后在项目中添加相关的数据源，系统会自动进行分析。',
+      content: '您可以先创建一个项目，然后在项目中添加相关的数据源，系统会自动进行分析。',
       time: '10:09',
       isMe: false
     },
@@ -265,10 +256,7 @@ export const useChatStore = defineStore('chat', {
   getters: {
     // 当前选中的联系人
     selectedContact(state) {
-      return (
-        state.contacts.find((c) => c.id === state.selectedContactId) ||
-        state.contacts[0]
-      )
+      return state.contacts.find((c) => c.id === state.selectedContactId) || state.contacts[0]
     },
     // 当前会话的消息列表
     currentMessages(state) {
@@ -325,8 +313,7 @@ export const useChatStore = defineStore('chat', {
           () => {
             this.typingMap[contactId] = false
             const replies = contactId === BOT_ID ? BOT_REPLIES : CONTACT_REPLIES
-            const index = (replyIndexMap[contactId] =
-              ((replyIndexMap[contactId] ?? -1) + 1) % replies.length)
+            const index = (replyIndexMap[contactId] = ((replyIndexMap[contactId] ?? -1) + 1) % replies.length)
             this.pushMessage(contactId, {
               id: this.nextMessageId(),
               sender: contact.name,

@@ -9,11 +9,7 @@
       <chart :options="barOption" height="192px" />
 
       <div class="target-vs-reality-totals">
-        <div
-          v-for="item in totalItems"
-          :key="item.label"
-          class="target-vs-reality-item"
-        >
+        <div v-for="item in totalItems" :key="item.label" class="target-vs-reality-item">
           <div class="target-vs-reality-item-left">
             <div class="target-vs-reality-item-icon">
               <el-icon>

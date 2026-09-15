@@ -4,17 +4,11 @@
       <div class="dash-header">
         <h4>最近动态</h4>
       </div>
-      <el-link class="crypto-activities-more" type="primary" underline="never">
-        查看全部
-      </el-link>
+      <el-link class="crypto-activities-more" type="primary" underline="never">查看全部</el-link>
     </template>
     <template #content>
       <el-scrollbar height="420px">
-        <div
-          v-for="(item, index) in activities"
-          :key="index"
-          class="crypto-activities-item"
-        >
+        <div v-for="(item, index) in activities" :key="index" class="crypto-activities-item">
           <el-avatar :src="item.avatar" :size="38" />
           <div class="crypto-activities-main">
             <div class="crypto-activities-name">{{ item.name }}</div>

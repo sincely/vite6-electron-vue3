@@ -56,12 +56,7 @@ export function isAsyncFunction(val) {
  * @description:  是否为promise
  */
 export function isPromise(val) {
-  return (
-    is(val, 'Promise') &&
-    isObject(val) &&
-    isFunction(val.then) &&
-    isFunction(val.catch)
-  )
+  return is(val, 'Promise') && isObject(val) && isFunction(val.then) && isFunction(val.catch)
 }
 
 /**

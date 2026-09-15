@@ -8,11 +8,7 @@
       </template>
       <div v-if="isUpdating">
         <p>正在下载更新...</p>
-        <el-progress
-          :percentage="downloadProgress"
-          :stroke-width="10"
-          :text-inside="true"
-        />
+        <el-progress :percentage="downloadProgress" :stroke-width="10" :text-inside="true" />
         <p class="progress-text">{{ downloadProgress.toFixed(1) }}%</p>
       </div>
       <div v-else-if="updateDownloaded">

@@ -1,11 +1,5 @@
 <template>
-  <div
-    class="layout-container"
-    :class="[
-      `layout-mode-${appStore.layoutMode}`,
-      { 'is-fullscreen': isFullscreen }
-    ]"
-  >
+  <div class="layout-container" :class="[`layout-mode-${appStore.layoutMode}`, { 'is-fullscreen': isFullscreen }]">
     <!-- 侧边栏 (left) -->
     <Transition name="layout-fade-x">
       <div
@@ -79,17 +73,11 @@
           v-if="showSubmenuCollapseHandle"
           class="submenu-collapse-handle"
           :class="{ 'is-collapsed': appStore.mixedSubmenuCollapsed }"
-          :title="
-            appStore.mixedSubmenuCollapsed ? '展开二级菜单' : '收起二级菜单'
-          "
+          :title="appStore.mixedSubmenuCollapsed ? '展开二级菜单' : '收起二级菜单'"
           @click="appStore.toggleMixedSubmenuCollapsed()"
         >
           <Icon
-            :icon="
-              appStore.mixedSubmenuCollapsed
-                ? 'lucide:chevron-right'
-                : 'lucide:chevron-left'
-            "
+            :icon="appStore.mixedSubmenuCollapsed ? 'lucide:chevron-right' : 'lucide:chevron-left'"
             width="13px"
             height="13px"
           />
@@ -162,9 +150,7 @@ import { useRoute } from 'vue-router'
 const appStore = useAppStore()
 const route = useRoute()
 
-const isTopMenu = computed(
-  () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
-)
+const isTopMenu = computed(() => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed')
 const isTopMixed = computed(() => appStore.layoutMode === 'top-mixed')
 const isDual = computed(() => appStore.layoutMode === 'dual')
 

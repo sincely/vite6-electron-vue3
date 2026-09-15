@@ -1,11 +1,7 @@
 <!-- 组件中心 - 图标 -->
 <template>
   <div class="icon-page">
-    <PageHeader
-      title="图标"
-      subtitle="基于 Iconify 的离线图标方案，支持多图标库"
-      icon="image"
-    />
+    <PageHeader title="图标" subtitle="基于 Iconify 的离线图标方案，支持多图标库" icon="image" />
 
     <div class="page-desc">
       项目采用 Iconify + 离线图标集合方案，图标数据由
@@ -14,8 +10,7 @@
       <code>addCollection</code>
       本地注册，无需网络请求，可在
       <a href="https://icones.js.org/" target="_blank">Icones</a>
-      中查找图标名后使用，支持 Remix Icon、Lucide、Material Line Icons
-      等多个图标库。
+      中查找图标名后使用，支持 Remix Icon、Lucide、Material Line Icons 等多个图标库。
     </div>
 
     <!-- Iconify 图标 -->
@@ -41,46 +36,14 @@
         <span class="card-title">Svg Spinners（加载动效）</span>
       </template>
       <div class="icon-row">
-        <Icon
-          icon="svg-spinners:3-dots-fade"
-          class="icon-demo"
-          style="color: #f87171"
-        />
-        <Icon
-          icon="svg-spinners:3-dots-bounce"
-          class="icon-demo"
-          style="color: #60a5fa"
-        />
-        <Icon
-          icon="svg-spinners:3-dots-move"
-          class="icon-demo"
-          style="color: #fb923c"
-        />
-        <Icon
-          icon="svg-spinners:3-dots-rotate"
-          class="icon-demo"
-          style="color: #c084fc"
-        />
-        <Icon
-          icon="svg-spinners:blocks-shuffle-2"
-          class="icon-demo"
-          style="color: #f9a8d4"
-        />
-        <Icon
-          icon="svg-spinners:clock"
-          class="icon-demo"
-          style="color: #eab308"
-        />
-        <Icon
-          icon="svg-spinners:tadpole"
-          class="icon-demo"
-          style="color: #f97316"
-        />
-        <Icon
-          icon="svg-spinners:blocks-wave"
-          class="icon-demo"
-          style="color: #3b82f6"
-        />
+        <Icon icon="svg-spinners:3-dots-fade" class="icon-demo" style="color: #f87171" />
+        <Icon icon="svg-spinners:3-dots-bounce" class="icon-demo" style="color: #60a5fa" />
+        <Icon icon="svg-spinners:3-dots-move" class="icon-demo" style="color: #fb923c" />
+        <Icon icon="svg-spinners:3-dots-rotate" class="icon-demo" style="color: #c084fc" />
+        <Icon icon="svg-spinners:blocks-shuffle-2" class="icon-demo" style="color: #f9a8d4" />
+        <Icon icon="svg-spinners:clock" class="icon-demo" style="color: #eab308" />
+        <Icon icon="svg-spinners:tadpole" class="icon-demo" style="color: #f97316" />
+        <Icon icon="svg-spinners:blocks-wave" class="icon-demo" style="color: #3b82f6" />
       </div>
     </ElCard>
 
@@ -90,46 +53,14 @@
         <span class="card-title">Material Line Icons</span>
       </template>
       <div class="icon-row">
-        <Icon
-          icon="line-md:phone-call-twotone-loop"
-          class="icon-demo"
-          style="color: #3b82f6"
-        />
-        <Icon
-          icon="line-md:switch-off"
-          class="icon-demo"
-          style="color: #22c55e"
-        />
-        <Icon
-          icon="line-md:sun-rising-filled-loop"
-          class="icon-demo"
-          style="color: #facc15"
-        />
-        <Icon
-          icon="line-md:volume-high-filled"
-          class="icon-demo"
-          style="color: #a855f7"
-        />
-        <Icon
-          icon="line-md:github-twotone"
-          class="icon-demo"
-          style="color: #374151"
-        />
-        <Icon
-          icon="line-md:telegram"
-          class="icon-demo"
-          style="color: #0ea5e9"
-        />
-        <Icon
-          icon="line-md:reddit-loop"
-          class="icon-demo"
-          style="color: #fb923c"
-        />
-        <Icon
-          icon="line-md:coffee-half-empty-filled-loop"
-          class="icon-demo"
-          style="color: #10b981"
-        />
+        <Icon icon="line-md:phone-call-twotone-loop" class="icon-demo" style="color: #3b82f6" />
+        <Icon icon="line-md:switch-off" class="icon-demo" style="color: #22c55e" />
+        <Icon icon="line-md:sun-rising-filled-loop" class="icon-demo" style="color: #facc15" />
+        <Icon icon="line-md:volume-high-filled" class="icon-demo" style="color: #a855f7" />
+        <Icon icon="line-md:github-twotone" class="icon-demo" style="color: #374151" />
+        <Icon icon="line-md:telegram" class="icon-demo" style="color: #0ea5e9" />
+        <Icon icon="line-md:reddit-loop" class="icon-demo" style="color: #fb923c" />
+        <Icon icon="line-md:coffee-half-empty-filled-loop" class="icon-demo" style="color: #10b981" />
       </div>
     </ElCard>
 

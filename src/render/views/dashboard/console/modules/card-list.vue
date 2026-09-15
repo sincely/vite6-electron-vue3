@@ -3,18 +3,10 @@
     <el-col v-for="item in dataList" :key="item.des" :sm="12" :md="6" :lg="6">
       <div class="stat-card">
         <span class="stat-card-label">{{ item.des }}</span>
-        <count-to
-          class="stat-card-value"
-          :target="item.num"
-          :duration="1300"
-          separator=","
-        />
+        <count-to class="stat-card-value" :target="item.num" :duration="1300" separator="," />
         <div class="stat-card-change">
           <span class="stat-card-change-label">较上周</span>
-          <span
-            class="stat-card-change-value"
-            :class="item.change.startsWith('+') ? 'is-up' : 'is-down'"
-          >
+          <span class="stat-card-change-value" :class="item.change.startsWith('+') ? 'is-up' : 'is-down'">
             {{ item.change }}
           </span>
         </div>

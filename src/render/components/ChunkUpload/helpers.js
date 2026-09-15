@@ -4,27 +4,19 @@
 export const formatSize = (size = 0) => {
   if (!size) return '0 B'
   const units = ['B', 'KB', 'MB', 'GB', 'TB']
-  const index = Math.min(
-    Math.floor(Math.log(size) / Math.log(1024)),
-    units.length - 1
-  )
+  const index = Math.min(Math.floor(Math.log(size) / Math.log(1024)), units.length - 1)
   return `${(size / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`
 }
 
 /** 生成文件项 uid */
-export const createUid = () =>
-  `chunk_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+export const createUid = () => `chunk_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
 
 /** 是否图片文件 */
 export const isImageFile = (file) =>
-  Boolean(
-    file?.type?.startsWith('image/') ||
-      /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(file?.name || '')
-  )
+  Boolean(file?.type?.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(file?.name || ''))
 
 /** 用于去重的文件指纹 */
-export const fileKey = (file) =>
-  `${file.name}_${file.size}_${file.lastModified || 0}`
+export const fileKey = (file) => `${file.name}_${file.size}_${file.lastModified || 0}`
 
 /** 从远端 URL 中解析文件名 */
 export const getRemoteName = (url) => {
@@ -40,8 +32,7 @@ export const getRemoteName = (url) => {
 export const fileIcon = (item) => {
   if (item.isImage) return 'lucide:image'
   const extension = item.name?.split('.').pop()?.toLowerCase()
-  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(extension))
-    return 'lucide:archive'
+  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(extension)) return 'lucide:archive'
   if (['mp4', 'mov', 'avi', 'mkv'].includes(extension)) return 'lucide:film'
   if (['mp3', 'wav', 'flac', 'aac'].includes(extension)) return 'lucide:music-2'
   if (['pdf'].includes(extension)) return 'lucide:file-text'
@@ -49,14 +40,10 @@ export const fileIcon = (item) => {
 }
 
 /** 是否处于进行中的状态 */
-export const isWorking = (item) =>
-  ['hashing', 'verifying', 'uploading', 'merging', 'paused'].includes(
-    item.status
-  )
+export const isWorking = (item) => ['hashing', 'verifying', 'uploading', 'merging', 'paused'].includes(item.status)
 
 /** 是否展示进度条 */
-export const showProgress = (item) =>
-  item.status !== 'ready' && item.status !== 'cancelled'
+export const showProgress = (item) => item.status !== 'ready' && item.status !== 'cancelled'
 
 /** 状态文案映射 */
 export const statusText = (item) => {
@@ -79,15 +66,9 @@ export const unwrap = (result) => result?.data ?? result ?? {}
 
 /** 把分片列表（数组 / 0-1 字符串）归一化为分片下标数组 */
 export const normalizeChunkList = (value, totalChunks) => {
-  if (Array.isArray(value))
-    return value
-      .map(Number)
-      .filter((index) => index >= 0 && index < totalChunks)
+  if (Array.isArray(value)) return value.map(Number).filter((index) => index >= 0 && index < totalChunks)
   if (typeof value === 'string' && /^[01]+$/.test(value)) {
-    return [...value].reduce(
-      (result, flag, index) => (flag === '1' ? [...result, index] : result),
-      []
-    )
+    return [...value].reduce((result, flag, index) => (flag === '1' ? [...result, index] : result), [])
   }
   return []
 }
@@ -100,8 +81,7 @@ export const publicModel = (item) => ({
 })
 
 /** 计算第 index 个分片实际字节数（最后一个分片可能不足 chunkSize） */
-export const chunkLength = (file, index, chunkSize) =>
-  Math.min(chunkSize, Math.max(0, file.size - index * chunkSize))
+export const chunkLength = (file, index, chunkSize) => Math.min(chunkSize, Math.max(0, file.size - index * chunkSize))
 
 /** 按 accept 规则判定当前文件是否合法 */
 export const acceptFile = (file, accept) => {
@@ -111,8 +91,7 @@ export const acceptFile = (file, accept) => {
     const token = item.trim().toLowerCase()
     if (!token) return false
     if (token.startsWith('.')) return token === extension
-    if (token.endsWith('/*'))
-      return file.type.toLowerCase().startsWith(token.slice(0, -1))
+    if (token.endsWith('/*')) return file.type.toLowerCase().startsWith(token.slice(0, -1))
     return token === file.type.toLowerCase()
   })
 }

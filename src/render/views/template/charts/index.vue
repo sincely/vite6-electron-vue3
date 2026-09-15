@@ -21,12 +21,7 @@
         <Card>
           <template #header>柱状图（单数据）</template>
           <template #content>
-            <BarChart
-              :data="singleBarData"
-              :xAxisData="xAxisData"
-              showLegend
-              legendPosition="right"
-            />
+            <BarChart :data="singleBarData" :xAxisData="xAxisData" showLegend legendPosition="right" />
           </template>
         </Card>
       </ElCol>
@@ -34,12 +29,7 @@
         <Card>
           <template #header>柱状图（多组数据）</template>
           <template #content>
-            <BarChart
-              :data="multiBarData"
-              :xAxisData="xAxisData"
-              showLegend
-              barWidth="26%"
-            />
+            <BarChart :data="multiBarData" :xAxisData="xAxisData" showLegend barWidth="26%" />
           </template>
         </Card>
       </ElCol>
@@ -47,13 +37,7 @@
         <Card>
           <template #header>柱状图（堆叠）</template>
           <template #content>
-            <BarChart
-              :data="stackBarData"
-              :xAxisData="stackXAxisData"
-              showLegend
-              stack
-              barWidth="26%"
-            />
+            <BarChart :data="stackBarData" :xAxisData="stackXAxisData" showLegend stack barWidth="26%" />
           </template>
         </Card>
       </ElCol>
@@ -64,15 +48,7 @@
           <template #content>
             <LineChart
               :data="[58, 15, 82, 35, 120, 62, 45]"
-              :xAxisData="[
-                '一月',
-                '二月',
-                '三月',
-                '四月',
-                '五月',
-                '六月',
-                '七月'
-              ]"
+              :xAxisData="['一月', '二月', '三月', '四月', '五月', '六月', '七月']"
               symbol="none"
               :symbolSize="7"
             />
@@ -85,15 +61,7 @@
           <template #content>
             <LineChart
               :data="[28, 45, 82, 35, 100, 32, 55]"
-              :xAxisData="[
-                '一月',
-                '二月',
-                '三月',
-                '四月',
-                '五月',
-                '六月',
-                '七月'
-              ]"
+              :xAxisData="['一月', '二月', '三月', '四月', '五月', '六月', '七月']"
               showAreaColor
             />
           </template>
@@ -103,11 +71,7 @@
         <Card>
           <template #header>折线图（多组数据）</template>
           <template #content>
-            <LineChart
-              :data="multiLineData"
-              :xAxisData="['1月', '2月', '3月', '4月', '5月', '6月']"
-              showLegend
-            />
+            <LineChart :data="multiLineData" :xAxisData="['1月', '2月', '3月', '4月', '5月', '6月']" showLegend />
           </template>
         </Card>
       </ElCol>
@@ -116,10 +80,7 @@
         <Card>
           <template #header>柱状图（水平）</template>
           <template #content>
-            <HBarChart
-              :data="[50, 80, 120, 90, 60]"
-              :xAxisData="['产品A', '产品B', '产品C', '产品D', '产品E']"
-            />
+            <HBarChart :data="[50, 80, 120, 90, 60]" :xAxisData="['产品A', '产品B', '产品C', '产品D', '产品E']" />
           </template>
         </Card>
       </ElCol>
@@ -280,16 +241,7 @@
             <DualBarChart
               :positiveData="[50, 28, 80, 65, 68, 70, 60, 55]"
               :negativeData="[50, 28, 40, 45, 38, 50, 42, 48]"
-              :xAxisData="[
-                '0-4岁',
-                '5-14岁',
-                '15-24岁',
-                '25-34岁',
-                '35-44岁',
-                '45-54岁',
-                '55-64岁',
-                '65岁以上'
-              ]"
+              :xAxisData="['0-4岁', '5-14岁', '15-24岁', '25-34岁', '35-44岁', '45-54岁', '55-64岁', '65岁以上']"
               positiveName="男性年龄分布"
               negativeName="女性年龄分布"
               showLegend

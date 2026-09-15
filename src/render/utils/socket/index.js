@@ -132,9 +132,7 @@ class WebSocketClient {
       // 设置连接超时检测
       this.clearTimer('connectionTimer')
       this.connectionTimer = setTimeout(() => {
-        console.error(
-          `WebSocket连接超时 (${this.connectionTimeout}ms)：${this.url}`
-        )
+        console.error(`WebSocket连接超时 (${this.connectionTimeout}ms)：${this.url}`)
         this.handleConnectionTimeout()
       }, this.connectionTimeout)
 
@@ -170,10 +168,7 @@ class WebSocketClient {
     this.state.connecting = false
 
     if (this.ws) {
-      this.ws.close(
-        force ? 1001 : 1000,
-        force ? 'Force closed' : 'Normal close'
-      )
+      this.ws.close(force ? 1001 : 1000, force ? 'Force closed' : 'Normal close')
       this.ws = null
     }
 
@@ -217,10 +212,7 @@ class WebSocketClient {
 
   // 发送队列中的消息
   flushMessageQueue() {
-    if (
-      this.messageQueue.length > 0 &&
-      this.ws?.readyState === WebSocket.OPEN
-    ) {
+    if (this.messageQueue.length > 0 && this.ws?.readyState === WebSocket.OPEN) {
       console.log(`发送队列中的${this.messageQueue.length}条消息`)
       while (this.messageQueue.length > 0) {
         const data = this.messageQueue.shift()
@@ -260,9 +252,7 @@ class WebSocketClient {
 
   // 处理连接关闭
   handleClose(event) {
-    console.log(
-      `WebSocket断开: 代码=${event.code}, 原因=${event.reason}, 干净关闭=${event.wasClean}`
-    )
+    console.log(`WebSocket断开: 代码=${event.code}, 原因=${event.reason}, 干净关闭=${event.wasClean}`)
 
     // 1000 是正常关闭代码
     const isNormalClose = event.code === 1000
@@ -301,10 +291,7 @@ class WebSocketClient {
       this.ws.onclose = null
       this.ws.onerror = null
 
-      if (
-        this.ws.readyState === WebSocket.OPEN ||
-        this.ws.readyState === WebSocket.CONNECTING
-      ) {
+      if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
         this.ws.close(1001, 'Reconnect')
       }
 
@@ -364,20 +351,13 @@ class WebSocketClient {
 
   // 重连 - 指数退避 + 次数限制
   reconnect() {
-    if (
-      !this.autoReconnect ||
-      this.stopReconnect ||
-      this.state.connecting ||
-      this.reconnectInterval <= 0
-    ) {
+    if (!this.autoReconnect || this.stopReconnect || this.state.connecting || this.reconnectInterval <= 0) {
       return
     }
 
     // 检查是否超过最大重连次数
     if (this.state.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error(
-        `已达到最大重连次数(${this.maxReconnectAttempts})，停止重连`
-      )
+      console.error(`已达到最大重连次数(${this.maxReconnectAttempts})，停止重连`)
       this.close(true)
       return
     }
@@ -393,9 +373,7 @@ class WebSocketClient {
 
     this.clearTimer('reconnectTimer')
     this.reconnectTimer = setTimeout(() => {
-      console.log(
-        `尝试重新连接WebSocket（第${this.state.reconnectAttempts}次）`
-      )
+      console.log(`尝试重新连接WebSocket（第${this.state.reconnectAttempts}次）`)
       this.connect(false)
     }, delay)
   }

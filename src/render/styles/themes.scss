@@ -114,12 +114,7 @@ html[data-theme='light'] {
   --shadow-glow-amber: 0 4px 14px -3px rgb(217 119 6 / 35%);
 
   // 渐变背景
-  --color-bg-gradient: linear-gradient(
-    135deg,
-    #eff6ff 0%,
-    #f5f3ff 50%,
-    #ecfeff 100%
-  );
+  --color-bg-gradient: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #ecfeff 100%);
 }
 
 // ---------- Dark Theme (深蓝暗色) ----------
@@ -176,11 +171,7 @@ html.dark {
   --brand-accent: #3b82f6;
   --brand-accent-alt: #2563eb;
   --brand-accent-soft: rgb(59 130 246 / 15%);
-  --app-bg-gradient: radial-gradient(
-    circle at 50% 0%,
-    rgb(59 130 246 / 8%) 0%,
-    transparent 60%
-  );
+  --app-bg-gradient: radial-gradient(circle at 50% 0%, rgb(59 130 246 / 8%) 0%, transparent 60%);
 
   // 顶部微弱蓝光
   --glass-surface: rgb(22 25 31 / 80%);

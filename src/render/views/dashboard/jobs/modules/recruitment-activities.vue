@@ -7,19 +7,12 @@
     </template>
     <template #content>
       <el-scrollbar height="420px">
-        <div
-          v-for="item in activities"
-          :key="item.time"
-          class="recruitment-activities-item"
-        >
+        <div v-for="item in activities" :key="item.time" class="recruitment-activities-item">
           <el-avatar :src="item.avatar" :size="40" />
           <div class="recruitment-activities-main">
             <div class="recruitment-activities-head">
               <span class="recruitment-activities-name">{{ item.name }}</span>
-              <span
-                class="recruitment-activities-tag"
-                :class="`is-${item.type}`"
-              >
+              <span class="recruitment-activities-tag" :class="`is-${item.type}`">
                 {{ item.tag }}
               </span>
             </div>

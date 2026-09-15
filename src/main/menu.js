@@ -83,9 +83,7 @@ const createMenu = () => {
           click: () => logger.info('打印')
         },
         { type: 'separator' },
-        isMac
-          ? { role: 'close', label: '关闭' }
-          : { role: 'quit', label: '退出' }
+        isMac ? { role: 'close', label: '关闭' } : { role: 'quit', label: '退出' }
       ]
     },
     {
@@ -141,9 +139,7 @@ const createMenu = () => {
         {
           label: '文档',
           click: async () => {
-            await shell.openExternal(
-              'https://github.com/sincely/vite6-electron-vue3'
-            )
+            await shell.openExternal('https://github.com/sincely/vite6-electron-vue3')
           }
         },
         {

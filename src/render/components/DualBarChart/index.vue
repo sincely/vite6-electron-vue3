@@ -93,9 +93,7 @@ function createSeriesConfig(config) {
 
 function buildOptions() {
   // 处理负向数据，确保为负值
-  const processedNegativeData = props.negativeData.map((val) =>
-    val > 0 ? -val : val
-  )
+  const processedNegativeData = props.negativeData.map((val) => (val > 0 ? -val : val))
 
   const gridConfig = {
     top: props.showLegend ? 50 : 20,
@@ -169,11 +167,7 @@ const rebuild = () => {
   options.value = buildOptions()
 }
 onThemeChange(rebuild)
-watch(
-  () => [props.positiveData, props.negativeData, props.xAxisData, props.colors],
-  rebuild,
-  { deep: true }
-)
+watch(() => [props.positiveData, props.negativeData, props.xAxisData, props.colors], rebuild, { deep: true })
 </script>
 
 <style lang="scss" scoped>

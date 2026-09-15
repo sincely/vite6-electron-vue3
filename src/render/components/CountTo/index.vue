@@ -40,8 +40,7 @@ const emit = defineEmits(['started', 'finished', 'paused', 'reset'])
 const DEFAULT_EASING = 'easeOutExpo'
 
 function formatNumber(value, decimals, decimal, separator) {
-  let result =
-    decimals > 0 ? value.toFixed(decimals) : Math.floor(value).toString()
+  let result = decimals > 0 ? value.toFixed(decimals) : Math.floor(value).toString()
 
   // 处理小数点符号
   if (decimal !== '.' && result.includes('.')) {
@@ -58,9 +57,7 @@ function formatNumber(value, decimals, decimal, separator) {
   return result
 }
 
-const safeEasing = computed(() =>
-  props.easing in TransitionPresets ? props.easing : DEFAULT_EASING
-)
+const safeEasing = computed(() => (props.easing in TransitionPresets ? props.easing : DEFAULT_EASING))
 
 // 状态管理
 const currentValue = shallowRef(0)
@@ -88,11 +85,7 @@ const transitionValue = useTransition(currentValue, {
 const formattedValue = computed(() => {
   const value = isPaused.value ? pausedValue.value : transitionValue.value
   if (!Number.isFinite(value)) return `${props.prefix}0${props.suffix}`
-  return (
-    props.prefix +
-    formatNumber(value, props.decimals, props.decimal, props.separator) +
-    props.suffix
-  )
+  return props.prefix + formatNumber(value, props.decimals, props.decimal, props.separator) + props.suffix
 })
 
 function resetPauseState() {

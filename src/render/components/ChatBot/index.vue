@@ -1,11 +1,6 @@
 <!-- 系统聊天窗口（Lightning Bot） -->
 <template>
-  <el-drawer
-    v-model="visible"
-    size="480px"
-    :with-header="false"
-    class="chat-bot-drawer"
-  >
+  <el-drawer v-model="visible" size="480px" :with-header="false" class="chat-bot-drawer">
     <div class="chat-bot">
       <!-- 头部 -->
       <div class="chat-bot__header">
@@ -26,12 +21,7 @@
 
       <!-- 聊天消息区域 -->
       <div ref="messageContainer" class="chat-bot__messages">
-        <div
-          v-for="message in messages"
-          :key="message.id"
-          class="chat-message"
-          :class="{ 'is-me': message.isMe }"
-        >
+        <div v-for="message in messages" :key="message.id" class="chat-message" :class="{ 'is-me': message.isMe }">
           <div class="chat-message__avatar">
             <img
               v-if="message.isMe && userAvatar && !avatarLoadFailed"
@@ -66,22 +56,10 @@
         />
         <div class="chat-bot__actions">
           <div class="chat-bot__tools">
-            <SvgIcon
-              icon-class="image"
-              class-name="chat-bot__tool-icon"
-              width="18px"
-              height="18px"
-            />
-            <SvgIcon
-              icon-class="emoji"
-              class-name="chat-bot__tool-icon"
-              width="18px"
-              height="18px"
-            />
+            <SvgIcon icon-class="image" class-name="chat-bot__tool-icon" width="18px" height="18px" />
+            <SvgIcon icon-class="emoji" class-name="chat-bot__tool-icon" width="18px" height="18px" />
           </div>
-          <el-button type="primary" class="chat-bot__send" @click="sendMessage">
-            发送
-          </el-button>
+          <el-button type="primary" class="chat-bot__send" @click="sendMessage">发送</el-button>
         </div>
       </div>
     </div>
@@ -110,11 +88,7 @@ const visible = computed({
 
 // 当前用户信息（取值逻辑同 UserDropdown）
 const displayName = computed(
-  () =>
-    userStore.userInfo?.nickname ||
-    userStore.userInfo?.name ||
-    userStore.userInfo?.username ||
-    'Admin'
+  () => userStore.userInfo?.nickname || userStore.userInfo?.name || userStore.userInfo?.username || 'Admin'
 )
 const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
@@ -139,8 +113,7 @@ const initializeMessages = () => [
   {
     id: 3,
     sender: BOT_NAME,
-    content:
-      '好的，我来为您介绍系统的主要功能。首先，您可以通过左侧菜单访问不同的功能模块...',
+    content: '好的，我来为您介绍系统的主要功能。首先，您可以通过左侧菜单访问不同的功能模块...',
     time: '10:02',
     isMe: false
   },
@@ -154,8 +127,7 @@ const initializeMessages = () => [
   {
     id: 5,
     sender: BOT_NAME,
-    content:
-      '当然可以。数据分析模块可以帮助您实时监控关键指标，并生成详细的报表...',
+    content: '当然可以。数据分析模块可以帮助您实时监控关键指标，并生成详细的报表...',
     time: '10:06',
     isMe: false
   },
@@ -169,8 +141,7 @@ const initializeMessages = () => [
   {
     id: 7,
     sender: BOT_NAME,
-    content:
-      '您可以先创建一个项目，然后在项目中添加相关的数据源，系统会自动进行分析。',
+    content: '您可以先创建一个项目，然后在项目中添加相关的数据源，系统会自动进行分析。',
     time: '10:09',
     isMe: false
   },
@@ -311,8 +282,7 @@ watch(visible, (val) => {
     height: 7px;
     background: var(--color-success);
     border-radius: 50%;
-    box-shadow: 0 0 6px
-      color-mix(in srgb, var(--color-success), transparent 40%);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--color-success), transparent 40%);
   }
 
   &__status-text {
@@ -475,11 +445,7 @@ watch(visible, (val) => {
     color: var(--color-text-primary);
     word-break: break-word;
     white-space: pre-wrap;
-    background: color-mix(
-      in srgb,
-      var(--color-text-secondary),
-      transparent 88%
-    );
+    background: color-mix(in srgb, var(--color-text-secondary), transparent 88%);
     border-radius: 10px 2px 10px 10px;
   }
 }

@@ -36,20 +36,9 @@
           height: `${cutterProps.cutHeight}px`
         }"
       >
-        <img
-          v-if="temImgPath"
-          class="preview-img"
-          :src="temImgPath"
-          alt="预览图"
-        />
+        <img v-if="temImgPath" class="preview-img" :src="temImgPath" alt="预览图" />
       </div>
-      <ElButton
-        class="download-btn"
-        :disabled="!temImgPath"
-        @click="downloadImg"
-      >
-        下载图片
-      </ElButton>
+      <ElButton class="download-btn" :disabled="!temImgPath" @click="downloadImg">下载图片</ElButton>
     </div>
   </div>
 </template>
@@ -186,8 +175,7 @@ const cutterProps = computed(() => ({
   index: props.index,
   afterChooseImg: props.afterChooseImg,
   WatermarkText: props.watermarkText,
-  WatermarkTextFont:
-    props.watermarkTextFont || `${props.watermarkFontSize}px Sans-serif`,
+  WatermarkTextFont: props.watermarkTextFont || `${props.watermarkFontSize}px Sans-serif`,
   WatermarkTextColor: props.watermarkTextColor || props.watermarkColor,
   WatermarkTextX: props.watermarkTextX,
   WatermarkTextY: props.watermarkTextY
@@ -313,8 +301,7 @@ function downloadImg() {
   if (!temImgPath.value) return
   const a = document.createElement('a')
   a.href = temImgPath.value
-  a.download =
-    latestResult.value?.fileName || `image.${props.fileType || 'png'}`
+  a.download = latestResult.value?.fileName || `image.${props.fileType || 'png'}`
   a.rel = 'noopener'
   document.body.appendChild(a)
   a.click()

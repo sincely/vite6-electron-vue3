@@ -2,6 +2,7 @@
 <template>
   <div class="qr-code" :style="{ width: `${size}px`, height: `${size}px` }">
     <canvas v-show="renderAs === 'canvas'" ref="canvasRef" />
+    <!-- eslint-disable-next-line vue/no-v-html -- SVG 由 qrcode 库本地生成，非外部不可信输入 -->
     <div v-if="renderAs === 'svg'" class="qr-code__svg" v-html="svgHtml"></div>
   </div>
 </template>
@@ -53,6 +54,15 @@ const loadImage = (src) =>
     img.onerror = reject
     img.src = src
   })
+
+// 属性值转义：防止 logo src 含引号等字符破坏 SVG 结构
+const escapeAttr = (value) =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 
 /** canvas 渲染 + Logo 叠加 */
 async function renderCanvas() {
@@ -112,17 +122,14 @@ async function renderSvg() {
       if (settings.excavate) {
         logoMarkup += `<rect x="${x - 1}" y="${y - 1}" width="${w + 2}" height="${h + 2}" fill="${props.background}"/>`
       }
-      logoMarkup += `<image href="${settings.src}" x="${x}" y="${y}" width="${w}" height="${h}"/>`
+      logoMarkup += `<image href="${escapeAttr(settings.src)}" x="${x}" y="${y}" width="${w}" height="${h}"/>`
 
       svg = svg.replace('</svg>', `${logoMarkup}</svg>`)
     }
   }
 
   // 固定输出尺寸
-  svg = svg.replace(
-    '<svg ',
-    `<svg width="${props.size}" height="${props.size}" `
-  )
+  svg = svg.replace('<svg ', `<svg width="${props.size}" height="${props.size}" `)
   svgHtml.value = svg
 }
 

@@ -15,12 +15,7 @@
         <span class="iframe-toolbar-title">{{ route.meta.title }}</span>
         <span class="iframe-toolbar-url">{{ src }}</span>
       </div>
-      <IconButton
-        icon="lucide:rotate-cw"
-        :icon-size="16"
-        title="刷新"
-        @click="reload"
-      />
+      <IconButton icon="lucide:rotate-cw" :icon-size="16" title="刷新" @click="reload" />
       <IconButton
         icon="lucide:square-arrow-out-up-right"
         :icon-size="16"
@@ -30,12 +25,7 @@
     </div>
     <div class="iframe-body">
       <div v-if="loading" class="iframe-loading">
-        <Icon
-          class="is-spinning"
-          icon="lucide:loader-circle"
-          :width="26"
-          :height="26"
-        />
+        <Icon class="is-spinning" icon="lucide:loader-circle" :width="26" :height="26" />
         <span>页面加载中…</span>
       </div>
       <iframe

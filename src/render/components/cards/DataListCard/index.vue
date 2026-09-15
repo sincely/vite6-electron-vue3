@@ -6,16 +6,8 @@
       <p class="data-list-card__subtitle">{{ subtitle }}</p>
     </div>
     <ElScrollbar :style="{ height: maxHeight }">
-      <div
-        v-for="(item, index) in list"
-        :key="index"
-        class="data-list-card__item"
-      >
-        <div
-          v-if="item.icon"
-          class="data-list-card__icon"
-          :style="iconStyle(item)"
-        >
+      <div v-for="(item, index) in list" :key="index" class="data-list-card__item">
+        <div v-if="item.icon" class="data-list-card__icon" :style="iconStyle(item)">
           <el-icon :size="20">
             <component :is="item.icon" />
           </el-icon>
@@ -27,13 +19,7 @@
         <div class="data-list-card__time">{{ item.time }}</div>
       </div>
     </ElScrollbar>
-    <ElButton
-      v-if="showMoreButton"
-      class="data-list-card__more"
-      @click="handleMore"
-    >
-      查看更多
-    </ElButton>
+    <ElButton v-if="showMoreButton" class="data-list-card__more" @click="handleMore">查看更多</ElButton>
   </div>
 </template>
 

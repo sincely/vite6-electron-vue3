@@ -14,15 +14,8 @@
         </div>
       </div>
       <div class="attendance-overview-legend">
-        <div
-          v-for="item in legendData"
-          :key="item.label"
-          class="attendance-overview-legend-item"
-        >
-          <span
-            class="attendance-overview-legend-dot"
-            :style="{ background: item.color }"
-          ></span>
+        <div v-for="item in legendData" :key="item.label" class="attendance-overview-legend-item">
+          <span class="attendance-overview-legend-dot" :style="{ background: item.color }"></span>
           <span class="attendance-overview-legend-label">{{ item.label }}</span>
           <span class="attendance-overview-legend-value">{{ item.value }}</span>
         </div>

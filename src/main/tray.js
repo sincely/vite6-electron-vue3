@@ -2,11 +2,7 @@ import { app, Menu, Tray, nativeImage } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import { getAutoUpdater } from './autoUpdater'
-import {
-  getMainWindow,
-  getLoginWindow,
-  restoreMainWindow
-} from './windowManager'
+import { getMainWindow, getLoginWindow, restoreMainWindow } from './windowManager'
 import logger from './log'
 
 let tray = null
@@ -50,8 +46,7 @@ const getIconsRoot = () =>
 /**
  * 开发模式下 app.png 所在的绝对路径（resources/app.png）
  */
-const getDevIconPath = () =>
-  path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'app.png')
+const getDevIconPath = () => path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'app.png')
 
 const createTrayIcon = () => {
   const iconsRoot = getIconsRoot()
@@ -86,10 +81,7 @@ const createTrayIcon = () => {
   }
 
   if (process.platform === 'win32') {
-    const iconPath = tryLoad(
-      path.join(iconsRoot, 'win', 'tray.ico'),
-      path.join(iconsRoot, 'win', 'tray.png')
-    )
+    const iconPath = tryLoad(path.join(iconsRoot, 'win', 'tray.ico'), path.join(iconsRoot, 'win', 'tray.png'))
     if (iconPath) return nativeImage.createFromPath(iconPath)
   }
 
@@ -99,14 +91,8 @@ const createTrayIcon = () => {
   }
 
   // ── 降级：从各平台目录中选取合适尺寸 ──
-  const fallbackSize =
-    process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
-  const platformDir =
-    process.platform === 'darwin'
-      ? 'mac'
-      : process.platform === 'linux'
-        ? 'linux'
-        : 'win'
+  const fallbackSize = process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
+  const platformDir = process.platform === 'darwin' ? 'mac' : process.platform === 'linux' ? 'linux' : 'win'
   const fallback = tryLoad(
     path.join(iconsRoot, platformDir, '256.png'),
     path.join(iconsRoot, platformDir, '128.png'),
@@ -157,8 +143,6 @@ const notifyCheckUpdate = () => {
 
 const rebuildTrayMenu = () => {
   if (!tray) return
-  const win = getActiveWindow()
-  const isVisible = !!win?.isVisible()
 
   const contextMenu = Menu.buildFromTemplate([
     // 更新已下载待安装时置顶显示安装入口（后台更新场景）

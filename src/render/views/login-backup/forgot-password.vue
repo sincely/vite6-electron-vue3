@@ -25,20 +25,11 @@
             }"
           >
             <div class="step-circle">
-              <svg-icon
-                v-if="currentStep > index"
-                iconClass="check"
-                width="14px"
-                height="14px"
-              />
+              <svg-icon v-if="currentStep > index" iconClass="check" width="14px" height="14px" />
               <span v-else>{{ index + 1 }}</span>
             </div>
             <span class="step-label">{{ step.label }}</span>
-            <div
-              v-if="index < steps.length - 1"
-              class="step-line"
-              :class="{ filled: currentStep > index }"
-            ></div>
+            <div v-if="index < steps.length - 1" class="step-line" :class="{ filled: currentStep > index }"></div>
           </div>
         </div>
 
@@ -73,11 +64,7 @@
                       class="custom-input code-input"
                       maxlength="6"
                     />
-                    <el-button
-                      class="code-btn"
-                      :disabled="counting || !isPhoneValid"
-                      @click="sendCode"
-                    >
+                    <el-button class="code-btn" :disabled="counting || !isPhoneValid" @click="sendCode">
                       {{ counting ? `${countdown}s 后重发` : '获取验证码' }}
                     </el-button>
                   </div>
@@ -114,15 +101,8 @@
                     class="custom-input"
                   >
                     <template #suffix>
-                      <span
-                        class="password-toggle"
-                        @click="showPassword = !showPassword"
-                      >
-                        <svg-icon
-                          :iconClass="showPassword ? 'open-eye' : 'close-eye'"
-                          width="16px"
-                          height="16px"
-                        />
+                      <span class="password-toggle" @click="showPassword = !showPassword">
+                        <svg-icon :iconClass="showPassword ? 'open-eye' : 'close-eye'" width="16px" height="16px" />
                       </span>
                     </template>
                   </el-input>
@@ -137,15 +117,8 @@
                     class="custom-input"
                   >
                     <template #suffix>
-                      <span
-                        class="password-toggle"
-                        @click="showConfirm = !showConfirm"
-                      >
-                        <svg-icon
-                          :iconClass="showConfirm ? 'open-eye' : 'close-eye'"
-                          width="16px"
-                          height="16px"
-                        />
+                      <span class="password-toggle" @click="showConfirm = !showConfirm">
+                        <svg-icon :iconClass="showConfirm ? 'open-eye' : 'close-eye'" width="16px" height="16px" />
                       </span>
                     </template>
                   </el-input>
@@ -154,12 +127,7 @@
                 <!-- 密码强度指示器 -->
                 <div class="password-strength">
                   <div class="strength-bars">
-                    <div
-                      v-for="i in 4"
-                      :key="i"
-                      class="strength-bar"
-                      :class="{ filled: passwordStrength >= i }"
-                    ></div>
+                    <div v-for="i in 4" :key="i" class="strength-bar" :class="{ filled: passwordStrength >= i }"></div>
                   </div>
                   <span class="strength-text">{{ strengthLabel }}</span>
                 </div>
@@ -183,9 +151,7 @@
               </div>
               <h2 class="success-title">密码重置成功</h2>
               <p class="success-desc">请使用新密码重新登录</p>
-              <el-button class="submit-btn" @click="goLogin">
-                返回登录
-              </el-button>
+              <el-button class="submit-btn" @click="goLogin">返回登录</el-button>
             </div>
           </transition>
         </div>
@@ -355,11 +321,7 @@ const goLogin = () => {
     width: 600px;
     height: 600px;
     content: '';
-    background: radial-gradient(
-      circle,
-      var(--brand-accent-soft) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, var(--brand-accent-soft) 0%, transparent 70%);
     filter: blur(80px);
     opacity: 0.6;
     animation: float 10s ease-in-out infinite alternate;
@@ -372,11 +334,7 @@ const goLogin = () => {
     width: 500px;
     height: 500px;
     content: '';
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-success), transparent 85%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-success), transparent 85%) 0%, transparent 70%);
     filter: blur(60px);
     opacity: 0.5;
     animation: float 12s ease-in-out infinite alternate-reverse;
@@ -412,11 +370,7 @@ const goLogin = () => {
     display: inline-flex;
     padding: 8px;
     margin-bottom: 10px;
-    background: linear-gradient(
-      135deg,
-      var(--color-bg-card),
-      var(--color-bg-hover)
-    );
+    background: linear-gradient(135deg, var(--color-bg-card), var(--color-bg-hover));
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
 
@@ -495,8 +449,7 @@ const goLogin = () => {
       .step-circle {
         color: #fff;
         background: var(--color-primary);
-        box-shadow: 0 0 0 4px
-          color-mix(in srgb, var(--color-primary), transparent 75%);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary), transparent 75%);
       }
 
       .step-label {

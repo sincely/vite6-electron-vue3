@@ -7,9 +7,7 @@
         比上周
         <span class="text-up">+23%</span>
       </p>
-      <p class="active-user-desc">
-        我们为您创建了多个选项，可将它们组合在一起并定制为像素完美的页面
-      </p>
+      <p class="active-user-desc">我们为您创建了多个选项，可将它们组合在一起并定制为像素完美的页面</p>
       <div class="active-user-metrics">
         <div v-for="item in list" :key="item.name" class="active-user-metric">
           <p class="active-user-metric-num">{{ item.num }}</p>
@@ -26,17 +24,7 @@ import { useChartTheme } from '@/hooks/useChartTheme'
 const { getThemeColors, tooltipBase, onThemeChange } = useChartTheme()
 
 // 最近 9 个月
-const xAxisLabels = [
-  '1月',
-  '2月',
-  '3月',
-  '4月',
-  '5月',
-  '6月',
-  '7月',
-  '8月',
-  '9月'
-]
+const xAxisLabels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月']
 
 // 每月活跃用户数
 const chartData = [160, 100, 150, 80, 190, 100, 175, 120, 160]

@@ -18,9 +18,7 @@
           >
             <div class="recent-transaction-content">
               <span class="recent-transaction-text">{{ item.content }}</span>
-              <span v-if="item.code" class="recent-transaction-code">
-                #{{ item.code }}
-              </span>
+              <span v-if="item.code" class="recent-transaction-code">#{{ item.code }}</span>
             </div>
           </el-timeline-item>
         </el-timeline>

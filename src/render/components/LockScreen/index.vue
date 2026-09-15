@@ -39,21 +39,11 @@
               @keyup.enter="handleLock"
             >
               <template #suffix>
-                <Icon
-                  icon="lucide:lock"
-                  class="lock-dialog__lock-icon"
-                  @click="handleLock"
-                />
+                <Icon icon="lucide:lock" class="lock-dialog__lock-icon" @click="handleLock" />
               </template>
             </el-input>
           </el-form-item>
-          <el-button
-            type="primary"
-            class="lock-dialog__btn"
-            @click="handleLock"
-          >
-            锁定
-          </el-button>
+          <el-button type="primary" class="lock-dialog__btn" @click="handleLock">锁定</el-button>
         </el-form>
       </div>
     </el-dialog>
@@ -71,12 +61,7 @@
 
       <!-- 顶部解锁入口：点击进入密码视图 -->
       <Transition name="fade">
-        <button
-          v-if="!showUnlock"
-          type="button"
-          class="unlock-trigger"
-          @click="revealUnlock"
-        >
+        <button v-if="!showUnlock" type="button" class="unlock-trigger" @click="revealUnlock">
           <Icon icon="lucide:lock" />
           <span>点击解锁</span>
         </button>
@@ -85,12 +70,7 @@
       <div class="unlock-stage">
         <Transition name="view" mode="out-in" appear>
           <!-- 视图一：实时时钟（日期+星期在上，时/分数字卡片居中） -->
-          <section
-            v-if="!showUnlock"
-            key="clock"
-            class="clock"
-            aria-label="当前日期与时间"
-          >
+          <section v-if="!showUnlock" key="clock" class="clock" aria-label="当前日期与时间">
             <!-- 日期：年-月-日 + 星期 -->
             <div class="clock__date">
               <Icon icon="lucide:calendar" class="clock__date-icon" />
@@ -107,11 +87,7 @@
                 </span>
                 <div class="clock__group">
                   <div class="clock__cards">
-                    <div
-                      v-for="(digit, di) in group.digits"
-                      :key="di"
-                      class="digit-card"
-                    >
+                    <div v-for="(digit, di) in group.digits" :key="di" class="digit-card">
                       <Transition name="digit">
                         <span :key="digit" class="digit-card__num">
                           {{ digit }}
@@ -134,10 +110,7 @@
               class="unlock-card__avatar"
               @error="avatarLoadFailed = true"
             />
-            <span
-              v-else
-              class="unlock-card__avatar unlock-card__avatar--fallback"
-            >
+            <span v-else class="unlock-card__avatar unlock-card__avatar--fallback">
               {{ userInitial }}
             </span>
             <div class="unlock-card__name">{{ displayName }}</div>
@@ -161,27 +134,14 @@
                   @keyup.enter="handleUnlock"
                 >
                   <template #suffix>
-                    <Icon
-                      icon="lucide:lock-open"
-                      class="unlock-card__unlock-icon"
-                      @click="handleUnlock"
-                    />
+                    <Icon icon="lucide:lock-open" class="unlock-card__unlock-icon" @click="handleUnlock" />
                   </template>
                 </el-input>
               </el-form-item>
-              <el-button
-                type="primary"
-                class="unlock-card__btn"
-                @click="handleUnlock"
-              >
-                解锁
-              </el-button>
+              <el-button type="primary" class="unlock-card__btn" @click="handleUnlock">解锁</el-button>
               <div class="unlock-card__actions">
                 <el-button text @click="hideUnlock">
-                  <Icon
-                    icon="lucide:corner-down-left"
-                    class="unlock-card__back-icon"
-                  />
+                  <Icon icon="lucide:corner-down-left" class="unlock-card__back-icon" />
                   返回
                 </el-button>
                 <span class="unlock-card__divider" aria-hidden="true"></span>
@@ -198,17 +158,29 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import { ElMessage } from 'element-plus'
-// 仅引入 AES 相关模块，避免整包 crypto-js 拖慢首屏
-import AES from 'crypto-js/aes'
-import Utf8 from 'crypto-js/enc-utf8'
+// 使用 hash-wasm 对密码做单向哈希（HMAC-SHA256），替代 crypto-js 的可逆 AES 加密
+import { createHMAC, createSHA256 } from 'hash-wasm'
 import { useLockStore } from '@/store/modules/lock'
 import { useUserStore } from '@/store/modules/user'
 
 const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
+// 哈希前缀标识，用于区分旧版本持久化的 AES 密文
+const LOCK_HASH_PREFIX = 'hmac-sha256:'
+
+// 以 ENCRYPT_KEY 为 HMAC 密钥对密码做哈希（单向不可逆）
+const hashPassword = async (password) => {
+  const hmac = await createHMAC(createSHA256(), ENCRYPT_KEY)
+  return LOCK_HASH_PREFIX + hmac.update(password).digest('hex')
+}
 
 const lockStore = useLockStore()
 const userStore = useUserStore()
 const router = useRouter()
+
+// 兼容旧版本：历史持久化的 AES 密文无法用哈希校验，检测到后直接重置锁屏状态
+if (lockStore.isLock && lockStore.lockPassword && !lockStore.lockPassword.startsWith(LOCK_HASH_PREFIX)) {
+  lockStore.resetLock()
+}
 
 // 输入框引用
 const lockInputRef = ref(null)
@@ -248,11 +220,7 @@ const rules = {
 // 用户信息展示（与 UserDropdown 保持一致）
 const avatarLoadFailed = ref(false)
 const displayName = computed(
-  () =>
-    userStore.userInfo?.nickname ||
-    userStore.userInfo?.name ||
-    userStore.userInfo?.username ||
-    'Admin'
+  () => userStore.userInfo?.nickname || userStore.userInfo?.name || userStore.userInfo?.username || 'Admin'
 )
 const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
@@ -271,20 +239,10 @@ const timeGroups = computed(() => [
 
 const dateText = computed(() => {
   const d = now.value
-  return `${d.getFullYear()} 年 ${pad2(d.getMonth() + 1)} 月 ${pad2(
-    d.getDate()
-  )} 日`
+  return `${d.getFullYear()} 年 ${pad2(d.getMonth() + 1)} 月 ${pad2(d.getDate())} 日`
 })
 
-const WEEK_TEXT = [
-  '星期日',
-  '星期一',
-  '星期二',
-  '星期三',
-  '星期四',
-  '星期五',
-  '星期六'
-]
+const WEEK_TEXT = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
 const weekText = computed(() => WEEK_TEXT[now.value.getDay()])
 
 const stopClock = () => {
@@ -302,15 +260,13 @@ const startClock = () => {
   }, 1000)
 }
 
-// 校验解锁密码：解密存储的密文与输入比对
-const verifyPassword = (inputPassword, storedPassword) => {
+// 校验解锁密码：对输入做哈希后与存储的哈希值比对
+const verifyPassword = async (inputPassword, storedPassword) => {
   try {
-    const decryptedPassword = AES.decrypt(storedPassword, ENCRYPT_KEY).toString(
-      Utf8
-    )
-    return inputPassword === decryptedPassword
+    const hashedPassword = await hashPassword(inputPassword)
+    return hashedPassword === storedPassword
   } catch (error) {
-    console.error('密码解密失败:', error)
+    console.error('密码校验失败:', error)
     return false
   }
 }
@@ -321,18 +277,15 @@ const handleDialogOpen = () => {
   }, 100)
 }
 
-// 锁定：加密密码并进入锁屏状态
+// 锁定：哈希密码并进入锁屏状态
 const handleLock = async () => {
   if (!lockFormRef.value) return
 
-  await lockFormRef.value.validate((valid) => {
+  await lockFormRef.value.validate(async (valid) => {
     if (valid) {
-      const encryptedPassword = AES.encrypt(
-        lockForm.password,
-        ENCRYPT_KEY
-      ).toString()
+      const hashedPassword = await hashPassword(lockForm.password)
       lockStore.setLockStatus(true)
-      lockStore.setLockPassword(encryptedPassword)
+      lockStore.setLockPassword(hashedPassword)
       lockStore.closeLockDialog()
       lockForm.password = ''
     }
@@ -343,12 +296,9 @@ const handleLock = async () => {
 const handleUnlock = async () => {
   if (!unlockFormRef.value) return
 
-  await unlockFormRef.value.validate((valid) => {
+  await unlockFormRef.value.validate(async (valid) => {
     if (valid) {
-      const isValid = verifyPassword(
-        unlockForm.password,
-        lockStore.lockPassword
-      )
+      const isValid = await verifyPassword(unlockForm.password, lockStore.lockPassword)
 
       if (isValid) {
         lockStore.resetLock()
@@ -563,11 +513,7 @@ html.dark {
   }
 
   .digit-card {
-    background: linear-gradient(
-      180deg,
-      rgb(255 255 255 / 10%) 0%,
-      rgb(255 255 255 / 4%) 100%
-    );
+    background: linear-gradient(180deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 4%) 100%);
     border-color: rgb(255 255 255 / 10%);
     box-shadow:
       var(--shadow-lg),
@@ -686,11 +632,7 @@ html.dark {
   width: var(--digit-w);
   height: var(--digit-h);
   overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 92%) 0%,
-    rgb(244 247 250 / 86%) 100%
-  );
+  background: linear-gradient(180deg, rgb(255 255 255 / 92%) 0%, rgb(244 247 250 / 86%) 100%);
   border: 1px solid rgb(15 23 42 / 6%);
   border-radius: var(--radius-lg);
   box-shadow:
@@ -710,9 +652,7 @@ html.dark {
 
   &__num {
     position: absolute;
-    font-family:
-      Inter, 'DIN Alternate', Bahnschrift, 'SF Pro Display', system-ui,
-      sans-serif;
+    font-family: Inter, 'DIN Alternate', Bahnschrift, 'SF Pro Display', system-ui, sans-serif;
     font-size: var(--digit-fs);
     font-weight: 700;
     font-variant-numeric: tabular-nums;

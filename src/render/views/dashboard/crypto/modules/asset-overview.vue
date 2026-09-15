@@ -7,11 +7,7 @@
     </template>
     <template #content>
       <div class="asset-overview-grid">
-        <div
-          v-for="item in accounts"
-          :key="item.label"
-          class="asset-overview-item"
-        >
+        <div v-for="item in accounts" :key="item.label" class="asset-overview-item">
           <div class="asset-overview-item-icon" :style="{ color: item.color }">
             <el-icon>
               <component :is="item.icon" />

@@ -48,10 +48,7 @@ export function parseDeepLink(url) {
   const raw = url.slice(prefix.length).replace(/^[/#]+/, '')
   // 分离路径与 query（保留 query 原样）
   const cutIndex = raw.search(/[?#]/)
-  const pathPart = (cutIndex === -1 ? raw : raw.slice(0, cutIndex)).replace(
-    /\/+$/,
-    ''
-  )
+  const pathPart = (cutIndex === -1 ? raw : raw.slice(0, cutIndex)).replace(/\/+$/, '')
   const rest = cutIndex === -1 ? '' : raw.slice(cutIndex)
 
   const routePath = pathPart ? `/${pathPart}` : ''
@@ -109,9 +106,7 @@ export function handleDeepLink(url, source = 'unknown') {
  */
 export function handleDeepLinkFromArgv(argv, source = 'argv') {
   const prefix = `${DEEPLINK_PROTOCOL}://`
-  const url = (argv || []).find(
-    (arg) => typeof arg === 'string' && arg.toLowerCase().startsWith(prefix)
-  )
+  const url = (argv || []).find((arg) => typeof arg === 'string' && arg.toLowerCase().startsWith(prefix))
   if (url) handleDeepLink(url, source)
 }
 
@@ -143,9 +138,7 @@ export function setupDeepLink() {
   } else {
     // 开发环境：需显式传入 electron 可执行文件与入口路径，
     // 否则系统无法通过协议正确拉起开发实例
-    app.setAsDefaultProtocolClient(DEEPLINK_PROTOCOL, process.execPath, [
-      path.resolve(process.argv[1] || '.')
-    ])
+    app.setAsDefaultProtocolClient(DEEPLINK_PROTOCOL, process.execPath, [path.resolve(process.argv[1] || '.')])
   }
 
   // macOS：无论应用是否在运行，协议链接都通过 open-url 事件派发

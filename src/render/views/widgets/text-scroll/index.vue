@@ -1,11 +1,7 @@
 <!-- 组件中心 - 文字滚动 -->
 <template>
   <div class="text-scroll-page">
-    <PageHeader
-      title="文字滚动"
-      subtitle="支持四个方向、速度控制、悬停暂停与关闭的公告滚动组件"
-      icon="text"
-    />
+    <PageHeader title="文字滚动" subtitle="支持四个方向、速度控制、悬停暂停与关闭的公告滚动组件" icon="text" />
 
     <div class="scroll-list">
       <!-- 基础用法 -->
@@ -24,19 +20,10 @@
       <TextScroll type="info" text="这是一条信息类型的滚动公告" />
 
       <!-- 可关闭 -->
-      <TextScroll
-        text="这是一条可关闭的滚动公告"
-        showClose
-        @close="handleClose"
-      />
+      <TextScroll text="这是一条可关闭的滚动公告" showClose @close="handleClose" />
 
       <!-- 自定义速度和方向 -->
-      <TextScroll
-        type="warning"
-        text="这是一条速度较慢、向右滚动的公告"
-        :speed="30"
-        direction="right"
-      />
+      <TextScroll type="warning" text="这是一条速度较慢、向右滚动的公告" :speed="30" direction="right" />
 
       <TextScroll
         text="这是一条文字溢出才会滚动的公告，当文本内容超出容器宽度时才会开始滚动显示，否则保持静止状态"
@@ -45,19 +32,9 @@
         @close="handleClose"
       />
 
-      <TextScroll
-        type="danger"
-        direction="up"
-        :speed="30"
-        text="这是一条向上滚动的公告"
-      />
+      <TextScroll type="danger" direction="up" :speed="30" text="这是一条向上滚动的公告" />
 
-      <TextScroll
-        type="info"
-        direction="down"
-        :speed="30"
-        text="这是一条向下滚动的公告"
-      />
+      <TextScroll type="info" direction="down" :speed="30" text="这是一条向下滚动的公告" />
     </div>
   </div>
 </template>

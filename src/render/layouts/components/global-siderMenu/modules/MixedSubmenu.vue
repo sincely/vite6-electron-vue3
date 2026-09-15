@@ -7,12 +7,7 @@
     <!-- 裁剪层：折叠过渡期间以固定 180px 菜单整体向左滑出，避免内容被压缩换行 -->
     <div class="mixed-submenu-clip">
       <nav class="mixed-submenu-nav">
-        <MixedMenuItem
-          v-for="child in parentItem.children"
-          :key="child.id"
-          :item="child"
-          :depth="2"
-        />
+        <MixedMenuItem v-for="child in parentItem.children" :key="child.id" :item="child" :depth="2" />
       </nav>
     </div>
   </div>
@@ -40,9 +35,7 @@ const route = useRoute()
 const appStore = useAppStore()
 
 // 伸缩功能启用：布局允许 + 设置开关开启；收起状态由布局层的把手按钮切换
-const collapseEnabled = computed(
-  () => props.collapsible && appStore.mixedSubmenuCollapsible
-)
+const collapseEnabled = computed(() => props.collapsible && appStore.mixedSubmenuCollapsible)
 const collapsed = computed(() => appStore.mixedSubmenuCollapsed)
 
 // 子级分组的展开状态（递归节点通过 inject 共享）
@@ -69,10 +62,7 @@ watch(
       return
     }
     const chain = findMenuPath(path)
-    expandedIds.value =
-      chain[0]?.id === props.parentItem.id
-        ? chain.slice(1, -1).map((item) => item.id)
-        : []
+    expandedIds.value = chain[0]?.id === props.parentItem.id ? chain.slice(1, -1).map((item) => item.id) : []
   },
   { immediate: true }
 )

@@ -1,20 +1,11 @@
 <!-- 组件中心 - Excel 导入导出 -->
 <template>
   <div class="excel-page">
-    <PageHeader
-      title="Excel 导入导出"
-      subtitle="基于 xlsx 的文件解析与导出，支持表头映射、列宽与格式化"
-      icon="excel"
-    />
+    <PageHeader title="Excel 导入导出" subtitle="基于 xlsx 的文件解析与导出，支持表头映射、列宽与格式化" icon="excel" />
 
     <ElCard class="page-card">
       <div class="action-bar">
-        <ExcelImport
-          @import-success="handleImportSuccess"
-          @import-error="handleImportError"
-        >
-          上传 Excel
-        </ExcelImport>
+        <ExcelImport @import-success="handleImportSuccess" @import-error="handleImportError">上传 Excel</ExcelImport>
 
         <ExcelExport
           :data="tableData"
@@ -35,12 +26,7 @@
       </div>
 
       <ElTable :data="tableData" class="data-table">
-        <ElTableColumn
-          v-for="(label, key) in headers"
-          :key="key"
-          :prop="key"
-          :label="label"
-        />
+        <ElTableColumn v-for="(label, key) in headers" :key="key" :prop="key" :label="label" />
       </ElTable>
     </ElCard>
   </div>

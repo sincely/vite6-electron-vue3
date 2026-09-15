@@ -17,11 +17,7 @@
       <button v-if="!isMac()" class="control-btn" @click="minimizeWindow">
         <SvgIcon icon-class="minus" width="16px" height="16px" />
       </button>
-      <button
-        v-if="!isMac()"
-        class="control-btn close-btn"
-        @click="closeWindow"
-      >
+      <button v-if="!isMac()" class="control-btn close-btn" @click="closeWindow">
         <SvgIcon icon-class="close" width="16px" height="16px" />
       </button>
     </div>

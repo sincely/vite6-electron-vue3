@@ -100,13 +100,7 @@
             >
               <div class="edit-control">
                 <!-- 插槽优先 -->
-                <slot
-                  v-if="column.editSlot"
-                  :name="column.editSlot"
-                  :row="row"
-                  :index="$index"
-                  :column="column"
-                />
+                <slot v-if="column.editSlot" :name="column.editSlot" :row="row" :index="$index" :column="column" />
 
                 <!-- 输入框 -->
                 <el-input
@@ -183,13 +177,7 @@
                 />
 
                 <el-checkbox-group
-                  v-else-if="
-                    [
-                      'checkbox-group',
-                      'check-box-group',
-                      'check-bo-groub'
-                    ].includes(column.type)
-                  "
+                  v-else-if="['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(column.type)"
                   v-model="row[column.prop]"
                   size="small"
                   class="center-control"
@@ -222,16 +210,7 @@
 
                 <!-- 日期选择 -->
                 <el-date-picker
-                  v-else-if="
-                    [
-                      'date',
-                      'datetime',
-                      'daterange',
-                      'datetimerange',
-                      'month',
-                      'year'
-                    ].includes(column.type)
-                  "
+                  v-else-if="['date', 'datetime', 'daterange', 'datetimerange', 'month', 'year'].includes(column.type)"
                   v-model="row[column.prop]"
                   :type="column.type"
                   size="small"
@@ -244,23 +223,14 @@
                 />
               </div>
               <!-- 校验错误提示：绝对定位悬浮于单元格下方，不改变行高 -->
-              <span
-                v-if="cellErrorOf(row, $index, column.prop)"
-                class="cell-error"
-              >
+              <span v-if="cellErrorOf(row, $index, column.prop)" class="cell-error">
                 {{ cellErrorOf(row, $index, column.prop) }}
               </span>
             </div>
 
             <!-- 非编辑状态 -->
             <div v-else class="view-cell">
-              <slot
-                v-if="column.slot"
-                :name="column.slot"
-                :row="row"
-                :index="$index"
-                :column="column"
-              />
+              <slot v-if="column.slot" :name="column.slot" :row="row" :index="$index" :column="column" />
               <span v-else>{{ formatDisplayValue(row, column) }}</span>
             </div>
           </template>
@@ -268,49 +238,15 @@
       </template>
 
       <!-- 操作列 -->
-      <el-table-column
-        v-if="showActionColumn"
-        label="操作"
-        width="90"
-        align="center"
-        fixed="right"
-      >
+      <el-table-column v-if="showActionColumn" label="操作" width="90" align="center" fixed="right">
         <template #default="{ row, $index }">
           <div v-if="isEditing(row)" class="table-action">
-            <el-button
-              link
-              type="success"
-              size="small"
-              :icon="Check"
-              title="保存"
-              @click="handleSave(row, $index)"
-            />
-            <el-button
-              link
-              type="warning"
-              size="small"
-              :icon="Close"
-              title="取消"
-              @click="handleCancel(row, $index)"
-            />
+            <el-button link type="success" size="small" :icon="Check" title="保存" @click="handleSave(row, $index)" />
+            <el-button link type="warning" size="small" :icon="Close" title="取消" @click="handleCancel(row, $index)" />
           </div>
           <div v-else class="table-action">
-            <el-button
-              link
-              type="primary"
-              size="small"
-              :icon="Edit"
-              title="编辑"
-              @click="handleEdit(row, $index)"
-            />
-            <el-button
-              link
-              type="danger"
-              size="small"
-              :icon="Delete"
-              title="删除"
-              @click="handleDelete(row, $index)"
-            />
+            <el-button link type="primary" size="small" :icon="Edit" title="编辑" @click="handleEdit(row, $index)" />
+            <el-button link type="danger" size="small" :icon="Delete" title="删除" @click="handleDelete(row, $index)" />
           </div>
         </template>
       </el-table-column>
@@ -375,9 +311,7 @@ const emit = defineEmits([
 
 // 表格高度动态计算：撑满剩余视口、表体内部滚动，新增行过多时不会被容器裁掉
 // bottomOffset 预留表格下方的“添加一行”按钮区与容器内边距
-const { tableHeight, tableRef, calcHeight } = useTableHeight(
-  (props.config.showAdd ?? true) ? 64 : 20
-)
+const { tableHeight, tableRef, calcHeight } = useTableHeight((props.config.showAdd ?? true) ? 64 : 20)
 
 // 内部数据（用于处理编辑状态）
 const tableData = ref([])
@@ -447,9 +381,7 @@ const tableStyle = reactive({
 // 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
   return {
-    '--edit-table-header-bg': tableStyle.headerBg
-      ? 'var(--color-bg-input)'
-      : 'transparent'
+    '--edit-table-header-bg': tableStyle.headerBg ? 'var(--color-bg-input)' : 'transparent'
   }
 })
 
@@ -460,11 +392,7 @@ watch([() => tableStyle.stripe, () => tableStyle.border], () => {
 
 // 根据 el-table 内部 column 对象回查用户的列配置（取 headerSlot 等自定义字段）
 const getColConfig = (tableColumn) => {
-  return props.columns.find(
-    (col) =>
-      (col.prop && col.prop === tableColumn.property) ||
-      col.label === tableColumn.label
-  )
+  return props.columns.find((col) => (col.prop && col.prop === tableColumn.property) || col.label === tableColumn.label)
 }
 const refresh = () => {}
 
@@ -598,9 +526,7 @@ watch(
       const sep = key.indexOf('::')
       const rowId = key.slice(0, sep)
       const prop = key.slice(sep + 2)
-      const index = tableData.value.findIndex(
-        (row, i) => rowIdOf(row, i) === rowId
-      )
+      const index = tableData.value.findIndex((row, i) => rowIdOf(row, i) === rowId)
       if (index === -1) {
         delete cellErrors[key]
         return
@@ -682,11 +608,7 @@ const handleAdd = () => {
       // 根据 type 设置默认值
       if (col.type === 'number' || col.type === 'money') {
         newRow[col.prop] = undefined // 数字/金额类型初始化为 undefined
-      } else if (
-        ['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(
-          col.type
-        )
-      ) {
+      } else if (['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(col.type)) {
         newRow[col.prop] = [] // checkbox group 初始化为空数组
       } else if (col.type === 'switch') {
         newRow[col.prop] = false
@@ -704,14 +626,11 @@ const handleAdd = () => {
 // 在 el-table 页脚 render 中被调用，编辑单元格的输入会实时刷新合计值
 const handleSummary = ({ columns }) => {
   const sumText = mergedConfig.value.sumText
-  const resolveConf = (col) =>
-    props.columns.find((c) => c.prop && c.prop === col.property)
+  const resolveConf = (col) => props.columns.find((c) => c.prop && c.prop === col.property)
   // “合计”标签优先放序号列，否则第一个非汇总数据列
   const labelColumn =
     columns.find((c) => c.type === 'index') ||
-    columns.find(
-      (c) => c.type !== 'selection' && resolveConf(c)?.summary !== true
-    )
+    columns.find((c) => c.type !== 'selection' && resolveConf(c)?.summary !== true)
 
   return columns.map((col) => {
     if (col === labelColumn) return sumText
@@ -732,9 +651,7 @@ const handleSummary = ({ columns }) => {
       const n = Number(row[conf.prop])
       return sum + (Number.isNaN(n) ? 0 : n)
     }, 0)
-    return conf.type === 'money'
-      ? formatMoney(total, resolveComponentProps(conf))
-      : total
+    return conf.type === 'money' ? formatMoney(total, resolveComponentProps(conf)) : total
   })
 }
 
@@ -821,9 +738,7 @@ const getHiddenDragImage = () => {
 }
 
 const initRowDrag = () => {
-  const tbody = tableRef.value?.$el?.querySelector(
-    '.el-table__body-wrapper tbody'
-  )
+  const tbody = tableRef.value?.$el?.querySelector('.el-table__body-wrapper tbody')
   if (!tbody) return
   // useDraggable 在组件作用域销毁时自动清理，无需手动 destroy
   useDraggable(tbody, tableData, {
@@ -915,10 +830,7 @@ const tableSize = ref(props.config?.table?.size || 'default')
 
 // 表头背景：支持 StyleSetting 通过 CSS 变量覆盖
 :deep(.el-table .el-table__header-wrapper .el-table__cell) {
-  background: var(
-    --edit-table-header-bg,
-    var(--el-table-header-bg-color, var(--color-bg-content))
-  );
+  background: var(--edit-table-header-bg, var(--el-table-header-bg-color, var(--color-bg-content)));
 }
 
 // 筛选图标：覆盖 EP 默认的 --el-color-info 着色

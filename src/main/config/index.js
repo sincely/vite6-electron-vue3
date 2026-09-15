@@ -10,7 +10,5 @@ export const renderer_dist = path.join(process.env.APP_ROOT, 'dist') // 渲染�
 export const { VITE_DEV_SERVER_URL } = process.env // 这个变量是 vite-plugin-electron 在开发模式下自动注入到 process.env 的，值是 Vite 开发服务器的地址，比如 http://localhost:3200。
 
 // 设置公共资源路径，开发环境指向 public 目录，生产环境指向 dist 目录
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
-  ? path.join(process.env.APP_ROOT, 'public')
-  : renderer_dist
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : renderer_dist
 export const { VITE_PUBLIC } = process.env

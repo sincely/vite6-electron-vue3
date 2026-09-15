@@ -13,9 +13,7 @@ import CodeLogin from './components/CodeLogin.vue'
 import RegisterForm from './components/RegisterForm.vue'
 
 // 扫码登录为次要功能，异步加载避免 qrcode 库进入登录首屏
-const QRCodeLogin = defineAsyncComponent(
-  () => import('./components/QRCodeLogin.vue')
-)
+const QRCodeLogin = defineAsyncComponent(() => import('./components/QRCodeLogin.vue'))
 
 // vben 认证页子视图：账号登录 | 验证码登录 | 扫码登录 | 注册
 const activeView = ref('account')

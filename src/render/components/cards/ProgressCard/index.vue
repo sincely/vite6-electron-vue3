@@ -1,10 +1,7 @@
 <!-- 进度卡片：百分比数字滚动 + 进度条动画 -->
 <template>
   <div class="progress-card">
-    <div
-      class="progress-card__header"
-      :style="{ justifyContent: icon ? 'space-between' : 'flex-start' }"
-    >
+    <div class="progress-card__header" :style="{ justifyContent: icon ? 'space-between' : 'flex-start' }">
       <div
         v-if="icon"
         class="progress-card__icon"
@@ -28,12 +25,7 @@
         <p class="progress-card__title">{{ title }}</p>
       </div>
     </div>
-    <ElProgress
-      :percentage="currentPercentage"
-      :stroke-width="strokeWidth"
-      :show-text="false"
-      :color="color"
-    />
+    <ElProgress :percentage="currentPercentage" :stroke-width="strokeWidth" :show-text="false" :color="color" />
   </div>
 </template>
 
@@ -129,11 +121,7 @@ watch(() => props.percentage, animateProgress)
   }
 
   :deep(.el-progress-bar__outer) {
-    background-color: color-mix(
-      in srgb,
-      var(--color-text-primary) 8%,
-      transparent
-    );
+    background-color: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
   }
 }
 </style>

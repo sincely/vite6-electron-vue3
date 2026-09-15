@@ -8,8 +8,7 @@ import SvgIcon from '@/components/SvgIcon/index.vue'
  * @returns {Object} { isOnline, type, downlink, rtt, saveData, effectiveType }
  */
 export function useNetwork() {
-  const { isOnline, type, downlink, rtt, saveData, effectiveType } =
-    useVueUseNetwork()
+  const { isOnline, type, downlink, rtt, saveData, effectiveType } = useVueUseNetwork()
 
   console.log('isOnline init', isOnline.value)
 

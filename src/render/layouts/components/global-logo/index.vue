@@ -10,9 +10,7 @@
     @click="goHome"
   >
     <img src="@/assets/bar/app.png" class="logo-block__img" alt="logo" />
-    <span class="logo-block__name" :class="{ 'is-hidden': isRail }">
-      Lightning
-    </span>
+    <span class="logo-block__name" :class="{ 'is-hidden': isRail }">Lightning</span>
   </div>
 </template>
 
@@ -23,14 +21,10 @@ import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
 const router = useRouter()
-const isTopMenu = computed(
-  () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
-)
+const isTopMenu = computed(() => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed')
 const isDual = computed(() => appStore.layoutMode === 'dual')
 // 窄栏形态（侧边栏收起 / 双列菜单第一列）：仅显示图标并水平居中
-const isRail = computed(
-  () => (appStore.sidebarCollapsed || isDual.value) && !isTopMenu.value
-)
+const isRail = computed(() => (appStore.sidebarCollapsed || isDual.value) && !isTopMenu.value)
 
 // 点击 app 区域回到首页（工作台）
 const goHome = () => {

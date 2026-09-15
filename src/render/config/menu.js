@@ -24,10 +24,7 @@ function buildChildren(parentPath, routes, idBase) {
     const id = idBase * 100 + idx + 1
     // 空路径子项拼接后与父路径相同（如 /desktop 的默认子路由），
     // 跳过递归避免自引用死循环
-    const children =
-      route.path === parentPath
-        ? undefined
-        : buildChildren(route.path, routes, id)
+    const children = route.path === parentPath ? undefined : buildChildren(route.path, routes, id)
     return {
       id,
       label: route.meta.title,
@@ -78,10 +75,7 @@ export const menuItems = buildMenuItems(asyncRoutes)
  */
 function filterMenuByRoles(items, roles) {
   return items.reduce((acc, item) => {
-    if (
-      item.roles?.length &&
-      !item.roles.some((role) => roles.includes(role))
-    ) {
+    if (item.roles?.length && !item.roles.some((role) => roles.includes(role))) {
       return acc
     }
     if (item.children?.length) {
@@ -108,9 +102,7 @@ export const visibleMenuItems = computed(() => {
 export function containsRoute(item, routePath) {
   if (!item) return false
   if (item.route === routePath) return true
-  return (
-    item.children?.some((child) => containsRoute(child, routePath)) ?? false
-  )
+  return item.children?.some((child) => containsRoute(child, routePath)) ?? false
 }
 
 /**

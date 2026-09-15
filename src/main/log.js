@@ -11,16 +11,14 @@ const installPath = path.dirname(app.getPath('exe'))
 
 // 设置日志文件路径到安装路径
 // 在 electron-log v5+ 中，建议使用 resolvePathFn 替代已弃用的 resolvePath
-logger.transports.file.resolvePathFn = () =>
-  path.join(installPath, 'logs', 'app.log')
+logger.transports.file.resolvePathFn = () => path.join(installPath, 'logs', 'app.log')
 
 logger.transports.console.level = 'debug' // 控制台输出的日志等级
 logger.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}] {level}: {text}' // 自定义控制台输出的日志格式
 logger.transports.console.inspectOptions = { depth: null } // 完整展开嵌套对象，避免 [Object] 截断
 logger.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}.{ms} [{level}]: {text}' // 自定义文件日志格式
 logger.transports.file.inspectOptions = { depth: null } // 完整展开嵌套对象，避免 [Object] 截断
-logger.transports.file.level =
-  process.env.NODE_ENV === 'development' ? false : 'info' // 设置日志写入文件的级别
+logger.transports.file.level = process.env.NODE_ENV === 'development' ? false : 'info' // 设置日志写入文件的级别
 
 // 设置日志文件最大大小为 5MB，超过该大小会自动滚动
 logger.transports.file.maxSize = 5 * 1024 * 1024 // 5MB

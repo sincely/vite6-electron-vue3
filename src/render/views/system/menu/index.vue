@@ -1,17 +1,8 @@
 <template>
   <div class="system-page">
-    <PageHeader
-      title="菜单管理"
-      subtitle="维护菜单结构、路由信息和按钮级权限"
-      icon="list"
-    />
+    <PageHeader title="菜单管理" subtitle="维护菜单结构、路由信息和按钮级权限" icon="list" />
 
-    <DynamicSearchBar
-      :items="searchItems"
-      :params="searchParams"
-      @query="handleQuery"
-      @reset="handleReset"
-    />
+    <DynamicSearchBar :items="searchItems" :params="searchParams" @query="handleQuery" @reset="handleReset" />
 
     <TreeTable
       ref="tableRef"
@@ -27,9 +18,7 @@
             <SvgIcon icon-class="plus" width="14px" height="14px" />
             <span>新增菜单</span>
           </el-button>
-          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-            批量删除
-          </el-button>
+          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">批量删除</el-button>
         </div>
       </template>
 
@@ -43,10 +32,7 @@
       </template>
 
       <template #visible="{ row }">
-        <span
-          class="status-badge"
-          :class="row.visible === '1' ? 'is-active' : 'is-hidden'"
-        >
+        <span class="status-badge" :class="row.visible === '1' ? 'is-active' : 'is-hidden'">
           <span class="status-dot" />
           {{ row.visible === '1' ? '显示' : '隐藏' }}
         </span>
@@ -63,32 +49,13 @@
             title="新增子菜单"
             @click="handleCreateChild(row)"
           />
-          <el-button
-            link
-            type="primary"
-            size="small"
-            :icon="Edit"
-            title="编辑"
-            @click="handleEdit(row)"
-          />
-          <el-button
-            link
-            type="danger"
-            size="small"
-            :icon="Delete"
-            title="删除"
-            @click="handleDelete(row)"
-          />
+          <el-button link type="primary" size="small" :icon="Edit" title="编辑" @click="handleEdit(row)" />
+          <el-button link type="danger" size="small" :icon="Delete" title="删除" @click="handleDelete(row)" />
         </div>
       </template>
     </TreeTable>
 
-    <ModalDialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="960px"
-      @close="handleDialogClose"
-    >
+    <ModalDialog v-model="dialogVisible" :title="dialogTitle" width="960px" @close="handleDialogClose">
       <AdvanceForm
         ref="formRef"
         v-model="formModel"
@@ -264,9 +231,7 @@ const buildMenuOptions = (list, excludeId) => {
       label: item.menuName,
       value: item.id,
       disabled: isDescendant(item, excludeId),
-      children: item.children?.length
-        ? buildMenuOptions(item.children, excludeId)
-        : undefined
+      children: item.children?.length ? buildMenuOptions(item.children, excludeId) : undefined
     }))
 }
 
@@ -534,8 +499,7 @@ onMounted(() => {
 
     .status-dot {
       background: var(--color-success);
-      box-shadow: 0 0 0 3px
-        color-mix(in srgb, var(--color-success), transparent 75%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success), transparent 75%);
     }
   }
 

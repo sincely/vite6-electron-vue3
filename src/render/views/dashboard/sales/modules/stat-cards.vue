@@ -5,9 +5,7 @@
         <div class="sales-stats-label">{{ item.label }}</div>
         <div class="sales-stats-value">{{ item.value }}</div>
         <div class="sales-stats-trend">
-          <span :class="item.up ? 'text-up' : 'text-down'">
-            {{ item.up ? '↑' : '↓' }} {{ item.trend }}
-          </span>
+          <span :class="item.up ? 'text-up' : 'text-down'">{{ item.up ? '↑' : '↓' }} {{ item.trend }}</span>
           <span class="sales-stats-unit">本月</span>
         </div>
       </template>

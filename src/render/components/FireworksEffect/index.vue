@@ -172,8 +172,7 @@ class FireworkSystem {
     const startY = this.canvasHeight
 
     // 根据是否有图片确定可用形状
-    const availableShapes =
-      imageUrl && this.imageCache[imageUrl] ? ['image'] : CONFIG.SHAPES
+    const availableShapes = imageUrl && this.imageCache[imageUrl] ? ['image'] : CONFIG.SHAPES
 
     const particles = []
 
@@ -189,22 +188,16 @@ class FireworkSystem {
       particle.x = startX
       particle.y = startY
       // 复杂的速度计算，模拟真实烟花爆炸轨迹
-      particle.vx =
-        Math.cos(angle) * Math.cos(spread) * speed * (Math.random() * 0.5 + 0.5)
+      particle.vx = Math.cos(angle) * Math.cos(spread) * speed * (Math.random() * 0.5 + 0.5)
       particle.vy = Math.sin(angle) * speed - 15 // 向上初始速度
-      particle.color =
-        CONFIG.COLORS[Math.floor(Math.random() * CONFIG.COLORS.length)]
+      particle.color = CONFIG.COLORS[Math.floor(Math.random() * CONFIG.COLORS.length)]
       particle.rotation = Math.random() * 360
       particle.rotationSpeed =
-        (Math.random() * CONFIG.ROTATION.RANDOM_SPEED +
-          CONFIG.ROTATION.BASE_SPEED) *
-        (Math.random() > 0.5 ? 1 : -1) // 随机旋转方向
+        (Math.random() * CONFIG.ROTATION.RANDOM_SPEED + CONFIG.ROTATION.BASE_SPEED) * (Math.random() > 0.5 ? 1 : -1) // 随机旋转方向
       particle.scale = 0.8 + Math.random() * 0.4 // 随机缩放
-      particle.shape =
-        availableShapes[Math.floor(Math.random() * availableShapes.length)]
+      particle.shape = availableShapes[Math.floor(Math.random() * availableShapes.length)]
       particle.opacity = 1
-      particle.imageUrl =
-        imageUrl && this.imageCache[imageUrl] ? imageUrl : undefined
+      particle.imageUrl = imageUrl && this.imageCache[imageUrl] ? imageUrl : undefined
 
       particles.push(particle)
     }
@@ -290,12 +283,7 @@ class FireworkSystem {
         )
         break
       case 'square':
-        ctx.value.fillRect(
-          -SIZES.SQUARE.SIZE / 2,
-          -SIZES.SQUARE.SIZE / 2,
-          SIZES.SQUARE.SIZE,
-          SIZES.SQUARE.SIZE
-        )
+        ctx.value.fillRect(-SIZES.SQUARE.SIZE / 2, -SIZES.SQUARE.SIZE / 2, SIZES.SQUARE.SIZE, SIZES.SQUARE.SIZE)
         break
       case 'circle':
         ctx.value.beginPath()
@@ -312,15 +300,7 @@ class FireworkSystem {
         break
       case 'oval':
         ctx.value.beginPath()
-        ctx.value.ellipse(
-          0,
-          0,
-          SIZES.OVAL.WIDTH / 2,
-          SIZES.OVAL.HEIGHT / 2,
-          0,
-          0,
-          Math.PI * 2
-        )
+        ctx.value.ellipse(0, 0, SIZES.OVAL.WIDTH / 2, SIZES.OVAL.HEIGHT / 2, 0, 0, Math.PI * 2)
         ctx.value.fill()
         break
       case 'image':

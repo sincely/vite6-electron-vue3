@@ -1,19 +1,12 @@
 <!-- 模板中心 - 横幅：基础横幅 / 自定义插槽 / 预设方案 / 卡片横幅 -->
 <template>
   <div class="template-banners-page">
-    <PageHeader
-      title="横幅"
-      subtitle="基础横幅、预设方案与卡片横幅示例"
-      icon="template"
-    />
+    <PageHeader title="横幅" subtitle="基础横幅、预设方案与卡片横幅示例" icon="template" />
 
     <h1 class="page-title">基础 & 自定义按钮+背景色</h1>
     <ElRow :gutter="20">
       <ElCol :xs="24" :sm="12" :md="12" class="page-col">
-        <BasicBanner
-          title="数据中心运行状态"
-          subtitle="系统访问量同比增长 23%，所有服务运行稳定，数据监控正常。"
-        />
+        <BasicBanner title="数据中心运行状态" subtitle="系统访问量同比增长 23%，所有服务运行稳定，数据监控正常。" />
       </ElCol>
       <ElCol :xs="24" :sm="12" :md="12" class="page-col">
         <BasicBanner
@@ -53,16 +46,12 @@
       <ElCol :xs="24" :sm="12" :md="12" class="page-col">
         <BasicBanner background="#70B1FF" :imageConfig="{ src: icon7 }">
           <template #title>
-            <h2 style="margin: 0; font-size: 1.6rem; color: #fff !important">
-              智能组件系统
-            </h2>
+            <h2 style="margin: 0; font-size: 1.6rem; color: #fff !important">智能组件系统</h2>
           </template>
 
           <template #subtitle>
             <div style="margin-top: 12px">
-              <p style="position: relative; z-index: 10; font-style: italic">
-                灵活配置，强大扩展，支持自定义插槽内容
-              </p>
+              <p style="position: relative; z-index: 10; font-style: italic">灵活配置，强大扩展，支持自定义插槽内容</p>
             </div>
           </template>
 
@@ -88,10 +77,7 @@
     <h1 class="page-title">卡片横幅</h1>
     <ElRow :gutter="20">
       <ElCol :xs="24" :sm="12" :md="12" :lg="6" class="page-col">
-        <CardBanner
-          title="系统运行正常"
-          description="所有核心服务运行稳定，响应时间在正常范围内。"
-        />
+        <CardBanner title="系统运行正常" description="所有核心服务运行稳定，响应时间在正常范围内。" />
       </ElCol>
       <ElCol :xs="24" :sm="12" :md="12" :lg="6" class="page-col">
         <CardBanner

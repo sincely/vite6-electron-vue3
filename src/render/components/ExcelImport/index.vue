@@ -1,12 +1,7 @@
 <!-- 导入 Excel 文件 -->
 <template>
   <div class="inline-block">
-    <ElUpload
-      :auto-upload="false"
-      accept=".xlsx, .xls"
-      :show-file-list="false"
-      @change="handleFileChange"
-    >
+    <ElUpload :auto-upload="false" accept=".xlsx, .xls" :show-file-list="false" @change="handleFileChange">
       <ElButton type="primary">
         <slot>导入 Excel</slot>
       </ElButton>

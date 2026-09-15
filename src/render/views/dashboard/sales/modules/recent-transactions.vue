@@ -7,16 +7,10 @@
     </template>
     <template #content>
       <el-scrollbar height="360px">
-        <div
-          v-for="item in transactions"
-          :key="item.code"
-          class="recent-transactions-item"
-        >
+        <div v-for="item in transactions" :key="item.code" class="recent-transactions-item">
           <div class="recent-transactions-main">
             <div class="recent-transactions-code">订单号 - {{ item.code }}</div>
-            <div class="recent-transactions-meta">
-              {{ item.count }} 件商品 · {{ item.amount }} · {{ item.date }}
-            </div>
+            <div class="recent-transactions-meta">{{ item.count }} 件商品 · {{ item.amount }} · {{ item.date }}</div>
           </div>
           <div class="recent-transactions-tail">
             <span class="recent-transactions-status" :class="`is-${item.type}`">
@@ -30,9 +24,7 @@
                 :size="26"
                 class="recent-transactions-avatar"
               />
-              <span v-if="item.extra" class="recent-transactions-extra">
-                +{{ item.extra }}
-              </span>
+              <span v-if="item.extra" class="recent-transactions-extra">+{{ item.extra }}</span>
             </div>
           </div>
         </div>

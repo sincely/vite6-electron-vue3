@@ -47,35 +47,14 @@
         type="button"
         class="control-btn"
         title="切换主题"
-        @click="
-          appStore.toggleThemeWithTransition(
-            $event,
-            appStore.isDark ? 'light' : 'dark'
-          )
-        "
+        @click="appStore.toggleThemeWithTransition($event, appStore.isDark ? 'light' : 'dark')"
       >
-        <SvgIcon
-          :icon-class="appStore.isDark ? 'sun' : 'moon'"
-          width="16px"
-          height="16px"
-        />
+        <SvgIcon :icon-class="appStore.isDark ? 'sun' : 'moon'" width="16px" height="16px" />
       </button>
-      <button
-        v-if="!isMac()"
-        type="button"
-        class="control-btn"
-        title="最小化"
-        @click="minimizeWindow"
-      >
+      <button v-if="!isMac()" type="button" class="control-btn" title="最小化" @click="minimizeWindow">
         <SvgIcon icon-class="minus" width="16px" height="16px" />
       </button>
-      <button
-        v-if="!isMac()"
-        type="button"
-        class="control-btn close-btn"
-        title="关闭"
-        @click="closeWindow"
-      >
+      <button v-if="!isMac()" type="button" class="control-btn close-btn" title="关闭" @click="closeWindow">
         <SvgIcon icon-class="close" width="16px" height="16px" />
       </button>
     </div>
@@ -86,10 +65,7 @@
 import { Icon } from '@iconify/vue'
 import { isMac } from '@/utils/platform'
 import { useAppStore } from '@/store/modules/app'
-import {
-  AUTH_PANEL_LAYOUTS,
-  useAuthPanelLayout
-} from '../composables/useAuthPanelLayout'
+import { AUTH_PANEL_LAYOUTS, useAuthPanelLayout } from '../composables/useAuthPanelLayout'
 
 defineOptions({ name: 'CustomTitleBar' })
 
@@ -100,8 +76,7 @@ defineProps({
 })
 
 const appStore = useAppStore()
-const { activeLayoutIcon, authPanelLayout, setAuthPanelLayout } =
-  useAuthPanelLayout()
+const { activeLayoutIcon, authPanelLayout, setAuthPanelLayout } = useAuthPanelLayout()
 
 const minimizeWindow = () => {
   window.ipcRenderer.send('minimize-window')

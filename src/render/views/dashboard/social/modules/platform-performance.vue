@@ -21,10 +21,7 @@
         <el-table-column label="平台" min-width="120">
           <template #default="{ row }">
             <div class="platform-performance-name">
-              <span
-                class="platform-performance-dot"
-                :style="{ background: row.color }"
-              ></span>
+              <span class="platform-performance-dot" :style="{ background: row.color }"></span>
               <span>{{ row.platform }}</span>
             </div>
           </template>
@@ -43,9 +40,7 @@
         </el-table-column>
       </el-table>
       <div class="platform-performance-footer">
-        <span class="platform-performance-total">
-          显示 {{ filteredList.length }} 条记录
-        </span>
+        <span class="platform-performance-total">显示 {{ filteredList.length }} 条记录</span>
       </div>
     </template>
   </card>

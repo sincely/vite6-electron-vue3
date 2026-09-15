@@ -12,23 +12,14 @@
           <!-- 头部：火箭图标 + 标题 + 关闭按钮（下载中隐藏关闭按钮，防止中断） -->
           <div class="update-dialog__header">
             <div class="update-icon-wrap">
-              <SvgIcon
-                icon-class="rocket"
-                width="28px"
-                height="28px"
-                class="update-rocket"
-              />
+              <SvgIcon icon-class="rocket" width="28px" height="28px" class="update-rocket" />
             </div>
             <div class="update-dialog__title-group">
               <h3 class="update-dialog__title">
                 {{ isForce ? '当前版本已停止支持' : '发现新版本' }}
               </h3>
               <p class="update-dialog__subtitle">
-                {{
-                  isForce
-                    ? '请升级到最新版本以继续使用'
-                    : '新版本已就绪，立即更新体验最新功能'
-                }}
+                {{ isForce ? '请升级到最新版本以继续使用' : '新版本已就绪，立即更新体验最新功能' }}
               </p>
             </div>
             <!-- 下载中显示"后台运行"按钮：最小化窗口，下载在后台继续（强制升级时隐藏） -->
@@ -41,12 +32,7 @@
               <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
             <!-- 初始态和下载完成态显示关闭按钮（强制升级时隐藏，防止跳过） -->
-            <button
-              v-else-if="!isForce"
-              class="update-close-btn"
-              title="稍后提醒"
-              @click="handleLater"
-            >
+            <button v-else-if="!isForce" class="update-close-btn" title="稍后提醒" @click="handleLater">
               <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
@@ -75,24 +61,14 @@
             <div class="update-dialog__progress">
               <!-- 进度条头部：下载图标（带呼吸动画）+ 标签 + 百分比 -->
               <div class="progress-header">
-                <SvgIcon
-                  icon-class="download"
-                  width="15px"
-                  height="15px"
-                  class="progress-icon"
-                />
+                <SvgIcon icon-class="download" width="15px" height="15px" class="progress-icon" />
                 <span class="progress-label">正在下载更新...</span>
                 <!-- downloadProgress 是平滑显示值，非主进程直接上报值 -->
-                <span class="progress-percent">
-                  {{ downloadProgress.toFixed(1) }}%
-                </span>
+                <span class="progress-percent">{{ downloadProgress.toFixed(1) }}%</span>
               </div>
               <!-- 进度条轨道：width 由 downloadProgress 控制 -->
               <div class="progress-track">
-                <div
-                  class="progress-fill"
-                  :style="{ width: downloadProgress + '%' }"
-                />
+                <div class="progress-fill" :style="{ width: downloadProgress + '%' }" />
               </div>
               <!-- 进度条底部元信息：左侧下载速度，右侧已下载/总大小 -->
               <div class="progress-meta">
@@ -105,12 +81,7 @@
             </div>
             <!-- 下载中操作：最小化窗口到后台，下载在主进程继续（强制升级时隐藏） -->
             <div v-if="!isForce" class="update-dialog__actions">
-              <button
-                class="update-btn update-btn--later"
-                @click="handleBackground"
-              >
-                最小化到后台
-              </button>
+              <button class="update-btn update-btn--later" @click="handleBackground">最小化到后台</button>
             </div>
           </template>
 
@@ -118,31 +89,15 @@
           <template v-else-if="updateDownloaded">
             <div class="update-dialog__downloaded">
               <div class="downloaded-icon-wrap">
-                <SvgIcon
-                  icon-class="success"
-                  width="24px"
-                  height="24px"
-                  class="downloaded-icon"
-                />
+                <SvgIcon icon-class="success" width="24px" height="24px" class="downloaded-icon" />
               </div>
               <p class="downloaded-title">更新下载完成</p>
-              <p class="downloaded-desc">
-                重启应用后将自动完成安装，建议立即重启
-              </p>
+              <p class="downloaded-desc">重启应用后将自动完成安装，建议立即重启</p>
             </div>
             <!-- 操作按钮：稍后重启 / 立即重启安装（强制升级时隐藏稍后按钮） -->
             <div class="update-dialog__actions">
-              <button
-                v-if="!isForce"
-                class="update-btn update-btn--later"
-                @click="handleLater"
-              >
-                稍后重启
-              </button>
-              <button
-                class="update-btn update-btn--confirm"
-                @click="handleInstall"
-              >
+              <button v-if="!isForce" class="update-btn update-btn--later" @click="handleLater">稍后重启</button>
+              <button class="update-btn update-btn--confirm" @click="handleInstall">
                 <SvgIcon icon-class="rotate-ccw" width="15px" height="15px" />
                 立即重启安装
               </button>
@@ -153,17 +108,8 @@
           <template v-else>
             <!-- 操作按钮：稍后更新 / 立即更新（强制升级时隐藏稍后按钮） -->
             <div class="update-dialog__actions">
-              <button
-                v-if="!isForce"
-                class="update-btn update-btn--later"
-                @click="handleLater"
-              >
-                稍后更新
-              </button>
-              <button
-                class="update-btn update-btn--confirm"
-                @click="handleConfirm"
-              >
+              <button v-if="!isForce" class="update-btn update-btn--later" @click="handleLater">稍后更新</button>
+              <button class="update-btn update-btn--confirm" @click="handleConfirm">
                 <SvgIcon icon-class="download" width="15px" height="15px" />
                 {{ isForce ? '立即升级' : '立即更新' }}
               </button>
@@ -532,11 +478,7 @@ onMounted(() => {
 
   // 如果 loading 已经结束，检查是否需要显示更新弹窗
   const checkAndShowDialog = () => {
-    if (
-      loadingFinished &&
-      latestVersion.value &&
-      latestVersion.value !== currentVersion.value
-    ) {
+    if (loadingFinished && latestVersion.value && latestVersion.value !== currentVersion.value) {
       visible.value = true
     }
   }
@@ -775,11 +717,7 @@ onUnmounted(() => {
     width: 200px;
     height: 200px;
     pointer-events: none;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-primary), transparent 68%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-primary), transparent 68%) 0%, transparent 70%);
     border-radius: 999px;
   }
 
@@ -1008,11 +946,7 @@ onUnmounted(() => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--color-primary) 0%,
-    var(--brand-accent-alt) 100%
-  );
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
   border-radius: 999px;
   box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary), transparent 40%);
   transition: width 0.16s linear;
@@ -1121,18 +1055,12 @@ onUnmounted(() => {
 
   &--confirm {
     color: #fff;
-    background: linear-gradient(
-      100deg,
-      var(--color-primary) 0%,
-      var(--brand-accent-alt) 100%
-    );
-    box-shadow: 0 4px 12px -4px
-      color-mix(in srgb, var(--color-primary), transparent 40%);
+    background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary), transparent 40%);
 
     &:hover {
       filter: brightness(1.08);
-      box-shadow: 0 6px 16px -4px
-        color-mix(in srgb, var(--color-primary), transparent 30%);
+      box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary), transparent 30%);
       transform: translateY(-1px);
     }
 

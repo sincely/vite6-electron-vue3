@@ -27,20 +27,8 @@
           <!-- Chrome 标签背景几何图形（google 风格下渲染） -->
           <ChromeTabBg v-if="tagsViewStyle === 'google'" />
           <!-- 固定指示器：已固定标签打上 pin 图标标识 -->
-          <Icon
-            v-if="tag.affix"
-            icon="lucide:pin"
-            class="tag-affix-icon"
-            width="12"
-            height="12"
-          />
-          <Icon
-            v-if="tag.icon"
-            :icon="`lucide:${tag.icon}`"
-            class="tag-item-icon"
-            width="14"
-            height="14"
-          />
+          <Icon v-if="tag.affix" icon="lucide:pin" class="tag-affix-icon" width="12" height="12" />
+          <Icon v-if="tag.icon" :icon="`lucide:${tag.icon}`" class="tag-item-icon" width="14" height="14" />
           <span class="tag-title">{{ tag.title }}</span>
           <Icon
             v-if="!tag.affix"
@@ -68,11 +56,7 @@
     <div class="tags-view-actions">
       <!-- 最大化 / 还原 -->
       <span class="action-btn" @click="toggleFullscreen">
-        <Icon
-          :icon="isFullscreen ? 'lucide:minimize' : 'lucide:maximize'"
-          width="14"
-          height="14"
-        />
+        <Icon :icon="isFullscreen ? 'lucide:minimize' : 'lucide:maximize'" width="14" height="14" />
       </span>
 
       <!-- 下拉菜单 -->
@@ -83,48 +67,23 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="refresh">
-              <Icon
-                icon="lucide:refresh-cw"
-                width="14"
-                height="14"
-                style="margin-right: 6px"
-              />
+              <Icon icon="lucide:refresh-cw" width="14" height="14" style="margin-right: 6px" />
               刷新当前
             </el-dropdown-item>
             <el-dropdown-item command="closeLeft" :disabled="!canCloseLeft">
-              <Icon
-                icon="lucide:panel-left-close"
-                width="14"
-                height="14"
-                style="margin-right: 6px"
-              />
+              <Icon icon="lucide:panel-left-close" width="14" height="14" style="margin-right: 6px" />
               关闭左侧
             </el-dropdown-item>
             <el-dropdown-item command="closeRight" :disabled="!canCloseRight">
-              <Icon
-                icon="lucide:panel-right-close"
-                width="14"
-                height="14"
-                style="margin-right: 6px"
-              />
+              <Icon icon="lucide:panel-right-close" width="14" height="14" style="margin-right: 6px" />
               关闭右侧
             </el-dropdown-item>
             <el-dropdown-item command="closeOthers" :disabled="!canCloseOthers">
-              <Icon
-                icon="lucide:list-x"
-                width="14"
-                height="14"
-                style="margin-right: 6px"
-              />
+              <Icon icon="lucide:list-x" width="14" height="14" style="margin-right: 6px" />
               关闭其他
             </el-dropdown-item>
             <el-dropdown-item command="closeAll" :disabled="!canCloseAll">
-              <Icon
-                icon="lucide:square-x"
-                width="14"
-                height="14"
-                style="margin-right: 6px"
-              />
+              <Icon icon="lucide:square-x" width="14" height="14" style="margin-right: 6px" />
               关闭全部
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -142,25 +101,11 @@
           @click.stop
         >
           <div class="ctx-item" @click="handleCtxRefresh">
-            <Icon
-              icon="lucide:refresh-cw"
-              width="14"
-              height="14"
-              style="margin-right: 6px"
-            />
+            <Icon icon="lucide:refresh-cw" width="14" height="14" style="margin-right: 6px" />
             刷新
           </div>
-          <div
-            v-if="contextMenuTag && !contextMenuTag.affix"
-            class="ctx-item"
-            @click="handleCtxClose"
-          >
-            <Icon
-              icon="lucide:x"
-              width="14"
-              height="14"
-              style="margin-right: 6px"
-            />
+          <div v-if="contextMenuTag && !contextMenuTag.affix" class="ctx-item" @click="handleCtxClose">
+            <Icon icon="lucide:x" width="14" height="14" style="margin-right: 6px" />
             关闭
           </div>
           <div class="ctx-item" @click="handleCtxTogglePin">
@@ -173,56 +118,20 @@
             {{ contextMenuTag?.affix ? '取消固定' : '固定' }}
           </div>
           <div class="ctx-separator" />
-          <div
-            class="ctx-item"
-            :class="{ 'is-disabled': !canCtxCloseLeft }"
-            @click="handleCtxCloseLeft"
-          >
-            <Icon
-              icon="lucide:panel-left-close"
-              width="14"
-              height="14"
-              style="margin-right: 6px"
-            />
+          <div class="ctx-item" :class="{ 'is-disabled': !canCtxCloseLeft }" @click="handleCtxCloseLeft">
+            <Icon icon="lucide:panel-left-close" width="14" height="14" style="margin-right: 6px" />
             关闭左侧
           </div>
-          <div
-            class="ctx-item"
-            :class="{ 'is-disabled': !canCtxCloseRight }"
-            @click="handleCtxCloseRight"
-          >
-            <Icon
-              icon="lucide:panel-right-close"
-              width="14"
-              height="14"
-              style="margin-right: 6px"
-            />
+          <div class="ctx-item" :class="{ 'is-disabled': !canCtxCloseRight }" @click="handleCtxCloseRight">
+            <Icon icon="lucide:panel-right-close" width="14" height="14" style="margin-right: 6px" />
             关闭右侧
           </div>
-          <div
-            class="ctx-item"
-            :class="{ 'is-disabled': !canCtxCloseOthers }"
-            @click="handleCtxCloseOthers"
-          >
-            <Icon
-              icon="lucide:list-x"
-              width="14"
-              height="14"
-              style="margin-right: 6px"
-            />
+          <div class="ctx-item" :class="{ 'is-disabled': !canCtxCloseOthers }" @click="handleCtxCloseOthers">
+            <Icon icon="lucide:list-x" width="14" height="14" style="margin-right: 6px" />
             关闭其他
           </div>
-          <div
-            class="ctx-item"
-            :class="{ 'is-disabled': !canCtxCloseAll }"
-            @click="handleCtxCloseAll"
-          >
-            <Icon
-              icon="lucide:square-x"
-              width="14"
-              height="14"
-              style="margin-right: 6px"
-            />
+          <div class="ctx-item" :class="{ 'is-disabled': !canCtxCloseAll }" @click="handleCtxCloseAll">
+            <Icon icon="lucide:square-x" width="14" height="14" style="margin-right: 6px" />
             关闭全部
           </div>
         </div>
@@ -373,11 +282,8 @@ const closableCountOnRight = (tag) => {
   if (idx === -1 || idx === views.length - 1) return 0
   return views.slice(idx + 1).filter((v) => !v.affix).length
 }
-const closableCountOthers = (tag) =>
-  tagsViewStore.visitedViews.filter((v) => v.path !== tag?.path && !v.affix)
-    .length
-const closableCountAll = () =>
-  tagsViewStore.visitedViews.filter((v) => !v.affix).length
+const closableCountOthers = (tag) => tagsViewStore.visitedViews.filter((v) => v.path !== tag?.path && !v.affix).length
+const closableCountAll = () => tagsViewStore.visitedViews.filter((v) => !v.affix).length
 
 // 下拉菜单：基于当前激活路由对应的标签进行检测
 const canCloseLeft = computed(() => closableCountOnLeft(currentTag()) > 0)
@@ -419,15 +325,9 @@ const contextMenuY = ref(0)
 const contextMenuTag = ref(null)
 
 // 右键菜单：基于右键目标标签进行检测
-const canCtxCloseLeft = computed(
-  () => closableCountOnLeft(contextMenuTag.value) > 0
-)
-const canCtxCloseRight = computed(
-  () => closableCountOnRight(contextMenuTag.value) > 0
-)
-const canCtxCloseOthers = computed(
-  () => closableCountOthers(contextMenuTag.value) > 0
-)
+const canCtxCloseLeft = computed(() => closableCountOnLeft(contextMenuTag.value) > 0)
+const canCtxCloseRight = computed(() => closableCountOnRight(contextMenuTag.value) > 0)
+const canCtxCloseOthers = computed(() => closableCountOthers(contextMenuTag.value) > 0)
 const canCtxCloseAll = computed(() => closableCountAll() > 0)
 
 const handleContextMenu = (event, tag) => {

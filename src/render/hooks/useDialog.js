@@ -94,10 +94,7 @@ export function useDialog() {
         default: () => {
           if (dialogContent == null) return null
           if (typeof dialogContent === 'string') return dialogContent
-          if (
-            typeof dialogContent === 'function' ||
-            typeof dialogContent === 'object'
-          ) {
+          if (typeof dialogContent === 'function' || typeof dialogContent === 'object') {
             return h(dialogContent, { ...componentProps, ref: componentRef })
           }
           return null
@@ -118,8 +115,7 @@ export function useDialog() {
                             exposed: componentRef.value
                           })
                         else if (item.action === 'cancel') handleClose()
-                        else if (item.action === 'confirm' && onConfirm)
-                          onConfirm()
+                        else if (item.action === 'confirm' && onConfirm) onConfirm()
                       }
                     },
                     () => item.label

@@ -6,11 +6,7 @@
       </div>
     </template>
     <template #content>
-      <div
-        v-for="item in activities"
-        :key="item.time"
-        class="social-activities-item"
-      >
+      <div v-for="item in activities" :key="item.time" class="social-activities-item">
         <span
           class="social-activities-icon"
           :style="{

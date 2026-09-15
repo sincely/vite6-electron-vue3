@@ -1,38 +1,19 @@
 <!-- 组件中心 - 二维码 -->
 <template>
   <div class="qrcode-page">
-    <PageHeader
-      title="二维码"
-      subtitle="基于 qrcode 库，支持 canvas / svg 渲染与中心 Logo"
-      icon="qrcode"
-    />
+    <PageHeader title="二维码" subtitle="基于 qrcode 库，支持 canvas / svg 渲染与中心 Logo" icon="qrcode" />
 
     <!-- 内容输入 -->
     <ElCard class="page-card">
       <div class="value-input">
         <span class="input-label">二维码内容：</span>
-        <ElInput
-          v-model="qrValue"
-          placeholder="请输入二维码内容"
-          class="input-field"
-        />
-        <ElSwitch
-          v-model="isShowLogo"
-          active-text="显示 Logo"
-          class="logo-switch"
-        />
+        <ElInput v-model="qrValue" placeholder="请输入二维码内容" class="input-field" />
+        <ElSwitch v-model="isShowLogo" active-text="显示 Logo" class="logo-switch" />
       </div>
     </ElCard>
 
     <ElRow :gutter="20">
-      <ElCol
-        v-for="preset in qrcodePresets"
-        :key="preset.title"
-        :xs="24"
-        :sm="12"
-        :md="6"
-        class="page-col"
-      >
+      <ElCol v-for="preset in qrcodePresets" :key="preset.title" :xs="24" :sm="12" :md="6" class="page-col">
         <ElCard>
           <template #header>
             <span class="card-title">{{ preset.title }}</span>

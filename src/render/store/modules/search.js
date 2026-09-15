@@ -14,9 +14,7 @@ export const useSearchStore = defineStore('search', {
     // 新增搜索历史：按 path 去重置顶，超出上限淘汰末尾
     addSearchHistory(item) {
       const record = { title: item.title, path: item.path }
-      const existIndex = this.searchHistory.findIndex(
-        (historyItem) => historyItem.path === record.path
-      )
+      const existIndex = this.searchHistory.findIndex((historyItem) => historyItem.path === record.path)
 
       if (existIndex !== -1) {
         this.searchHistory.splice(existIndex, 1)

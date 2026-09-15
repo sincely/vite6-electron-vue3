@@ -1,10 +1,6 @@
 <template>
   <div class="tree-table-page">
-    <PageHeader
-      title="树表格"
-      subtitle="TreeTable 组件演示：层级数据展示、展开收起与节点增删"
-      icon="list-tree"
-    />
+    <PageHeader title="树表格" subtitle="TreeTable 组件演示：层级数据展示、展开收起与节点增删" icon="list-tree" />
 
     <TreeTable
       ref="treeTableRef"
@@ -182,11 +178,7 @@ const handleAdd = (row, index) => {
     inputErrorMessage: '部门/人员名称不能为空'
   })
     .then(({ value }) => {
-      const newId =
-        Math.max(
-          ...flattenTree(treeTableRef.value.tableData).map((item) => item.id),
-          0
-        ) + 1
+      const newId = Math.max(...flattenTree(treeTableRef.value.tableData).map((item) => item.id), 0) + 1
       if (!row.children) {
         row.children = []
       }

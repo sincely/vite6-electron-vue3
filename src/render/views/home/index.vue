@@ -2,12 +2,7 @@
   <div class="dashboard">
     <!-- 统计卡片行 -->
     <div class="stats-grid">
-      <div
-        v-for="stat in statCards"
-        :key="stat.key"
-        class="stat-card"
-        :style="{ color: stat.color }"
-      >
+      <div v-for="stat in statCards" :key="stat.key" class="stat-card" :style="{ color: stat.color }">
         <div class="stat-card-header">
           <div class="stat-card-icon-bg">
             <el-icon class="stat-card-icon">
@@ -89,12 +84,7 @@
 defineOptions({ name: 'dashboard-home' })
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'
-import {
-  TrendCharts,
-  PieChart,
-  Histogram,
-  DataAnalysis
-} from '@element-plus/icons-vue'
+import { TrendCharts, PieChart, Histogram, DataAnalysis } from '@element-plus/icons-vue'
 
 const appStore = useAppStore()
 const { isDark } = storeToRefs(appStore)
@@ -103,10 +93,7 @@ const { isDark } = storeToRefs(appStore)
 // 颜色工具 - 读取 CSS 变量（每次调用都是最新值）
 // =============================================
 function c(name, fallback = '') {
-  return (
-    getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
-    fallback
-  )
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback
 }
 
 function makeSparkOption(data, color) {
@@ -176,10 +163,7 @@ function buildOptions() {
       trend: 12.4,
       color: primary,
       icon: 'Document',
-      sparkOption: makeSparkOption(
-        [80, 95, 70, 120, 100, 140, 130, 160],
-        primary
-      )
+      sparkOption: makeSparkOption([80, 95, 70, 120, 100, 140, 130, 160], primary)
     },
     {
       key: 'revenue',
@@ -188,10 +172,7 @@ function buildOptions() {
       trend: 8.2,
       color: success,
       icon: 'Money',
-      sparkOption: makeSparkOption(
-        [60, 80, 75, 100, 95, 120, 110, 145],
-        success
-      )
+      sparkOption: makeSparkOption([60, 80, 75, 100, 95, 120, 110, 145], success)
     },
     {
       key: 'users',

@@ -137,8 +137,7 @@ function useLoading() {
       const raw = localStorage.getItem('app')
       if (raw) {
         const theme = JSON.parse(raw)?.theme
-        if (theme === 'light' || theme === 'dark' || theme === 'auto')
-          return theme
+        if (theme === 'light' || theme === 'dark' || theme === 'auto') return theme
       }
     } catch {
       // localStorage 不可读或格式异常时使用默认值

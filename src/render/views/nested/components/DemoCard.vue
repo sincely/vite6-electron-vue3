@@ -49,12 +49,10 @@
         <li>
           中间分组路由不配置
           <code>component</code>
-          ，vue-router 会跳过该层级，页面直接渲染在布局的 router-view
-          中，keep-alive 缓存不受影响。
+          ，vue-router 会跳过该层级，页面直接渲染在布局的 router-view 中，keep-alive 缓存不受影响。
         </li>
         <li>
-          侧边栏、双列菜单、混合模式子菜单列与顶部下拉菜单均已支持多级嵌套展开，
-          可在右上角设置中切换布局模式查看效果。
+          侧边栏、双列菜单、混合模式子菜单列与顶部下拉菜单均已支持多级嵌套展开， 可在右上角设置中切换布局模式查看效果。
         </li>
       </ul>
     </div>
@@ -78,8 +76,7 @@ defineProps({
   },
   description: {
     type: String,
-    default:
-      '这是一个嵌套菜单演示页面，用于展示三级菜单的路由组织与各布局下的渲染效果。'
+    default: '这是一个嵌套菜单演示页面，用于展示三级菜单的路由组织与各布局下的渲染效果。'
   }
 })
 
@@ -230,8 +227,7 @@ const currentPath = computed(() => route.path)
 
   code {
     padding: 1px 6px;
-    font-family:
-      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 12px;
     color: var(--color-primary);
     background: var(--color-bg-input);

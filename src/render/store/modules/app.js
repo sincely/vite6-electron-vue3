@@ -62,8 +62,7 @@ export const useAppStore = defineStore('app', {
     },
     // 切换设置弹窗可见性
     toggleSettings(visible) {
-      this.settingsVisible =
-        visible === undefined ? !this.settingsVisible : visible
+      this.settingsVisible = visible === undefined ? !this.settingsVisible : visible
     },
     // 切换开机自启
     toggleAutoLaunch(autoLaunch) {
@@ -104,12 +103,8 @@ export const useAppStore = defineStore('app', {
 
       // 批量同步到 electron-store
       if (window.store) {
-        window.store
-          .set('appSettings.autoLaunch', this.autoLaunch)
-          .catch(() => {})
-        window.store
-          .set('appSettings.closeAction', this.closeAction)
-          .catch(() => {})
+        window.store.set('appSettings.autoLaunch', this.autoLaunch).catch(() => {})
+        window.store.set('appSettings.closeAction', this.closeAction).catch(() => {})
       }
     },
     async initDesktopSettings() {
@@ -167,9 +162,7 @@ export const useAppStore = defineStore('app', {
       let effectiveTheme = theme
       if (theme === 'auto') {
         // 如果是自动模式，检测系统偏好
-        const isSystemDark = window.matchMedia(
-          '(prefers-color-scheme: dark)'
-        ).matches
+        const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         effectiveTheme = isSystemDark ? 'dark' : 'light'
 
         // 监听系统主题变化
@@ -193,10 +186,7 @@ export const useAppStore = defineStore('app', {
       } else {
         // 移除监听器
         if (systemThemeListener && systemThemeMediaQuery) {
-          systemThemeMediaQuery.removeEventListener(
-            'change',
-            systemThemeListener
-          )
+          systemThemeMediaQuery.removeEventListener('change', systemThemeListener)
           systemThemeListener = null
           systemThemeMediaQuery = null
         }
@@ -246,15 +236,13 @@ export const useAppStore = defineStore('app', {
     setThemeColors(colors) {
       this.themeColors = { ...this.themeColors, ...colors }
 
-      const { primary, infoFollowPrimary, info, success, warning, error } =
-        this.themeColors
+      const { primary, infoFollowPrimary, info, success, warning, error } = this.themeColors
       const effectiveInfo = infoFollowPrimary ? primary : info
 
       const updateColor = (type, color) => {
         updateElementPlusTheme(type, color)
         // 同时更新我们自己定义的 CSS 变量
-        const cssVarName =
-          type === 'error' ? '--color-danger' : `--color-${type}`
+        const cssVarName = type === 'error' ? '--color-danger' : `--color-${type}`
         document.documentElement.style.setProperty(cssVarName, color)
       }
 

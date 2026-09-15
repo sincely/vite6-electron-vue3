@@ -1,17 +1,8 @@
 <template>
   <div class="system-page">
-    <PageHeader
-      title="角色管理"
-      subtitle="维护角色编码、权限点和账号授权范围"
-      icon="shield-check"
-    />
+    <PageHeader title="角色管理" subtitle="维护角色编码、权限点和账号授权范围" icon="shield-check" />
 
-    <DynamicSearchBar
-      :items="searchItems"
-      :params="searchParams"
-      @query="handleQuery"
-      @reset="handleReset"
-    />
+    <DynamicSearchBar :items="searchItems" :params="searchParams" @query="handleQuery" @reset="handleReset" />
 
     <AdvanceTable
       ref="tableRef"
@@ -27,9 +18,7 @@
             <SvgIcon icon-class="plus" width="14px" height="14px" />
             <span>新增角色</span>
           </el-button>
-          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-            批量删除
-          </el-button>
+          <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">批量删除</el-button>
         </div>
       </template>
 
@@ -47,10 +36,7 @@
       </template>
 
       <template #status="{ row }">
-        <span
-          class="status-badge"
-          :class="row.status === '1' ? 'is-active' : 'is-disabled'"
-        >
+        <span class="status-badge" :class="row.status === '1' ? 'is-active' : 'is-disabled'">
           <span class="status-dot" />
           {{ row.status === '1' ? '启用' : '禁用' }}
         </span>
@@ -58,32 +44,13 @@
 
       <template #action="{ row }">
         <div class="table-action">
-          <el-button
-            link
-            type="primary"
-            size="small"
-            :icon="Edit"
-            title="编辑"
-            @click="handleEdit(row)"
-          />
-          <el-button
-            link
-            type="danger"
-            size="small"
-            :icon="Delete"
-            title="删除"
-            @click="handleDelete(row)"
-          />
+          <el-button link type="primary" size="small" :icon="Edit" title="编辑" @click="handleEdit(row)" />
+          <el-button link type="danger" size="small" :icon="Delete" title="删除" @click="handleDelete(row)" />
         </div>
       </template>
     </AdvanceTable>
 
-    <ModalDialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="920px"
-      @close="handleDialogClose"
-    >
+    <ModalDialog v-model="dialogVisible" :title="dialogTitle" width="920px" @close="handleDialogClose">
       <AdvanceForm
         ref="formRef"
         v-model="formModel"
@@ -416,8 +383,7 @@ const handleBatchDelete = () => {
 
     .status-dot {
       background: var(--color-success);
-      box-shadow: 0 0 0 3px
-        color-mix(in srgb, var(--color-success), transparent 75%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success), transparent 75%);
     }
   }
 
@@ -427,8 +393,7 @@ const handleBatchDelete = () => {
 
     .status-dot {
       background: var(--color-amber);
-      box-shadow: 0 0 0 3px
-        color-mix(in srgb, var(--color-amber), transparent 75%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-amber), transparent 75%);
     }
   }
 }

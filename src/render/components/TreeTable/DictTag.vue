@@ -25,9 +25,7 @@ const dictItem = computed(() => {
   if (props.value === undefined || props.value === null) {
     return null
   }
-  return props.options.find(
-    (item) => String(item.value) === String(props.value)
-  )
+  return props.options.find((item) => String(item.value) === String(props.value))
 })
 
 const formattedValue = computed(() => {

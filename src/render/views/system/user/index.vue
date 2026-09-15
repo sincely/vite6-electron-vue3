@@ -1,17 +1,8 @@
 <template>
   <div class="system-page">
-    <PageHeader
-      title="用户管理"
-      subtitle="维护后台账号、角色归属和账号状态"
-      icon="user"
-    />
+    <PageHeader title="用户管理" subtitle="维护后台账号、角色归属和账号状态" icon="user" />
 
-    <DynamicSearchBar
-      :items="searchItems"
-      :params="searchParams"
-      @query="handleQuery"
-      @reset="handleReset"
-    />
+    <DynamicSearchBar :items="searchItems" :params="searchParams" @query="handleQuery" @reset="handleReset" />
 
     <AdvanceTable
       ref="tableRef"
@@ -26,50 +17,29 @@
           <SvgIcon icon-class="plus" width="14px" height="14px" />
           <span>新增用户</span>
         </el-button>
-        <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">
-          批量删除
-        </el-button>
+        <el-button :disabled="!selectedIds.length" @click="handleBatchDelete">批量删除</el-button>
       </template>
 
       <template #gender="{ row }">
-        <el-tag
-          :type="row.gender === '男' ? 'primary' : 'danger'"
-          effect="light"
-          round
-          size="small"
-        >
+        <el-tag :type="row.gender === '男' ? 'primary' : 'danger'" effect="light" round size="small">
           {{ row.gender }}
         </el-tag>
       </template>
 
       <template #roles="{ row }">
         <div class="role-cell">
-          <el-tag
-            v-for="role in (row.roleNames || []).slice(0, 2)"
-            :key="role"
-            size="small"
-            effect="plain"
-            round
-          >
+          <el-tag v-for="role in (row.roleNames || []).slice(0, 2)" :key="role" size="small" effect="plain" round>
             {{ role }}
           </el-tag>
-          <el-tooltip
-            v-if="(row.roleNames || []).length > 2"
-            :content="(row.roleNames || []).slice(2).join('、')"
-          >
-            <el-tag size="small" type="info" effect="plain" round>
-              +{{ (row.roleNames || []).length - 2 }}
-            </el-tag>
+          <el-tooltip v-if="(row.roleNames || []).length > 2" :content="(row.roleNames || []).slice(2).join('、')">
+            <el-tag size="small" type="info" effect="plain" round>+{{ (row.roleNames || []).length - 2 }}</el-tag>
           </el-tooltip>
           <span v-if="!row.roleNames?.length" class="text-muted">-</span>
         </div>
       </template>
 
       <template #status="{ row }">
-        <span
-          class="status-badge"
-          :class="row.status === '1' ? 'is-active' : 'is-disabled'"
-        >
+        <span class="status-badge" :class="row.status === '1' ? 'is-active' : 'is-disabled'">
           <span class="status-dot" />
           {{ row.status === '1' ? '启用' : '禁用' }}
         </span>
@@ -77,32 +47,13 @@
 
       <template #action="{ row }">
         <div class="table-action">
-          <el-button
-            link
-            type="primary"
-            size="small"
-            :icon="Edit"
-            title="编辑"
-            @click="handleEdit(row)"
-          />
-          <el-button
-            link
-            type="danger"
-            size="small"
-            :icon="Delete"
-            title="删除"
-            @click="handleDelete(row)"
-          />
+          <el-button link type="primary" size="small" :icon="Edit" title="编辑" @click="handleEdit(row)" />
+          <el-button link type="danger" size="small" :icon="Delete" title="删除" @click="handleDelete(row)" />
         </div>
       </template>
     </AdvanceTable>
 
-    <ModalDialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="860px"
-      @close="handleDialogClose"
-    >
+    <ModalDialog v-model="dialogVisible" :title="dialogTitle" width="860px" @close="handleDialogClose">
       <AdvanceForm
         ref="formRef"
         v-model="formModel"
@@ -124,13 +75,7 @@
 defineOptions({ name: 'system-user' })
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete } from '@element-plus/icons-vue'
-import {
-  createUser,
-  deleteUsers,
-  getRoleList,
-  getUserList,
-  updateUser
-} from '@/api/system'
+import { createUser, deleteUsers, getRoleList, getUserList, updateUser } from '@/api/system'
 
 const tableRef = ref()
 const formRef = ref()
@@ -484,8 +429,7 @@ onMounted(() => {
 
     .status-dot {
       background: var(--color-success);
-      box-shadow: 0 0 0 3px
-        color-mix(in srgb, var(--color-success), transparent 75%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success), transparent 75%);
     }
   }
 
@@ -495,8 +439,7 @@ onMounted(() => {
 
     .status-dot {
       background: var(--color-amber);
-      box-shadow: 0 0 0 3px
-        color-mix(in srgb, var(--color-amber), transparent 75%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-amber), transparent 75%);
     }
   }
 }

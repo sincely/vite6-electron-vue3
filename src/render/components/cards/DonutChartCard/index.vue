@@ -5,26 +5,18 @@
       <p class="donut-chart-card__title">{{ title }}</p>
       <div>
         <p class="donut-chart-card__value">{{ formatNumber(value) }}</p>
-        <div
-          class="donut-chart-card__trend"
-          :class="percentage > 0 ? 'is-up' : 'is-down'"
-        >
+        <div class="donut-chart-card__trend" :class="percentage > 0 ? 'is-up' : 'is-down'">
           {{ percentage > 0 ? '+' : '' }}{{ percentage }}%
           <span v-if="percentageLabel">{{ percentageLabel }}</span>
         </div>
       </div>
       <div class="donut-chart-card__legend">
         <div v-if="currentValue" class="donut-chart-card__legend-item">
-          <span
-            class="donut-chart-card__dot"
-            :style="{ background: sliceColor }"
-          ></span>
+          <span class="donut-chart-card__dot" :style="{ background: sliceColor }"></span>
           {{ currentValue }}
         </div>
         <div v-if="previousValue" class="donut-chart-card__legend-item">
-          <span
-            class="donut-chart-card__dot donut-chart-card__dot--prev"
-          ></span>
+          <span class="donut-chart-card__dot donut-chart-card__dot--prev"></span>
           {{ previousValue }}
         </div>
       </div>
@@ -104,17 +96,7 @@ const rebuild = () => {
   options.value = buildOptions()
 }
 onThemeChange(rebuild)
-watch(
-  () => [
-    props.data,
-    props.color,
-    props.radius,
-    props.currentValue,
-    props.previousValue
-  ],
-  rebuild,
-  { deep: true }
-)
+watch(() => [props.data, props.color, props.radius, props.currentValue, props.previousValue], rebuild, { deep: true })
 </script>
 
 <style lang="scss" scoped>

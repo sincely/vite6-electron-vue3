@@ -163,11 +163,7 @@ const jobs = [
 
   &-exp {
     color: var(--color-text-secondary);
-    background: color-mix(
-      in srgb,
-      var(--color-text-secondary),
-      transparent 88%
-    );
+    background: color-mix(in srgb, var(--color-text-secondary), transparent 88%);
   }
 }
 

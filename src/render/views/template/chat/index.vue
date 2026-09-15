@@ -14,11 +14,7 @@
 
         <!-- 排序方式 -->
         <div class="template-chat__sortbar">
-          <el-dropdown
-            trigger="click"
-            placement="bottom-start"
-            @command="handleSortCommand"
-          >
+          <el-dropdown trigger="click" placement="bottom-start" @command="handleSortCommand">
             <span class="sort-trigger">
               <span>{{ sortLabel }}</span>
               <Icon icon="lucide:chevron-down" width="14" height="14" />
@@ -43,10 +39,7 @@
           >
             <div class="contact-item__avatar">
               <img :src="item.avatar" :alt="item.name" />
-              <span
-                class="status-dot"
-                :class="item.online ? 'is-online' : 'is-offline'"
-              ></span>
+              <span class="status-dot" :class="item.online ? 'is-online' : 'is-offline'"></span>
             </div>
             <div class="contact-item__info">
               <div class="contact-item__row">
@@ -84,14 +77,7 @@
                 {{ chatStore.selectedContact?.name }}
               </span>
               <div class="header-status">
-                <span
-                  class="status-dot"
-                  :class="
-                    chatStore.selectedContact?.online
-                      ? 'is-online'
-                      : 'is-offline'
-                  "
-                ></span>
+                <span class="status-dot" :class="chatStore.selectedContact?.online ? 'is-online' : 'is-offline'"></span>
                 <span class="header-status-text">
                   {{ chatStore.selectedContact?.online ? '在线' : '离线' }}
                 </span>
@@ -121,11 +107,7 @@
               <span v-else-if="message.isMe" class="avatar-fallback">
                 {{ userInitial }}
               </span>
-              <img
-                v-else
-                :src="chatStore.selectedContact?.avatar"
-                :alt="chatStore.selectedContact?.name"
-              />
+              <img v-else :src="chatStore.selectedContact?.avatar" :alt="chatStore.selectedContact?.name" />
             </div>
             <div class="chat-message__body">
               <div class="chat-message__meta">
@@ -141,10 +123,7 @@
           <!-- 对方正在输入 -->
           <div v-if="isTyping" class="chat-message">
             <div class="chat-message__avatar">
-              <img
-                :src="chatStore.selectedContact?.avatar"
-                :alt="chatStore.selectedContact?.name"
-              />
+              <img :src="chatStore.selectedContact?.avatar" :alt="chatStore.selectedContact?.name" />
             </div>
             <div class="chat-message__body">
               <div class="chat-message__bubble chat-message__bubble--typing">
@@ -168,25 +147,10 @@
           />
           <div class="template-chat__actions">
             <div class="template-chat__tools">
-              <SvgIcon
-                icon-class="image"
-                class-name="template-chat__tool-icon"
-                width="18px"
-                height="18px"
-              />
-              <SvgIcon
-                icon-class="emoji"
-                class-name="template-chat__tool-icon"
-                width="18px"
-                height="18px"
-              />
+              <SvgIcon icon-class="image" class-name="template-chat__tool-icon" width="18px" height="18px" />
+              <SvgIcon icon-class="emoji" class-name="template-chat__tool-icon" width="18px" height="18px" />
             </div>
-            <el-button
-              type="primary"
-              :disabled="!messageText.trim()"
-              class="template-chat__send"
-              @click="sendMessage"
-            >
+            <el-button type="primary" :disabled="!messageText.trim()" class="template-chat__send" @click="sendMessage">
               发送
             </el-button>
           </div>
@@ -215,9 +179,7 @@ const avatarLoadFailed = ref(false)
 
 // 排序方式：time-按时间（最近联系在前） / name-按名称
 const sortMode = ref('time')
-const sortLabel = computed(() =>
-  sortMode.value === 'name' ? '按名称排序' : '按时间排序'
-)
+const sortLabel = computed(() => (sortMode.value === 'name' ? '按名称排序' : '按时间排序'))
 
 // 排序方式下拉命令
 const handleSortCommand = (command) => {
@@ -230,11 +192,7 @@ const handleSortCommand = (command) => {
 
 // 当前用户信息（取值逻辑同 UserDropdown）
 const displayName = computed(
-  () =>
-    userStore.userInfo?.nickname ||
-    userStore.userInfo?.name ||
-    userStore.userInfo?.username ||
-    'Admin'
+  () => userStore.userInfo?.nickname || userStore.userInfo?.name || userStore.userInfo?.username || 'Admin'
 )
 const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
@@ -245,9 +203,7 @@ const filteredContacts = computed(() => {
   let list = chatStore.contacts
   if (keyword) {
     list = list.filter(
-      (item) =>
-        item.name.toLowerCase().includes(keyword) ||
-        item.email.toLowerCase().includes(keyword)
+      (item) => item.name.toLowerCase().includes(keyword) || item.email.toLowerCase().includes(keyword)
     )
   }
 
@@ -261,12 +217,9 @@ const filteredContacts = computed(() => {
 })
 
 // 当前联系人是否正在输入
-const isTyping = computed(
-  () => !!chatStore.typingMap[chatStore.selectedContactId]
-)
+const isTyping = computed(() => !!chatStore.typingMap[chatStore.selectedContactId])
 
-const formatCurrentTime = () =>
-  new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+const formatCurrentTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -305,11 +258,7 @@ const sendMessage = () => {
 
 // 消息变化 / 打字状态变化时保持滚动到底部
 watch(
-  () => [
-    chatStore.currentMessages.length,
-    chatStore.selectedContactId,
-    isTyping.value
-  ],
+  () => [chatStore.currentMessages.length, chatStore.selectedContactId, isTyping.value],
   () => scrollToBottom()
 )
 
@@ -717,11 +666,7 @@ onMounted(() => {
     color: var(--color-text-primary);
     word-break: break-word;
     white-space: pre-wrap;
-    background: color-mix(
-      in srgb,
-      var(--color-text-secondary),
-      transparent 88%
-    );
+    background: color-mix(in srgb, var(--color-text-secondary), transparent 88%);
     border-radius: 2px 10px 10px;
 
     &--typing {

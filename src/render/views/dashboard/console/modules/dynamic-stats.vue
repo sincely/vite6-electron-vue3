@@ -11,11 +11,7 @@
     </template>
     <template #content>
       <el-scrollbar class="dynamic-stats-scroll">
-        <div
-          v-for="(item, index) in list"
-          :key="index"
-          class="dynamic-stats-item"
-        >
+        <div v-for="(item, index) in list" :key="index" class="dynamic-stats-item">
           <span class="dynamic-stats-name">{{ item.username }}</span>
           <span class="dynamic-stats-type">{{ item.type }}</span>
           <span class="dynamic-stats-target">{{ item.target }}</span>

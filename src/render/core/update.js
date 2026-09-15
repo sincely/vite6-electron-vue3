@@ -58,9 +58,7 @@ export function useUpdater() {
   const onDownloadProgress = (_event, progress) => {
     updateStore.setUpdating(true)
     updateStore.setDownloadProgress(progress?.percent ?? 0)
-    window.dispatchEvent(
-      new CustomEvent('update:download-progress', { detail: progress })
-    )
+    window.dispatchEvent(new CustomEvent('update:download-progress', { detail: progress }))
   }
 
   /**

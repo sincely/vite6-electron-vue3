@@ -75,9 +75,7 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start()
 
   // 设置页面标题
-  document.title = to.meta.title
-    ? `${to.meta.title} - 后台管理系统`
-    : '后台管理系统'
+  document.title = to.meta.title ? `${to.meta.title} - 后台管理系统` : '后台管理系统'
 
   const userStore = useUserStore()
   const { token } = userStore
@@ -159,9 +157,7 @@ function hasPermission(route, userStore) {
 
     // 检查细粒度权限
     if (route.meta.permissions) {
-      return route.meta.permissions.some((permission) =>
-        userStore.permissions.includes(permission)
-      )
+      return route.meta.permissions.some((permission) => userStore.permissions.includes(permission))
     }
   }
 

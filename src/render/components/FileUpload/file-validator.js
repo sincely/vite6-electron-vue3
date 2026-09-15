@@ -47,5 +47,4 @@ export const validateFile = (file, fileTypes = [], maxSize = 0) => {
 }
 
 /** 用于提示：把 fileTypes 数组拼接成中文顿号分隔的字符串 */
-export const getTypeLabel = (fileTypes = []) =>
-  (Array.isArray(fileTypes) ? fileTypes : []).join('、')
+export const getTypeLabel = (fileTypes = []) => (Array.isArray(fileTypes) ? fileTypes : []).join('、')

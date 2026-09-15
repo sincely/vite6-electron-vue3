@@ -22,17 +22,11 @@
               </el-icon>
             </div>
             <div class="today-sales-item-info">
-              <count-to
-                class="today-sales-item-value"
-                :target="item.value"
-                :duration="1500"
-              />
+              <count-to class="today-sales-item-value" :target="item.value" :duration="1500" />
               <p class="today-sales-item-label">{{ item.label }}</p>
               <small class="today-sales-item-change">
                 较昨天
-                <span
-                  :class="item.change.startsWith('+') ? 'text-up' : 'text-down'"
-                >
+                <span :class="item.change.startsWith('+') ? 'text-up' : 'text-down'">
                   {{ item.change }}
                 </span>
               </small>

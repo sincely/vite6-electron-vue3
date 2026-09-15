@@ -1,10 +1,5 @@
 <template>
-  <el-popover
-    placement="bottom-end"
-    trigger="click"
-    width="260"
-    popper-class="style-setting-popover"
-  >
+  <el-popover placement="bottom-end" trigger="click" width="260" popper-class="style-setting-popover">
     <template #reference>
       <span class="style-setting-trigger" title="表格样式设置">
         <Icon icon="ri:settings-line" width="18" height="18" />

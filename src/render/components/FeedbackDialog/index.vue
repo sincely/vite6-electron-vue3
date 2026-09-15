@@ -13,50 +13,26 @@
     <template #header>
       <div class="feedback-header">
         <div class="feedback-header__title">问题反馈</div>
-        <div class="feedback-header__subtitle">
-          欢迎提交功能建议或 Bug 反馈，帮助我们持续改进产品
-        </div>
+        <div class="feedback-header__subtitle">欢迎提交功能建议或 Bug 反馈，帮助我们持续改进产品</div>
       </div>
     </template>
 
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-position="top"
-      class="feedback-form"
-      @submit.prevent
-    >
+    <el-form ref="formRef" :model="form" :rules="rules" label-position="top" class="feedback-form" @submit.prevent>
       <div class="form-row">
         <el-form-item label="反馈类型" prop="type">
           <el-select v-model="form.type" placeholder="请选择反馈类型">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+            <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
         <el-form-item label="紧急程度" prop="priority">
           <el-select v-model="form.priority" placeholder="请选择紧急程度">
-            <el-option
-              v-for="item in priorityOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+            <el-option v-for="item in priorityOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
       </div>
 
       <el-form-item label="问题标题" prop="title">
-        <el-input
-          v-model="form.title"
-          placeholder="一句话描述问题或建议"
-          maxlength="100"
-          clearable
-        />
+        <el-input v-model="form.title" placeholder="一句话描述问题或建议" maxlength="100" clearable />
       </el-form-item>
 
       <el-form-item label="详细描述" prop="description">
@@ -88,11 +64,7 @@
           <el-input v-model="form.contact" placeholder="可选" clearable />
         </el-form-item>
         <el-form-item label="联系方式" prop="contactInfo">
-          <el-input
-            v-model="form.contactInfo"
-            placeholder="邮箱 / QQ / 电话，可选"
-            clearable
-          />
+          <el-input v-model="form.contactInfo" placeholder="邮箱 / QQ / 电话，可选" clearable />
         </el-form-item>
       </div>
     </el-form>
@@ -100,9 +72,7 @@
     <template #footer>
       <div class="feedback-footer">
         <el-button @click="handleLater">稍后再说</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleSubmit">
-          提交反馈
-        </el-button>
+        <el-button type="primary" :loading="submitting" @click="handleSubmit">提交反馈</el-button>
       </div>
     </template>
   </el-dialog>
@@ -177,23 +147,13 @@ const getEnvInfo = () => {
 }
 
 const buildIssueUrl = () => {
-  const {
-    type,
-    priority,
-    title,
-    description,
-    expectation,
-    contact,
-    contactInfo
-  } = form.value
+  const { type, priority, title, description, expectation, contact, contactInfo } = form.value
   const body = [
     `## 反馈类型\n${type}`,
     `## 紧急程度\n${priority}`,
     `## 详细描述\n${description}`,
     expectation ? `## 期望表现\n${expectation}` : '',
-    contact || contactInfo
-      ? `## 联系方式\n${contact || '-'} ${contactInfo || ''}`.trim()
-      : '',
+    contact || contactInfo ? `## 联系方式\n${contact || '-'} ${contactInfo || ''}`.trim() : '',
     `## 环境信息\n${getEnvInfo()}`
   ]
     .filter(Boolean)
@@ -217,9 +177,7 @@ const handleSubmit = async () => {
   try {
     // window.open 会被主进程 setWindowOpenHandler 拦截并交给系统浏览器打开
     window.open(buildIssueUrl(), '_blank', 'noopener')
-    ElMessage.success(
-      '感谢反馈！已为你打开 GitHub Issues 页面，点击提交即可完成'
-    )
+    ElMessage.success('感谢反馈！已为你打开 GitHub Issues 页面，点击提交即可完成')
     visible.value = false
   } finally {
     submitting.value = false

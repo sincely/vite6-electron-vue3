@@ -1,10 +1,6 @@
 <template>
   <div class="switch-role-page">
-    <PageHeader
-      title="切换角色"
-      subtitle="一键切换登录账号，体验不同角色下的菜单可见性与按钮权限差异"
-      icon="user"
-    />
+    <PageHeader title="切换角色" subtitle="一键切换登录账号，体验不同角色下的菜单可见性与按钮权限差异" icon="user" />
 
     <!-- 当前账号信息 -->
     <el-card shadow="never" class="role-card">
@@ -13,38 +9,23 @@
           <span class="current-label">当前账号</span>
           <span class="current-name">
             {{ userStore.userInfo?.realName || '未登录' }}
-            <span class="current-username">
-              （{{ userStore.userInfo?.username || '-' }}）
-            </span>
+            <span class="current-username">（{{ userStore.userInfo?.username || '-' }}）</span>
           </span>
         </div>
         <div class="current-user-meta">
           <div class="meta-item">
             <span class="meta-label">角色</span>
-            <el-tag
-              v-for="role in userStore.roles"
-              :key="role"
-              size="small"
-              type="primary"
-              effect="light"
-            >
+            <el-tag v-for="role in userStore.roles" :key="role" size="small" type="primary" effect="light">
               {{ role }}
             </el-tag>
             <span v-if="!userStore.roles.length" class="meta-empty">无</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">权限码</span>
-            <el-tag
-              v-for="perm in userStore.permissions"
-              :key="perm"
-              size="small"
-              effect="plain"
-            >
+            <el-tag v-for="perm in userStore.permissions" :key="perm" size="small" effect="plain">
               {{ perm }}
             </el-tag>
-            <span v-if="!userStore.permissions.length" class="meta-empty">
-              无
-            </span>
+            <span v-if="!userStore.permissions.length" class="meta-empty">无</span>
           </div>
         </div>
       </div>
@@ -67,23 +48,11 @@
             <span class="account-name">{{ account.name }}</span>
             <span class="account-username">{{ account.username }}</span>
           </div>
-          <el-tag
-            v-if="account.username === currentUsername"
-            size="small"
-            type="success"
-            effect="light"
-          >
-            当前
-          </el-tag>
+          <el-tag v-if="account.username === currentUsername" size="small" type="success" effect="light">当前</el-tag>
         </div>
         <p class="account-desc">{{ account.desc }}</p>
         <div class="account-roles">
-          <el-tag
-            v-for="role in account.roles"
-            :key="role"
-            size="small"
-            effect="plain"
-          >
+          <el-tag v-for="role in account.roles" :key="role" size="small" effect="plain">
             {{ role }}
           </el-tag>
         </div>
@@ -94,11 +63,7 @@
           :disabled="account.username === currentUsername"
           plain
         >
-          {{
-            account.username === currentUsername
-              ? '已登录该账号'
-              : '切换到该账号'
-          }}
+          {{ account.username === currentUsername ? '已登录该账号' : '切换到该账号' }}
         </el-button>
       </div>
     </div>

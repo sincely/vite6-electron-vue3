@@ -1,27 +1,17 @@
 <!-- 柱状图卡片：数值 + 涨跌 + 迷你/大图表 -->
 <template>
-  <div
-    class="bar-chart-card"
-    :class="{ 'bar-chart-card--mini': isMiniChart }"
-    :style="{ height: `${height}rem` }"
-  >
+  <div class="bar-chart-card" :class="{ 'bar-chart-card--mini': isMiniChart }" :style="{ height: `${height}rem` }">
     <div class="bar-chart-card__header">
       <div>
         <p class="bar-chart-card__value">{{ value }}</p>
         <p class="bar-chart-card__label">{{ label }}</p>
       </div>
-      <div
-        class="bar-chart-card__trend"
-        :class="percentage > 0 ? 'is-up' : 'is-down'"
-      >
+      <div class="bar-chart-card__trend" :class="percentage > 0 ? 'is-up' : 'is-down'">
         {{ percentage > 0 ? '+' : '' }}{{ percentage }}%
       </div>
       <div v-if="date" class="bar-chart-card__date">{{ date }}</div>
     </div>
-    <div
-      class="bar-chart-card__chart"
-      :style="isMiniChart ? {} : { height: `calc(${height}rem - 5rem)` }"
-    >
+    <div class="bar-chart-card__chart" :style="isMiniChart ? {} : { height: `calc(${height}rem - 5rem)` }">
       <chart :options="options" />
     </div>
   </div>

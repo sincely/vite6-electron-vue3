@@ -15,19 +15,11 @@
 
         <!-- Login Mode Switcher -->
         <div class="login-tabs">
-          <div
-            class="tab-item"
-            :class="{ active: activeTab === 'account' }"
-            @click="updateActiveTab('account')"
-          >
+          <div class="tab-item" :class="{ active: activeTab === 'account' }" @click="updateActiveTab('account')">
             <span class="tab-text">账号登录</span>
             <div v-if="activeTab === 'account'" class="active-indicator"></div>
           </div>
-          <div
-            class="tab-item"
-            :class="{ active: activeTab === 'qrcode' }"
-            @click="updateActiveTab('qrcode')"
-          >
+          <div class="tab-item" :class="{ active: activeTab === 'qrcode' }" @click="updateActiveTab('qrcode')">
             <span class="tab-text">扫码登录</span>
             <div v-if="activeTab === 'qrcode'" class="active-indicator"></div>
           </div>
@@ -84,11 +76,7 @@ const updateActiveTab = (tab) => {
     width: 600px;
     height: 600px;
     content: '';
-    background: radial-gradient(
-      circle,
-      var(--brand-accent-soft) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, var(--brand-accent-soft) 0%, transparent 70%);
     filter: blur(80px);
     opacity: 0.6;
     animation: float 10s ease-in-out infinite alternate;
@@ -101,11 +89,7 @@ const updateActiveTab = (tab) => {
     width: 500px;
     height: 500px;
     content: '';
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-success), transparent 85%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-success), transparent 85%) 0%, transparent 70%);
     filter: blur(60px);
     opacity: 0.5;
     animation: float 12s ease-in-out infinite alternate-reverse;
@@ -141,11 +125,7 @@ const updateActiveTab = (tab) => {
     display: inline-flex;
     padding: 8px;
     margin-bottom: 10px;
-    background: linear-gradient(
-      135deg,
-      var(--color-bg-card),
-      var(--color-bg-hover)
-    );
+    background: linear-gradient(135deg, var(--color-bg-card), var(--color-bg-hover));
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
 

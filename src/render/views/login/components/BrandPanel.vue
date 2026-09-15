@@ -8,25 +8,15 @@
 
     <!-- 左上角品牌标识 -->
     <div class="brand-header enter-x">
-      <img
-        src="@/assets/bar/app.png"
-        alt="Lightning"
-        class="brand-header-logo"
-      />
+      <img src="@/assets/bar/app.png" alt="Lightning" class="brand-header-logo" />
       <span class="brand-header-name">Lightning</span>
     </div>
 
     <!-- 系统介绍 -->
     <div class="brand-content enter-x">
-      <img
-        src="@/assets/images/background.svg"
-        alt="Lightning"
-        class="brand-logo animate-float"
-      />
+      <img src="@/assets/images/background.svg" alt="Lightning" class="brand-logo animate-float" />
       <h2 class="brand-title">开箱即用的企业级桌面应用模版</h2>
-      <p class="brand-desc">
-        工程化、高性能、跨端一致的 Electron 桌面应用解决方案
-      </p>
+      <p class="brand-desc">工程化、高性能、跨端一致的 Electron 桌面应用解决方案</p>
       <div class="brand-tags">
         <span class="brand-tag">Electron</span>
         <span class="brand-tag">Vue 3</span>
@@ -97,11 +87,7 @@ html[data-theme='dark'] .brand-streak {
   left: -10%;
   width: 320px;
   height: 320px;
-  background: color-mix(
-    in srgb,
-    var(--brand-accent-alt, #3b82f6),
-    transparent 85%
-  );
+  background: color-mix(in srgb, var(--brand-accent-alt, #3b82f6), transparent 85%);
   animation: drift 17s ease-in-out infinite alternate-reverse;
 }
 

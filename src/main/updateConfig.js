@@ -37,25 +37,13 @@ function normalizeConfig(raw) {
     return { ...DEFAULT_CONFIG }
   }
   return {
-    schemaVersion:
-      typeof raw.schemaVersion === 'number'
-        ? raw.schemaVersion
-        : DEFAULT_CONFIG.schemaVersion,
-    eligible:
-      typeof raw.eligible === 'boolean'
-        ? raw.eligible
-        : DEFAULT_CONFIG.eligible,
+    schemaVersion: typeof raw.schemaVersion === 'number' ? raw.schemaVersion : DEFAULT_CONFIG.schemaVersion,
+    eligible: typeof raw.eligible === 'boolean' ? raw.eligible : DEFAULT_CONFIG.eligible,
     disabledClientVersions: Array.isArray(raw.disabledClientVersions)
       ? raw.disabledClientVersions
       : DEFAULT_CONFIG.disabledClientVersions,
-    autoDownload:
-      typeof raw.autoDownload === 'boolean'
-        ? raw.autoDownload
-        : DEFAULT_CONFIG.autoDownload,
-    checkOnFocus:
-      typeof raw.checkOnFocus === 'boolean'
-        ? raw.checkOnFocus
-        : DEFAULT_CONFIG.checkOnFocus
+    autoDownload: typeof raw.autoDownload === 'boolean' ? raw.autoDownload : DEFAULT_CONFIG.autoDownload,
+    checkOnFocus: typeof raw.checkOnFocus === 'boolean' ? raw.checkOnFocus : DEFAULT_CONFIG.checkOnFocus
   }
 }
 
@@ -114,10 +102,7 @@ export async function refreshUpdateConfig() {
  * 判断指定版本是否被禁用
  * 支持精确匹配（"1.0.1"）与前缀匹配（"1.0" 命中 1.0.x 系列）
  */
-export function isVersionDisabled(
-  version,
-  disabledList = config.disabledClientVersions
-) {
+export function isVersionDisabled(version, disabledList = config.disabledClientVersions) {
   if (!version || !Array.isArray(disabledList) || disabledList.length === 0) {
     return false
   }

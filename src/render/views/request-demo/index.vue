@@ -2,10 +2,7 @@
   <div class="request-demo">
     <div class="demo-header">
       <h1>🚀 Electron 请求规范演示</h1>
-      <p class="demo-subtitle">
-        渲染进程只传普通对象，主进程统一构造请求体；彻底规避跨域与 IPC
-        序列化异常
-      </p>
+      <p class="demo-subtitle">渲染进程只传普通对象，主进程统一构造请求体；彻底规避跨域与 IPC 序列化异常</p>
     </div>
 
     <el-card class="env-card" shadow="never">
@@ -26,9 +23,7 @@
           <div class="card-header">
             <el-icon :size="20"><Postcard /></el-icon>
             <span>JSON 请求</span>
-            <el-tag size="small" type="info">
-              Content-Type: application/json
-            </el-tag>
+            <el-tag size="small" type="info">Content-Type: application/json</el-tag>
           </div>
         </template>
         <el-form :model="jsonForm" label-width="80px" size="default">
@@ -36,20 +31,10 @@
             <el-input v-model="jsonForm.username" placeholder="admin" />
           </el-form-item>
           <el-form-item label="密码">
-            <el-input
-              v-model="jsonForm.password"
-              type="password"
-              placeholder="123456"
-              show-password
-            />
+            <el-input v-model="jsonForm.password" type="password" placeholder="123456" show-password />
           </el-form-item>
         </el-form>
-        <el-button
-          type="primary"
-          :icon="Postcard"
-          :loading="loading.json"
-          @click="handleJsonLogin"
-        >
+        <el-button type="primary" :icon="Postcard" :loading="loading.json" @click="handleJsonLogin">
           发起 JSON 登录
         </el-button>
         <ResponsePanel :response="lastResponse.json" />
@@ -61,9 +46,7 @@
           <div class="card-header">
             <el-icon :size="20"><Tickets /></el-icon>
             <span>表单请求</span>
-            <el-tag size="small" type="info">
-              application/x-www-form-urlencoded
-            </el-tag>
+            <el-tag size="small" type="info">application/x-www-form-urlencoded</el-tag>
           </div>
         </template>
         <el-form :model="formPayload" label-width="80px" size="default">
@@ -71,20 +54,10 @@
             <el-input v-model="formPayload.username" placeholder="admin" />
           </el-form-item>
           <el-form-item label="密码">
-            <el-input
-              v-model="formPayload.password"
-              type="password"
-              placeholder="123456"
-              show-password
-            />
+            <el-input v-model="formPayload.password" type="password" placeholder="123456" show-password />
           </el-form-item>
         </el-form>
-        <el-button
-          type="primary"
-          :icon="Tickets"
-          :loading="loading.form"
-          @click="handleFormLogin"
-        >
+        <el-button type="primary" :icon="Tickets" :loading="loading.form" @click="handleFormLogin">
           发起表单登录
         </el-button>
         <ResponsePanel :response="lastResponse.form" />
@@ -107,14 +80,7 @@
             <el-input-number v-model="queryForm.pageSize" :min="1" :max="50" />
           </el-form-item>
         </el-form>
-        <el-button
-          type="primary"
-          :icon="Search"
-          :loading="loading.list"
-          @click="handleList"
-        >
-          查询表格数据
-        </el-button>
+        <el-button type="primary" :icon="Search" :loading="loading.list" @click="handleList">查询表格数据</el-button>
         <ResponsePanel :response="lastResponse.list" />
       </el-card>
 
@@ -127,17 +93,8 @@
             <el-tag size="small" type="info">Authorization: Bearer ...</el-tag>
           </div>
         </template>
-        <p class="hint">
-          简化版不再自动注入 token —— 调用方登录后从 userStore 取 token 显式传入
-        </p>
-        <el-button
-          type="primary"
-          :icon="User"
-          :loading="loading.info"
-          @click="handleUserInfo"
-        >
-          获取当前用户
-        </el-button>
+        <p class="hint">简化版不再自动注入 token —— 调用方登录后从 userStore 取 token 显式传入</p>
+        <el-button type="primary" :icon="User" :loading="loading.info" @click="handleUserInfo">获取当前用户</el-button>
         <ResponsePanel :response="lastResponse.info" />
       </el-card>
     </div>
@@ -180,21 +137,10 @@
 
 <script setup>
 defineOptions({ name: 'request-demo' })
-import {
-  Postcard,
-  Tickets,
-  Search,
-  User,
-  Document
-} from '@element-plus/icons-vue'
+import { Postcard, Tickets, Search, User, Document } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
-import {
-  loginByJson,
-  loginByForm,
-  getTableList,
-  getUserInfo
-} from '@/api/request-demo'
+import { loginByJson, loginByForm, getTableList, getUserInfo } from '@/api/request-demo'
 import ResponsePanel from './ResponsePanel.vue'
 
 const userStore = useUserStore()

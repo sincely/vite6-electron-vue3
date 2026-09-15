@@ -1,12 +1,6 @@
 <!-- 导出 Excel 文件 -->
 <template>
-  <ElButton
-    :type="type"
-    :size="size"
-    :loading="isExporting"
-    :disabled="disabled || !hasData"
-    @click="handleExport"
-  >
+  <ElButton :type="type" :size="size" :loading="isExporting" :disabled="disabled || !hasData" @click="handleExport">
     <template #loading>
       <ElIcon class="is-loading"><Loading /></ElIcon>
       {{ loadingText }}
@@ -65,12 +59,7 @@ const props = defineProps({
   workbookOptions: { type: Object, default: () => ({}) }
 })
 
-const emit = defineEmits([
-  'before-export',
-  'export-success',
-  'export-error',
-  'export-progress'
-])
+const emit = defineEmits(['before-export', 'export-success', 'export-error', 'export-progress'])
 
 /** 导出错误类型 */
 class ExportError extends Error {
@@ -85,9 +74,7 @@ class ExportError extends Error {
 const isExporting = ref(false)
 
 /** 是否有数据可导出 */
-const hasData = computed(
-  () => Array.isArray(props.data) && props.data.length > 0
-)
+const hasData = computed(() => Array.isArray(props.data) && props.data.length > 0)
 
 /** 验证导出数据 */
 const validateData = (data) => {
@@ -100,14 +87,10 @@ const validateData = (data) => {
   }
 
   if (data.length > props.maxRows) {
-    throw new ExportError(
-      `数据行数超过限制（${props.maxRows}行）`,
-      'EXCEED_MAX_ROWS',
-      {
-        currentRows: data.length,
-        maxRows: props.maxRows
-      }
-    )
+    throw new ExportError(`数据行数超过限制（${props.maxRows}行）`, 'EXCEED_MAX_ROWS', {
+      currentRows: data.length,
+      maxRows: props.maxRows
+    })
   }
 }
 
@@ -157,18 +140,14 @@ const calculateColumnWidths = (data) => {
 
   return columns.map((column) => {
     // 使用配置的列宽度
-    const configWidth = Object.values(props.columns).find(
-      (col) => col.title === column
-    )?.width
+    const configWidth = Object.values(props.columns).find((col) => col.title === column)?.width
 
     if (configWidth) return { wch: configWidth }
 
     // 自动计算列宽度
     const maxLength = Math.max(
       column.length,
-      ...data
-        .slice(0, sampleSize)
-        .map((row) => String(row[column] || '').length)
+      ...data.slice(0, sampleSize).map((row) => String(row[column] || '').length)
     )
 
     // 限制最小和最大宽度
@@ -233,11 +212,7 @@ const exportToExcel = async (data, filename, sheetName) => {
 
     await nextTick()
   } catch (error) {
-    throw new ExportError(
-      `Excel 导出失败: ${error.message}`,
-      'EXPORT_FAILED',
-      error
-    )
+    throw new ExportError(`Excel 导出失败: ${error.message}`, 'EXPORT_FAILED', error)
   }
 }
 
@@ -261,9 +236,7 @@ const handleExport = useThrottleFn(async () => {
     }
   } catch (error) {
     const exportError =
-      error instanceof ExportError
-        ? error
-        : new ExportError(`导出失败: ${error.message}`, 'UNKNOWN_ERROR', error)
+      error instanceof ExportError ? error : new ExportError(`导出失败: ${error.message}`, 'UNKNOWN_ERROR', error)
 
     emit('export-error', exportError)
 

@@ -42,13 +42,10 @@ import { sendNotificationToRenderer } from './ipc/notification.js'
  *   打包：process.resourcesPath/icons/<platform>/...
  */
 const getIconsRoot = () =>
-  app.isPackaged
-    ? path.join(process.resourcesPath, 'icons')
-    : path.join(process.env.APP_ROOT, 'resources', 'icons')
+  app.isPackaged ? path.join(process.resourcesPath, 'icons') : path.join(process.env.APP_ROOT, 'resources', 'icons')
 
 /** 返回候选路径中第一个真实存在的文件，均不存在时返回 null */
-const pickFirstExisting = (candidates) =>
-  candidates.find((p) => p && fs.existsSync(p)) || null
+const pickFirstExisting = (candidates) => candidates.find((p) => p && fs.existsSync(p)) || null
 
 /**
  * 获取当前平台适配的通知图标
@@ -65,15 +62,9 @@ export const getNotificationIcon = () => {
 
   switch (process.platform) {
     case 'win32':
-      return pickFirstExisting([
-        path.join(iconsRoot, 'win', 'app.ico'),
-        path.join(iconsRoot, '..', 'app.png')
-      ])
+      return pickFirstExisting([path.join(iconsRoot, 'win', 'app.ico'), path.join(iconsRoot, '..', 'app.png')])
     case 'darwin':
-      return pickFirstExisting([
-        path.join(iconsRoot, 'mac', 'app.icns'),
-        path.join(iconsRoot, '..', 'app.png')
-      ])
+      return pickFirstExisting([path.join(iconsRoot, 'mac', 'app.icns'), path.join(iconsRoot, '..', 'app.png')])
     case 'linux':
       return pickFirstExisting([
         path.join(iconsRoot, 'linux', '256.png'),
@@ -133,19 +124,7 @@ const emptyHandle = (isClosed = false) => ({
  * @returns {Promise<Object>} 通知句柄 { id, close, getNative, isClosed }
  */
 const createNotification = async (options = {}) => {
-  const {
-    noNative,
-    noToast,
-    type,
-    icon,
-    onClick,
-    onClose,
-    onAction,
-    onReply,
-    onShow,
-    onFailed,
-    ...rest
-  } = options
+  const { noNative, noToast, type, icon, onClick, onClose, onAction, onReply, onShow, onFailed, ...rest } = options
 
   const title = options.title || '通知'
   const body = options.body || ''

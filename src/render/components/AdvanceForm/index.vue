@@ -1,11 +1,5 @@
 <template>
-  <el-form
-    ref="formRef"
-    v-bind="formBind"
-    :model="localModel"
-    :rules="mergedRules"
-    :disabled="!isEdit"
-  >
+  <el-form ref="formRef" v-bind="formBind" :model="localModel" :rules="mergedRules" :disabled="!isEdit">
     <el-row v-if="useGrid" v-bind="rowProps">
       <template v-for="item in visibleSchemas" :key="item.prop || item.label">
         <el-col v-bind="getColProps(item)">
@@ -14,12 +8,7 @@
               <slot :name="item.labelSlot" :item="item" :model="localModel" />
             </template>
 
-            <slot
-              v-if="item.slot"
-              :name="item.slot"
-              :item="item"
-              :model="localModel"
-            />
+            <slot v-if="item.slot" :name="item.slot" :item="item" :model="localModel" />
 
             <el-input
               v-else-if="isInput(item)"
@@ -191,17 +180,8 @@
     </el-row>
 
     <template v-else>
-      <el-form-item
-        v-for="item in visibleSchemas"
-        :key="item.prop || item.label"
-        v-bind="getFormItemProps(item)"
-      >
-        <slot
-          v-if="item.slot"
-          :name="item.slot"
-          :item="item"
-          :model="localModel"
-        />
+      <el-form-item v-for="item in visibleSchemas" :key="item.prop || item.label" v-bind="getFormItemProps(item)">
+        <slot v-if="item.slot" :name="item.slot" :item="item" :model="localModel" />
         <el-input
           v-else
           :model-value="getFieldValue(item.prop)"
@@ -350,17 +330,9 @@ const isRadioGroup = (item) => {
 }
 
 const isDateType = (item) => {
-  return [
-    'date',
-    'dates',
-    'datetime',
-    'week',
-    'month',
-    'year',
-    'daterange',
-    'monthrange',
-    'datetimerange'
-  ].includes(normalizeType(item.type))
+  return ['date', 'dates', 'datetime', 'week', 'month', 'year', 'daterange', 'monthrange', 'datetimerange'].includes(
+    normalizeType(item.type)
+  )
 }
 
 const isTimeType = (item) => {

@@ -9,17 +9,10 @@
     <el-card shadow="never" class="visibility-card">
       <div class="role-banner">
         <span class="role-banner-label">当前角色</span>
-        <el-tag
-          v-for="role in userStore.roles"
-          :key="role"
-          type="primary"
-          effect="light"
-        >
+        <el-tag v-for="role in userStore.roles" :key="role" type="primary" effect="light">
           {{ role }}
         </el-tag>
-        <span class="role-banner-tip">
-          你能看到本页面，说明当前角色在路由 meta.roles 白名单内
-        </span>
+        <span class="role-banner-tip">你能看到本页面，说明当前角色在路由 meta.roles 白名单内</span>
       </div>
     </el-card>
 
@@ -49,9 +42,7 @@
         <li>切换到「功能示例 → 切换角色」页，以 user 或 editor 账号重新登录</li>
         <li>侧边栏「功能示例」分组中将不再显示「页面可见性」菜单项</li>
         <li>全局搜索（Ctrl/Cmd + K）中也搜索不到本页面</li>
-        <li>
-          直接访问本页面地址会被路由守卫拦截，提示「当前角色无权访问该页面」并跳回工作台
-        </li>
+        <li>直接访问本页面地址会被路由守卫拦截，提示「当前角色无权访问该页面」并跳回工作台</li>
       </ul>
     </el-card>
   </div>

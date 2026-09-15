@@ -9,11 +9,7 @@
     <template #content>
       <chart :options="lineOption" height="144px" />
       <div class="hot-commodity-list">
-        <div
-          v-for="item in weeklyList"
-          :key="item.title"
-          class="hot-commodity-item"
-        >
+        <div v-for="item in weeklyList" :key="item.title" class="hot-commodity-item">
           <div class="hot-commodity-item-icon" :style="{ color: item.color }">
             <el-icon><Money /></el-icon>
           </div>
@@ -23,9 +19,7 @@
               {{ item.subtitle }}
             </span>
           </div>
-          <div class="hot-commodity-item-value" :style="{ color: item.color }">
-            +{{ item.value }}
-          </div>
+          <div class="hot-commodity-item-value" :style="{ color: item.color }">+{{ item.value }}</div>
         </div>
       </div>
     </template>

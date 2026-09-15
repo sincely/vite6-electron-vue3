@@ -1,25 +1,10 @@
 <template>
   <div class="basic-table-page">
-    <PageHeader
-      title="基础表格"
-      subtitle="AdvanceTable 最小配置：列定义、数据接口与分页，开箱即用"
-      icon="template"
-    />
+    <PageHeader title="基础表格" subtitle="AdvanceTable 最小配置：列定义、数据接口与分页，开箱即用" icon="template" />
 
     <!-- 搜索栏 -->
-    <DynamicSearchBar
-      :items="searchItems"
-      :params="searchParams"
-      @query="handleQuery"
-      @reset="handleReset"
-    />
-    <AdvanceTable
-      ref="tableRef"
-      :columns="columns"
-      :func="getTableList"
-      :config="config"
-      :params="searchParams"
-    >
+    <DynamicSearchBar :items="searchItems" :params="searchParams" @query="handleQuery" @reset="handleReset" />
+    <AdvanceTable ref="tableRef" :columns="columns" :func="getTableList" :config="config" :params="searchParams">
       <template #statusCell="{ row }">
         <el-tag :type="statusTagType(row.status)" size="small" effect="light">
           {{ row.statusLabel }}

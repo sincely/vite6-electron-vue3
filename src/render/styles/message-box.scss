@@ -22,11 +22,7 @@
     height: 180px;
     pointer-events: none;
     content: '';
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-primary), transparent 70%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-primary), transparent 70%) 0%, transparent 70%);
     border-radius: 999px;
   }
 

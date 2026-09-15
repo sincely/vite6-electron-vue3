@@ -42,28 +42,14 @@
         <el-table-column label="操作" width="90" fixed="right" align="center">
           <template #default>
             <div class="table-action">
-              <el-button
-                link
-                type="info"
-                size="small"
-                :icon="View"
-                title="查看"
-              />
-              <el-button
-                link
-                type="primary"
-                size="small"
-                :icon="Edit"
-                title="编辑"
-              />
+              <el-button link type="info" size="small" :icon="View" title="查看" />
+              <el-button link type="primary" size="small" :icon="Edit" title="编辑" />
             </div>
           </template>
         </el-table-column>
       </el-table>
       <div class="job-posts-footer">
-        <span class="job-posts-total">
-          显示 {{ filteredList.length }} 条，共 {{ posts.length }} 条记录
-        </span>
+        <span class="job-posts-total">显示 {{ filteredList.length }} 条，共 {{ posts.length }} 条记录</span>
       </div>
     </template>
   </card>
@@ -167,12 +153,7 @@ const posts = [
 const filteredList = computed(() => {
   const key = keyword.value.trim()
   if (!key) return posts
-  return posts.filter(
-    (item) =>
-      item.job.includes(key) ||
-      item.company.includes(key) ||
-      item.city.includes(key)
-  )
+  return posts.filter((item) => item.job.includes(key) || item.company.includes(key) || item.city.includes(key))
 })
 </script>
 

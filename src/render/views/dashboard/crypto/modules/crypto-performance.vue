@@ -11,9 +11,7 @@
           <span class="crypto-performance-coin-icon">₿</span>
           <div>
             <div class="crypto-performance-coin-name">比特币 - BTC</div>
-            <div class="crypto-performance-coin-desc">
-              主力币种 · 24 小时走势
-            </div>
+            <div class="crypto-performance-coin-desc">主力币种 · 24 小时走势</div>
           </div>
         </div>
         <div class="crypto-performance-price">
@@ -23,11 +21,7 @@
       </div>
       <chart :options="lineOption" height="220px" />
       <div class="crypto-performance-ohlc">
-        <div
-          v-for="item in ohlc"
-          :key="item.label"
-          class="crypto-performance-ohlc-item"
-        >
+        <div v-for="item in ohlc" :key="item.label" class="crypto-performance-ohlc-item">
           <span class="crypto-performance-ohlc-label">{{ item.label }}</span>
           <span class="crypto-performance-ohlc-value">{{ item.value }}</span>
         </div>
@@ -39,8 +33,7 @@
 <script setup>
 import { useChartTheme } from '@/hooks/useChartTheme'
 
-const { getThemeColors, tooltipBase, onThemeChange, hexToRgba } =
-  useChartTheme()
+const { getThemeColors, tooltipBase, onThemeChange, hexToRgba } = useChartTheme()
 
 /**
  * 比特币 24 小时走势
@@ -60,8 +53,8 @@ function buildOptions() {
   // 24 小时价格曲线
   const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`)
   const prices = [
-    6612, 6615, 6618, 6614, 6610, 6616, 6620, 6624, 6619, 6615, 6618, 6622,
-    6626, 6621, 6617, 6613, 6616, 6620, 6624, 6628, 6623, 6619, 6622, 6623
+    6612, 6615, 6618, 6614, 6610, 6616, 6620, 6624, 6619, 6615, 6618, 6622, 6626, 6621, 6617, 6613, 6616, 6620, 6624,
+    6628, 6623, 6619, 6622, 6623
   ]
 
   lineOption.value = {
@@ -182,11 +175,7 @@ onThemeChange(buildOptions)
       gap: 4px;
       align-items: center;
       padding: 12px 0;
-      background: color-mix(
-        in srgb,
-        var(--color-text-primary),
-        transparent 96%
-      );
+      background: color-mix(in srgb, var(--color-text-primary), transparent 96%);
       border-radius: 10px;
     }
 

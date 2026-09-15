@@ -2,18 +2,10 @@
   <a
     class="mixed-submenu-item"
     :class="{ 'mixed-submenu-item-active': isActive }"
-    :style="
-      depth > 2 ? { paddingLeft: `${12 + (depth - 2) * 12}px` } : undefined
-    "
+    :style="depth > 2 ? { paddingLeft: `${12 + (depth - 2) * 12}px` } : undefined"
     @click="handleClick"
   >
-    <Icon
-      v-if="item.icon"
-      :icon="`lucide:${item.icon}`"
-      class="mixed-submenu-icon"
-      width="14px"
-      height="14px"
-    />
+    <Icon v-if="item.icon" :icon="`lucide:${item.icon}`" class="mixed-submenu-icon" width="14px" height="14px" />
     <span v-else class="mixed-submenu-dot"></span>
     <span class="mixed-submenu-label">{{ item.label }}</span>
     <Icon
@@ -38,18 +30,9 @@
   </a>
 
   <!-- 子级分组：递归渲染更深层级（文件名即组件名，支持模板内自引用） -->
-  <div
-    v-if="item.children?.length"
-    class="mixed-submenu-group"
-    :class="{ 'mixed-submenu-group-open': isExpanded }"
-  >
+  <div v-if="item.children?.length" class="mixed-submenu-group" :class="{ 'mixed-submenu-group-open': isExpanded }">
     <div class="mixed-submenu-group-inner">
-      <MixedMenuItem
-        v-for="child in item.children"
-        :key="child.id"
-        :item="child"
-        :depth="depth + 1"
-      />
+      <MixedMenuItem v-for="child in item.children" :key="child.id" :item="child" :depth="depth + 1" />
     </div>
   </div>
 </template>
@@ -86,8 +69,7 @@ const handleClick = () => {
     toggleExpand(props.item.id)
     return
   }
-  if (props.item.link && !props.item.iframe)
-    return openExternalLink(props.item.link)
+  if (props.item.link && !props.item.iframe) return openExternalLink(props.item.link)
   router.push(props.item.route).catch(() => {})
 }
 </script>

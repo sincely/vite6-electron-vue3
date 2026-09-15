@@ -18,12 +18,7 @@
     <div class="fast-enter">
       <!-- 应用九宫格 -->
       <div class="fast-enter__apps">
-        <div
-          v-for="app in enabledApplications"
-          :key="app.name"
-          class="fast-enter__app"
-          @click="handleNavigate(app)"
-        >
+        <div v-for="app in enabledApplications" :key="app.name" class="fast-enter__app" @click="handleNavigate(app)">
           <div class="fast-enter__app-icon" :style="{ color: app.iconColor }">
             <Icon :icon="app.icon" width="22" height="22" />
           </div>
@@ -38,11 +33,7 @@
       <div class="fast-enter__links">
         <h3>快速链接</h3>
         <ul>
-          <li
-            v-for="link in enabledQuickLinks"
-            :key="link.name"
-            @click="handleNavigate(link)"
-          >
+          <li v-for="link in enabledQuickLinks" :key="link.name" @click="handleNavigate(link)">
             {{ link.name }}
           </li>
         </ul>

@@ -22,23 +22,13 @@
           class="account-select"
           @change="handleAccountChange"
         >
-          <el-option
-            v-for="option in MOCK_ACCOUNTS"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value"
-          />
+          <el-option v-for="option in MOCK_ACCOUNTS" :key="option.value" :label="option.label" :value="option.value" />
         </el-select>
       </el-form-item>
 
       <!-- vben formSchema：账号 -->
       <el-form-item prop="username">
-        <el-input
-          v-model="form.username"
-          placeholder="请输入用户名"
-          class="custom-input"
-          autocomplete="username"
-        />
+        <el-input v-model="form.username" placeholder="请输入用户名" class="custom-input" autocomplete="username" />
       </el-form-item>
 
       <!-- vben formSchema：密码 -->
@@ -73,12 +63,8 @@
 
     <!-- vben：手机号登录 + 扫码登录（outline 按钮） -->
     <div class="alt-actions">
-      <el-button class="outline-btn" @click="emit('switch', 'code')">
-        手机号登录
-      </el-button>
-      <el-button class="outline-btn" @click="emit('switch', 'qrcode')">
-        扫码登录
-      </el-button>
+      <el-button class="outline-btn" @click="emit('switch', 'code')">手机号登录</el-button>
+      <el-button class="outline-btn" @click="emit('switch', 'qrcode')">扫码登录</el-button>
     </div>
 
     <!-- vben：第三方登录 -->
@@ -159,10 +145,7 @@ const handleSubmit = async () => {
     if (!valid) return
     loading.value = true
     try {
-      localStorage.setItem(
-        REMEMBER_ME_KEY,
-        rememberMe.value ? form.username : ''
-      )
+      localStorage.setItem(REMEMBER_ME_KEY, rememberMe.value ? form.username : '')
       await userStore.loginAction({
         username: form.username,
         password: form.password

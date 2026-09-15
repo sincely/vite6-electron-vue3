@@ -2,11 +2,7 @@
 // 引擎状态（cellErrors、行标识等）仍留在组件内，这里只提供无副作用的判定逻辑
 
 // 判断值是否为空（false / 0 不算空）
-export const isEmpty = (v) =>
-  v === undefined ||
-  v === null ||
-  v === '' ||
-  (Array.isArray(v) && v.length === 0)
+export const isEmpty = (v) => v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)
 
 // 解析 required 规则：既支持列级 required，也支持 rules 内的 required
 export const resolveRules = (column) => {
@@ -41,9 +37,7 @@ export const runRule = (rule, value) => {
   if (typeof rule.validator === 'function') {
     let msg = ''
     const done = (e) => {
-      if (e)
-        msg =
-          typeof e === 'string' ? e : e.message || rule.message || '校验不通过'
+      if (e) msg = typeof e === 'string' ? e : e.message || rule.message || '校验不通过'
     }
     // 兼容 callback 风格与直接返回 false / 错误字符串两种写法
     const ret = rule.validator(rule, value, done)
@@ -53,16 +47,14 @@ export const runRule = (rule, value) => {
   }
   if (rule.min !== undefined) {
     if (rule.type === 'number') {
-      if (Number(value) < rule.min)
-        return rule.message || `不能小于 ${rule.min}`
+      if (Number(value) < rule.min) return rule.message || `不能小于 ${rule.min}`
     } else if (String(value).length < rule.min) {
       return rule.message || `长度不能少于 ${rule.min}`
     }
   }
   if (rule.max !== undefined) {
     if (rule.type === 'number') {
-      if (Number(value) > rule.max)
-        return rule.message || `不能大于 ${rule.max}`
+      if (Number(value) > rule.max) return rule.message || `不能大于 ${rule.max}`
     } else if (String(value).length > rule.max) {
       return rule.message || `长度不能超过 ${rule.max}`
     }

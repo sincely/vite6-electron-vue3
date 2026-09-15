@@ -39,12 +39,10 @@ const chartRef = ref()
 const sizeStyle = computed(() => {
   const style = {}
   if (props.width != null) {
-    style.width =
-      typeof props.width === 'number' ? `${props.width}px` : props.width
+    style.width = typeof props.width === 'number' ? `${props.width}px` : props.width
   }
   if (props.height != null) {
-    style.height =
-      typeof props.height === 'number' ? `${props.height}px` : props.height
+    style.height = typeof props.height === 'number' ? `${props.height}px` : props.height
   }
   return style
 })

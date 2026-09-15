@@ -41,12 +41,7 @@
       <div class="config-row">
         <div class="config-url">
           <span class="config-label">服务地址</span>
-          <el-input
-            v-model="url"
-            placeholder="ws://localhost:5320/ws/chat"
-            :disabled="isConnected"
-            clearable
-          />
+          <el-input v-model="url" placeholder="ws://localhost:5320/ws/chat" :disabled="isConnected" clearable />
         </div>
         <div class="config-item">
           <span class="config-label">自动重连</span>
@@ -57,17 +52,8 @@
           <el-switch v-model="enableHeartbeat" :disabled="isConnected" />
         </div>
         <div class="config-actions">
-          <el-button
-            v-if="!isConnected"
-            type="primary"
-            :loading="isConnecting"
-            @click="handleConnect"
-          >
-            连接
-          </el-button>
-          <el-button v-else type="danger" plain @click="handleDisconnect">
-            断开
-          </el-button>
+          <el-button v-if="!isConnected" type="primary" :loading="isConnecting" @click="handleConnect">连接</el-button>
+          <el-button v-else type="danger" plain @click="handleDisconnect">断开</el-button>
         </div>
       </div>
     </el-card>
@@ -88,20 +74,9 @@
           type="textarea"
           :rows="4"
           :disabled="sendType === 'ping'"
-          :placeholder="
-            sendType === 'ping'
-              ? '发送 ping 心跳，服务端将回复 pong'
-              : '输入要发送的消息内容'
-          "
+          :placeholder="sendType === 'ping' ? '发送 ping 心跳，服务端将回复 pong' : '输入要发送的消息内容'"
         />
-        <el-button
-          class="send-btn"
-          type="primary"
-          :disabled="!hasClient"
-          @click="handleSend"
-        >
-          发送
-        </el-button>
+        <el-button class="send-btn" type="primary" :disabled="!hasClient" @click="handleSend">发送</el-button>
       </el-card>
 
       <!-- 连接日志 -->
@@ -140,9 +115,7 @@
           <span class="message-text">{{ msg.text }}</span>
           <span class="message-time">{{ formatTime(msg.time) }}</span>
         </div>
-        <div v-if="!messages.length" class="log-empty">
-          暂无消息，连接后服务端会推送欢迎消息
-        </div>
+        <div v-if="!messages.length" class="log-empty">暂无消息，连接后服务端会推送欢迎消息</div>
       </div>
     </el-card>
   </div>
@@ -170,9 +143,7 @@ const hasClient = computed(() => !!client.value)
 const isConnected = computed(() => client.value?.state.connected ?? false)
 const isConnecting = computed(() => client.value?.state.connecting ?? false)
 const statusText = computed(() => client.value?.statusText.value ?? '已断开')
-const reconnectAttempts = computed(
-  () => client.value?.state.reconnectAttempts ?? 0
-)
+const reconnectAttempts = computed(() => client.value?.state.reconnectAttempts ?? 0)
 
 const statusLevel = computed(() => {
   if (isConnected.value) return 'success'

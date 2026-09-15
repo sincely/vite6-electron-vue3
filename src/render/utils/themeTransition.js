@@ -14,9 +14,7 @@
  * @param {() => void} applyTheme 主题应用函数（需同步完成 DOM 变更）
  */
 export function startThemeTransition(event, applyTheme) {
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  ).matches
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   // 不支持 View Transition 或偏好减少动态效果时直接切换
   if (typeof document.startViewTransition !== 'function' || reducedMotion) {
@@ -28,10 +26,7 @@ export function startThemeTransition(event, applyTheme) {
   const x = event?.clientX ?? window.innerWidth / 2
   const y = event?.clientY ?? window.innerHeight / 2
   // 计算点击位置距离视口最远角的半径，保证扩散的圆能覆盖整个视口
-  const endRadius = Math.hypot(
-    Math.max(x, window.innerWidth - x),
-    Math.max(y, window.innerHeight - y)
-  )
+  const endRadius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
 
   const root = document.documentElement
   root.style.setProperty('--theme-vt-x', `${x}px`)

@@ -7,11 +7,7 @@
     </template>
     <template #content>
       <el-scrollbar height="420px">
-        <div
-          v-for="(item, index) in transactions"
-          :key="index"
-          class="transaction-history-item"
-        >
+        <div v-for="(item, index) in transactions" :key="index" class="transaction-history-item">
           <span
             class="transaction-history-icon"
             :style="{
@@ -27,10 +23,7 @@
           </div>
           <div class="transaction-history-tail">
             <div class="transaction-history-amount">{{ item.amount }}</div>
-            <span
-              class="transaction-history-status"
-              :class="`is-${item.statusType}`"
-            >
+            <span class="transaction-history-status" :class="`is-${item.statusType}`">
               {{ item.status }}
             </span>
           </div>

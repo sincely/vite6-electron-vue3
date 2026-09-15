@@ -41,35 +41,15 @@
         <el-table-column label="操作" width="110" fixed="right" align="center">
           <template #default>
             <div class="table-action">
-              <el-button
-                link
-                type="info"
-                size="small"
-                :icon="View"
-                title="查看"
-              />
-              <el-button
-                link
-                type="primary"
-                size="small"
-                :icon="Edit"
-                title="编辑"
-              />
-              <el-button
-                link
-                type="danger"
-                size="small"
-                :icon="Delete"
-                title="删除"
-              />
+              <el-button link type="info" size="small" :icon="View" title="查看" />
+              <el-button link type="primary" size="small" :icon="Edit" title="编辑" />
+              <el-button link type="danger" size="small" :icon="Delete" title="删除" />
             </div>
           </template>
         </el-table-column>
       </el-table>
       <div class="applicant-list-footer">
-        <span class="applicant-list-total">
-          显示 {{ filteredList.length }} 条记录
-        </span>
+        <span class="applicant-list-total">显示 {{ filteredList.length }} 条记录</span>
         <el-pagination
           layout="prev, pager, next"
           :total="20"
@@ -157,12 +137,7 @@ const applicants = [
 const filteredList = computed(() => {
   const key = keyword.value.trim()
   if (!key) return applicants
-  return applicants.filter(
-    (item) =>
-      item.name.includes(key) ||
-      item.code.includes(key) ||
-      item.job.includes(key)
-  )
+  return applicants.filter((item) => item.name.includes(key) || item.code.includes(key) || item.job.includes(key))
 })
 </script>
 

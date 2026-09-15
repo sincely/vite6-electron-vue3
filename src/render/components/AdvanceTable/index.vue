@@ -36,24 +36,11 @@
       @header-dragend="handleHeaderDragend"
     >
       <!-- 多选列 (根据 config.selection 开启) -->
-      <el-table-column
-        v-if="mergedConfig.selection"
-        type="selection"
-        width="55"
-        :reserve-selection="true"
-      />
+      <el-table-column v-if="mergedConfig.selection" type="selection" width="55" :reserve-selection="true" />
 
-      <template
-        v-for="column in visibleColumns"
-        :key="column.prop || column.label"
-      >
+      <template v-for="column in visibleColumns" :key="column.prop || column.label">
         <!-- selection / index 列 -->
-        <el-table-column
-          v-if="column.type === 'selection'"
-          type="selection"
-          fixed
-          :width="column.width || 55"
-        />
+        <el-table-column v-if="column.type === 'selection'" type="selection" fixed :width="column.width || 55" />
         <el-table-column
           v-else-if="column.type === 'index'"
           type="index"
@@ -97,21 +84,10 @@
 
           <!-- 表头提示 -->
           <template #header>
-            <slot
-              v-if="column.headerSlot"
-              :name="column.headerSlot"
-              :column="column"
-            />
+            <slot v-if="column.headerSlot" :name="column.headerSlot" :column="column" />
             <span v-else>{{ column.label }}</span>
-            <el-tooltip
-              v-if="column.tip"
-              :content="column.tip.content"
-              placement="top"
-            >
-              <i
-                class="el-icon-question"
-                style="margin-left: 4px; color: #999"
-              ></i>
+            <el-tooltip v-if="column.tip" :content="column.tip.content" placement="top">
+              <i class="el-icon-question" style="margin-left: 4px; color: #999"></i>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -193,9 +169,7 @@ const tableStyle = reactive({
 // 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
 const headerBgCssVar = computed(() => {
   return {
-    '--smart-table-header-bg': tableStyle.headerBg
-      ? 'var(--color-bg-input)'
-      : 'transparent'
+    '--smart-table-header-bg': tableStyle.headerBg ? 'var(--color-bg-input)' : 'transparent'
   }
 })
 const tableData = ref([])
@@ -273,11 +247,7 @@ onMounted(() => {
     if (!el || typeof ResizeObserver === 'undefined') return
     layoutObserver = new ResizeObserver((entries) => {
       const width = entries[0]?.contentRect?.width ?? 0
-      if (
-        lastContainerWidth &&
-        width &&
-        Math.abs(width - lastContainerWidth) >= 1
-      ) {
+      if (lastContainerWidth && width && Math.abs(width - lastContainerWidth) >= 1) {
         resetColumnWidths()
       }
       lastContainerWidth = width
@@ -356,14 +326,8 @@ async function getList() {
     if (props.events?.formatParams) {
       finalParams = props.events.formatParams(finalParams) || finalParams
     }
-    const requestDelay = Math.max(
-      Number(props.config?.requestDelay ?? 1000) || 0,
-      0
-    )
-    const [res] = await Promise.all([
-      props.func(finalParams),
-      promiseTimeout(requestDelay)
-    ])
+    const requestDelay = Math.max(Number(props.config?.requestDelay ?? 1000) || 0, 0)
+    const [res] = await Promise.all([props.func(finalParams), promiseTimeout(requestDelay)])
 
     console.log('表格数据', res)
 
@@ -410,9 +374,7 @@ function reload() {
 // 排序变更
 function handleSortChange({ prop, order }) {
   if (mergedConfig.value.sort) {
-    const sort = order
-      ? { prop, order: order === 'ascending' ? 'asc' : 'desc' }
-      : null
+    const sort = order ? { prop, order: order === 'ascending' ? 'asc' : 'desc' } : null
     if (props.events?.onSortChange) {
       props.events.onSortChange(queryParams, sort)
     }

@@ -6,17 +6,9 @@
       icon="file-text"
     >
       <template #actions>
-        <el-switch
-          v-model="isEdit"
-          inline-prompt
-          active-text="编辑"
-          inactive-text="只读"
-          style="margin-right: 12px"
-        />
+        <el-switch v-model="isEdit" inline-prompt active-text="编辑" inactive-text="只读" style="margin-right: 12px" />
         <el-button @click="handleReset">重置</el-button>
-        <el-button type="primary" :disabled="!isEdit" @click="handleSubmit">
-          提交
-        </el-button>
+        <el-button type="primary" :disabled="!isEdit" @click="handleSubmit">提交</el-button>
       </template>
     </PageHeader>
 

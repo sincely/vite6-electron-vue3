@@ -43,17 +43,9 @@ export const findSameFile = (file, candidates) =>
  *
  * @returns {Array} 归一化后的新列表
  */
-export const syncFromModel = (
-  value,
-  currentFiles,
-  limit,
-  objectUrlMap,
-  responseUrlKey
-) => {
+export const syncFromModel = (value, currentFiles, limit, objectUrlMap, responseUrlKey) => {
   const source = Array.isArray(value) ? value : value ? [value] : []
-  const normalized = source
-    .map((item, index) => normalizeFile(item, index, responseUrlKey))
-    .filter(Boolean)
+  const normalized = source.map((item, index) => normalizeFile(item, index, responseUrlKey)).filter(Boolean)
   const limited = limit ? normalized.slice(0, limit) : normalized
 
   const next = limited.map((file) => {

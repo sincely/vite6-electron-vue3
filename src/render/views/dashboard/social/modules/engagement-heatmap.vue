@@ -19,8 +19,7 @@
 <script setup>
 import { useChartTheme } from '@/hooks/useChartTheme'
 
-const { getThemeColors, tooltipBase, onThemeChange, hexToRgba } =
-  useChartTheme()
+const { getThemeColors, tooltipBase, onThemeChange, hexToRgba } = useChartTheme()
 
 /**
  * 互动热力图：星期 x 时段
@@ -83,8 +82,7 @@ function buildOptions() {
     backgroundColor: 'transparent',
     tooltip: {
       position: 'top',
-      formatter: (params) =>
-        `${weekDays[params.value[1]]} ${hours[params.value[0]]}<br/>互动量：${params.value[2]}`,
+      formatter: (params) => `${weekDays[params.value[1]]} ${hours[params.value[0]]}<br/>互动量：${params.value[2]}`,
       ...tooltipBase()
     },
     grid: { top: 10, right: 10, left: 0, bottom: 0, containLabel: true },
@@ -107,11 +105,7 @@ function buildOptions() {
       min: 80,
       max: 600,
       inRange: {
-        color: [
-          hexToRgba(primary, 0.12).rgba,
-          hexToRgba(primary, 0.45).rgba,
-          primary
-        ]
+        color: [hexToRgba(primary, 0.12).rgba, hexToRgba(primary, 0.45).rgba, primary]
       }
     },
     series: [

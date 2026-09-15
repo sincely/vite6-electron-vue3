@@ -2,40 +2,22 @@
   <div class="ec-banner">
     <!-- 流星动效 -->
     <div class="ec-banner-meteors" aria-hidden="true">
-      <i
-        v-for="n in 8"
-        :key="n"
-        class="ec-banner-meteor"
-        :style="meteorStyle(n)"
-      />
+      <i v-for="n in 8" :key="n" class="ec-banner-meteor" :style="meteorStyle(n)" />
     </div>
 
     <div class="ec-banner-content">
-      <h2 class="ec-banner-title">
-        欢迎回来{{ userName ? ` ${userName}` : '' }}
-      </h2>
+      <h2 class="ec-banner-title">欢迎回来{{ userName ? ` ${userName}` : '' }}</h2>
       <div class="ec-banner-stats">
         <div class="ec-banner-stat ec-banner-stat--bordered">
           <p class="ec-banner-stat-value">
-            <count-to
-              class="ec-banner-stat-num"
-              :target="2340"
-              :duration="1500"
-              prefix="¥"
-              separator=","
-            />
+            <count-to class="ec-banner-stat-num" :target="2340" :duration="1500" prefix="¥" separator="," />
             <el-icon class="ec-banner-stat-arrow"><TopRight /></el-icon>
           </p>
           <p class="ec-banner-stat-label">今日销售额</p>
         </div>
         <div class="ec-banner-stat">
           <p class="ec-banner-stat-value">
-            <count-to
-              class="ec-banner-stat-num"
-              :target="35"
-              :duration="1500"
-              suffix="%"
-            />
+            <count-to class="ec-banner-stat-num" :target="35" :duration="1500" suffix="%" />
             <el-icon class="ec-banner-stat-arrow"><TopRight /></el-icon>
           </p>
           <p class="ec-banner-stat-label">较昨日</p>
@@ -56,11 +38,7 @@ const userStore = useUserStore()
 
 // 获取当前用户名（未登录时为空，仅显示欢迎语）
 const userName = computed(
-  () =>
-    userStore.userInfo?.userName ||
-    userStore.userInfo?.nickName ||
-    userStore.userInfo?.name ||
-    ''
+  () => userStore.userInfo?.userName || userStore.userInfo?.nickName || userStore.userInfo?.name || ''
 )
 
 // 流星位置与动画错峰配置
@@ -79,11 +57,7 @@ function meteorStyle(n) {
   height: 212px;
   padding: 20px 28px;
   overflow: hidden;
-  background: color-mix(
-    in srgb,
-    var(--color-primary) 10%,
-    var(--color-bg-card)
-  );
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-bg-card));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 

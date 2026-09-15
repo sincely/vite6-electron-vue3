@@ -33,16 +33,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          label="当前余额（币）"
-          prop="balance"
-          min-width="120"
-        />
-        <el-table-column
-          label="当前价格（美元）"
-          prop="price"
-          min-width="130"
-        />
+        <el-table-column label="当前余额（币）" prop="balance" min-width="120" />
+        <el-table-column label="当前价格（美元）" prop="price" min-width="130" />
         <el-table-column label="总价值（美元）" prop="total" min-width="120" />
         <el-table-column label="24小时涨跌" min-width="110">
           <template #default="{ row }">
@@ -58,17 +50,11 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="24小时成交额（美元）"
-          prop="volume"
-          min-width="150"
-        />
+        <el-table-column label="24小时成交额（美元）" prop="volume" min-width="150" />
         <el-table-column label="市场排名" prop="rank" width="90" />
       </el-table>
       <div class="portfolio-table-footer">
-        <span class="portfolio-table-total">
-          显示 {{ filteredList.length }} 条记录
-        </span>
+        <span class="portfolio-table-total">显示 {{ filteredList.length }} 条记录</span>
       </div>
     </template>
   </card>

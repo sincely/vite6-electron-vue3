@@ -23,13 +23,7 @@ const props = defineProps({
   showTooltip: { type: Boolean, default: true }
 })
 
-const {
-  isDark,
-  getDefaultColors,
-  getAnimationConfig,
-  getTooltipStyle,
-  onThemeChange
-} = useChartTheme()
+const { isDark, getDefaultColors, getAnimationConfig, getTooltipStyle, onThemeChange } = useChartTheme()
 
 const seriesColors = computed(() => props.colors || getDefaultColors())
 

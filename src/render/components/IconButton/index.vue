@@ -1,10 +1,6 @@
 <!-- 图标按钮组件 -->
 <template>
-  <div
-    class="icon-button"
-    :class="{ 'is-circle': circle }"
-    :style="{ width: size, height: size }"
-  >
+  <div class="icon-button" :class="{ 'is-circle': circle }" :style="{ width: size, height: size }">
     <Icon v-if="icon" :icon="icon" :width="iconSize" :height="iconSize" />
     <slot></slot>
   </div>

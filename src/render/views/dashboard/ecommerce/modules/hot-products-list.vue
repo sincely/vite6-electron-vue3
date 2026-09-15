@@ -12,11 +12,7 @@
           <el-table-column label="产品" prop="product" width="220">
             <template #default="{ row }">
               <div class="hot-products-list-product">
-                <img
-                  class="hot-products-list-product-img"
-                  :src="row.image"
-                  alt="product"
-                />
+                <img class="hot-products-list-product-img" :src="row.image" alt="product" />
                 <div class="hot-products-list-product-info">
                   <div class="hot-products-list-product-name">
                     {{ row.name }}
@@ -30,17 +26,12 @@
           </el-table-column>
           <el-table-column label="价格" prop="price">
             <template #default="{ row }">
-              <span class="hot-products-list-price">
-                ¥{{ row.price.toLocaleString() }}
-              </span>
+              <span class="hot-products-list-price">¥{{ row.price.toLocaleString() }}</span>
             </template>
           </el-table-column>
           <el-table-column label="库存" prop="stock">
             <template #default="{ row }">
-              <div
-                class="hot-products-list-stock"
-                :class="getStockClass(row.stock)"
-              >
+              <div class="hot-products-list-stock" :class="getStockClass(row.stock)">
                 {{ getStockStatus(row.stock) }}
               </div>
             </template>
@@ -48,11 +39,7 @@
           <el-table-column label="销量" prop="sales" />
           <el-table-column label="销售趋势" width="240">
             <template #default="{ row }">
-              <el-progress
-                :percentage="row.pro"
-                :color="row.color"
-                :stroke-width="4"
-              />
+              <el-progress :percentage="row.pro" :color="row.color" :stroke-width="4" />
             </template>
           </el-table-column>
         </el-table>

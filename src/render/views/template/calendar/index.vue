@@ -1,20 +1,12 @@
 <!-- 模板中心 - 日历：支持事件的增删改查、跨日期事件 -->
 <template>
   <div class="template-calendar-page">
-    <PageHeader
-      title="日历"
-      subtitle="点击日期添加事件，点击事件进行编辑"
-      icon="template"
-    />
+    <PageHeader title="日历" subtitle="点击日期添加事件，点击事件进行编辑" icon="template" />
 
     <div class="calendar-panel">
       <ElCalendar v-model="currentDate">
         <template #date-cell="{ data }">
-          <div
-            class="calendar-cell"
-            :class="{ 'is-selected': data.isSelected }"
-            @click="handleCellClick(data.day)"
-          >
+          <div class="calendar-cell" :class="{ 'is-selected': data.isSelected }" @click="handleCellClick(data.day)">
             <!-- 日期显示 -->
             <p class="calendar-cell__date">{{ formatDate(data.day) }}</p>
 
@@ -25,10 +17,7 @@
                 :key="`${event.date}-${event.content}`"
                 @click.stop="handleEventClick(event)"
               >
-                <div
-                  class="calendar-event"
-                  :class="`calendar-event--${event.type || 'primary'}`"
-                >
+                <div class="calendar-event" :class="`calendar-event--${event.type || 'primary'}`">
                   {{ event.content }}
                 </div>
               </div>
@@ -45,11 +34,7 @@
         </ElFormItem>
         <ElFormItem label="事件颜色">
           <ElRadioGroup v-model="eventForm.type">
-            <ElRadio
-              v-for="type in eventTypes"
-              :key="type.value"
-              :value="type.value"
-            >
+            <ElRadio v-for="type in eventTypes" :key="type.value" :value="type.value">
               {{ type.label }}
             </ElRadio>
           </ElRadioGroup>
@@ -77,9 +62,7 @@
         </ElFormItem>
       </ElForm>
       <template #footer>
-        <ElButton v-if="isEditing" type="danger" @click="handleDeleteEvent">
-          删除
-        </ElButton>
+        <ElButton v-if="isEditing" type="danger" @click="handleDeleteEvent">删除</ElButton>
         <ElButton type="primary" @click="handleSaveEvent">
           {{ isEditing ? '更新' : '添加' }}
         </ElButton>
@@ -108,8 +91,7 @@ const eventTypes = [
  */
 const monthStart = dayjs().startOf('month')
 const daysInMonth = monthStart.daysInMonth()
-const day = (n) =>
-  monthStart.add(Math.min(n, daysInMonth) - 1, 'day').format('YYYY-MM-DD')
+const day = (n) => monthStart.add(Math.min(n, daysInMonth) - 1, 'day').format('YYYY-MM-DD')
 
 const currentDate = ref(new Date())
 const dialogVisible = ref(false)
@@ -165,9 +147,7 @@ const getEvents = (currentDay) => {
   return events.value.filter((event) => {
     const eventDate = new Date(event.date)
     const cellDate = new Date(currentDay)
-    const endDate = event.endDate
-      ? new Date(event.endDate)
-      : new Date(event.date)
+    const endDate = event.endDate ? new Date(event.endDate) : new Date(event.date)
 
     return cellDate >= eventDate && cellDate <= endDate
   })
@@ -216,9 +196,7 @@ const handleCellClick = (currentDay) => {
 const handleEventClick = (event) => {
   dialogTitle.value = '编辑事件'
   eventForm.value = { ...event }
-  editingEventIndex.value = events.value.findIndex(
-    (e) => e.date === event.date && e.content === event.content
-  )
+  editingEventIndex.value = events.value.findIndex((e) => e.date === event.date && e.content === event.content)
   dialogVisible.value = true
 }
 
@@ -350,11 +328,7 @@ const handleDeleteEvent = () => {
 }
 
 :deep(.is-selected) {
-  background-color: color-mix(
-    in srgb,
-    var(--color-primary) 8%,
-    transparent
-  ) !important;
+  background-color: color-mix(in srgb, var(--color-primary) 8%, transparent) !important;
 }
 
 :deep(.el-calendar-day) {

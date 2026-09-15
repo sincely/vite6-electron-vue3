@@ -9,14 +9,7 @@ const collectExtraData = (data, context) => {
   return result && typeof result === 'object' ? result : {}
 }
 
-const requestJson = async (
-  url,
-  headers,
-  body,
-  withCredentials,
-  context,
-  data
-) => {
+const requestJson = async (url, headers, body, withCredentials, context, data) => {
   if (!url) throw new Error('未配置上传接口，请传入 action 或 api')
   const response = await fetch(url, {
     method: 'POST',
@@ -29,8 +22,7 @@ const requestJson = async (
   return text ? JSON.parse(text) : {}
 }
 
-const buildUrl = (base, suffix) =>
-  base ? `${base.replace(/\/$/, '')}${suffix}` : ''
+const buildUrl = (base, suffix) => (base ? `${base.replace(/\/$/, '')}${suffix}` : '')
 
 /**
  * 校验文件秒传 / 已上传分片信息。
@@ -89,24 +81,18 @@ export const callMerge = (context, options) => {
  * 调用方可通过 api.uploadChunk 自行实现，例如改用对象存储 SDK。
  */
 export const callUploadChunk = (context, options) => {
-  const { action, chunkUrl, api, headers, data, withCredentials, chunkField } =
-    options
+  const { action, chunkUrl, api, headers, data, withCredentials, chunkField } = options
   if (typeof api?.uploadChunk === 'function') return api.uploadChunk(context)
 
   const url = chunkUrl || action
-  if (!url)
-    return Promise.reject(
-      new Error('未配置分片上传接口，请传入 action 或 api.uploadChunk')
-    )
+  if (!url) return Promise.reject(new Error('未配置分片上传接口，请传入 action 或 api.uploadChunk'))
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     context.task.activeXhrs.add(xhr)
     xhr.open('POST', url, true)
     xhr.withCredentials = withCredentials
-    Object.entries(collectHeaders(headers)).forEach(([key, value]) =>
-      xhr.setRequestHeader(key, value)
-    )
+    Object.entries(collectHeaders(headers)).forEach(([key, value]) => xhr.setRequestHeader(key, value))
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) context.onProgress(event.loaded, event.total)
     }

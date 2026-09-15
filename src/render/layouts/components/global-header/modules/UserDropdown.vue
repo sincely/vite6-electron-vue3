@@ -120,11 +120,7 @@ const secondaryUserActions = [
 ]
 
 const displayName = computed(
-  () =>
-    userStore.userInfo?.nickname ||
-    userStore.userInfo?.name ||
-    userStore.userInfo?.username ||
-    'Admin'
+  () => userStore.userInfo?.nickname || userStore.userInfo?.name || userStore.userInfo?.username || 'Admin'
 )
 
 const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
@@ -134,9 +130,7 @@ const userEmail = computed(() => {
   const account = userStore.userInfo?.username || 'admin'
   return `${account}@lightning.app`
 })
-const userBadge = computed(() =>
-  userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'PRO'
-)
+const userBadge = computed(() => (userStore.roles?.length ? userStore.roles[0].toUpperCase() : 'PRO'))
 
 const closeUserDropdown = () => {
   userDropdownRef.value?.handleClose?.()
@@ -355,11 +349,7 @@ const handleUserAction = async (action) => {
     }
 
     &.is-danger {
-      color: color-mix(
-        in srgb,
-        var(--color-danger),
-        var(--color-text-primary) 18%
-      );
+      color: color-mix(in srgb, var(--color-danger), var(--color-text-primary) 18%);
 
       .header-user-menu__item-icon {
         color: inherit;

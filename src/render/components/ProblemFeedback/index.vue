@@ -12,13 +12,7 @@
       :title="panelOpen ? '收起反馈面板' : '问题反馈'"
       @click="panelOpen = !panelOpen"
     >
-      <Icon
-        :icon="
-          panelOpen ? 'lucide:chevrons-right' : 'lucide:message-square-text'
-        "
-        width="15"
-        height="15"
-      />
+      <Icon :icon="panelOpen ? 'lucide:chevrons-right' : 'lucide:message-square-text'" width="15" height="15" />
       <span class="pf-handle-text">问题反馈</span>
     </button>
 
@@ -28,28 +22,15 @@
         <header class="pf-panel-header">
           <div>
             <div class="pf-panel-title">问题反馈</div>
-            <div class="pf-panel-subtitle">
-              欢迎提交功能建议或 Bug，帮助我们持续改进产品
-            </div>
+            <div class="pf-panel-subtitle">欢迎提交功能建议或 Bug，帮助我们持续改进产品</div>
           </div>
-          <button
-            type="button"
-            class="pf-panel-close"
-            title="收起"
-            @click="panelOpen = false"
-          >
+          <button type="button" class="pf-panel-close" title="收起" @click="panelOpen = false">
             <Icon icon="lucide:x" width="16" height="16" />
           </button>
         </header>
 
         <div class="pf-panel-body">
-          <el-form
-            ref="formRef"
-            :model="form"
-            :rules="rules"
-            label-position="top"
-            @submit.prevent
-          >
+          <el-form ref="formRef" :model="form" :rules="rules" label-position="top" @submit.prevent>
             <el-form-item label="反馈类型" prop="type">
               <el-radio-group v-model="form.type">
                 <el-radio v-for="item in typeOptions" :key="item" :value="item">
@@ -60,23 +41,14 @@
 
             <el-form-item label="紧急程度" prop="urgency">
               <el-radio-group v-model="form.urgency">
-                <el-radio
-                  v-for="item in urgencyOptions"
-                  :key="item"
-                  :value="item"
-                >
+                <el-radio v-for="item in urgencyOptions" :key="item" :value="item">
                   {{ item }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
 
             <el-form-item label="问题标题" prop="title">
-              <el-input
-                v-model="form.title"
-                placeholder="一句话描述问题或建议"
-                maxlength="100"
-                clearable
-              />
+              <el-input v-model="form.title" placeholder="一句话描述问题或建议" maxlength="100" clearable />
             </el-form-item>
 
             <el-form-item label="详细描述" prop="description">
@@ -106,33 +78,19 @@
                 <el-input v-model="form.contact" placeholder="可选" clearable />
               </el-form-item>
               <el-form-item label="联系方式" prop="contactInfo">
-                <el-input
-                  v-model="form.contactInfo"
-                  placeholder="邮箱 / QQ / 电话，可选"
-                  clearable
-                />
+                <el-input v-model="form.contactInfo" placeholder="邮箱 / QQ / 电话，可选" clearable />
               </el-form-item>
             </div>
 
             <div class="pf-form-row">
               <el-form-item label="发生频率" prop="frequency">
                 <el-select v-model="form.frequency" placeholder="请选择">
-                  <el-option
-                    v-for="item in frequencyOptions"
-                    :key="item"
-                    :label="item"
-                    :value="item"
-                  />
+                  <el-option v-for="item in frequencyOptions" :key="item" :label="item" :value="item" />
                 </el-select>
               </el-form-item>
               <el-form-item label="影响范围" prop="scope">
                 <el-select v-model="form.scope" placeholder="请选择">
-                  <el-option
-                    v-for="item in scopeOptions"
-                    :key="item"
-                    :label="item"
-                    :value="item"
-                  />
+                  <el-option v-for="item in scopeOptions" :key="item" :label="item" :value="item" />
                 </el-select>
               </el-form-item>
             </div>
@@ -141,9 +99,7 @@
 
         <footer class="pf-panel-footer">
           <el-button @click="handleLater">稍后再说</el-button>
-          <el-button type="primary" :loading="submitting" @click="handleSubmit">
-            提交反馈
-          </el-button>
+          <el-button type="primary" :loading="submitting" @click="handleSubmit">提交反馈</el-button>
         </footer>
       </section>
     </Transition>
@@ -227,17 +183,7 @@ const getEnvInfo = () => {
 }
 
 const buildIssueUrl = () => {
-  const {
-    type,
-    urgency,
-    title,
-    description,
-    expectation,
-    contact,
-    contactInfo,
-    frequency,
-    scope
-  } = form.value
+  const { type, urgency, title, description, expectation, contact, contactInfo, frequency, scope } = form.value
   const body = [
     `## 反馈类型\n${type}`,
     `## 紧急程度\n${urgency}`,
@@ -245,9 +191,7 @@ const buildIssueUrl = () => {
     `## 发生频率\n${frequency}`,
     `## 影响范围\n${scope}`,
     expectation ? `## 期望表现\n${expectation}` : '',
-    contact || contactInfo
-      ? `## 联系方式\n${contact || '-'} ${contactInfo || ''}`.trim()
-      : '',
+    contact || contactInfo ? `## 联系方式\n${contact || '-'} ${contactInfo || ''}`.trim() : '',
     `## 环境信息\n${getEnvInfo()}`
   ]
     .filter(Boolean)
@@ -271,9 +215,7 @@ const handleSubmit = async () => {
   try {
     // window.open 会被主进程 setWindowOpenHandler 拦截并交给系统浏览器打开
     window.open(buildIssueUrl(), '_blank', 'noopener')
-    ElMessage.success(
-      '感谢反馈！已为你打开 GitHub Issues 页面，点击提交即可完成'
-    )
+    ElMessage.success('感谢反馈！已为你打开 GitHub Issues 页面，点击提交即可完成')
     panelOpen.value = false
   } finally {
     submitting.value = false

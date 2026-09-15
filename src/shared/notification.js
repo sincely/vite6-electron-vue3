@@ -18,12 +18,9 @@
  */
 
 // ─── 环境检测 ───────────────────────────────────────────────────────────
-const isMainProcess =
-  typeof process !== 'undefined' && process.type === 'browser'
+const isMainProcess = typeof process !== 'undefined' && process.type === 'browser'
 
-const isRendererProcess =
-  typeof process !== 'undefined' &&
-  (process.type === 'renderer' || process.type === 'worker')
+const isRendererProcess = typeof process !== 'undefined' && (process.type === 'renderer' || process.type === 'worker')
 
 // ─── 工具函数 ───────────────────────────────────────────────────────────
 
@@ -215,25 +212,19 @@ export function initRendererNotificationListener() {
     _rendererCallbacks.delete(notifId)
   })
 
-  window.ipcRenderer.on(
-    'native-notification-action',
-    (_event, notifId, actionIndex) => {
-      const cb = _rendererCallbacks.get(notifId)
-      if (cb?.onAction) {
-        cb.onAction(null, actionIndex)
-      }
+  window.ipcRenderer.on('native-notification-action', (_event, notifId, actionIndex) => {
+    const cb = _rendererCallbacks.get(notifId)
+    if (cb?.onAction) {
+      cb.onAction(null, actionIndex)
     }
-  )
+  })
 
-  window.ipcRenderer.on(
-    'native-notification-reply',
-    (_event, notifId, reply) => {
-      const cb = _rendererCallbacks.get(notifId)
-      if (cb?.onReply) {
-        cb.onReply(null, reply)
-      }
+  window.ipcRenderer.on('native-notification-reply', (_event, notifId, reply) => {
+    const cb = _rendererCallbacks.get(notifId)
+    if (cb?.onReply) {
+      cb.onReply(null, reply)
     }
-  )
+  })
 
   window.ipcRenderer.on('native-notification-show', (_event, notifId) => {
     const cb = _rendererCallbacks.get(notifId)
@@ -242,16 +233,13 @@ export function initRendererNotificationListener() {
     }
   })
 
-  window.ipcRenderer.on(
-    'native-notification-failed',
-    (_event, notifId, error) => {
-      const cb = _rendererCallbacks.get(notifId)
-      if (cb?.onFailed) {
-        cb.onFailed(error)
-      }
-      _rendererCallbacks.delete(notifId)
+  window.ipcRenderer.on('native-notification-failed', (_event, notifId, error) => {
+    const cb = _rendererCallbacks.get(notifId)
+    if (cb?.onFailed) {
+      cb.onFailed(error)
     }
-  )
+    _rendererCallbacks.delete(notifId)
+  })
 }
 
 // ─── 渲染进程降级：Toast 通知（不经过 IPC）───────────────────────────────

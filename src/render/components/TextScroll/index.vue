@@ -1,11 +1,6 @@
 <!-- 文字滚动公告 -->
 <template>
-  <div
-    ref="containerRef"
-    class="text-scroll"
-    :class="`text-scroll--${normalizedType}`"
-    :style="containerStyle"
-  >
+  <div ref="containerRef" class="text-scroll" :class="`text-scroll--${normalizedType}`" :style="containerStyle">
     <div class="text-scroll__side text-scroll__side--left">
       <Icon icon="ri:volume-down-line" width="18" height="18" />
     </div>
@@ -23,25 +18,20 @@
       <!-- 原始内容 -->
       <span ref="textRef" class="text-scroll__text">
         <slot>
-          <span v-html="text"></span>
+          <!-- eslint-disable-next-line vue/no-v-html -- 内容已经过 DOMPurify 净化 -->
+          <span v-html="safeText"></span>
         </slot>
       </span>
       <!-- 克隆内容用于无缝循环 -->
-      <span
-        v-if="shouldClone"
-        class="text-scroll__text text-scroll__text--clone"
-      >
+      <span v-if="shouldClone" class="text-scroll__text text-scroll__text--clone">
         <slot>
-          <span v-html="text"></span>
+          <!-- eslint-disable-next-line vue/no-v-html -- 内容已经过 DOMPurify 净化 -->
+          <span v-html="safeText"></span>
         </slot>
       </span>
     </div>
 
-    <div
-      v-if="showClose"
-      class="text-scroll__side text-scroll__side--right"
-      @click="handleClose"
-    >
+    <div v-if="showClose" class="text-scroll__side text-scroll__side--right" @click="handleClose">
       <Icon icon="ri:close-fill" width="18" height="18" />
     </div>
   </div>
@@ -49,13 +39,8 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import {
-  useElementSize,
-  useRafFn,
-  useElementHover,
-  useDebounceFn,
-  useTimeoutFn
-} from '@vueuse/core'
+import { useElementSize, useRafFn, useElementHover, useDebounceFn, useTimeoutFn } from '@vueuse/core'
+import { sanitizeHtml } from '@/utils/sanitize'
 
 defineOptions({ name: 'TextScroll' })
 
@@ -88,9 +73,10 @@ const emit = defineEmits(['close'])
 const handleClose = () => emit('close')
 
 // theme 别名映射到 primary
-const normalizedType = computed(() =>
-  props.type === 'theme' ? 'primary' : props.type
-)
+const normalizedType = computed(() => (props.type === 'theme' ? 'primary' : props.type))
+
+// text 属性支持 HTML（如公告中的链接），渲染前先净化防止 XSS
+const safeText = computed(() => sanitizeHtml(props.text))
 
 const containerRef = ref()
 const contentRef = ref()
@@ -102,16 +88,11 @@ const textSize = ref(0)
 const containerSize = ref(0)
 const shouldClone = ref(false)
 
-const isHorizontal = computed(
-  () => props.direction === 'left' || props.direction === 'right'
-)
-const isReverse = computed(
-  () => props.direction === 'right' || props.direction === 'down'
-)
+const isHorizontal = computed(() => props.direction === 'left' || props.direction === 'right')
+const isReverse = computed(() => props.direction === 'right' || props.direction === 'down')
 
 // 监听容器尺寸变化
-const { width: containerWidth, height: containerHeight } =
-  useElementSize(containerRef)
+const { width: containerWidth, height: containerHeight } = useElementSize(containerRef)
 
 // 检测鼠标悬停
 const isHovered = useElementHover(containerRef)
@@ -131,9 +112,7 @@ const containerStyle = computed(() => ({
 }))
 
 const contentStyle = computed(() => ({
-  transform: isHorizontal.value
-    ? `translateX(${currentPosition.value}px)`
-    : `translateY(${currentPosition.value}px)`,
+  transform: isHorizontal.value ? `translateX(${currentPosition.value}px)` : `translateY(${currentPosition.value}px)`,
   willChange: 'transform'
 }))
 
@@ -232,11 +211,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   font-size: 14px;
   color: var(--ts-color);
-  background-color: color-mix(
-    in srgb,
-    var(--ts-color) 8%,
-    var(--color-bg-card)
-  );
+  background-color: color-mix(in srgb, var(--ts-color) 8%, var(--color-bg-card));
   border: 1px solid color-mix(in srgb, var(--ts-color) 45%, transparent);
   border-radius: var(--radius-sm);
 
@@ -264,11 +239,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 36px;
     height: 100%;
-    background-color: color-mix(
-      in srgb,
-      var(--ts-color) 12%,
-      var(--color-bg-card)
-    );
+    background-color: color-mix(in srgb, var(--ts-color) 12%, var(--color-bg-card));
 
     &--left {
       left: 0;

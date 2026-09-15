@@ -1,17 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition name="glass-dialog">
-      <div
-        v-if="modelValue"
-        class="glass-overlay"
-        @click.self="handleOverlayClick"
-      >
-        <div
-          class="glass-dialog"
-          :style="{ width, height: height || 'auto' }"
-          role="dialog"
-          aria-modal="true"
-        >
+      <div v-if="modelValue" class="glass-overlay" @click.self="handleOverlayClick">
+        <div class="glass-dialog" :style="{ width, height: height || 'auto' }" role="dialog" aria-modal="true">
           <!-- 顶部光晕装饰 -->
           <div class="glass-dialog__glow" aria-hidden="true" />
 
@@ -26,12 +17,7 @@
                 <p v-if="subtitle" class="header-subtitle">{{ subtitle }}</p>
               </div>
             </div>
-            <button
-              v-if="showClose"
-              class="close-btn"
-              title="关闭"
-              @click="close"
-            >
+            <button v-if="showClose" class="close-btn" title="关闭" @click="close">
               <SvgIcon icon-class="close" width="16px" height="16px" />
             </button>
           </div>
@@ -134,11 +120,7 @@ const handleOverlayClick = () => {
     width: 300px;
     height: 300px;
     pointer-events: none;
-    background: radial-gradient(
-      circle,
-      var(--brand-accent-soft) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, var(--brand-accent-soft) 0%, transparent 70%);
     filter: blur(60px);
     opacity: 0.5;
   }

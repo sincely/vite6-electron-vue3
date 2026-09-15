@@ -2,9 +2,7 @@
   <div class="notification-demo">
     <div class="demo-header">
       <h1>🔔 Electron 通知系统演示</h1>
-      <p class="demo-subtitle">
-        支持原生 OS 通知 + 应用内 Toast，主进程 & 渲染进程均可使用
-      </p>
+      <p class="demo-subtitle">支持原生 OS 通知 + 应用内 Toast，主进程 & 渲染进程均可使用</p>
     </div>
 
     <div class="demo-grid">
@@ -17,18 +15,10 @@
           </div>
         </template>
         <div class="btn-group">
-          <el-button type="success" :icon="SuccessFilled" @click="sendSuccess">
-            成功通知
-          </el-button>
-          <el-button type="warning" :icon="WarningFilled" @click="sendWarning">
-            警告通知
-          </el-button>
-          <el-button type="danger" :icon="CircleCloseFilled" @click="sendError">
-            错误通知
-          </el-button>
-          <el-button type="info" :icon="InfoFilled" @click="sendInfo">
-            信息通知
-          </el-button>
+          <el-button type="success" :icon="SuccessFilled" @click="sendSuccess">成功通知</el-button>
+          <el-button type="warning" :icon="WarningFilled" @click="sendWarning">警告通知</el-button>
+          <el-button type="danger" :icon="CircleCloseFilled" @click="sendError">错误通知</el-button>
+          <el-button type="info" :icon="InfoFilled" @click="sendInfo">信息通知</el-button>
         </div>
       </el-card>
 
@@ -41,19 +31,9 @@
           </div>
         </template>
         <div class="btn-group">
-          <el-button type="primary" :icon="Bell" @click="sendToastOnly">
-            仅 Toast 通知
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="Document"
-            @click="sendToastWithLongContent"
-          >
-            长文本通知
-          </el-button>
-          <el-button type="primary" :icon="List" @click="sendMultipleToasts">
-            连续发送 5 条
-          </el-button>
+          <el-button type="primary" :icon="Bell" @click="sendToastOnly">仅 Toast 通知</el-button>
+          <el-button type="primary" :icon="Document" @click="sendToastWithLongContent">长文本通知</el-button>
+          <el-button type="primary" :icon="List" @click="sendMultipleToasts">连续发送 5 条</el-button>
         </div>
       </el-card>
 
@@ -66,30 +46,13 @@
           </div>
         </template>
         <div class="btn-group">
-          <el-button type="primary" :icon="Promotion" @click="sendNative">
-            原生通知（带回调）
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="MuteNotification"
-            @click="sendSilent"
-          >
-            静默通知
-          </el-button>
-          <el-button type="primary" :icon="Warning" @click="sendCritical">
-            紧急通知 (critical)
-          </el-button>
+          <el-button type="primary" :icon="Promotion" @click="sendNative">原生通知（带回调）</el-button>
+          <el-button type="primary" :icon="MuteNotification" @click="sendSilent">静默通知</el-button>
+          <el-button type="primary" :icon="Warning" @click="sendCritical">紧急通知 (critical)</el-button>
         </div>
         <div v-if="nativeResult" class="native-result">
-          <el-tag
-            :type="nativeResult.success ? 'success' : 'danger'"
-            size="small"
-          >
-            {{
-              nativeResult.success
-                ? '✓ 原生通知已发送'
-                : '✗ 发送失败: ' + nativeResult.error
-            }}
+          <el-tag :type="nativeResult.success ? 'success' : 'danger'" size="small">
+            {{ nativeResult.success ? '✓ 原生通知已发送' : '✗ 发送失败: ' + nativeResult.error }}
           </el-tag>
         </div>
       </el-card>
@@ -103,12 +66,8 @@
           </div>
         </template>
         <div class="btn-group">
-          <el-button type="primary" :icon="Connection" @click="sendViaPreload">
-            window.notification.show()
-          </el-button>
-          <el-button :icon="Files" @click="sendViaImport">
-            import { showNotification }
-          </el-button>
+          <el-button type="primary" :icon="Connection" @click="sendViaPreload">window.notification.show()</el-button>
+          <el-button :icon="Files" @click="sendViaImport">import { showNotification }</el-button>
         </div>
         <div class="code-hint">
           <code>window.notification.show({ title, body, onClick })</code>
@@ -142,15 +101,8 @@
           </div>
           <div class="info-item">
             <span class="info-label">macOS 特性：</span>
-            <el-tag
-              size="small"
-              :type="platformInfo.isMac ? 'success' : 'info'"
-            >
-              {{
-                platformInfo.isMac
-                  ? '✓ actions / reply / subtitle'
-                  : '仅基础功能'
-              }}
+            <el-tag size="small" :type="platformInfo.isMac ? 'success' : 'info'">
+              {{ platformInfo.isMac ? '✓ actions / reply / subtitle' : '仅基础功能' }}
             </el-tag>
           </div>
         </div>
@@ -175,10 +127,7 @@
           </div>
           <div class="info-item">
             <span class="info-label">面板可见：</span>
-            <el-tag
-              size="small"
-              :type="store.panelVisible ? 'success' : 'info'"
-            >
+            <el-tag size="small" :type="store.panelVisible ? 'success' : 'info'">
               {{ store.panelVisible ? '是' : '否' }}
             </el-tag>
           </div>
@@ -187,12 +136,8 @@
           <el-button size="small" @click="store.togglePanel()">
             {{ store.panelVisible ? '关闭' : '打开' }}通知面板
           </el-button>
-          <el-button size="small" type="warning" @click="store.markAllRead()">
-            全部已读
-          </el-button>
-          <el-button size="small" type="danger" @click="store.clear()">
-            清空通知
-          </el-button>
+          <el-button size="small" type="warning" @click="store.markAllRead()">全部已读</el-button>
+          <el-button size="small" type="danger" @click="store.clear()">清空通知</el-button>
         </div>
       </el-card>
     </div>

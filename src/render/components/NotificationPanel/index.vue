@@ -1,11 +1,6 @@
 <template>
   <Transition name="notif-panel">
-    <div
-      v-if="store.panelVisible"
-      ref="panelRef"
-      class="notif-panel"
-      @click.stop
-    >
+    <div v-if="store.panelVisible" ref="panelRef" class="notif-panel" @click.stop>
       <!-- 头部 -->
       <div class="notif-panel__header" :class="{ 'is-scrolled': isScrolled }">
         <div class="notif-panel__title-wrap">
@@ -15,12 +10,7 @@
           </span>
         </div>
         <div class="notif-panel__header-actions">
-          <button
-            v-if="store.hasUnread"
-            class="notif-text-btn"
-            title="全部标为已读"
-            @click="store.markAllRead()"
-          >
+          <button v-if="store.hasUnread" class="notif-text-btn" title="全部标为已读" @click="store.markAllRead()">
             <SvgIcon icon-class="check-check" width="13px" height="13px" />
             全部已读
           </button>
@@ -37,11 +27,7 @@
       </div>
 
       <!-- 列表 -->
-      <div
-        ref="bodyRef"
-        class="notif-panel__body"
-        @scroll.passive="onBodyScroll"
-      >
+      <div ref="bodyRef" class="notif-panel__body" @scroll.passive="onBodyScroll">
         <!-- 空状态 -->
         <div v-if="!store.list.length" class="notif-empty">
           <div class="notif-empty__badge">
@@ -52,13 +38,7 @@
         </div>
 
         <!-- 通知条目 -->
-        <TransitionGroup
-          v-else
-          name="notif-item"
-          tag="div"
-          class="notif-list"
-          appear
-        >
+        <TransitionGroup v-else name="notif-item" tag="div" class="notif-list" appear>
           <div
             v-for="(item, index) in store.list"
             :key="item.id"
@@ -68,15 +48,8 @@
             @click="store.markRead(item.id)"
           >
             <!-- 类型图标 -->
-            <div
-              class="notif-item__icon"
-              :class="`notif-item__icon--${item.type}`"
-            >
-              <SvgIcon
-                :icon-class="typeIcon(item.type)"
-                width="16px"
-                height="16px"
-              />
+            <div class="notif-item__icon" :class="`notif-item__icon--${item.type}`">
+              <SvgIcon :icon-class="typeIcon(item.type)" width="16px" height="16px" />
             </div>
 
             <!-- 内容 -->
@@ -90,11 +63,7 @@
             <span v-if="!item.read" class="notif-item__dot" />
 
             <!-- 删除 -->
-            <button
-              class="notif-item__remove"
-              title="删除"
-              @click.stop="store.remove(item.id)"
-            >
+            <button class="notif-item__remove" title="删除" @click.stop="store.remove(item.id)">
               <SvgIcon icon-class="close" width="12px" height="12px" />
             </button>
           </div>
@@ -416,21 +385,18 @@ $notif-types: (
     margin-top: 6px;
     background: var(--color-primary);
     border-radius: 50%;
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--color-primary), transparent 84%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 84%);
     animation: notif-dot-pulse 2.2s ease-in-out infinite;
   }
 
   @keyframes notif-dot-pulse {
     0%,
     100% {
-      box-shadow: 0 0 0 3px
-        color-mix(in srgb, var(--color-primary), transparent 84%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 84%);
     }
 
     50% {
-      box-shadow: 0 0 0 6px
-        color-mix(in srgb, var(--color-primary), transparent 92%);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-primary), transparent 92%);
     }
   }
 
@@ -457,8 +423,7 @@ $notif-types: (
     }
 
     &:focus-visible {
-      outline: 2px solid
-        color-mix(in srgb, var(--color-primary), transparent 50%);
+      outline: 2px solid color-mix(in srgb, var(--color-primary), transparent 50%);
       outline-offset: 1px;
       opacity: 1;
       transform: translateX(0);

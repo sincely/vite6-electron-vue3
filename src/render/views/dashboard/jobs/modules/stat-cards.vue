@@ -14,9 +14,7 @@
           </div>
         </div>
         <div class="jobs-stats-trend">
-          <span :class="item.up ? 'text-up' : 'text-down'">
-            {{ item.up ? '↑' : '↓' }} {{ item.trend }}
-          </span>
+          <span :class="item.up ? 'text-up' : 'text-down'">{{ item.up ? '↑' : '↓' }} {{ item.trend }}</span>
           <span class="jobs-stats-unit">较上月</span>
         </div>
       </template>

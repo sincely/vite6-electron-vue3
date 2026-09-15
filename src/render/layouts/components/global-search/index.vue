@@ -2,12 +2,7 @@
   <div class="global-search">
     <!-- 搜索触发按钮 -->
     <button class="search-trigger" title="搜索菜单" @click="openDialog">
-      <SvgIcon
-        icon-class="search"
-        class="search-trigger__icon"
-        width="14px"
-        height="14px"
-      />
+      <SvgIcon icon-class="search" class="search-trigger__icon" width="14px" height="14px" />
       <span class="search-trigger__text">搜索</span>
       <span class="search-trigger__kbd">{{ isMac() ? '⌘' : 'Ctrl' }} K</span>
     </button>
@@ -23,12 +18,7 @@
       @close="handleClose"
       @opened="focusInput"
     >
-      <ElInput
-        ref="searchInputRef"
-        v-model="keyword"
-        class="search-input"
-        placeholder="搜索页面名称或路径"
-      >
+      <ElInput ref="searchInputRef" v-model="keyword" class="search-input" placeholder="搜索页面名称或路径">
         <template #prefix>
           <SvgIcon icon-class="search" width="15px" height="15px" />
         </template>
@@ -74,29 +64,15 @@
               </template>
             </p>
           </div>
-          <Icon
-            v-show="activeIndex === index"
-            icon="lucide:corner-down-left"
-            class="search-item__enter"
-            width="15"
-          />
-          <span
-            v-if="!trimmedKeyword"
-            class="search-item__remove"
-            title="删除记录"
-            @click.stop="removeHistory(index)"
-          >
+          <Icon v-show="activeIndex === index" icon="lucide:corner-down-left" class="search-item__enter" width="15" />
+          <span v-if="!trimmedKeyword" class="search-item__remove" title="删除记录" @click.stop="removeHistory(index)">
             <SvgIcon icon-class="close" width="12px" height="12px" />
           </span>
         </div>
 
         <!-- 空状态 -->
         <div v-if="!displayList.length" class="search-empty">
-          {{
-            trimmedKeyword
-              ? '未找到相关菜单'
-              : '可搜索页面名称或路径，快速定位菜单'
-          }}
+          {{ trimmedKeyword ? '未找到相关菜单' : '可搜索页面名称或路径，快速定位菜单' }}
         </div>
       </ElScrollbar>
 
@@ -168,8 +144,7 @@ const menuList = computed(() => {
       if (title && route.name && !route.meta?.noLayout) {
         // 页面可见性：过滤当前角色无权访问的路由
         const roles = route.meta?.roles
-        const roleAllowed =
-          !roles?.length || roles.some((role) => userStore.roles.includes(role))
+        const roleAllowed = !roles?.length || roles.some((role) => userStore.roles.includes(role))
 
         if (roleAllowed && !list.some((item) => item.path === path)) {
           list.push({ title, path, breadcrumb: chain })
@@ -186,9 +161,7 @@ const menuList = computed(() => {
   return list
 })
 
-const menuPathMap = computed(
-  () => new Map(menuList.value.map((item) => [item.path, item]))
-)
+const menuPathMap = computed(() => new Map(menuList.value.map((item) => [item.path, item])))
 
 // 匹配评分：标题前缀 > 标题包含 > 面包屑包含 > 路径包含，未命中为 Infinity
 const matchScore = (item, kw) => {
@@ -219,9 +192,7 @@ const displayList = computed(() => {
   return trimmedKeyword.value ? searchResult.value : searchStore.searchHistory
 })
 
-const showHistoryTitle = computed(
-  () => !trimmedKeyword.value && searchStore.searchHistory.length > 0
-)
+const showHistoryTitle = computed(() => !trimmedKeyword.value && searchStore.searchHistory.length > 0)
 
 // 将文本按关键字拆分为高亮/普通片段
 const highlight = (text) => {
@@ -300,9 +271,7 @@ const handleClose = () => {
 const highlightPrev = () => {
   if (!displayList.value.length) return
   setKeyboardNavigating()
-  activeIndex.value =
-    (activeIndex.value - 1 + displayList.value.length) %
-    displayList.value.length
+  activeIndex.value = (activeIndex.value - 1 + displayList.value.length) % displayList.value.length
   scrollToActiveItem()
 }
 
@@ -390,8 +359,7 @@ const removeHistory = (index) => {
   &:hover {
     color: var(--color-text-primary);
     border-color: color-mix(in srgb, var(--color-primary), transparent 50%);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--color-primary), transparent 88%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 88%);
   }
 
   &__icon {

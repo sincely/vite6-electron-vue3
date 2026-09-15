@@ -1,8 +1,5 @@
 <template>
-  <header
-    class="title-bar"
-    :class="{ 'is-top-mode': isTopMenu, 'is-mac': isMac() }"
-  >
+  <header class="title-bar" :class="{ 'is-top-mode': isTopMenu, 'is-mac': isMac() }">
     <div class="title-bar__inner">
       <!-- 侧边栏折叠 / 子菜单栏切换 -->
       <button
@@ -17,17 +14,10 @@
       <!-- Logo 区域 (顶部菜单模式显示) -->
       <GlobalLogo v-if="isTopMenu" class="top-mode-logo" />
       <!-- 刷新当前页面：翻转 store 的 refresh，内容区销毁重建路由视图（软刷新，保留布局与已打开标签），可在设置中关闭 -->
-      <button
-        v-if="appStore.refreshBtn"
-        class="icon-btn refresh-btn"
-        title="刷新当前页面"
-        @click="handleRefresh"
-      >
+      <button v-if="appStore.refreshBtn" class="icon-btn refresh-btn" title="刷新当前页面" @click="handleRefresh">
         <SvgIcon
           icon-class="refresh"
-          :class-name="
-            isRefreshing ? 'refresh-icon is-spinning' : 'refresh-icon'
-          "
+          :class-name="isRefreshing ? 'refresh-icon is-spinning' : 'refresh-icon'"
           width="16px"
           height="16px"
         />
@@ -61,28 +51,14 @@
           <button ref="bellBtnRef" class="icon-btn" @click="handleNotice">
             <SvgIcon icon-class="notice" width="18px" height="18px" />
             <span v-if="noticeStore.hasUnread" class="notif-badge">
-              {{
-                noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount
-              }}
+              {{ noticeStore.unreadCount > 99 ? '99+' : noticeStore.unreadCount }}
             </span>
           </button>
           <NotificationPanel :anchor-ref="bellBtnRef" />
         </div>
         <!-- 主题切换 -->
-        <button
-          class="icon-btn"
-          @click="
-            appStore.toggleThemeWithTransition(
-              $event,
-              isDark ? 'light' : 'dark'
-            )
-          "
-        >
-          <SvgIcon
-            :icon-class="appStore.isDark ? 'sun' : 'moon'"
-            width="16px"
-            height="16px"
-          />
+        <button class="icon-btn" @click="appStore.toggleThemeWithTransition($event, isDark ? 'light' : 'dark')">
+          <SvgIcon :icon-class="appStore.isDark ? 'sun' : 'moon'" width="16px" height="16px" />
         </button>
         <!-- 用户头像与菜单（所有布局模式统一置于右上角） -->
         <UserDropdown />
@@ -93,17 +69,9 @@
               <SvgIcon icon-class="minus" width="16px" height="16px" />
             </button>
           </el-tooltip>
-          <el-tooltip
-            :content="isMaximized ? '向下还原' : '最大化'"
-            placement="bottom"
-            :show-after="200"
-          >
+          <el-tooltip :content="isMaximized ? '向下还原' : '最大化'" placement="bottom" :show-after="200">
             <button class="icon-btn" @click="maximize">
-              <SvgIcon
-                :icon-class="isMaximized ? 'mini' : 'max'"
-                width="16px"
-                height="16px"
-              />
+              <SvgIcon :icon-class="isMaximized ? 'mini' : 'max'" width="16px" height="16px" />
             </button>
           </el-tooltip>
           <el-tooltip content="关闭" placement="bottom" :show-after="200">
@@ -158,22 +126,16 @@ const handleRefresh = () => {
   }, 600)
 }
 
-const isTopMenu = computed(
-  () => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed'
-)
+const isTopMenu = computed(() => appStore.layoutMode === 'top' || appStore.layoutMode === 'top-mixed')
 const isDark = computed(() => appStore.isDark)
 
 // 是否显示侧边栏切换按钮（仅 left 模式，控制侧边栏折叠；
 // top 用悬停下拉、top-mixed 子菜单列固定显示、dual 第二列固定展开，均无需此按钮）
 const showSidebarToggle = computed(() => appStore.layoutMode === 'left')
 
-const toggleButtonTitle = computed(() =>
-  appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'
-)
+const toggleButtonTitle = computed(() => (appStore.sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'))
 
-const toggleIcon = computed(() =>
-  appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'
-)
+const toggleIcon = computed(() => (appStore.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close'))
 
 const handleToggleClick = () => {
   appStore.toggleSidebar()
@@ -353,13 +315,11 @@ onBeforeUnmount(() => {
 @keyframes downloaded-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0
-      color-mix(in srgb, var(--color-success), transparent 70%);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success), transparent 70%);
   }
 
   50% {
-    box-shadow: 0 0 0 4px
-      color-mix(in srgb, var(--color-success), transparent 90%);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-success), transparent 90%);
   }
 }
 
@@ -418,8 +378,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
   background: linear-gradient(135deg, var(--color-rose), var(--color-danger));
   border-radius: 999px;
-  box-shadow: 0 2px 8px -2px
-    color-mix(in srgb, var(--color-danger), transparent 50%);
+  box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--color-danger), transparent 50%);
   transform: translate(40%, -40%);
   animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }

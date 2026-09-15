@@ -1,11 +1,7 @@
 <!-- 组件中心 - 拖拽 | https://vue-draggable-plus.pages.dev/ -->
 <template>
   <div class="drag-page">
-    <PageHeader
-      title="拖拽"
-      subtitle="基于 vue-draggable-plus 的列表、过渡动画与表格拖拽排序"
-      icon="drag"
-    />
+    <PageHeader title="拖拽" subtitle="基于 vue-draggable-plus 的列表、过渡动画与表格拖拽排序" icon="drag" />
 
     <ElRow :gutter="20">
       <!-- 基础示例 -->
@@ -29,12 +25,7 @@
             <span class="card-title">过渡动画</span>
           </template>
           <VueDraggable v-model="userList" target=".sort-target" :scroll="true">
-            <TransitionGroup
-              type="transition"
-              tag="ul"
-              name="fade"
-              class="sort-target"
-            >
+            <TransitionGroup type="transition" tag="ul" name="fade" class="sort-target">
               <li v-for="item in userList" :key="item.name" class="drag-item">
                 {{ item.name }}
               </li>
@@ -62,12 +53,7 @@
       <template #header>
         <span class="card-title">指定元素拖拽排序（通过操作列手柄）</span>
       </template>
-      <VueDraggable
-        v-model="userList"
-        target="tbody"
-        handle=".handle"
-        :animation="150"
-      >
+      <VueDraggable v-model="userList" target="tbody" handle=".handle" :animation="150">
         <ElTable :data="userList">
           <ElTableColumn label="姓名" prop="name" />
           <ElTableColumn label="角色" prop="role" />

@@ -61,10 +61,7 @@ const {
 // 判断是否为多系列数据
 const isMultipleData = computed(() => {
   return (
-    Array.isArray(props.data) &&
-    props.data.length > 0 &&
-    typeof props.data[0] === 'object' &&
-    'name' in props.data[0]
+    Array.isArray(props.data) && props.data.length > 0 && typeof props.data[0] === 'object' && 'name' in props.data[0]
   )
 })
 
@@ -86,16 +83,14 @@ const maxValue = computed(() => {
 // 获取颜色配置
 function getColor(customColor, index) {
   if (customColor) return customColor
-  if (index !== undefined)
-    return seriesColors.value[index % seriesColors.value.length]
+  if (index !== undefined) return seriesColors.value[index % seriesColors.value.length]
   return getThemeColor()
 }
 
 // 多系列面积样式
 function generateAreaStyle(item, color) {
   // 有 areaStyle 配置或显式开启区域颜色时才显示
-  if (!item.areaStyle && !item.showAreaColor && !props.showAreaColor)
-    return undefined
+  if (!item.areaStyle && !item.showAreaColor && !props.showAreaColor) return undefined
 
   const areaConfig = item.areaStyle || {}
   if (areaConfig.custom) return areaConfig.custom
@@ -153,15 +148,11 @@ function buildOptions() {
     animation: true,
     animationDuration: 1300,
     animationDurationUpdate: 1300,
-    grid: getGridWithLegend(
-      props.showLegend && isMultipleData.value,
-      props.legendPosition,
-      {
-        top: 15,
-        right: 15,
-        left: 0
-      }
-    ),
+    grid: getGridWithLegend(props.showLegend && isMultipleData.value, props.legendPosition, {
+      top: 15,
+      right: 15,
+      left: 0
+    }),
     tooltip: props.showTooltip ? getTooltipStyle() : undefined,
     xAxis: {
       type: 'category',

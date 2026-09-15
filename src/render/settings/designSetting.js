@@ -10,15 +10,7 @@
  * - #F9901F：活力橙
  * - #FF80C8：樱花粉
  */
-export const appPresetColors = [
-  '#5D87FF',
-  '#B48DF3',
-  '#1D84FF',
-  '#60C041',
-  '#38C0FC',
-  '#F9901F',
-  '#FF80C8'
-]
+export const appPresetColors = ['#5D87FF', '#B48DF3', '#1D84FF', '#60C041', '#38C0FC', '#F9901F', '#FF80C8']
 
 /**
  * el-color-picker 推荐色板（兼容旧逻辑）

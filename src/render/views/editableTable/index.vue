@@ -394,11 +394,7 @@ const filteredData = computed(() => {
   return tableData.value.filter((row) => {
     if (kw && !(row.name || '').toLowerCase().includes(kw)) return false
     if (searchParams.role && row.role !== searchParams.role) return false
-    if (
-      searchParams.enabled !== '' &&
-      String(row.enabled) !== searchParams.enabled
-    )
-      return false
+    if (searchParams.enabled !== '' && String(row.enabled) !== searchParams.enabled) return false
     return true
   })
 })

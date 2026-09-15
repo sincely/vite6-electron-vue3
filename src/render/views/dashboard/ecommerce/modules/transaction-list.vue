@@ -8,15 +8,8 @@
     </template>
     <template #content>
       <el-scrollbar height="264px">
-        <div
-          v-for="(item, index) in dataList.slice(0, maxCount)"
-          :key="index"
-          class="transaction-list-item"
-        >
-          <div
-            class="transaction-list-item-icon"
-            :style="{ color: item.color }"
-          >
+        <div v-for="(item, index) in dataList.slice(0, maxCount)" :key="index" class="transaction-list-item">
+          <div class="transaction-list-item-icon" :style="{ color: item.color }">
             <el-icon>
               <component :is="item.icon" />
             </el-icon>
@@ -28,9 +21,7 @@
           <div class="transaction-list-item-time">{{ item.time }}</div>
         </div>
       </el-scrollbar>
-      <el-button class="transaction-list-more" @click="handleMore">
-        查看更多
-      </el-button>
+      <el-button class="transaction-list-more" @click="handleMore">查看更多</el-button>
     </template>
   </card>
 </template>

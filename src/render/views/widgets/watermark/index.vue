@@ -1,21 +1,14 @@
 <!-- 组件中心 - 水印 -->
 <template>
   <div class="watermark-page">
-    <PageHeader
-      title="水印"
-      subtitle="Element Plus 水印组件与全局水印开关"
-      icon="watermark"
-    />
+    <PageHeader title="水印" subtitle="Element Plus 水印组件与全局水印开关" icon="watermark" />
 
     <!-- 基础文字水印 -->
     <ElCard class="page-card">
       <template #header>
         <span class="card-title">基础文字水印</span>
       </template>
-      <ElWatermark
-        content="Lightning"
-        :font="{ color: 'rgba(128, 128, 128, 0.2)' }"
-      >
+      <ElWatermark content="Lightning" :font="{ color: 'rgba(128, 128, 128, 0.2)' }">
         <div class="watermark-area" />
       </ElWatermark>
     </ElCard>
@@ -38,12 +31,7 @@
       <template #header>
         <span class="card-title">图片水印</span>
       </template>
-      <ElWatermark
-        :image="watermarkImage"
-        :opacity="0.3"
-        :width="60"
-        :height="60"
-      >
+      <ElWatermark :image="watermarkImage" :opacity="0.3" :width="60" :height="60">
         <div class="watermark-area" />
       </ElWatermark>
     </ElCard>
@@ -77,10 +65,7 @@
         <code>settings/appSetting.js</code>
         的 watermarkContent 配置。
       </p>
-      <ElButton
-        :type="appStore.watermarkVisible ? 'danger' : 'primary'"
-        @click="handleWatermarkVisible"
-      >
+      <ElButton :type="appStore.watermarkVisible ? 'danger' : 'primary'" @click="handleWatermarkVisible">
         {{ appStore.watermarkVisible ? '隐藏全局水印' : '显示全局水印' }}
       </ElButton>
     </ElCard>

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useLockStore = defineStore('lock', {
   state: () => ({
     isLock: false, // 是否处于锁屏状态
-    lockPassword: '', // 锁屏密码（AES 加密后的密文）
+    lockPassword: '', // 锁屏密码（HMAC-SHA256 哈希值，带 hmac-sha256: 前缀）
     dialogVisible: false // 设置锁屏密码弹窗是否显示（不持久化）
   }),
   actions: {

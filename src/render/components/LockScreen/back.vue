@@ -45,13 +45,7 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-button
-            type="primary"
-            class="lock-dialog__btn"
-            @click="handleLock"
-          >
-            锁定
-          </el-button>
+          <el-button type="primary" class="lock-dialog__btn" @click="handleLock">锁定</el-button>
         </el-form>
       </div>
     </el-dialog>
@@ -107,13 +101,7 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-button
-            type="primary"
-            class="unlock-card__btn"
-            @click="handleUnlock"
-          >
-            解锁
-          </el-button>
+          <el-button type="primary" class="unlock-card__btn" @click="handleUnlock">解锁</el-button>
           <div class="unlock-card__back">
             <el-button text @click="toLogin">返回登录</el-button>
           </div>
@@ -126,17 +114,29 @@
 <script setup>
 import { Lock, Unlock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-// 仅引入 AES 相关模块，避免整包 crypto-js 拖慢首屏
-import AES from 'crypto-js/aes'
-import Utf8 from 'crypto-js/enc-utf8'
+// 使用 hash-wasm 对密码做单向哈希（HMAC-SHA256），替代 crypto-js 的可逆 AES 加密
+import { createHMAC, createSHA256 } from 'hash-wasm'
 import { useLockStore } from '@/store/modules/lock'
 import { useUserStore } from '@/store/modules/user'
 
 const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
+// 哈希前缀标识，用于区分旧版本持久化的 AES 密文
+const LOCK_HASH_PREFIX = 'hmac-sha256:'
+
+// 以 ENCRYPT_KEY 为 HMAC 密钥对密码做哈希（单向不可逆）
+const hashPassword = async (password) => {
+  const hmac = await createHMAC(createSHA256(), ENCRYPT_KEY)
+  return LOCK_HASH_PREFIX + hmac.update(password).digest('hex')
+}
 
 const lockStore = useLockStore()
 const userStore = useUserStore()
 const router = useRouter()
+
+// 兼容旧版本：历史持久化的 AES 密文无法用哈希校验，检测到后直接重置锁屏状态
+if (lockStore.isLock && lockStore.lockPassword && !lockStore.lockPassword.startsWith(LOCK_HASH_PREFIX)) {
+  lockStore.resetLock()
+}
 
 // 输入框引用
 const lockInputRef = ref(null)
@@ -157,24 +157,18 @@ const rules = {
 // 用户信息展示（与 UserDropdown 保持一致）
 const avatarLoadFailed = ref(false)
 const displayName = computed(
-  () =>
-    userStore.userInfo?.nickname ||
-    userStore.userInfo?.name ||
-    userStore.userInfo?.username ||
-    'Admin'
+  () => userStore.userInfo?.nickname || userStore.userInfo?.name || userStore.userInfo?.username || 'Admin'
 )
 const userInitial = computed(() => displayName.value.slice(0, 1).toUpperCase())
 const userAvatar = computed(() => userStore.userInfo?.avatar || '')
 
-// 校验解锁密码：解密存储的密文与输入比对
-const verifyPassword = (inputPassword, storedPassword) => {
+// 校验解锁密码：对输入做哈希后与存储的哈希值比对
+const verifyPassword = async (inputPassword, storedPassword) => {
   try {
-    const decryptedPassword = AES.decrypt(storedPassword, ENCRYPT_KEY).toString(
-      Utf8
-    )
-    return inputPassword === decryptedPassword
+    const hashedPassword = await hashPassword(inputPassword)
+    return hashedPassword === storedPassword
   } catch (error) {
-    console.error('密码解密失败:', error)
+    console.error('密码校验失败:', error)
     return false
   }
 }
@@ -185,18 +179,15 @@ const handleDialogOpen = () => {
   }, 100)
 }
 
-// 锁定：加密密码并进入锁屏状态
+// 锁定：哈希密码并进入锁屏状态
 const handleLock = async () => {
   if (!lockFormRef.value) return
 
-  await lockFormRef.value.validate((valid) => {
+  await lockFormRef.value.validate(async (valid) => {
     if (valid) {
-      const encryptedPassword = AES.encrypt(
-        lockForm.password,
-        ENCRYPT_KEY
-      ).toString()
+      const hashedPassword = await hashPassword(lockForm.password)
       lockStore.setLockStatus(true)
-      lockStore.setLockPassword(encryptedPassword)
+      lockStore.setLockPassword(hashedPassword)
       lockStore.closeLockDialog()
       lockForm.password = ''
     }
@@ -207,12 +198,9 @@ const handleLock = async () => {
 const handleUnlock = async () => {
   if (!unlockFormRef.value) return
 
-  await unlockFormRef.value.validate((valid) => {
+  await unlockFormRef.value.validate(async (valid) => {
     if (valid) {
-      const isValid = verifyPassword(
-        unlockForm.password,
-        lockStore.lockPassword
-      )
+      const isValid = await verifyPassword(unlockForm.password, lockStore.lockPassword)
 
       if (isValid) {
         lockStore.resetLock()

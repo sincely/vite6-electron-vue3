@@ -17,9 +17,7 @@ export const AUTH_PANEL_LAYOUTS = [
 
 const STORAGE_KEY = `AUTH_PANEL_LAYOUT_${location.hostname}`
 
-const initialLayout = AUTH_PANEL_LAYOUTS.some(
-  (item) => item.value === localStorage.getItem(STORAGE_KEY)
-)
+const initialLayout = AUTH_PANEL_LAYOUTS.some((item) => item.value === localStorage.getItem(STORAGE_KEY))
   ? localStorage.getItem(STORAGE_KEY)
   : 'left'
 
@@ -27,9 +25,7 @@ const authPanelLayout = ref(initialLayout)
 
 // 与 vben SUIIconButton 行为一致：触发按钮图标随当前布局联动
 const activeLayoutIcon = computed(
-  () =>
-    AUTH_PANEL_LAYOUTS.find((item) => item.value === authPanelLayout.value)
-      ?.icon || AUTH_PANEL_LAYOUTS[0].icon
+  () => AUTH_PANEL_LAYOUTS.find((item) => item.value === authPanelLayout.value)?.icon || AUTH_PANEL_LAYOUTS[0].icon
 )
 
 export function useAuthPanelLayout() {

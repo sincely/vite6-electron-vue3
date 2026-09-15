@@ -4,17 +4,11 @@
       <div class="dash-header">
         <h4>重点客户</h4>
       </div>
-      <el-link class="key-customers-more" type="primary" underline="never">
-        查看全部 →
-      </el-link>
+      <el-link class="key-customers-more" type="primary" underline="never">查看全部 →</el-link>
     </template>
     <template #content>
       <el-scrollbar height="320px">
-        <div
-          v-for="item in customers"
-          :key="item.name"
-          class="key-customers-item"
-        >
+        <div v-for="item in customers" :key="item.name" class="key-customers-item">
           <span
             class="key-customers-avatar"
             :style="{

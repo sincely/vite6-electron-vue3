@@ -1,12 +1,7 @@
 <!-- WangEditor 富文本编辑器 插件地址：https://www.wangeditor.com/ -->
 <template>
   <div class="editor-wrapper">
-    <Toolbar
-      class="editor-toolbar"
-      :editor="editorRef"
-      :mode="mode"
-      :defaultConfig="toolbarConfig"
-    />
+    <Toolbar class="editor-toolbar" :editor="editorRef" :mode="mode" :defaultConfig="toolbarConfig" />
     <Editor
       v-model="modelValue"
       :style="{ height: height, overflowY: 'hidden' }"

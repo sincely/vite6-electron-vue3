@@ -90,11 +90,7 @@ defineExpose({ onOk, onCancel })
   font-size: 11px;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--brand-accent)
-  );
+  background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
   border-radius: 50%;
 }
 

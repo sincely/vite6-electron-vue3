@@ -22,21 +22,14 @@ export const getColumnOptions = (column, row) => {
 
 // 占位符：componentProps 为函数时按行求值
 export const getPlaceholder = (column, row, action = '输入') => {
-  return (
-    resolveComponentProps(column, row).placeholder || `${action}${column.label}`
-  )
+  return resolveComponentProps(column, row).placeholder || `${action}${column.label}`
 }
 
 // 金额格式化：千分位 + 固定小数位，prefix/decimals/thousand 可通过 componentProps 定制
 export const formatMoney = (value, opts = {}) => {
   const { prefix = '￥', decimals = 2, thousand = true } = opts
   const num = Number(value)
-  if (
-    value === null ||
-    value === undefined ||
-    value === '' ||
-    Number.isNaN(num)
-  ) {
+  if (value === null || value === undefined || value === '' || Number.isNaN(num)) {
     return value ?? ''
   }
   const fixed = Math.abs(num).toFixed(decimals)
@@ -56,23 +49,14 @@ export const formatDisplayValue = (row, column) => {
   }
 
   // 处理 Select / Radio (从 options 中找 label)
-  if (
-    column.type === 'select' ||
-    column.type === 'radio' ||
-    column.type === 'radio-group'
-  ) {
+  if (column.type === 'select' || column.type === 'radio' || column.type === 'radio-group') {
     const options = getColumnOptions(column, row)
     const option = options.find((opt) => opt.value === value)
     return option ? option.label : value
   }
 
   // 处理 Checkbox / CheckboxGroup (数组转 label 拼接)
-  if (
-    column.type === 'checkbox' ||
-    ['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(
-      column.type
-    )
-  ) {
+  if (column.type === 'checkbox' || ['checkbox-group', 'check-box-group', 'check-bo-groub'].includes(column.type)) {
     if (Array.isArray(value)) {
       const options = getColumnOptions(column, row)
       const labels = value.map((val) => {
@@ -89,14 +73,9 @@ export const formatDisplayValue = (row, column) => {
   }
 
   // 处理日期范围 (数组转字符串拼接)
-  if (
-    column.type === 'daterange' ||
-    column.type === 'datetimerange' ||
-    column.type === 'monthrange'
-  ) {
+  if (column.type === 'daterange' || column.type === 'datetimerange' || column.type === 'monthrange') {
     if (Array.isArray(value) && value.length === 2) {
-      const separator =
-        resolveComponentProps(column, row).rangeSeparator || ' 至 '
+      const separator = resolveComponentProps(column, row).rangeSeparator || ' 至 '
       return `${value[0]}${separator}${value[1]}`
     }
   }

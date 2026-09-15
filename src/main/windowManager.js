@@ -54,8 +54,7 @@ const getWindowIcon = () => {
  * 窗口初始背景色，与 index.html 启动画面及主题变量保持一致，
  * 避免 ready-to-show 前系统默认白色画布造成的白屏闪烁
  */
-const getWindowBackgroundColor = () =>
-  nativeTheme.shouldUseDarkColors ? '#0b0c0f' : '#ffffff'
+const getWindowBackgroundColor = () => (nativeTheme.shouldUseDarkColors ? '#0b0c0f' : '#ffffff')
 
 const windows = new Map() // 窗口映射表
 let mainWindowId = null // 主窗口 ID
@@ -94,15 +93,10 @@ const setupWindow = (win, { autoShow = true } = {}) => {
     return { action: 'deny' } // 拒绝打开外部链接
   })
 
-  win.webContents.on(
-    'did-fail-load',
-    (_event, errorCode, errorDescription, validatedURL) => {
-      if (win.isDestroyed()) return
-      logger.error(
-        `页面加载失败: ${errorDescription} (${errorCode}) at ${validatedURL}`
-      )
-    }
-  )
+  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+    if (win.isDestroyed()) return
+    logger.error(`页面加载失败: ${errorDescription} (${errorCode}) at ${validatedURL}`)
+  })
 
   win.webContents.on('render-process-gone', (_event, details) => {
     if (win.isDestroyed()) return
@@ -275,8 +269,7 @@ export function createMainWindow() {
     mainWindowId = null
   }
   // 获取屏幕尺寸
-  const { width: screenWidth, height: screenHeight } =
-    screen.getPrimaryDisplay().workAreaSize
+  const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize
   // 计算窗口大小，默认为屏幕的 80%
   const windowWidth = Math.floor(screenWidth * 0.8)
   const windowHeight = Math.floor(screenHeight * 0.8)

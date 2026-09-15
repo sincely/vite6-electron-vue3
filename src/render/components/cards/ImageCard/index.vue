@@ -2,21 +2,14 @@
 <template>
   <div class="image-card" @click="handleClick">
     <div class="image-card__cover">
-      <ElImage
-        :src="imageUrl"
-        fit="cover"
-        loading="lazy"
-        class="image-card__img"
-      >
+      <ElImage :src="imageUrl" fit="cover" loading="lazy" class="image-card__img">
         <template #placeholder>
           <div class="image-card__placeholder">
             <el-icon><Picture /></el-icon>
           </div>
         </template>
       </ElImage>
-      <div v-if="readTime" class="image-card__read-time">
-        {{ readTime }} 阅读
-      </div>
+      <div v-if="readTime" class="image-card__read-time">{{ readTime }} 阅读</div>
     </div>
 
     <div class="image-card__body">

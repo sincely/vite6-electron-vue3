@@ -18,20 +18,11 @@
           }"
         >
           <div class="step-circle">
-            <svg-icon
-              v-if="currentStep > index"
-              icon-class="check"
-              width="14px"
-              height="14px"
-            />
+            <svg-icon v-if="currentStep > index" icon-class="check" width="14px" height="14px" />
             <span v-else>{{ index + 1 }}</span>
           </div>
           <span class="step-label">{{ step.label }}</span>
-          <div
-            v-if="index < steps.length - 1"
-            class="step-line"
-            :class="{ filled: currentStep > index }"
-          ></div>
+          <div v-if="index < steps.length - 1" class="step-line" :class="{ filled: currentStep > index }"></div>
         </div>
       </div>
 
@@ -66,23 +57,14 @@
                   class="custom-input code-input"
                   maxlength="6"
                 />
-                <el-button
-                  class="code-btn"
-                  :disabled="counting || !isPhoneValid"
-                  @click="sendCode"
-                >
+                <el-button class="code-btn" :disabled="counting || !isPhoneValid" @click="sendCode">
                   {{ counting ? `${countdown}s 后重发` : '获取验证码' }}
                 </el-button>
               </div>
             </el-form-item>
 
             <el-form-item class="submit-item">
-              <el-button
-                type="primary"
-                class="submit-btn"
-                :loading="loading"
-                @click="nextStep"
-              >
+              <el-button type="primary" class="submit-btn" :loading="loading" @click="nextStep">
                 {{ loading ? '验证中...' : '下一步' }}
               </el-button>
             </el-form-item>
@@ -109,15 +91,8 @@
                 class="custom-input"
               >
                 <template #suffix>
-                  <span
-                    class="password-toggle"
-                    @click="showPassword = !showPassword"
-                  >
-                    <svg-icon
-                      :icon-class="showPassword ? 'open-eye' : 'close-eye'"
-                      width="16px"
-                      height="16px"
-                    />
+                  <span class="password-toggle" @click="showPassword = !showPassword">
+                    <svg-icon :icon-class="showPassword ? 'open-eye' : 'close-eye'" width="16px" height="16px" />
                   </span>
                 </template>
               </el-input>
@@ -132,15 +107,8 @@
                 class="custom-input"
               >
                 <template #suffix>
-                  <span
-                    class="password-toggle"
-                    @click="showConfirm = !showConfirm"
-                  >
-                    <svg-icon
-                      :icon-class="showConfirm ? 'open-eye' : 'close-eye'"
-                      width="16px"
-                      height="16px"
-                    />
+                  <span class="password-toggle" @click="showConfirm = !showConfirm">
+                    <svg-icon :icon-class="showConfirm ? 'open-eye' : 'close-eye'" width="16px" height="16px" />
                   </span>
                 </template>
               </el-input>
@@ -149,23 +117,13 @@
             <!-- 密码强度指示器 -->
             <div class="password-strength">
               <div class="strength-bars">
-                <div
-                  v-for="i in 4"
-                  :key="i"
-                  class="strength-bar"
-                  :class="{ filled: passwordStrength >= i }"
-                ></div>
+                <div v-for="i in 4" :key="i" class="strength-bar" :class="{ filled: passwordStrength >= i }"></div>
               </div>
               <span class="strength-text">{{ strengthLabel }}</span>
             </div>
 
             <el-form-item class="submit-item">
-              <el-button
-                type="primary"
-                class="submit-btn"
-                :loading="loading"
-                @click="submitReset"
-              >
+              <el-button type="primary" class="submit-btn" :loading="loading" @click="submitReset">
                 {{ loading ? '提交中...' : '确认重置' }}
               </el-button>
             </el-form-item>
@@ -179,9 +137,7 @@
           </div>
           <h2 class="success-title">密码重置成功</h2>
           <p class="success-desc">请使用新密码重新登录</p>
-          <el-button type="primary" class="submit-btn" @click="goLogin">
-            返回登录
-          </el-button>
+          <el-button type="primary" class="submit-btn" @click="goLogin">返回登录</el-button>
         </div>
       </transition>
 
@@ -417,8 +373,7 @@ onBeforeUnmount(() => {
       .step-circle {
         color: #fff;
         background: var(--color-primary);
-        box-shadow: 0 0 0 4px
-          color-mix(in srgb, var(--color-primary), transparent 75%);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary), transparent 75%);
       }
 
       .step-label {

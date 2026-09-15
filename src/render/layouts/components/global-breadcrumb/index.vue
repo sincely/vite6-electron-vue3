@@ -1,16 +1,8 @@
 <template>
   <!-- 标题栏面包屑：仅在存在两级及以上层级时显示（参照 art-design-pro） -->
-  <nav
-    v-if="breadcrumbs.length > 1"
-    class="global-breadcrumb"
-    aria-label="breadcrumb"
-  >
+  <nav v-if="breadcrumbs.length > 1" class="global-breadcrumb" aria-label="breadcrumb">
     <ul class="breadcrumb-track">
-      <li
-        v-for="(crumb, idx) in breadcrumbs"
-        :key="`${crumb.path}-${idx}`"
-        class="breadcrumb-item"
-      >
+      <li v-for="(crumb, idx) in breadcrumbs" :key="`${crumb.path}-${idx}`" class="breadcrumb-item">
         <span
           class="breadcrumb-label"
           :class="{ 'is-link': !isLast(idx), 'is-current': isLast(idx) }"
@@ -19,9 +11,7 @@
         >
           {{ crumb.title }}
         </span>
-        <span v-if="!isLast(idx)" class="breadcrumb-sep" aria-hidden="true">
-          /
-        </span>
+        <span v-if="!isLast(idx)" class="breadcrumb-sep" aria-hidden="true">/</span>
       </li>
     </ul>
   </nav>

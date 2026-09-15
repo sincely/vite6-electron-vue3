@@ -8,9 +8,7 @@
               <component :is="item.icon" />
             </el-icon>
           </div>
-          <span :class="item.up ? 'text-up' : 'text-down'">
-            {{ item.up ? '↑' : '↓' }} {{ item.trend }}
-          </span>
+          <span :class="item.up ? 'text-up' : 'text-down'">{{ item.up ? '↑' : '↓' }} {{ item.trend }}</span>
         </div>
         <div class="social-stats-value">{{ item.value }}</div>
         <div class="social-stats-label">{{ item.label }}</div>

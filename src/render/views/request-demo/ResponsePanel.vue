@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="response"
-    class="response-panel"
-    :class="{ 'is-error': !response.ok }"
-  >
+  <div v-if="response" class="response-panel" :class="{ 'is-error': !response.ok }">
     <div class="response-header">
       <el-tag :type="response.ok ? 'success' : 'danger'" size="small">
         {{ response.ok ? '✓ 成功' : '✗ 失败' }}
@@ -11,11 +7,7 @@
       <span class="time">{{ response.timestamp }}</span>
     </div>
     <pre class="response-body">{{
-      JSON.stringify(
-        response.ok ? response.payload : { error: response.error },
-        null,
-        2
-      )
+      JSON.stringify(response.ok ? response.payload : { error: response.error }, null, 2)
     }}</pre>
   </div>
 </template>

@@ -9,12 +9,7 @@
       hide-required-asterisk
     >
       <el-form-item prop="phone" label="手机号码">
-        <el-input
-          v-model="ruleForm.phone"
-          placeholder="请输入手机号码"
-          :prefix-icon="Iphone"
-          class="custom-input"
-        />
+        <el-input v-model="ruleForm.phone" placeholder="请输入手机号码" :prefix-icon="Iphone" class="custom-input" />
       </el-form-item>
 
       <el-form-item prop="password" label="密码">
@@ -27,11 +22,7 @@
         >
           <template #suffix>
             <span class="password-toggle" @click="togglePasswordVisibility">
-              <svg-icon
-                :iconClass="showPassword ? 'open-eye' : 'close-eye'"
-                width="16px"
-                height="16px"
-              />
+              <svg-icon :iconClass="showPassword ? 'open-eye' : 'close-eye'" width="16px" height="16px" />
             </span>
           </template>
         </el-input>

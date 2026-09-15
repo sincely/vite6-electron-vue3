@@ -1,11 +1,7 @@
 <!-- 组件中心 - 图像裁剪 -->
 <template>
   <div class="image-crop-page">
-    <PageHeader
-      title="图像裁剪"
-      subtitle="基于 vue-img-cutter，支持实时预览、缩放旋转与水印"
-      icon="image"
-    />
+    <PageHeader title="图像裁剪" subtitle="基于 vue-img-cutter，支持实时预览、缩放旋转与水印" icon="image" />
 
     <ElCard class="page-card">
       <ImageCutter

@@ -19,27 +19,15 @@
     - 受控 / 非受控模式（v-model:open）
 -->
 <template>
-  <component
-    :is="inline ? 'div' : Teleport"
-    v-if="inline || enabled"
-    :to="inline ? undefined : 'body'"
-  >
+  <component :is="inline ? 'div' : Teleport" v-if="inline || enabled" :to="inline ? undefined : 'body'">
     <div
       v-if="enabled"
       class="online-support"
-      :class="[
-        `is-${position}`,
-        { 'is-inline': inline, 'is-panel-open': panelOpen }
-      ]"
+      :class="[`is-${position}`, { 'is-inline': inline, 'is-panel-open': panelOpen }]"
       :style="floatingStyle"
     >
       <!-- 悬浮按钮 -->
-      <button
-        v-if="!panelOpen"
-        class="online-support__trigger"
-        :title="triggerTitle"
-        @click="handleTogglePanel"
-      >
+      <button v-if="!panelOpen" class="online-support__trigger" :title="triggerTitle" @click="handleTogglePanel">
         <span class="online-support__trigger-icon">
           <SvgIcon icon-class="message" width="22px" height="22px" />
         </span>
@@ -64,11 +52,7 @@
               </div>
             </div>
           </div>
-          <button
-            class="online-support__close"
-            title="收起"
-            @click="handleTogglePanel(false)"
-          >
+          <button class="online-support__close" title="收起" @click="handleTogglePanel(false)">
             <SvgIcon icon-class="close" width="16px" height="16px" />
           </button>
         </div>
@@ -90,18 +74,9 @@
             </div>
 
             <!-- 普通消息 / 图片 / 文件 -->
-            <div
-              v-else
-              class="online-support__bubble-row"
-              :class="{ 'is-agent': msg.from === 'agent' }"
-            >
+            <div v-else class="online-support__bubble-row" :class="{ 'is-agent': msg.from === 'agent' }">
               <div class="online-support__bubble-avatar">
-                <SvgIcon
-                  v-if="msg.from === 'agent'"
-                  icon-class="message"
-                  width="14px"
-                  height="14px"
-                />
+                <SvgIcon v-if="msg.from === 'agent'" icon-class="message" width="14px" height="14px" />
                 <span v-else class="online-support__avatar-fallback">
                   {{ userInitial }}
                 </span>
@@ -109,11 +84,7 @@
 
               <div class="online-support__bubble-stack">
                 <!-- 图片消息 -->
-                <div
-                  v-if="msg.messageType === 'image'"
-                  class="online-support__image"
-                  @click="previewImage(msg)"
-                >
+                <div v-if="msg.messageType === 'image'" class="online-support__image" @click="previewImage(msg)">
                   <img :src="msg.content" :alt="msg.fileName || '图片'" />
                   <div v-if="msg.fileName" class="online-support__image-name">
                     {{ msg.fileName }}
@@ -158,10 +129,7 @@
           </div>
 
           <!-- 常见问题快捷入口 -->
-          <div
-            v-if="showQuickReplies && messages.length <= 2"
-            class="online-support__quick"
-          >
+          <div v-if="showQuickReplies && messages.length <= 2" class="online-support__quick">
             <div
               v-for="item in quickReplies"
               :key="item"
@@ -176,28 +144,15 @@
         <!-- 待发送的附件预览条 -->
         <div v-if="pendingAttachments.length" class="online-support__pending">
           <div class="online-support__pending-list">
-            <div
-              v-for="item in pendingAttachments"
-              :key="item.key"
-              class="online-support__pending-item"
-            >
-              <img
-                v-if="item.isImage"
-                :src="item.url"
-                class="online-support__pending-thumb"
-                alt=""
-              />
+            <div v-for="item in pendingAttachments" :key="item.key" class="online-support__pending-item">
+              <img v-if="item.isImage" :src="item.url" class="online-support__pending-thumb" alt="" />
               <div v-else class="online-support__pending-file">
                 <SvgIcon icon-class="download" width="14px" height="14px" />
                 <span class="online-support__pending-file-name">
                   {{ item.fileName }}
                 </span>
               </div>
-              <button
-                class="online-support__pending-remove"
-                title="移除"
-                @click="removePending(item.key)"
-              >
+              <button class="online-support__pending-remove" title="移除" @click="removePending(item.key)">
                 <SvgIcon icon-class="close" width="10px" height="10px" />
               </button>
             </div>
@@ -233,11 +188,7 @@
                   </button>
 
                   <Transition name="emoji-panel">
-                    <div
-                      v-show="emojiVisible"
-                      class="online-support__emoji-panel"
-                      @click.stop
-                    >
+                    <div v-show="emojiVisible" class="online-support__emoji-panel" @click.stop>
                       <!-- 分类标签页 -->
                       <div class="online-support__emoji-tabs">
                         <button
@@ -248,10 +199,7 @@
                           :title="tab.label"
                           @click="activeEmojiTab = tab.key"
                         >
-                          <span
-                            v-if="tab.icon"
-                            class="online-support__emoji-tab-icon"
-                          >
+                          <span v-if="tab.icon" class="online-support__emoji-tab-icon">
                             {{ tab.icon }}
                           </span>
                           <span v-else class="online-support__emoji-tab-text">
@@ -271,10 +219,7 @@
                         >
                           {{ emo }}
                         </div>
-                        <div
-                          v-if="!currentEmojiList.length"
-                          class="online-support__emoji-empty"
-                        >
+                        <div v-if="!currentEmojiList.length" class="online-support__emoji-empty">
                           暂无最近使用的表情
                         </div>
                       </div>
@@ -300,12 +245,7 @@
                 />
               </div>
 
-              <button
-                class="online-support__send-icon"
-                title="发送"
-                :disabled="!canSend"
-                @click="sendUserMessage"
-              >
+              <button class="online-support__send-icon" title="发送" :disabled="!canSend" @click="sendUserMessage">
                 <SvgIcon icon-class="send" width="18px" height="18px" />
               </button>
             </div>
@@ -314,12 +254,7 @@
       </div>
 
       <!-- 图片预览（Teleport 到 body，单实例） -->
-      <el-image-viewer
-        v-if="previewSrc"
-        :url-list="[previewSrc]"
-        :initial-index="0"
-        @close="previewSrc = ''"
-      />
+      <el-image-viewer v-if="previewSrc" :url-list="[previewSrc]" :initial-index="0" @close="previewSrc = ''" />
     </div>
   </component>
 </template>
@@ -343,8 +278,7 @@ const props = defineProps({
   position: {
     type: String,
     default: 'top-left',
-    validator: (v) =>
-      ['bottom-right', 'bottom-left', 'top-right', 'top-left'].includes(v)
+    validator: (v) => ['bottom-right', 'bottom-left', 'top-right', 'top-left'].includes(v)
   },
   // 距视口边缘距离（px）
   offset: { type: Number, default: 24 },
@@ -355,11 +289,7 @@ const props = defineProps({
   // 常见问题
   quickReplies: {
     type: Array,
-    default: () => [
-      '如何使用本系统？',
-      '如何联系人工客服？',
-      '遇到问题如何反馈？'
-    ]
+    default: () => ['如何使用本系统？', '如何联系人工客服？', '遇到问题如何反馈？']
   },
   // 客服在线文案
   statusText: { type: String, default: '在线服务中' },
@@ -530,8 +460,7 @@ const insertEmoji = (emoji) => {
 }
 
 const inputPlaceholder = computed(() => {
-  if (props.showEmoji && props.showFile)
-    return '输入消息，回车发送，Shift+Enter 换行'
+  if (props.showEmoji && props.showFile) return '输入消息，回车发送，Shift+Enter 换行'
   if (props.showFile) return '输入消息或发送文件，回车发送'
   if (props.showEmoji) return '输入消息或发表情，回车发送'
   return '输入消息，回车发送'
@@ -541,8 +470,7 @@ const inputPlaceholder = computed(() => {
 // 消息列表（本地模拟客服回复，可替换为真实接口）
 // ─────────────────────────────────────────────────────────────
 let messageSeed = 1
-const formatTime = () =>
-  new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+const formatTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 const formatFileSize = (bytes) => {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
@@ -591,9 +519,7 @@ onClickOutside(emojiWrapRef, () => {
   emojiVisible.value = false
 })
 
-const canSend = computed(
-  () => !!inputText.value.trim() || pendingAttachments.value.length > 0
-)
+const canSend = computed(() => !!inputText.value.trim() || pendingAttachments.value.length > 0)
 
 // ─────────────────────────────────────────────────────────────
 // 滚动到底
@@ -707,9 +633,7 @@ const readFileAsDataURL = (file) =>
   })
 
 const removePending = (key) => {
-  pendingAttachments.value = pendingAttachments.value.filter(
-    (item) => item.key !== key
-  )
+  pendingAttachments.value = pendingAttachments.value.filter((item) => item.key !== key)
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -935,11 +859,7 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     padding: 14px 16px;
     color: #fff;
-    background: linear-gradient(
-      135deg,
-      var(--color-primary),
-      color-mix(in srgb, var(--color-primary), #000 18%)
-    );
+    background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary), #000 18%));
   }
 
   &__profile {
@@ -1401,13 +1321,11 @@ onBeforeUnmount(() => {
     background: var(--color-primary);
     border: none;
     border-radius: 50%;
-    box-shadow: 0 2px 6px
-      color-mix(in srgb, var(--color-primary), transparent 60%);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--color-primary), transparent 60%);
     transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
-      box-shadow: 0 4px 10px
-        color-mix(in srgb, var(--color-primary), transparent 50%);
+      box-shadow: 0 4px 10px color-mix(in srgb, var(--color-primary), transparent 50%);
       transform: translateY(-1px);
     }
 

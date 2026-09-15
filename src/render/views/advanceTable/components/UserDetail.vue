@@ -66,11 +66,7 @@
         <div class="info-item">
           <span class="info-label">绩效评分</span>
           <div class="performance-bar-wrap">
-            <div
-              class="performance-bar"
-              :class="performanceClass"
-              :style="{ width: row.performance + '%' }"
-            ></div>
+            <div class="performance-bar" :class="performanceClass" :style="{ width: row.performance + '%' }"></div>
             <span class="performance-text">{{ row.performance }}%</span>
           </div>
         </div>

@@ -17,9 +17,7 @@
         >
           <div class="timeline-list-card__content">
             <span class="timeline-list-card__text">{{ item.content }}</span>
-            <span v-if="item.code" class="timeline-list-card__code">
-              #{{ item.code }}
-            </span>
+            <span v-if="item.code" class="timeline-list-card__code">#{{ item.code }}</span>
           </div>
         </ElTimelineItem>
       </ElTimeline>

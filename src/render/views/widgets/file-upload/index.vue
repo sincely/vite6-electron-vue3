@@ -1,11 +1,7 @@
 <!-- 组件中心 - 通用文件上传 -->
 <template>
   <div class="file-upload-page">
-    <PageHeader
-      title="文件上传"
-      subtitle="统一处理类型校验、进度展示、表单回显、拖拽上传与图片预览"
-      icon="upload"
-    />
+    <PageHeader title="文件上传" subtitle="统一处理类型校验、进度展示、表单回显、拖拽上传与图片预览" icon="upload" />
 
     <ElRow :gutter="20">
       <ElCol :xs="24" :lg="12">
@@ -69,17 +65,8 @@
           <ElButton size="small" @click="resetEcho">恢复示例数据</ElButton>
         </div>
       </template>
-      <p class="card-description">
-        初始值可以直接传入服务端 URL 数组或 UploadFile
-        对象数组；单文件模式也始终传数组。
-      </p>
-      <FileUpload
-        v-model="echoFiles"
-        multiple
-        :limit="3"
-        :http-request="mockUpload"
-        :file-types="['image/*']"
-      />
+      <p class="card-description">初始值可以直接传入服务端 URL 数组或 UploadFile 对象数组；单文件模式也始终传数组。</p>
+      <FileUpload v-model="echoFiles" multiple :limit="3" :http-request="mockUpload" :file-types="['image/*']" />
     </ElCard>
   </div>
 </template>
@@ -125,9 +112,7 @@ const mockUpload = ({ file, onProgress, onSuccess }) => {
   }
 }
 
-const summarizeFiles = (files) =>
-  files.map((file) => file.name || file.url || '未命名文件').join('、') ||
-  '暂无文件'
+const summarizeFiles = (files) => files.map((file) => file.name || file.url || '未命名文件').join('、') || '暂无文件'
 
 resetEcho()
 </script>

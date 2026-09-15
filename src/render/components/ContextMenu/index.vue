@@ -29,37 +29,16 @@
               :style="menuItemStyle"
               @click="handleMenuClick(item)"
             >
-              <Icon
-                v-if="item.icon"
-                :icon="item.icon"
-                class="context-menu__icon"
-                width="16"
-                height="16"
-              />
+              <Icon v-if="item.icon" :icon="item.icon" class="context-menu__icon" width="16" height="16" />
               <span class="context-menu__label">{{ item.label }}</span>
             </li>
 
             <!-- 子菜单 -->
-            <li
-              v-else
-              class="context-menu__item context-menu__item--submenu"
-              :style="menuItemStyle"
-            >
+            <li v-else class="context-menu__item context-menu__item--submenu" :style="menuItemStyle">
               <div class="context-menu__submenu-title">
-                <Icon
-                  v-if="item.icon"
-                  :icon="item.icon"
-                  class="context-menu__icon"
-                  width="16"
-                  height="16"
-                />
+                <Icon v-if="item.icon" :icon="item.icon" class="context-menu__icon" width="16" height="16" />
                 <span class="context-menu__label">{{ item.label }}</span>
-                <Icon
-                  icon="ri:arrow-right-s-line"
-                  class="context-menu__arrow"
-                  width="16"
-                  height="16"
-                />
+                <Icon icon="ri:arrow-right-s-line" class="context-menu__arrow" width="16" height="16" />
               </div>
               <ul class="context-menu__submenu" :style="submenuListStyle">
                 <li
@@ -73,13 +52,7 @@
                   :style="menuItemStyle"
                   @click="handleMenuClick(child)"
                 >
-                  <Icon
-                    v-if="child.icon"
-                    :icon="child.icon"
-                    class="context-menu__icon"
-                    width="16"
-                    height="16"
-                  />
+                  <Icon v-if="child.icon" :icon="child.icon" class="context-menu__icon" width="16" height="16" />
                   <span class="context-menu__label">{{ child.label }}</span>
                 </li>
               </ul>
@@ -135,9 +108,7 @@ let showTimer = null
 let eventListenersAdded = false
 
 const hasSubmenu = computed(() =>
-  props.menuItems.some(
-    (item) => Array.isArray(item.children) && item.children.length > 0
-  )
+  props.menuItems.some((item) => Array.isArray(item.children) && item.children.length > 0)
 )
 
 const menuStyle = computed(() => ({
@@ -184,14 +155,8 @@ const calculatePosition = (e, measuredSize = {}) => {
   const screenWidth = window.innerWidth
   const screenHeight = window.innerHeight
   const boundary = props.boundaryDistance
-  const menuWidth = Math.min(
-    measuredSize.width || props.menuWidth,
-    Math.max(1, screenWidth - boundary * 2)
-  )
-  const menuHeight = Math.min(
-    measuredSize.height || calculateMenuHeight(),
-    Math.max(1, screenHeight - boundary * 2)
-  )
+  const menuWidth = Math.min(measuredSize.width || props.menuWidth, Math.max(1, screenWidth - boundary * 2))
+  const menuHeight = Math.min(measuredSize.height || calculateMenuHeight(), Math.max(1, screenHeight - boundary * 2))
   const submenuWidth = hasSubmenu.value ? props.submenuWidth : 0
 
   let x = e.clientX

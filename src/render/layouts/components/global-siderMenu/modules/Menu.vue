@@ -8,17 +8,8 @@
         @click="handleNav(item)"
       >
         <div class="sidebar-icon-wrap">
-          <Icon
-            v-if="item.icon"
-            :icon="`lucide:${item.icon}`"
-            class="sidebar-icon"
-            width="18px"
-            height="18px"
-          />
-          <span
-            v-if="isCollapsed && item.showBadge"
-            class="menu-badge menu-badge-icon"
-          ></span>
+          <Icon v-if="item.icon" :icon="`lucide:${item.icon}`" class="sidebar-icon" width="18px" height="18px" />
+          <span v-if="isCollapsed && item.showBadge" class="menu-badge menu-badge-icon"></span>
         </div>
         <span v-if="!isCollapsed" class="sidebar-label">{{ item.label }}</span>
         <Icon
@@ -29,10 +20,7 @@
           height="12px"
         />
         <span v-if="!isCollapsed && item.showBadge" class="menu-badge"></span>
-        <span
-          v-else-if="!isCollapsed && item.showTextBadge"
-          class="menu-text-badge"
-        >
+        <span v-else-if="!isCollapsed && item.showTextBadge" class="menu-text-badge">
           {{ item.showTextBadge }}
         </span>
         <SvgIcon
@@ -53,12 +41,7 @@
         }"
       >
         <div class="sidebar-submenu-inner">
-          <SubMenuNode
-            v-for="child in item.children"
-            :key="child.id"
-            :item="child"
-            :depth="2"
-          />
+          <SubMenuNode v-for="child in item.children" :key="child.id" :item="child" :depth="2" />
         </div>
       </div>
     </div>
@@ -69,12 +52,7 @@
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
-import {
-  visibleMenuItems,
-  findMenuPath,
-  containsRoute,
-  firstLeaf
-} from '@/config/menu'
+import { visibleMenuItems, findMenuPath, containsRoute, firstLeaf } from '@/config/menu'
 import { openExternalLink } from '@/utils/openLink'
 import SubMenuNode from './SubMenuNode.vue'
 
@@ -82,9 +60,7 @@ const appStore = useAppStore()
 const router = useRouter()
 const route = useRoute()
 
-const mainItems = computed(() =>
-  visibleMenuItems.value.filter((item) => !item.footer)
-)
+const mainItems = computed(() => visibleMenuItems.value.filter((item) => !item.footer))
 const expandedIds = ref([])
 
 const isCollapsed = computed(() => appStore.sidebarCollapsed)
@@ -212,11 +188,7 @@ const handleNav = (item) => {
       inset: 8px auto 8px 0;
       width: 3px;
       content: '';
-      background: linear-gradient(
-        180deg,
-        var(--color-primary),
-        var(--color-violet)
-      );
+      background: linear-gradient(180deg, var(--color-primary), var(--color-violet));
       border-radius: 4px;
     }
   }

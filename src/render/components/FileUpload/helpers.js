@@ -42,9 +42,7 @@ export const getValueByPath = (value, path) => {
 export const makeStableUid = (item, index) => {
   if (item?.uid !== undefined && item.uid !== null) return item.uid
   const identity =
-    typeof item === 'string'
-      ? item
-      : `${item?.url || ''}-${item?.name || ''}-${item?.size || ''}-${index}`
+    typeof item === 'string' ? item : `${item?.url || ''}-${item?.name || ''}-${item?.size || ''}-${index}`
   let hash = 0
   for (let i = 0; i < identity.length; i += 1) {
     hash = (hash << 5) - hash + identity.charCodeAt(i)

@@ -1,11 +1,7 @@
 <template>
   <div class="table-demo">
     <!-- 页面头部 -->
-    <PageHeader
-      title="用户管理"
-      subtitle="管理系统用户账户、角色和权限分配"
-      icon="user"
-    >
+    <PageHeader title="用户管理" subtitle="管理系统用户账户、角色和权限分配" icon="user">
       <template #actions>
         <el-button type="primary" class="action-btn" @click="handleCreate">
           <SvgIcon icon-class="plus" width="16px" height="16px" />
@@ -55,12 +51,7 @@
     </div>
 
     <!-- 搜索栏 -->
-    <DynamicSearchBar
-      :items="searchItems"
-      :params="searchParams"
-      @query="handleQuery"
-      @reset="handleReset"
-    />
+    <DynamicSearchBar :items="searchItems" :params="searchParams" @query="handleQuery" @reset="handleReset" />
 
     <!-- 表格 -->
     <AdvanceTable
@@ -129,41 +120,15 @@
       <!-- 操作列 -->
       <template #action="{ row }">
         <div class="table-action">
-          <el-button
-            link
-            type="info"
-            size="small"
-            :icon="View"
-            title="查看"
-            @click="handleDetail(row)"
-          />
-          <el-button
-            link
-            type="primary"
-            size="small"
-            :icon="Edit"
-            title="编辑"
-            @click="handleEdit(row)"
-          />
-          <el-button
-            link
-            type="danger"
-            size="small"
-            :icon="Delete"
-            title="删除"
-            @click="handleDelete(row)"
-          />
+          <el-button link type="info" size="small" :icon="View" title="查看" @click="handleDetail(row)" />
+          <el-button link type="primary" size="small" :icon="Edit" title="编辑" @click="handleEdit(row)" />
+          <el-button link type="danger" size="small" :icon="Delete" title="删除" @click="handleDelete(row)" />
         </div>
       </template>
 
       <!-- 批量操作 -->
       <template #toolbar-left>
-        <el-button
-          v-if="selectedRows.length > 0"
-          type="danger"
-          size="small"
-          plain
-        >
+        <el-button v-if="selectedRows.length > 0" type="danger" size="small" plain>
           批量删除 ({{ selectedRows.length }})
         </el-button>
       </template>
@@ -637,15 +602,13 @@ function handleDetail(row) {
 
   &.status-active {
     background: var(--color-success);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--color-success), transparent 80%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success), transparent 80%);
     animation: pulse-ring 2.5s ease-in-out infinite;
   }
 
   &.status-inactive {
     background: var(--color-amber);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--color-amber), transparent 80%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-amber), transparent 80%);
   }
 
   &.status-disabled {
@@ -695,11 +658,7 @@ function handleDetail(row) {
   }
 
   &.perf-good {
-    background: linear-gradient(
-      90deg,
-      var(--color-primary),
-      var(--color-indigo)
-    );
+    background: linear-gradient(90deg, var(--color-primary), var(--color-indigo));
   }
 
   &.perf-average {

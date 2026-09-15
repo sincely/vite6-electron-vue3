@@ -22,13 +22,7 @@ const resolveAlgorithm = (algorithm) => {
 }
 
 // 主线程降级路径：浏览器禁用 Worker / 资源加载失败时仍能完成哈希。
-const calculateHashOnMainThread = async (
-  file,
-  task,
-  chunkSize,
-  onProgress,
-  algorithm
-) => {
+const calculateHashOnMainThread = async (file, task, chunkSize, onProgress, algorithm) => {
   const factory = resolveAlgorithm(algorithm)
   const hasher = await factory()
   hasher.init()
@@ -52,13 +46,7 @@ const calculateHashInWorker = (file, task, chunkSize, onProgress, algorithm) =>
       worker = new HashWorker()
     } catch (error) {
       // Worker 创建失败（隐私模式 / CSP）→ 退回主线程
-      calculateHashOnMainThread(
-        file,
-        task,
-        chunkSize,
-        onProgress,
-        algorithm
-      ).then(resolve, reject)
+      calculateHashOnMainThread(file, task, chunkSize, onProgress, algorithm).then(resolve, reject)
       return
     }
 
@@ -119,9 +107,6 @@ export const calculateHash = (
   onProgress = () => {},
   algorithm = 'md5'
 ) => {
-  const runner =
-    typeof Worker !== 'undefined'
-      ? calculateHashInWorker
-      : calculateHashOnMainThread
+  const runner = typeof Worker !== 'undefined' ? calculateHashInWorker : calculateHashOnMainThread
   return runner(file, task, hashChunkSize, onProgress, algorithm)
 }

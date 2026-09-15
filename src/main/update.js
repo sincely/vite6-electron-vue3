@@ -32,12 +32,7 @@ function buildUpdatePayload(info) {
 
 // 发送更新负载到渲染进程
 function sendToRenderer(channel, payload) {
-  if (
-    mainWindow &&
-    !mainWindow.isDestroyed() &&
-    mainWindow.webContents &&
-    !mainWindow.webContents.isDestroyed()
-  ) {
+  if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents && !mainWindow.webContents.isDestroyed()) {
     mainWindow.webContents.send(channel, payload)
   }
 }
@@ -172,10 +167,7 @@ export const initUpdater = async (win) => {
     sendToRenderer('update-config', config)
   })
 
-  logger.info(
-    '更新服务地址：',
-    UPDATE_URL || '使用 electron-builder 默认 publish 配置'
-  )
+  logger.info('更新服务地址：', UPDATE_URL || '使用 electron-builder 默认 publish 配置')
   const eventNames = [
     'checking-for-update',
     'update-not-available',
@@ -208,10 +200,7 @@ export const initUpdater = async (win) => {
   autoUpdater.on('update-available', (info) => {
     manualCheckPending = false // 发现新版本时由更新弹窗接管反馈
     const payload = buildUpdatePayload(info)
-    const rolloutText =
-      typeof payload.stagingPercentage === 'number'
-        ? `（灰度 ${payload.stagingPercentage}%）`
-        : ''
+    const rolloutText = typeof payload.stagingPercentage === 'number' ? `（灰度 ${payload.stagingPercentage}%）` : ''
     logger.info(`检测到新版本 ${payload.version}${rolloutText}`)
     sendToRenderer('update-available', payload)
   })
@@ -223,9 +212,7 @@ export const initUpdater = async (win) => {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.setProgressBar(progress.percent / 100)
     }
-    setTrayToolTip(
-      `${app.getName()} - 正在下载更新 ${Math.floor(progress.percent)}%`
-    )
+    setTrayToolTip(`${app.getName()} - 正在下载更新 ${Math.floor(progress.percent)}%`)
   })
 
   autoUpdater.on('update-downloaded', (info) => {

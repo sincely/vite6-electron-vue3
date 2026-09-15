@@ -11,32 +11,17 @@
       <div class="identity">
         <div class="identity-item">
           <span class="identity-label">当前角色</span>
-          <el-tag
-            v-for="role in userStore.roles"
-            :key="role"
-            size="small"
-            type="primary"
-            effect="light"
-          >
+          <el-tag v-for="role in userStore.roles" :key="role" size="small" type="primary" effect="light">
             {{ role }}
           </el-tag>
-          <span v-if="!userStore.roles.length" class="identity-empty">
-            未登录
-          </span>
+          <span v-if="!userStore.roles.length" class="identity-empty">未登录</span>
         </div>
         <div class="identity-item">
           <span class="identity-label">权限码</span>
-          <el-tag
-            v-for="perm in userStore.permissions"
-            :key="perm"
-            size="small"
-            effect="plain"
-          >
+          <el-tag v-for="perm in userStore.permissions" :key="perm" size="small" effect="plain">
             {{ perm }}
           </el-tag>
-          <span v-if="!userStore.permissions.length" class="identity-empty">
-            无
-          </span>
+          <span v-if="!userStore.permissions.length" class="identity-empty">无</span>
         </div>
       </div>
     </el-card>
@@ -46,9 +31,7 @@
       <template #header>
         <div class="card-header">
           <span class="card-title">方式一：v-permission 指令（权限码）</span>
-          <span class="card-desc">
-            无权限时按钮直接从 DOM 移除，适合静态按钮
-          </span>
+          <span class="card-desc">无权限时按钮直接从 DOM 移除，适合静态按钮</span>
         </div>
       </template>
       <div class="demo-rows">
@@ -92,24 +75,14 @@
     <el-card shadow="never" class="auth-card">
       <template #header>
         <div class="card-header">
-          <span class="card-title">
-            方式三：编程式判断（hasPermission / hasRole）
-          </span>
+          <span class="card-title">方式三：编程式判断（hasPermission / hasRole）</span>
           <span class="card-desc">需要在无权限时展示占位或降级 UI 时使用</span>
         </div>
       </template>
       <div class="demo-rows">
-        <div
-          v-for="item in permButtons"
-          :key="`prog-${item.code}`"
-          class="demo-row"
-        >
+        <div v-for="item in permButtons" :key="`prog-${item.code}`" class="demo-row">
           <code class="demo-code">{{ item.code }}</code>
-          <el-button
-            v-if="userStore.hasPermission(item.code)"
-            size="small"
-            :type="item.type"
-          >
+          <el-button v-if="userStore.hasPermission(item.code)" size="small" :type="item.type">
             {{ item.label }}
           </el-button>
           <span v-else class="no-auth-hint">无权限（v-if 条件渲染）</span>

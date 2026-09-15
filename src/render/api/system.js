@@ -6,40 +6,28 @@
  */
 import request from '@/utils/request'
 
-export const getUserList = (params) =>
-  request({ url: '/system/users/list', method: 'get', params })
+export const getUserList = (params) => request({ url: '/system/users/list', method: 'get', params })
 
-export const createUser = (data) =>
-  request({ url: '/system/users/create', method: 'post', data })
+export const createUser = (data) => request({ url: '/system/users/create', method: 'post', data })
 
-export const updateUser = (data) =>
-  request({ url: '/system/users/update', method: 'put', data })
+export const updateUser = (data) => request({ url: '/system/users/update', method: 'put', data })
 
-export const deleteUsers = (data) =>
-  request({ url: '/system/users/delete', method: 'post', data })
+export const deleteUsers = (data) => request({ url: '/system/users/delete', method: 'post', data })
 
 // ---------- 角色 ----------
-export const getRoleList = (params) =>
-  request({ url: '/system/roles/list', method: 'get', params })
+export const getRoleList = (params) => request({ url: '/system/roles/list', method: 'get', params })
 
-export const createRole = (data) =>
-  request({ url: '/system/roles/create', method: 'post', data })
+export const createRole = (data) => request({ url: '/system/roles/create', method: 'post', data })
 
-export const updateRole = (data) =>
-  request({ url: '/system/roles/update', method: 'put', data })
+export const updateRole = (data) => request({ url: '/system/roles/update', method: 'put', data })
 
-export const deleteRoles = (data) =>
-  request({ url: '/system/roles/delete', method: 'post', data })
+export const deleteRoles = (data) => request({ url: '/system/roles/delete', method: 'post', data })
 
 // ---------- 菜单 ----------
-export const getMenuList = (params) =>
-  request({ url: '/system/menus/list', method: 'get', params })
+export const getMenuList = (params) => request({ url: '/system/menus/list', method: 'get', params })
 
-export const createMenu = (data) =>
-  request({ url: '/system/menus/create', method: 'post', data })
+export const createMenu = (data) => request({ url: '/system/menus/create', method: 'post', data })
 
-export const updateMenu = (data) =>
-  request({ url: '/system/menus/update', method: 'put', data })
+export const updateMenu = (data) => request({ url: '/system/menus/update', method: 'put', data })
 
-export const deleteMenus = (data) =>
-  request({ url: '/system/menus/delete', method: 'post', data })
+export const deleteMenus = (data) => request({ url: '/system/menus/delete', method: 'post', data })

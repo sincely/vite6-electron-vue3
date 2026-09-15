@@ -24,22 +24,14 @@
     <div class="basic-banner__content">
       <!-- title 插槽 -->
       <slot name="title">
-        <p
-          v-if="title"
-          class="basic-banner__title"
-          :style="{ color: titleColor }"
-        >
+        <p v-if="title" class="basic-banner__title" :style="{ color: titleColor }">
           {{ title }}
         </p>
       </slot>
 
       <!-- subtitle 插槽 -->
       <slot name="subtitle">
-        <p
-          v-if="subtitle"
-          class="basic-banner__subtitle"
-          :style="{ color: subtitleColor }"
-        >
+        <p v-if="subtitle" class="basic-banner__subtitle" :style="{ color: subtitleColor }">
           {{ subtitle }}
         </p>
       </slot>
@@ -245,12 +237,7 @@ onMounted(() => {
       position: absolute;
       width: 2px;
       height: 60px;
-      background: linear-gradient(
-        to top,
-        rgb(255 255 255 / 40%),
-        rgb(255 255 255 / 10%),
-        transparent
-      );
+      background: linear-gradient(to top, rgb(255 255 255 / 40%), rgb(255 255 255 / 10%), transparent);
       opacity: 0;
       transform-origin: top left;
       animation-name: meteor-fall;

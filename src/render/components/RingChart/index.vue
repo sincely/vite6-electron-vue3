@@ -33,14 +33,7 @@ const props = defineProps({
   legendPosition: { type: String, default: 'right' }
 })
 
-const {
-  isDark,
-  getDefaultColors,
-  getAnimationConfig,
-  getTooltipStyle,
-  getLegendStyle,
-  onThemeChange
-} = useChartTheme()
+const { isDark, getDefaultColors, getAnimationConfig, getTooltipStyle, getLegendStyle, onThemeChange } = useChartTheme()
 
 const seriesColors = computed(() => props.colors || getDefaultColors())
 
@@ -64,9 +57,7 @@ function getCenterPosition() {
 
 function buildOptions() {
   const options = {
-    tooltip: props.showTooltip
-      ? getTooltipStyle('item', { formatter: '{b}: {c} ({d}%)' })
-      : undefined,
+    tooltip: props.showTooltip ? getTooltipStyle('item', { formatter: '{b}: {c} ({d}%)' }) : undefined,
     legend: props.showLegend ? getLegendStyle(props.legendPosition) : undefined,
     series: [
       {

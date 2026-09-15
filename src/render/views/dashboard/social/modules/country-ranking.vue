@@ -21,9 +21,7 @@
           <template #default="{ row }">
             <div class="country-ranking-fans">
               <span class="country-ranking-fans-value">{{ row.fans }}</span>
-              <span :class="row.up ? 'text-up' : 'text-down'">
-                {{ row.up ? '↗' : '↘' }} {{ row.trend }}
-              </span>
+              <span :class="row.up ? 'text-up' : 'text-down'">{{ row.up ? '↗' : '↘' }} {{ row.trend }}</span>
             </div>
           </template>
         </el-table-column>

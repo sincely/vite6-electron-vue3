@@ -189,12 +189,7 @@
 
 // 微光效果
 .shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(255 255 255 / 30%) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 30%) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }
@@ -369,9 +364,7 @@ body {
     }
 
     to {
-      clip-path: circle(
-        var(--theme-vt-r) at var(--theme-vt-x) var(--theme-vt-y)
-      );
+      clip-path: circle(var(--theme-vt-r) at var(--theme-vt-x) var(--theme-vt-y));
     }
   }
 

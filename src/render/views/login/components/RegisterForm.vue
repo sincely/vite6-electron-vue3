@@ -15,12 +15,7 @@
       @submit.prevent
     >
       <el-form-item prop="username">
-        <el-input
-          v-model="form.username"
-          placeholder="请输入用户名"
-          class="custom-input"
-          autocomplete="username"
-        />
+        <el-input v-model="form.username" placeholder="请输入用户名" class="custom-input" autocomplete="username" />
       </el-form-item>
 
       <el-form-item prop="password">

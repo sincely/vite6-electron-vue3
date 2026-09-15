@@ -1,11 +1,7 @@
 <!-- 组件中心 - 右键菜单 -->
 <template>
   <div class="context-menu-page">
-    <PageHeader
-      title="右键菜单"
-      subtitle="自定义右键上下文菜单，支持子菜单、分割线与禁用项"
-      icon="list"
-    />
+    <PageHeader title="右键菜单" subtitle="自定义右键上下文菜单，支持子菜单、分割线与禁用项" icon="list" />
 
     <ElCard class="page-card">
       <div class="trigger-area" @contextmenu.prevent="showMenu">

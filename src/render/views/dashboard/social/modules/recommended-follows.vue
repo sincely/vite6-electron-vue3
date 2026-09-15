@@ -4,27 +4,15 @@
       <div class="dash-header">
         <h4>推荐关注</h4>
       </div>
-      <el-link
-        class="recommended-follows-more"
-        type="primary"
-        underline="never"
-      >
-        查看全部
-      </el-link>
+      <el-link class="recommended-follows-more" type="primary" underline="never">查看全部</el-link>
     </template>
     <template #content>
       <el-scrollbar height="280px">
-        <div
-          v-for="item in users"
-          :key="item.name"
-          class="recommended-follows-item"
-        >
+        <div v-for="item in users" :key="item.name" class="recommended-follows-item">
           <el-avatar :src="item.avatar" :size="40" />
           <div class="recommended-follows-main">
             <div class="recommended-follows-name">{{ item.name }}</div>
-            <div class="recommended-follows-friends">
-              {{ item.friends }} 位共同好友
-            </div>
+            <div class="recommended-follows-friends">{{ item.friends }} 位共同好友</div>
           </div>
           <el-button
             :type="item.followed ? 'default' : 'primary'"

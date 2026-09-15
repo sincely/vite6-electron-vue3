@@ -6,15 +6,11 @@
         {{ company.shortName }}
       </span>
       <span class="global-footer__separator" />
-      <span class="global-footer__item global-footer__item--version">
-        v{{ currentVersion || '--' }}
-      </span>
+      <span class="global-footer__item global-footer__item--version">v{{ currentVersion || '--' }}</span>
     </div>
 
     <div class="global-footer__center">
-      <span class="global-footer__item">
-        © {{ copyrightYear }} {{ company.fullName }} 版权所有
-      </span>
+      <span class="global-footer__item">© {{ copyrightYear }} {{ company.fullName }} 版权所有</span>
     </div>
   </footer>
 </template>

@@ -55,26 +55,20 @@ export const releaseObjectUrl = (uid, objectUrlMap) => {
  * - 最后对本地 raw File 按需 createObjectURL 并缓存。
  * 用工厂模式是因为 objectUrlMap 是组件实例级状态，且需要响应式 responseUrlKey。
  */
-export const createPreviewUrlGetter =
-  (objectUrlMap, getResponseUrlKey) => (file) => {
-    if (!file) return ''
-    const responseUrlKey = getResponseUrlKey()
-    if (file.url) return file.url
+export const createPreviewUrlGetter = (objectUrlMap, getResponseUrlKey) => (file) => {
+  if (!file) return ''
+  const responseUrlKey = getResponseUrlKey()
+  if (file.url) return file.url
 
-    const responseUrl = getResponseUrl(file.response, responseUrlKey)
-    if (responseUrl) return responseUrl
+  const responseUrl = getResponseUrl(file.response, responseUrlKey)
+  if (responseUrl) return responseUrl
 
-    if (
-      file.raw &&
-      isImageFile(file, responseUrlKey) &&
-      typeof URL !== 'undefined' &&
-      URL.createObjectURL
-    ) {
-      if (!objectUrlMap.has(file.uid)) {
-        objectUrlMap.set(file.uid, URL.createObjectURL(file.raw))
-      }
-      return objectUrlMap.get(file.uid)
+  if (file.raw && isImageFile(file, responseUrlKey) && typeof URL !== 'undefined' && URL.createObjectURL) {
+    if (!objectUrlMap.has(file.uid)) {
+      objectUrlMap.set(file.uid, URL.createObjectURL(file.raw))
     }
-
-    return ''
+    return objectUrlMap.get(file.uid)
   }
+
+  return ''
+}

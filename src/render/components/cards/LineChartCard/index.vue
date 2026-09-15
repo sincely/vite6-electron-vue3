@@ -1,27 +1,17 @@
 <!-- 折线图卡片：数值 + 涨跌 + 迷你/大图表 -->
 <template>
-  <div
-    class="line-chart-card"
-    :class="{ 'line-chart-card--mini': isMiniChart }"
-    :style="{ height: `${height}rem` }"
-  >
+  <div class="line-chart-card" :class="{ 'line-chart-card--mini': isMiniChart }" :style="{ height: `${height}rem` }">
     <div class="line-chart-card__header">
       <div>
         <p class="line-chart-card__value">{{ value }}</p>
         <p class="line-chart-card__label">{{ label }}</p>
       </div>
-      <div
-        class="line-chart-card__trend"
-        :class="percentage > 0 ? 'is-up' : 'is-down'"
-      >
+      <div class="line-chart-card__trend" :class="percentage > 0 ? 'is-up' : 'is-down'">
         {{ percentage > 0 ? '+' : '' }}{{ percentage }}%
       </div>
       <div v-if="date" class="line-chart-card__date">{{ date }}</div>
     </div>
-    <div
-      class="line-chart-card__chart"
-      :style="isMiniChart ? {} : { height: `calc(${height}rem - 5rem)` }"
-    >
+    <div class="line-chart-card__chart" :style="isMiniChart ? {} : { height: `calc(${height}rem - 5rem)` }">
       <chart :options="options" />
     </div>
   </div>

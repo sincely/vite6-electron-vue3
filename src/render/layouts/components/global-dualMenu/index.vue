@@ -14,17 +14,8 @@
           @click="handleNav(item)"
         >
           <span class="dual-menu-icon-wrap">
-            <Icon
-              v-if="item.icon"
-              :icon="`lucide:${item.icon}`"
-              class="dual-menu-icon"
-              width="20px"
-              height="20px"
-            />
-            <span
-              v-if="item.showBadge"
-              class="menu-badge menu-badge-icon"
-            ></span>
+            <Icon v-if="item.icon" :icon="`lucide:${item.icon}`" class="dual-menu-icon" width="20px" height="20px" />
+            <span v-if="item.showBadge" class="menu-badge menu-badge-icon"></span>
           </span>
           <span v-if="showText" class="dual-menu-name">{{ item.label }}</span>
         </a>
@@ -67,9 +58,7 @@ const appStore = useAppStore()
 const router = useRouter()
 const route = useRoute()
 
-const mainItems = computed(() =>
-  visibleMenuItems.value.filter((item) => !item.footer)
-)
+const mainItems = computed(() => visibleMenuItems.value.filter((item) => !item.footer))
 const showText = computed(() => appStore.dualMenuShowText)
 
 // 当前路由对应的一级菜单项（决定第一列激活态与第二列内容）

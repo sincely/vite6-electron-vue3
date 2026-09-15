@@ -35,11 +35,7 @@
 
       <!-- 右侧：搜索 + 表格 -->
       <div class="table-panel">
-        <DynamicSearchBar
-          :items="searchItems"
-          :params="searchParams"
-          :table-ref="tableRef"
-        />
+        <DynamicSearchBar :items="searchItems" :params="searchParams" :table-ref="tableRef" />
         <AdvanceTable
           ref="tableRef"
           :columns="columns"

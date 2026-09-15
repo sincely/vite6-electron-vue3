@@ -1,21 +1,13 @@
 <template>
   <div class="dashboard">
     <!-- 装饰性光斑 -->
-    <div
-      class="decorative-orb decorative-orb--primary"
-      style="top: -60px; right: 10%; width: 200px; height: 200px"
-    />
-    <div
-      class="decorative-orb decorative-orb--violet"
-      style="bottom: 20%; left: -40px; width: 160px; height: 160px"
-    />
+    <div class="decorative-orb decorative-orb--primary" style="top: -60px; right: 10%; width: 200px; height: 200px" />
+    <div class="decorative-orb decorative-orb--violet" style="bottom: 20%; left: -40px; width: 160px; height: 160px" />
 
     <section class="hero glass-card">
       <div class="hero-content">
         <h2 class="hero-title">仪表板</h2>
-        <p class="hero-subtitle">
-          欢迎回来，这里展示当前模型服务状态与请求概况。
-        </p>
+        <p class="hero-subtitle">欢迎回来，这里展示当前模型服务状态与请求概况。</p>
       </div>
       <div class="hero-tags">
         <span class="hero-tag hero-tag--success">
@@ -97,15 +89,8 @@
           <span class="panel-title">最近活动</span>
         </div>
         <ul class="activity-list">
-          <li
-            v-for="item in activities"
-            :key="item.title"
-            class="activity-item"
-          >
-            <span
-              class="activity-dot"
-              :style="{ backgroundColor: item.color }"
-            />
+          <li v-for="item in activities" :key="item.title" class="activity-item">
+            <span class="activity-dot" :style="{ backgroundColor: item.color }" />
             <div class="activity-text">
               <p class="activity-title">{{ item.title }}</p>
               <p class="activity-time">{{ item.time }}</p>
@@ -272,12 +257,7 @@ const copyEndpoint = async () => {
   animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   &:hover {
-    box-shadow: 0 8px 20px -4px
-      color-mix(
-        in srgb,
-        var(--stat-color, var(--color-primary)),
-        transparent 60%
-      );
+    box-shadow: 0 8px 20px -4px color-mix(in srgb, var(--stat-color, var(--color-primary)), transparent 60%);
     transform: translate3d(0, -4px, 0);
   }
 
@@ -411,11 +391,7 @@ const copyEndpoint = async () => {
 
     &:hover {
       color: var(--color-primary);
-      background-color: color-mix(
-        in srgb,
-        var(--color-bg-hover),
-        transparent 15%
-      );
+      background-color: color-mix(in srgb, var(--color-bg-hover), transparent 15%);
     }
   }
 }

@@ -1,11 +1,7 @@
 <!-- 组件中心 - 富文本编辑器 -->
 <template>
   <div class="wang-editor-page">
-    <PageHeader
-      title="富文本编辑器"
-      subtitle="基于 wangEditor，支持完整/简化工具栏与内容实时预览"
-      icon="edit"
-    />
+    <PageHeader title="富文本编辑器" subtitle="基于 wangEditor，支持完整/简化工具栏与内容实时预览" icon="edit" />
 
     <!-- 完整工具栏编辑器 -->
     <ElCard class="editor-card">
@@ -14,12 +10,8 @@
           <span>🛠️ 完整工具栏编辑器</span>
           <div class="header-buttons">
             <ElButton size="small" @click="clearFullEditor">清空</ElButton>
-            <ElButton size="small" @click="getFullEditorContent">
-              获取内容
-            </ElButton>
-            <ElButton size="small" @click="setFullEditorDemo">
-              设置示例
-            </ElButton>
+            <ElButton size="small" @click="getFullEditorContent">获取内容</ElButton>
+            <ElButton size="small" @click="setFullEditorDemo">设置示例</ElButton>
           </div>
         </div>
       </template>
@@ -40,12 +32,8 @@
           <span>✨ 简化工具栏编辑器</span>
           <div class="header-buttons">
             <ElButton size="small" @click="clearSimpleEditor">清空</ElButton>
-            <ElButton size="small" @click="getSimpleEditorContent">
-              获取内容
-            </ElButton>
-            <ElButton size="small" @click="setSimpleEditorDemo">
-              设置示例
-            </ElButton>
+            <ElButton size="small" @click="getSimpleEditorContent">获取内容</ElButton>
+            <ElButton size="small" @click="setSimpleEditorDemo">设置示例</ElButton>
           </div>
         </div>
       </template>
@@ -70,16 +58,11 @@
           <h3>完整编辑器内容</h3>
           <ElTabs v-model="fullActiveTab">
             <ElTabPane label="渲染效果" name="preview">
-              <div class="content-preview" v-html="fullEditorHtml"></div>
+              <!-- eslint-disable-next-line vue/no-v-html -- 内容已经过 DOMPurify 净化 -->
+              <div class="content-preview" v-html="safeFullEditorHtml"></div>
             </ElTabPane>
             <ElTabPane label="HTML源码" name="html">
-              <ElInput
-                v-model="fullEditorHtml"
-                type="textarea"
-                :rows="8"
-                placeholder="HTML源码"
-                readonly
-              />
+              <ElInput v-model="fullEditorHtml" type="textarea" :rows="8" placeholder="HTML源码" readonly />
             </ElTabPane>
           </ElTabs>
         </ElCol>
@@ -88,16 +71,11 @@
           <h3>简化编辑器内容</h3>
           <ElTabs v-model="simpleActiveTab">
             <ElTabPane label="渲染效果" name="preview">
-              <div class="content-preview" v-html="simpleEditorHtml"></div>
+              <!-- eslint-disable-next-line vue/no-v-html -- 内容已经过 DOMPurify 净化 -->
+              <div class="content-preview" v-html="safeSimpleEditorHtml"></div>
             </ElTabPane>
             <ElTabPane label="HTML源码" name="html">
-              <ElInput
-                v-model="simpleEditorHtml"
-                type="textarea"
-                :rows="8"
-                placeholder="HTML源码"
-                readonly
-              />
+              <ElInput v-model="simpleEditorHtml" type="textarea" :rows="8" placeholder="HTML源码" readonly />
             </ElTabPane>
           </ElTabs>
         </ElCol>
@@ -212,9 +190,7 @@ const handleGetContent = () =&gt; {
                 <p class="note">适用于简单的文本编辑场景，界面更清爽。</p>
               </ElCol>
             </ElRow>
-            <p class="note">
-              桌面端无图片上传服务器，编辑器内插入的图片会转为 base64 内嵌存储。
-            </p>
+            <p class="note">桌面端无图片上传服务器，编辑器内插入的图片会转为 base64 内嵌存储。</p>
           </div>
         </ElCollapseItem>
       </ElCollapse>
@@ -224,6 +200,7 @@ const handleGetContent = () =&gt; {
 
 <script setup>
 import { ElMessage } from 'element-plus'
+import { sanitizeHtml } from '@/utils/sanitize'
 
 defineOptions({ name: 'WidgetsWangEditor' })
 
@@ -314,6 +291,10 @@ const simpleEditorHtml = ref(`<h1>✨ 简化工具栏编辑器示例</h1>
 <p>支持插入 <a href="https://www.wangeditor.com/" target="_blank">链接</a> 和图片。</p>
 
 <p>简化版编辑器专注于基础功能，适合简单的内容编辑需求。</p>`)
+
+// 预览区渲染编辑器输出的 HTML，先净化防止 XSS
+const safeFullEditorHtml = computed(() => sanitizeHtml(fullEditorHtml.value))
+const safeSimpleEditorHtml = computed(() => sanitizeHtml(simpleEditorHtml.value))
 
 /**
  * 清空完整编辑器内容

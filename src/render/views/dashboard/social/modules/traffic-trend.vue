@@ -15,20 +15,17 @@
 <script setup>
 import { useChartTheme } from '@/hooks/useChartTheme'
 
-const { getThemeColors, tooltipBase, onThemeChange, hexToRgba } =
-  useChartTheme()
+const { getThemeColors, tooltipBase, onThemeChange, hexToRgba } = useChartTheme()
 
 /**
  * 主页流量趋势：双系列平滑面积图
  */
 const days = Array.from({ length: 30 }, (_, i) => `${i + 1}日`)
 const visitData = [
-  420, 432, 401, 434, 490, 530, 520, 482, 491, 534, 580, 610, 592, 601, 634,
-  690, 730, 710, 682, 691, 734, 780, 810, 792, 801, 834, 890, 930, 910, 948
+  420, 432, 401, 434, 490, 530, 520, 482, 491, 534, 580, 610, 592, 601, 634, 690, 730, 710, 682, 691, 734, 780, 810,
+  792, 801, 834, 890, 930, 910, 948
 ]
-const interactData = visitData.map((v, i) =>
-  Math.round(v * (0.42 + (i % 5) * 0.03))
-)
+const interactData = visitData.map((v, i) => Math.round(v * (0.42 + (i % 5) * 0.03)))
 
 const lineOption = ref({})
 

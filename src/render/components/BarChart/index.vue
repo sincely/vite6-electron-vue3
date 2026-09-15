@@ -58,10 +58,7 @@ const {
 // 判断是否为多系列数据
 const isMultipleData = computed(() => {
   return (
-    Array.isArray(props.data) &&
-    props.data.length > 0 &&
-    typeof props.data[0] === 'object' &&
-    'name' in props.data[0]
+    Array.isArray(props.data) && props.data.length > 0 && typeof props.data[0] === 'object' && 'name' in props.data[0]
   )
 })
 
@@ -114,15 +111,11 @@ function createSeriesItem(config) {
 
 function buildOptions() {
   const options = {
-    grid: getGridWithLegend(
-      props.showLegend && isMultipleData.value,
-      props.legendPosition,
-      {
-        top: 15,
-        right: 0,
-        left: 0
-      }
-    ),
+    grid: getGridWithLegend(props.showLegend && isMultipleData.value, props.legendPosition, {
+      top: 15,
+      right: 0,
+      left: 0
+    }),
     tooltip: props.showTooltip ? getTooltipStyle() : undefined,
     xAxis: {
       type: 'category',

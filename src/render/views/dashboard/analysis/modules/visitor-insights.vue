@@ -17,20 +17,7 @@ import { useChartTheme } from '@/hooks/useChartTheme'
 const { getThemeColors, tooltipBase, onThemeChange } = useChartTheme()
 
 // X 轴数据配置，表示一年的月份（1-12月）
-const xAxisData = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12'
-]
+const xAxisData = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 
 /**
  * 访客洞察图表数据
@@ -50,8 +37,7 @@ const chartData = [
 const lineOption = ref({})
 
 function buildOptions() {
-  const { primary, success, textSecondary, textMuted, border } =
-    getThemeColors()
+  const { primary, success, textSecondary, textMuted, border } = getThemeColors()
   const colors = [primary, success]
 
   lineOption.value = {

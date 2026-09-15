@@ -6,12 +6,8 @@ const buildKey = (hash, chunkSize) => `chunk-upload:${hash}:${chunkSize}`
 /** 读取已上传完成的分片下标 */
 export const readStoredChunks = (hash, chunkSize) => {
   try {
-    const value = JSON.parse(
-      localStorage.getItem(buildKey(hash, chunkSize)) || '[]'
-    )
-    return Array.isArray(value)
-      ? value.map(Number).filter(Number.isInteger)
-      : []
+    const value = JSON.parse(localStorage.getItem(buildKey(hash, chunkSize)) || '[]')
+    return Array.isArray(value) ? value.map(Number).filter(Number.isInteger) : []
   } catch {
     return []
   }
@@ -20,10 +16,7 @@ export const readStoredChunks = (hash, chunkSize) => {
 /** 写入已上传完成的分片下标（排序后保存） */
 export const storeChunks = (hash, chunkSize, chunks) => {
   try {
-    localStorage.setItem(
-      buildKey(hash, chunkSize),
-      JSON.stringify([...chunks].sort((a, b) => a - b))
-    )
+    localStorage.setItem(buildKey(hash, chunkSize), JSON.stringify([...chunks].sort((a, b) => a - b)))
   } catch {
     // localStorage 可能因隐私模式或配额不足不可用，不影响本次上传。
   }

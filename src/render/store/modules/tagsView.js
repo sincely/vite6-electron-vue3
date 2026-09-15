@@ -41,27 +41,21 @@ export const useTagsViewStore = defineStore('tagsView', {
     },
     // 移除其他标签页（保留 affix 和当前页）
     removeOtherViews(view) {
-      this.visitedViews = this.visitedViews.filter(
-        (v) => v.affix || v.path === view.path
-      )
+      this.visitedViews = this.visitedViews.filter((v) => v.affix || v.path === view.path)
       this._syncCachedViews()
     },
     // 移除左侧标签页（保留 affix 和当前页）
     removeLeftViews(view) {
       const index = this.visitedViews.findIndex((v) => v.path === view.path)
       if (index <= 0) return
-      this.visitedViews = this.visitedViews.filter(
-        (v, i) => v.affix || i >= index
-      )
+      this.visitedViews = this.visitedViews.filter((v, i) => v.affix || i >= index)
       this._syncCachedViews()
     },
     // 移除右侧标签页（保留 affix 和当前页）
     removeRightViews(view) {
       const index = this.visitedViews.findIndex((v) => v.path === view.path)
       if (index === -1 || index === this.visitedViews.length - 1) return
-      this.visitedViews = this.visitedViews.filter(
-        (v, i) => v.affix || i <= index
-      )
+      this.visitedViews = this.visitedViews.filter((v, i) => v.affix || i <= index)
       this._syncCachedViews()
     },
     // 关闭所有标签页（仅保留 affix）
@@ -78,11 +72,7 @@ export const useTagsViewStore = defineStore('tagsView', {
     },
     // 根据当前 visitedViews 同步 cachedViews，移除已不存在的缓存
     _syncCachedViews() {
-      const keepNames = new Set(
-        this.visitedViews
-          .filter((v) => v.meta?.keepAlive && v.name)
-          .map((v) => v.name)
-      )
+      const keepNames = new Set(this.visitedViews.filter((v) => v.meta?.keepAlive && v.name).map((v) => v.name))
       this.cachedViews = this.cachedViews.filter((name) => keepNames.has(name))
     }
   }

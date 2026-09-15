@@ -32,12 +32,7 @@
               @mousedown.stop
               @click.stop="handleAction(item.event)"
             >
-              <SvgIcon
-                v-if="item.isShow"
-                :icon-class="item.icon"
-                width="16px"
-                height="16px"
-              />
+              <SvgIcon v-if="item.isShow" :icon-class="item.icon" width="16px" height="16px" />
             </button>
           </template>
         </div>
@@ -82,15 +77,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'update:download',
-  'download',
-  'open',
-  'opened',
-  'close',
-  'closed'
-])
+const emit = defineEmits(['update:modelValue', 'update:download', 'download', 'open', 'opened', 'close', 'closed'])
 
 const handleAction = (event) => {
   if (event === 'close') {
@@ -143,11 +130,7 @@ const headerActions = ref([
     width: 200px;
     height: 200px;
     pointer-events: none;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-primary), transparent 68%) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-primary), transparent 68%) 0%, transparent 70%);
     border-radius: 999px;
   }
 

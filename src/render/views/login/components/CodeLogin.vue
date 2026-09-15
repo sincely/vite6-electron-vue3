@@ -33,11 +33,7 @@
             class="custom-input code-input"
             autocomplete="one-time-code"
           />
-          <el-button
-            class="code-btn"
-            :disabled="counting || !isPhoneValid"
-            @click="sendCode"
-          >
+          <el-button class="code-btn" :disabled="counting || !isPhoneValid" @click="sendCode">
             {{ counting ? `${countdown}s 后重发` : '获取验证码' }}
           </el-button>
         </div>
@@ -55,9 +51,7 @@
     </el-button>
 
     <!-- vben code-login：返回账号登录 -->
-    <el-button class="outline-btn" @click="emit('switch', 'account')">
-      返回账号登录
-    </el-button>
+    <el-button class="outline-btn" @click="emit('switch', 'account')">返回账号登录</el-button>
   </div>
 </template>
 
@@ -123,9 +117,7 @@ const handleSubmit = async () => {
     try {
       // 演示环境未接入短信服务，引导用户使用账号密码登录
       await new Promise((resolve) => setTimeout(resolve, 600))
-      ElMessage.info(
-        '演示环境暂未接入短信服务，请使用账号密码登录（admin/123456）'
-      )
+      ElMessage.info('演示环境暂未接入短信服务，请使用账号密码登录（admin/123456）')
     } finally {
       loading.value = false
     }

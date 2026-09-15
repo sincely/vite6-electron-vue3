@@ -13,7 +13,6 @@ import log from 'electron-log/renderer'
 
 // 设置渲染进程的日志级别
 log.transports.console.level = 'debug'
-log.transports.console.format =
-  '[{y}-{m}-{d} {h}:{i}:{s}] [{processType}] {level}: {text}'
+log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}] [{processType}] {level}: {text}'
 
 export default log

@@ -19,15 +19,7 @@ const { getThemeColors, tooltipBase, onThemeChange } = useChartTheme()
 /**
  * 部门分布：横向柱状图
  */
-const departments = [
-  '人力资源部',
-  '客服部',
-  '销售部',
-  '财务部',
-  '运营部',
-  '市场部',
-  '技术研发'
-]
+const departments = ['人力资源部', '客服部', '销售部', '财务部', '运营部', '市场部', '技术研发']
 const counts = [445, 490, 510, 480, 360, 430, 520]
 
 const barOption = ref({})

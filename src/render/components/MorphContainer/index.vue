@@ -65,17 +65,10 @@
         </template>
       </div>
 
-      <div
-        v-else
-        :key="`${variant}-expanded`"
-        class="morph-state morph-state--expanded"
-      >
+      <div v-else :key="`${variant}-expanded`" class="morph-state morph-state--expanded">
         <!-- 1. 圆点变胶囊 -->
         <template v-if="variant === 'dot-capsule'">
-          <span
-            class="dot-capsule__dot dot-capsule__dot--active"
-            aria-hidden="true"
-          ></span>
+          <span class="dot-capsule__dot dot-capsule__dot--active" aria-hidden="true"></span>
           <div class="morph-state__copy">
             <strong>同步完成</strong>
             <span>所有内容都已更新</span>
@@ -93,15 +86,8 @@
             <Icon icon="lucide:bell-ring" width="18" aria-hidden="true" />
           </div>
           <div class="info-card__list">
-            <div
-              v-for="item in activityItems"
-              :key="item.title"
-              class="info-card__item"
-            >
-              <span
-                class="info-card__item-dot"
-                :class="`is-${item.tone}`"
-              ></span>
+            <div v-for="item in activityItems" :key="item.title" class="info-card__item">
+              <span class="info-card__item-dot" :class="`is-${item.tone}`"></span>
               <span>{{ item.title }}</span>
               <time>{{ item.time }}</time>
             </div>
@@ -121,12 +107,7 @@
             <span class="state-badge">⌘ K</span>
           </div>
           <div class="quick-actions">
-            <button
-              v-for="action in quickActions"
-              :key="action.label"
-              type="button"
-              @click.stop
-            >
+            <button v-for="action in quickActions" :key="action.label" type="button" @click.stop>
               <Icon :icon="action.icon" width="15" aria-hidden="true" />
               {{ action.label }}
             </button>
@@ -173,11 +154,7 @@
             <span class="state-badge">本周</span>
           </div>
           <div class="reflow-grid">
-            <div
-              v-for="stat in reflowStats"
-              :key="stat.label"
-              class="reflow-stat"
-            >
+            <div v-for="stat in reflowStats" :key="stat.label" class="reflow-stat">
               <strong>{{ stat.value }}</strong>
               <span>{{ stat.label }}</span>
             </div>
@@ -194,13 +171,7 @@
               <strong>项目预览</strong>
               <span>展开后从底部反向收回</span>
             </div>
-            <button
-              class="retract-header__button"
-              type="button"
-              @click.stop="toggle"
-            >
-              收回
-            </button>
+            <button class="retract-header__button" type="button" @click.stop="toggle">收回</button>
           </div>
           <div class="retract-body">
             <div class="retract-body__line">
@@ -313,18 +284,13 @@ const toggle = () => {
     box-shadow var(--morph-duration) ease;
 
   &:hover {
-    border-color: color-mix(
-      in srgb,
-      var(--morph-accent),
-      var(--morph-border) 55%
-    );
+    border-color: color-mix(in srgb, var(--morph-accent), var(--morph-border) 55%);
     box-shadow: var(--shadow-md);
   }
 
   &:focus-visible {
     border-color: var(--morph-accent);
-    box-shadow: 0 0 0 3px
-      color-mix(in srgb, var(--morph-accent), transparent 78%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--morph-accent), transparent 78%);
   }
 }
 
@@ -425,16 +391,8 @@ const toggle = () => {
 .is-dot-capsule {
   --morph-height: 58px;
   --morph-radius: 99px;
-  --morph-surface: color-mix(
-    in srgb,
-    var(--brand-accent),
-    var(--color-bg-card) 92%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--brand-accent),
-    var(--color-border) 70%
-  );
+  --morph-surface: color-mix(in srgb, var(--brand-accent), var(--color-bg-card) 92%);
+  --morph-border: color-mix(in srgb, var(--brand-accent), var(--color-border) 70%);
 
   &.is-expanded {
     --morph-height: 88px;
@@ -453,8 +411,7 @@ const toggle = () => {
 
   &--active {
     background: var(--color-success);
-    box-shadow: 0 0 0 5px
-      color-mix(in srgb, var(--color-success), transparent 86%);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-success), transparent 86%);
   }
 }
 
@@ -462,16 +419,8 @@ const toggle = () => {
 .is-capsule-card {
   --morph-height: 58px;
   --morph-radius: 99px;
-  --morph-surface: color-mix(
-    in srgb,
-    var(--color-violet),
-    var(--color-bg-card) 92%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--color-violet),
-    var(--color-border) 72%
-  );
+  --morph-surface: color-mix(in srgb, var(--color-violet), var(--color-bg-card) 92%);
+  --morph-border: color-mix(in srgb, var(--color-violet), var(--color-border) 72%);
 
   &.is-expanded {
     --morph-height: 188px;
@@ -566,16 +515,8 @@ const toggle = () => {
   --morph-height: 58px;
   --morph-radius: 16px;
   --morph-accent: var(--color-cyan);
-  --morph-surface: color-mix(
-    in srgb,
-    var(--color-cyan),
-    var(--color-bg-card) 92%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--color-cyan),
-    var(--color-border) 72%
-  );
+  --morph-surface: color-mix(in srgb, var(--color-cyan), var(--color-bg-card) 92%);
+  --morph-border: color-mix(in srgb, var(--color-cyan), var(--color-border) 72%);
 
   &.is-expanded {
     --morph-height: 168px;
@@ -636,16 +577,8 @@ const toggle = () => {
   --morph-height: 66px;
   --morph-radius: 33px;
   --morph-accent: var(--color-amber);
-  --morph-surface: color-mix(
-    in srgb,
-    var(--color-amber),
-    var(--color-bg-card) 92%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--color-amber),
-    var(--color-border) 72%
-  );
+  --morph-surface: color-mix(in srgb, var(--color-amber), var(--color-bg-card) 92%);
+  --morph-border: color-mix(in srgb, var(--color-amber), var(--color-border) 72%);
 
   &.is-expanded {
     --morph-height: 144px;
@@ -707,16 +640,8 @@ const toggle = () => {
   --morph-height: 62px;
   --morph-radius: 14px;
   --morph-accent: var(--color-success);
-  --morph-surface: color-mix(
-    in srgb,
-    var(--color-success),
-    var(--color-bg-card) 94%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--color-success),
-    var(--color-border) 72%
-  );
+  --morph-surface: color-mix(in srgb, var(--color-success), var(--color-bg-card) 94%);
+  --morph-border: color-mix(in srgb, var(--color-success), var(--color-border) 72%);
 
   &.is-expanded {
     --morph-height: 152px;
@@ -780,16 +705,8 @@ const toggle = () => {
   --morph-height: 62px;
   --morph-radius: 15px;
   --morph-accent: var(--color-rose);
-  --morph-surface: color-mix(
-    in srgb,
-    var(--color-rose),
-    var(--color-bg-card) 94%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--color-rose),
-    var(--color-border) 72%
-  );
+  --morph-surface: color-mix(in srgb, var(--color-rose), var(--color-bg-card) 94%);
+  --morph-border: color-mix(in srgb, var(--color-rose), var(--color-border) 72%);
 
   &.is-expanded {
     --morph-height: 170px;
@@ -846,16 +763,8 @@ const toggle = () => {
   --morph-height: 62px;
   --morph-radius: 15px;
   --morph-accent: var(--color-indigo);
-  --morph-surface: color-mix(
-    in srgb,
-    var(--color-indigo),
-    var(--color-bg-card) 94%
-  );
-  --morph-border: color-mix(
-    in srgb,
-    var(--color-indigo),
-    var(--color-border) 72%
-  );
+  --morph-surface: color-mix(in srgb, var(--color-indigo), var(--color-bg-card) 94%);
+  --morph-border: color-mix(in srgb, var(--color-indigo), var(--color-border) 72%);
 
   &.is-expanded {
     --morph-height: 194px;

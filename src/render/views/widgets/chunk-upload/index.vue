@@ -1,10 +1,6 @@
 <template>
   <div class="chunk-upload-page">
-    <PageHeader
-      title="大文件上传"
-      subtitle="分片、断点、秒传与并发控制一体化组件"
-      icon="cloud-upload"
-    />
+    <PageHeader title="大文件上传" subtitle="分片、断点、秒传与并发控制一体化组件" icon="cloud-upload" />
 
     <div class="chunk-upload-page__grid">
       <ElCard class="chunk-upload-page__card">
@@ -51,11 +47,7 @@
         <div class="chunk-upload-page__model">
           <span>当前 modelValue</span>
           <code>
-            {{
-              formFiles
-                .map((item) => `${item.name} · ${item.status}`)
-                .join('、') || '[]'
-            }}
+            {{ formFiles.map((item) => `${item.name} · ${item.status}`).join('、') || '[]' }}
           </code>
         </div>
       </ElCard>
@@ -65,10 +57,7 @@
       <div class="chunk-upload-page__card-heading">
         <div>
           <h3>接入配置</h3>
-          <p>
-            生产环境传入 action 使用默认协议，或通过 api 覆盖 verify /
-            uploadChunk / merge。
-          </p>
+          <p>生产环境传入 action 使用默认协议，或通过 api 覆盖 verify / uploadChunk / merge。</p>
         </div>
       </div>
       <div class="chunk-upload-page__config-list">
@@ -126,8 +115,7 @@ const formFiles = ref([
 const demoSessions = new Map()
 const demoCompleted = new Map()
 
-const wait = (duration) =>
-  new Promise((resolve) => window.setTimeout(resolve, duration))
+const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration))
 
 const demoApi = {
   verify: async ({ fileHash, totalChunks }) => {
@@ -171,14 +159,11 @@ const beforeUpload = async (file) => {
 }
 
 const handleSuccess = ({ item, method }) => {
-  ElMessage.success(
-    `${item.name} ${method === 'fast' ? '秒传成功' : '上传成功'}`
-  )
+  ElMessage.success(`${item.name} ${method === 'fast' ? '秒传成功' : '上传成功'}`)
 }
 
 const handleError = ({ message, phase }) => {
-  if (phase === 'validate' || phase === 'before-upload')
-    ElMessage.error(message)
+  if (phase === 'validate' || phase === 'before-upload') ElMessage.error(message)
 }
 </script>
 

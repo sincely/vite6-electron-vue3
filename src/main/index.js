@@ -32,11 +32,7 @@ app.whenReady().then(() => {
   setupProtocol()
   // 开发模式下：Dock 图标使用 resources/app.png
   if (!app.isPackaged && process.platform === 'darwin' && app.dock) {
-    const devIcon = path.join(
-      process.env.APP_ROOT || process.cwd(),
-      'resources',
-      'app.png'
-    )
+    const devIcon = path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'app.png')
     app.dock.setIcon(nativeImage.createFromPath(devIcon))
   }
 
