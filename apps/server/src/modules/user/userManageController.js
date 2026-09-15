@@ -1,0 +1,105 @@
+/**
+ * @module 用户管理 Controller
+ * @description HTTP 适配层，业务逻辑委托给 userService
+ */
+
+import * as userService from './userService.js'
+import { businessCode, businessMsg } from '../../config/businessCode.js'
+import { createSuccessResponse, createFailResponse } from '../../utils/createResponse.js'
+
+/**
+ * 获取用户列表
+ */
+const listUsers = async (ctx) => {
+  const data = await userService.listUsers(ctx.query)
+  ctx.body = createSuccessResponse(businessCode.success, '获取用户列表成功', data)
+}
+
+/**
+ * 创建用户
+ */
+const createUser = async (ctx) => {
+  const result = await userService.createUser(ctx.request.body)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, businessMsg[result.code]))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, '创建用户成功', result.data)
+}
+
+/**
+ * 更新用户
+ */
+const updateUser = async (ctx) => {
+  const result = await userService.updateUser(ctx.request.body)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, businessMsg[result.code]))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, '更新用户成功')
+}
+
+/**
+ * 删除用户（前端传 { ids: [...] } 或 { id }）
+ */
+const deleteUser = async (ctx) => {
+  const { id, ids } = ctx.request.body
+  // 前端 deleteUsers({ ids }) 走批量删除语义
+  if (Array.isArray(ids) && ids.length > 0) {
+    const result = await userService.batchDeleteUsers(ids, ctx.state.user.userId)
+    if (!result.success) {
+      return (ctx.body = createFailResponse(result.code, result.msg))
+    }
+    return (ctx.body = createSuccessResponse(businessCode.success, `成功删除 ${result.data.count} 个用户`))
+  }
+
+  const result = await userService.deleteUser(id, ctx.state.user.userId)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, businessMsg[result.code]))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, '删除用户成功')
+}
+
+/**
+ * 批量删除用户
+ */
+const batchDeleteUsers = async (ctx) => {
+  const { ids } = ctx.request.body
+  const result = await userService.batchDeleteUsers(ids, ctx.state.user.userId)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, result.msg))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, `成功删除 ${result.data.count} 个用户`)
+}
+
+/**
+ * 更新用户状态
+ */
+const updateUserStatus = async (ctx) => {
+  const { id, status } = ctx.request.body
+  const result = await userService.updateUserStatus(id, status, ctx.state.user.userId)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, businessMsg[result.code]))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, '更新用户状态成功')
+}
+
+/**
+ * 重置用户密码
+ */
+const resetUserPassword = async (ctx) => {
+  const { id } = ctx.request.body
+  const result = await userService.resetUserPassword(id)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, businessMsg[result.code]))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, '密码重置成功，默认密码: 123456')
+}
+
+export default {
+  listUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  batchDeleteUsers,
+  updateUserStatus,
+  resetUserPassword
+}

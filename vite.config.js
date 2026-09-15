@@ -46,13 +46,7 @@ export default defineConfig(({ mode, command }) => {
       proxy: viteEnv.VITE_USE_PROXY === 'true' ? proxyServer : undefined
     },
     build: {
-      // Vite 8 使用 rolldownOptions；rollupOptions 已弃用，且当两者同时存在时
-      // rollupOptions 会被静默忽略（Vite 内部为 `rolldownOptions ??= rollupOptions`），
-      // 因此这里统一合并到 rolldownOptions，避免配置失效。
       rolldownOptions: {
-        // 渲染进程是浏览器环境，排除 electron，避免其内部的
-        // fs / child_process / path 等 Node 内置模块被打包而产生
-        // "externalized for browser compatibility" 警告
         external: ['electron'],
         treeshake: {
           propertyReadSideEffects: false

@@ -25,7 +25,7 @@ function genRequestId() {
  */
 function unwrapBusinessEnvelope(body) {
   if (body && typeof body === 'object' && 'code' in body) {
-    if (body.code === 0) {
+    if (body.code === 200) {
       return body.data ?? null
     } else {
       const err = new Error(body.message || '业务请求失败')
