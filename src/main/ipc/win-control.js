@@ -39,6 +39,19 @@ export default [
       const win = BrowserWindow.fromWebContents(event.sender)
       win?.close()
     }
+  },
+  // 恢复并聚焦窗口（系统通知点击回调等场景把窗口带回前台）
+  {
+    channel: 'focus-window',
+    type: 'on',
+    handler: (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (win) {
+        if (win.isMinimized()) win.restore()
+        win.show()
+        win.focus()
+      }
+    }
   }
 ]
 
