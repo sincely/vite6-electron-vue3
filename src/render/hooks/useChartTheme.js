@@ -41,14 +41,18 @@ export function useChartTheme() {
     }
   }
 
-  // 主题切换时等待 DOM 更新后重建（CSS 变量已被 setTheme 更新）
+  // 主题切换时等待 DOM 更新后重建（CSS 变量已被 setTheme / setThemeColors 更新）
+  // 需要同时监听两类变化：
+  // 1. isDark —— 明暗主题切换，影响坐标轴/tooltip/图例等中性色；
+  // 2. themeColors —— 主题色切换（主色/辅助色），影响系列色板与渐变。
+  // 只监听 isDark 会导致切换主题色后图表颜色不实时更新。
   function onThemeChange(rebuild) {
     watch(
-      isDark,
+      [isDark, () => appStore.themeColors],
       () => {
         nextTick(rebuild)
       },
-      { immediate: true }
+      { immediate: true, deep: true }
     )
   }
 
