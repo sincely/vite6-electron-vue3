@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.11](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.10...v1.0.11) (2026-09-15)
+
+### ✨ Features
+
+* 在线客服提交 ([9678d59](https://github.com/sincely/vite6-electron-vue3/commit/9678d599c1a5d48d2ac0c409e448e6e781b1a564))
+* 添加新的图标支持，包括个人资料、外观显示和关于软件 ([5d07f64](https://github.com/sincely/vite6-electron-vue3/commit/5d07f64d214df5dedacbddc103eb3d6db66d80fd))
+
+### 🐞 Bug Fixes
+
+* 修复响应拦截器中的错误消息处理，确保使用正确的错误对象 ([71cf69f](https://github.com/sincely/vite6-electron-vue3/commit/71cf69fbe8a9537bb462fbc10b3ddc27ab87c742))
+* 将表格尺寸默认值修改为 'default'，调整工具栏按钮样式 ([2d48ba1](https://github.com/sincely/vite6-electron-vue3/commit/2d48ba1271ba2790a49f697895f797eef9f250fe))
+* 更新主题切换逻辑，支持根据当前主题切换到相反主题 ([020d275](https://github.com/sincely/vite6-electron-vue3/commit/020d275fe2f245d7ba7a09562ac32181c061b82a))
+* 移除 splashFailsafe 模块，简化启动逻辑 ([6c98cd4](https://github.com/sincely/vite6-electron-vue3/commit/6c98cd449fab0d1c7550bab6121496a8e50bb8b9))
+* 移除不必要的 warmup 配置，简化服务器设置 ([d46b77f](https://github.com/sincely/vite6-electron-vue3/commit/d46b77f4c9d09f934725a95c6a847977d34d0fe0))
+* 移除更新提示按钮及相关逻辑，简化界面 ([5ab075e](https://github.com/sincely/vite6-electron-vue3/commit/5ab075e527e28d5257a1f986fb0d5b61d567d985))
+* 移除更新检查的最小间隔配置，简化更新逻辑 ([3d01d4c](https://github.com/sincely/vite6-electron-vue3/commit/3d01d4cf0c86b97c783d40b3a369806f2fb5686e))
+
+### ♻️ Code Refactoring
+
+* 简化响应处理逻辑，统一业务信封拆层，优化请求模块 ([1a2ccaa](https://github.com/sincely/vite6-electron-vue3/commit/1a2ccaa7cd29a871e79492028386973a797e7524))
+
 ## [1.0.10](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.9...v1.0.10) (2026-09-10)
 
 ### ✨ Features
