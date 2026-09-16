@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.1](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.11...v2.0.1) (2026-09-16)
+
+### ✨ Features
+
+* 添加 MySQL 8.4.11 Docker 部署文档，涵盖镜像拉取、密码初始化、容器启动等完整流程 ([ed0b9cb](https://github.com/sincely/vite6-electron-vue3/commit/ed0b9cb59ad68a322ec6d7bfb6be81932a803d37))
+* 添加后端服务 ([8508ab2](https://github.com/sincely/vite6-electron-vue3/commit/8508ab2db92bb936fb8a8de3c8ef00f93bbc288e))
+
+### 🐞 Bug Fixes
+
+* 更新主题切换逻辑，确保同时监听明暗主题和主题色变化 ([c8453b4](https://github.com/sincely/vite6-electron-vue3/commit/c8453b43849d93e6da42df52c758c9dfe4c59945))
+
+### ♻️ Code Refactoring
+
+* 更新环境变量配置，统一注释风格并添加数据库备份配置 ([0af8ddc](https://github.com/sincely/vite6-electron-vue3/commit/0af8ddcf3ba085711afdb60b3ab6bef93f0cb661))
+* 构建工具依赖升级，eslint升级 ([96a91c2](https://github.com/sincely/vite6-electron-vue3/commit/96a91c2bba3a7032e54291fcfe7f6a04f9d28fa1))
+
 ## [1.0.11](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.10...v1.0.11) (2026-09-15)
 
 ### ✨ Features
