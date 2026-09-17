@@ -1,6 +1,6 @@
 {
   "name": "lightning",
-  "version": "2.0.1",
+  "version": "2.0.11",
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
@@ -101,8 +101,8 @@
     "md5": "2.3.0",
     "mitt": "^3.0.1",
     "nprogress": "0.2.0",
-    "pinia": "2.3.1",
-    "pinia-plugin-persistedstate": "3.2.3",
+    "pinia": "4.0.3",
+    "pinia-plugin-persistedstate": "4.7.1",
     "png-to-ico": "3.0.1",
     "postcss": "8.4.33",
     "postcss-html": "1.5.0",
