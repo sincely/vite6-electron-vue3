@@ -56,8 +56,8 @@ export default defineConfig(({ mode, command }) => {
           // 等价于原 terserOptions 的关键配置；passes / pure_funcs / reduce_funcs 在 oxc 中没有对应项
           minify: {
             compress: {
-              dropConsole: true, // 移除所有 console.* 调用
-              dropDebugger: true // 移除 debugger; 语句
+              // dropConsole: true, // 移除所有 console.* 调用
+              // dropDebugger: true // 移除 debugger; 语句
               // unused: true（默认）对应原 reduce_funcs
               // oxc 不支持 passes / pure_funcs；dropConsole 已覆盖原 pure_funcs 列表
             },
@@ -102,7 +102,8 @@ export default defineConfig(({ mode, command }) => {
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
           assetFileNames(assetInfo) {
-            const info = assetInfo.name.split('.')
+            const name = assetInfo.names[0] ?? ''
+            const info = name.split('.')
             const ext = info[info.length - 1]
             if (/png|jpe?g|gif|tiff|bmp|ico|webp|svg/i.test(ext)) {
               return `images/[name]-[hash][extname]`
