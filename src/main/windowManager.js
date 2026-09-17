@@ -332,12 +332,6 @@ export function createMainWindow() {
   // 监听Electron窗口完成首次加载（或刷新后加载完成）完成
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString())
-    // 在主窗口加载完成后发送一个测试通知
-    createNotification({
-      title: '欢迎',
-      body: '应用已成功启动！',
-      type: 'celebrate'
-    })
     win.focus() // 聚焦窗口，提升用户体验
   })
 

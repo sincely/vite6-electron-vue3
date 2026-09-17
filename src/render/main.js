@@ -42,15 +42,6 @@ async function setupApp() {
       console.log('当前应用版本号:', version)
       updateStore.setCurrentVersion(version)
     })
-
-    // 监听主进程发送的通知 → 推入通知中心
-    window.ipcRenderer.on('show-notification', (event, options) => {
-      notifStore.push({
-        title: options.title || '通知',
-        body: options.body || '',
-        type: options.type || 'info'
-      })
-    })
   })
   app.config.performance = false
 }

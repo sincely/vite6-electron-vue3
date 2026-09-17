@@ -1,14 +1,18 @@
-import { onMounted, onBeforeUnmount } from 'vue'
+import { onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 
 /**
  * 浏览器唤起应用 Deep Link Hook
  *
- * 监听主进程推送的 deep-link-open 事件，并在挂载时主动拉取冷启动缓存的链接。
+ * 监听主进程推送的 deep-link-open 事件，并主动拉取冷启动缓存的链接。
  * 链接格式：lightning://desktop/console?id=1 → 跳转路由 /desktop/console?id=1
  * 空路径（lightning://）仅激活窗口，不做路由跳转。
  *
  * 两条链路可能对同一链接重复送达（实时推送 + 拉取兜底），通过 payload.id 去重。
+ *
+ * ⚠️ 本 hook 在 App.vue 的 onMounted 中调用，因此内部不能再用 onMounted
+ * 包装 setup —— Vue 3 中嵌套 onMounted 虽会注册但永不触发（flush 队列已过）。
+ * 直接在调用时完成注册，currentInstance 在外层 onMounted 执行期间已就绪。
  *
  * @example
  * // App.vue
@@ -35,9 +39,8 @@ export function useDeepLink() {
 
   const handler = (_event, payload) => navigate(payload)
 
-  onMounted(() => {
-    if (!window.ipcRenderer) return
-
+  // 直接注册监听并拉取缓存链接（不使用 onMounted 包装，原因见上文）
+  if (window.ipcRenderer) {
     // 监听应用运行中收到的深链
     window.ipcRenderer.on('deep-link-open', handler)
 
@@ -48,7 +51,7 @@ export function useDeepLink() {
       .catch((err) => {
         console.warn('[DeepLink] 获取缓存链接失败:', err)
       })
-  })
+  }
 
   onBeforeUnmount(() => {
     window.ipcRenderer?.off('deep-link-open', handler)
