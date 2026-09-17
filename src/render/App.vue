@@ -22,6 +22,15 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 const route = useRoute()
 const isLoginPage = computed(() => route.path === '/login')
 
+// 挂载更新 IPC 监听、网络状态监听、深链监听
+// ⚠️ 必须在 setup 阶段调用，不能放在 onMounted 内部：
+// useUpdater / useDeepLink 内部使用 onMounted 注册回调，若在外层 onMounted
+// 中调用，内层 onMounted 因组件已挂载而永不触发，IPC 监听将无法注册。
+// 同时避免 onMounted 中 skipSplash 提前 return 导致 hook 被跳过。
+useUpdater()
+useNetwork()
+useDeepLink()
+
 // 移除 index.html 中的预挂载启动层：frame:false 的窗口（登录/通用）
 // 在 Vue 接管渲染前由它提供唯一可拖拽区域，避免白屏期无法拖拽窗口。
 onMounted(() => {
@@ -61,13 +70,6 @@ onMounted(() => {
     if (remaining > 0) setTimeout(removeSplash, remaining)
     else removeSplash()
   }
-
-  // 挂载更新IPC监听
-  useUpdater()
-  // 挂载网络状态监听
-  useNetwork()
-  // 挂载浏览器唤起应用（lightning://）深链监听
-  useDeepLink()
 })
 </script>
 
