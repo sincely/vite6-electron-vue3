@@ -40,7 +40,7 @@
     <p>点击以下链接，验证浏览器能否唤起 Lightning 应用：</p>
 
     <ul>
-      <li><a href="lightning://">仅唤起应用</a></li>
+      <li><a href="lightning://open">仅唤起应用</a></li>
       <li><a href="lightning://desktop">仪表板</a></li>
       <li><a href="lightning://desktop/console?id=123">工作台（带参数）</a></li>
       <li><a href="lightning://template/pricing">定价模板</a></li>
@@ -59,10 +59,19 @@
         。
       </p>
       <p>
-        2. 需先安装打包后的应用（安装程序会注册协议）；macOS
+        2. "仅唤起应用"使用
+        <code>lightning://open</code>
+        而非裸
+        <code>lightning://</code>
+        ：浏览器不会派发 authority 为空的协议链接，必须带主机名才能冷启动唤起应用；
+        <code>open</code>
+        为保留哨兵，解析时不产生路由跳转。
+      </p>
+      <p>
+        3. 需先安装打包后的应用（安装程序会注册协议）；macOS
         开发模式下系统无法将协议链接转发到开发实例，请用打包产物测试。
       </p>
-      <p>3. 应用已在运行时点击链接，会聚焦现有窗口并跳转到目标页面。</p>
+      <p>4. 应用已在运行时点击链接，会聚焦现有窗口并跳转到目标页面。</p>
     </div>
   </body>
 </html>

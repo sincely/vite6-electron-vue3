@@ -10,7 +10,9 @@
  *
  * 链接格式：lightning://<路由路径>?<查询参数>
  *   例如 lightning://desktop/console?id=1 → 渲染进程路由 /desktop/console?id=1
- *   仅传 lightning:// 或 lightning://open 时只激活窗口，不做路由跳转
+ *   仅传 lightning://open（或裸 lightning://）时只激活窗口，不做路由跳转。
+ *   ⚠️ 浏览器不会派发 authority 为空的 lightning://，故"仅唤起"应使用
+ *   lightning://open（open 为保留哨兵主机名，解析时不产生路由）。
  *
  * 分发策略：
  *  - 主窗口已加载完成：通过 IPC 事件 deep-link-open 实时推送
@@ -25,6 +27,13 @@ import { getMainWindow, restoreMainWindow } from './windowManager'
 
 /** 自定义协议名（与 electron-builder.json5 中 protocols.schemes 保持一致） */
 export const DEEPLINK_PROTOCOL = 'lightning'
+
+/**
+ * "仅激活窗口"哨兵主机名：lightning://open
+ * 浏览器不会派发 authority 为空的链接（lightning://），故用带主机名的 open
+ * 作为等价哨兵；解析时识别到该主机名即视为无路由，仅激活窗口。
+ */
+export const DEEPLINK_ACTIVATE_HOST = 'open'
 
 /** 渲染进程消费用的 IPC 事件/通道名 */
 export const DEEPLINK_EVENT = 'deep-link-open'
@@ -50,6 +59,11 @@ export function parseDeepLink(url) {
   const cutIndex = raw.search(/[?#]/)
   const pathPart = (cutIndex === -1 ? raw : raw.slice(0, cutIndex)).replace(/\/+$/, '')
   const rest = cutIndex === -1 ? '' : raw.slice(cutIndex)
+
+  // lightning://open 为"仅激活"哨兵：等价于 lightning://，不产生路由跳转
+  if (pathPart.toLowerCase() === DEEPLINK_ACTIVATE_HOST) {
+    return { url, path: '', query: '', fullPath: '' }
+  }
 
   const routePath = pathPart ? `/${pathPart}` : ''
   return {
