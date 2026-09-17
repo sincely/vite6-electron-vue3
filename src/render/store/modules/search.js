@@ -1,33 +1,39 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 // 搜索历史最大条数
 const HISTORY_MAX_LENGTH = 10
 
-export const useSearchStore = defineStore('search', {
-  state: () => {
-    return {
-      // 搜索历史：{ title, path }[]，最新在前
-      searchHistory: []
-    }
-  },
-  actions: {
+export const useSearchStore = defineStore(
+  'search',
+  () => {
+    // 搜索历史：{ title, path }[]，最新在前
+    const searchHistory = ref([])
+
     // 新增搜索历史：按 path 去重置顶，超出上限淘汰末尾
-    addSearchHistory(item) {
+    function addSearchHistory(item) {
       const record = { title: item.title, path: item.path }
-      const existIndex = this.searchHistory.findIndex((historyItem) => historyItem.path === record.path)
+      const existIndex = searchHistory.value.findIndex((historyItem) => historyItem.path === record.path)
 
       if (existIndex !== -1) {
-        this.searchHistory.splice(existIndex, 1)
-      } else if (this.searchHistory.length >= HISTORY_MAX_LENGTH) {
-        this.searchHistory.pop()
+        searchHistory.value.splice(existIndex, 1)
+      } else if (searchHistory.value.length >= HISTORY_MAX_LENGTH) {
+        searchHistory.value.pop()
       }
 
-      this.searchHistory.unshift(record)
-    },
+      searchHistory.value.unshift(record)
+    }
+
     // 删除单条搜索历史
-    removeSearchHistory(index) {
-      this.searchHistory.splice(index, 1)
+    function removeSearchHistory(index) {
+      searchHistory.value.splice(index, 1)
+    }
+
+    return {
+      searchHistory,
+      addSearchHistory,
+      removeSearchHistory
     }
   },
-  persist: true
-})
+  { persist: true }
+)

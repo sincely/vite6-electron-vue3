@@ -1,81 +1,102 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import { login, getUserInfo, logout } from '@/api/user'
-export const useUserStore = defineStore('user', {
-  state: () => {
-    return {
-      token: '',
-      userInfo: null,
-      permissions: [],
-      roles: []
+
+export const useUserStore = defineStore(
+  'user',
+  () => {
+    const token = ref('')
+    const userInfo = ref(null)
+    const permissions = ref([])
+    const roles = ref([])
+
+    function setToken(value) {
+      token.value = value
     }
-  },
-  actions: {
-    setToken(token) {
-      this.token = token
-    },
-    setUserInfo(userInfo) {
-      this.userInfo = userInfo
-    },
-    setPermissions(permissions) {
-      this.permissions = permissions
-    },
-    setRoles(roles) {
-      this.roles = roles
-    },
+
+    function setUserInfo(value) {
+      userInfo.value = value
+    }
+
+    function setPermissions(value) {
+      permissions.value = value
+    }
+
+    function setRoles(value) {
+      roles.value = value
+    }
+
     // 重置用户状态
-    resetUserState() {
-      this.token = ''
-      this.userInfo = null
-      this.permissions = []
-      this.roles = []
-    },
+    function resetUserState() {
+      token.value = ''
+      userInfo.value = null
+      permissions.value = []
+      roles.value = []
+    }
 
     // 登录
-    async loginAction(params) {
+    async function loginAction(params) {
       try {
         const payload = await login(params)
-        this.setToken(payload?.accessToken || payload?.token)
-        await this.getUserInfoAction()
+        setToken(payload?.accessToken || payload?.token)
+        await getUserInfoAction()
         return payload
       } catch (error) {
         return Promise.reject(error)
       }
-    },
+    }
 
     // 获取用户信息
-    async getUserInfoAction() {
+    async function getUserInfoAction() {
       try {
         const payload = await getUserInfo()
-        this.userInfo = payload
-        this.permissions = payload?.permissions || []
-        this.roles = payload?.roles || []
+        userInfo.value = payload
+        permissions.value = payload?.permissions || []
+        roles.value = payload?.roles || []
         return payload
       } catch (error) {
         return Promise.reject(error)
       }
-    },
+    }
 
     // 退出登录
-    async logoutAction() {
+    async function logoutAction() {
       try {
         await logout()
-        this.resetUserState()
+        resetUserState()
         return true
       } catch (error) {
         return Promise.reject(error)
       }
-    },
+    }
 
     // 检查用户权限（'*:*:*' 为超级权限通配符，拥有全部权限）
-    hasPermission(permission) {
-      if (this.permissions.includes('*:*:*')) return true
-      return this.permissions.includes(permission)
-    },
+    function hasPermission(permission) {
+      if (permissions.value.includes('*:*:*')) return true
+      return permissions.value.includes(permission)
+    }
 
     // 检查用户角色
-    hasRole(role) {
-      return this.roles.includes(role)
+    function hasRole(role) {
+      return roles.value.includes(role)
+    }
+
+    return {
+      token,
+      userInfo,
+      permissions,
+      roles,
+      setToken,
+      setUserInfo,
+      setPermissions,
+      setRoles,
+      resetUserState,
+      loginAction,
+      getUserInfoAction,
+      logoutAction,
+      hasPermission,
+      hasRole
     }
   },
-  persist: true
-})
+  { persist: true }
+)

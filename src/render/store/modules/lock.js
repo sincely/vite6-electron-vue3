@@ -1,32 +1,50 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useLockStore = defineStore('lock', {
-  state: () => ({
-    isLock: false, // 是否处于锁屏状态
-    lockPassword: '', // 锁屏密码（HMAC-SHA256 哈希值，带 hmac-sha256: 前缀）
-    dialogVisible: false // 设置锁屏密码弹窗是否显示（不持久化）
-  }),
-  actions: {
-    setLockStatus(status) {
-      this.isLock = status
-    },
-    setLockPassword(password) {
-      this.lockPassword = password
-    },
-    openLockDialog() {
-      this.dialogVisible = true
-    },
-    closeLockDialog() {
-      this.dialogVisible = false
-    },
+export const useLockStore = defineStore(
+  'lock',
+  () => {
+    const isLock = ref(false) // 是否处于锁屏状态
+    const lockPassword = ref('') // 锁屏密码（HMAC-SHA256 哈希值，带 hmac-sha256: 前缀）
+    const dialogVisible = ref(false) // 设置锁屏密码弹窗是否显示（不持久化）
+
+    function setLockStatus(status) {
+      isLock.value = status
+    }
+
+    function setLockPassword(password) {
+      lockPassword.value = password
+    }
+
+    function openLockDialog() {
+      dialogVisible.value = true
+    }
+
+    function closeLockDialog() {
+      dialogVisible.value = false
+    }
+
     // 解锁/退出登录时重置锁屏状态
-    resetLock() {
-      this.isLock = false
-      this.lockPassword = ''
-      this.dialogVisible = false
+    function resetLock() {
+      isLock.value = false
+      lockPassword.value = ''
+      dialogVisible.value = false
+    }
+
+    return {
+      isLock,
+      lockPassword,
+      dialogVisible,
+      setLockStatus,
+      setLockPassword,
+      openLockDialog,
+      closeLockDialog,
+      resetLock
     }
   },
-  persist: {
-    paths: ['isLock', 'lockPassword']
+  {
+    persist: {
+      pick: ['isLock', 'lockPassword']
+    }
   }
-})
+)

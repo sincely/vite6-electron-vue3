@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import botAvatar from '@/assets/bar/app.png'
 import avatar1 from '@/assets/images/avatar/avatar1.webp'
 import avatar2 from '@/assets/images/avatar/avatar2.webp'
@@ -244,88 +245,103 @@ const buildMessagesMap = () => ({
   ]
 })
 
-export const useChatStore = defineStore('chat', {
-  state: () => ({
-    visible: false, // 聊天抽屉是否可见
-    // ── 设置页聊天 ──────────────────────────────────────────────
-    selectedContactId: BOT_ID, // 当前选中的联系人
-    contacts: buildContacts(), // 联系人列表
-    messagesMap: buildMessagesMap(), // 各联系人的会话记录 { [id]: Message[] }
-    typingMap: {} // 各联系人的"正在输入"状态 { [id]: boolean }
-  }),
-  getters: {
-    // 当前选中的联系人
-    selectedContact(state) {
-      return state.contacts.find((c) => c.id === state.selectedContactId) || state.contacts[0]
-    },
-    // 当前会话的消息列表
-    currentMessages(state) {
-      return state.messagesMap[state.selectedContactId] || []
+export const useChatStore = defineStore('chat', () => {
+  const visible = ref(false) // 聊天抽屉是否可见
+  // ── 设置页聊天 ──────────────────────────────────────────────
+  const selectedContactId = ref(BOT_ID) // 当前选中的联系人
+  const contacts = ref(buildContacts()) // 联系人列表
+  const messagesMap = ref(buildMessagesMap()) // 各联系人的会话记录 { [id]: Message[] }
+  const typingMap = ref({}) // 各联系人的"正在输入"状态 { [id]: boolean }
+
+  // 当前选中的联系人
+  const selectedContact = computed(
+    () => contacts.value.find((c) => c.id === selectedContactId.value) || contacts.value[0]
+  )
+  // 当前会话的消息列表
+  const currentMessages = computed(() => messagesMap.value[selectedContactId.value] || [])
+
+  // 切换聊天窗口可见性
+  function toggleChat(value) {
+    visible.value = value === undefined ? !visible.value : value
+  }
+
+  // 选择联系人并清空其未读数
+  function selectContact(id) {
+    selectedContactId.value = id
+    const contact = contacts.value.find((c) => c.id === id)
+    if (contact) contact.unread = 0
+  }
+
+  // 生成消息自增 id
+  function nextMessageId() {
+    return ++messageSeed
+  }
+
+  // 追加一条消息；非当前联系人的来信累加未读数
+  function pushMessage(contactId, message) {
+    if (!messagesMap.value[contactId]) {
+      messagesMap.value[contactId] = []
     }
-  },
-  actions: {
-    // 切换聊天窗口可见性
-    toggleChat(visible) {
-      this.visible = visible === undefined ? !this.visible : visible
-    },
-    // 选择联系人并清空其未读数
-    selectContact(id) {
-      this.selectedContactId = id
-      const contact = this.contacts.find((c) => c.id === id)
-      if (contact) contact.unread = 0
-    },
-    // 生成消息自增 id
-    nextMessageId() {
-      return ++messageSeed
-    },
-    // 追加一条消息；非当前联系人的来信累加未读数
-    pushMessage(contactId, message) {
-      if (!this.messagesMap[contactId]) {
-        this.messagesMap[contactId] = []
+    messagesMap.value[contactId].push(message)
+
+    const contact = contacts.value.find((c) => c.id === contactId)
+    if (contact) {
+      contact.lastTime = message.time
+      contact.lastTimestamp = Date.now()
+      if (!message.isMe && contactId !== selectedContactId.value) {
+        contact.unread = (contact.unread || 0) + 1
       }
-      this.messagesMap[contactId].push(message)
-
-      const contact = this.contacts.find((c) => c.id === contactId)
-      if (contact) {
-        contact.lastTime = message.time
-        contact.lastTimestamp = Date.now()
-        if (!message.isMe && contactId !== this.selectedContactId) {
-          contact.unread = (contact.unread || 0) + 1
-        }
-      }
-    },
-    // 全部标为已读：清空所有联系人未读数
-    markAllRead() {
-      this.contacts.forEach((contact) => {
-        contact.unread = 0
-      })
-    },
-    // 模拟对方回复：先显示"正在输入"，随后追加回复消息
-    scheduleReply(contactId) {
-      if (replyTimers[contactId]) return
-      const contact = this.contacts.find((c) => c.id === contactId)
-      if (!contact) return
-
-      replyTimers[contactId] = setTimeout(() => {
-        this.typingMap[contactId] = true
-
-        replyTimers[contactId] = setTimeout(
-          () => {
-            this.typingMap[contactId] = false
-            const replies = contactId === BOT_ID ? BOT_REPLIES : CONTACT_REPLIES
-            const index = (replyIndexMap[contactId] = ((replyIndexMap[contactId] ?? -1) + 1) % replies.length)
-            this.pushMessage(contactId, {
-              id: this.nextMessageId(),
-              sender: contact.name,
-              content: replies[index],
-              time: formatTime(),
-              isMe: false
-            })
-            delete replyTimers[contactId]
-          },
-          1200 + Math.random() * 1000
-        )
-      }, 400)
     }
+  }
+
+  // 全部标为已读：清空所有联系人未读数
+  function markAllRead() {
+    contacts.value.forEach((contact) => {
+      contact.unread = 0
+    })
+  }
+
+  // 模拟对方回复：先显示"正在输入"，随后追加回复消息
+  function scheduleReply(contactId) {
+    if (replyTimers[contactId]) return
+    const contact = contacts.value.find((c) => c.id === contactId)
+    if (!contact) return
+
+    replyTimers[contactId] = setTimeout(() => {
+      typingMap.value[contactId] = true
+
+      replyTimers[contactId] = setTimeout(
+        () => {
+          typingMap.value[contactId] = false
+          const replies = contactId === BOT_ID ? BOT_REPLIES : CONTACT_REPLIES
+          const index = (replyIndexMap[contactId] = ((replyIndexMap[contactId] ?? -1) + 1) % replies.length)
+          pushMessage(contactId, {
+            id: nextMessageId(),
+            sender: contact.name,
+            content: replies[index],
+            time: formatTime(),
+            isMe: false
+          })
+          delete replyTimers[contactId]
+        },
+        1200 + Math.random() * 1000
+      )
+    }, 400)
+  }
+
+  return {
+    visible,
+    selectedContactId,
+    contacts,
+    messagesMap,
+    typingMap,
+    selectedContact,
+    currentMessages,
+    toggleChat,
+    selectContact,
+    nextMessageId,
+    pushMessage,
+    markAllRead,
+    scheduleReply
   }
 })
