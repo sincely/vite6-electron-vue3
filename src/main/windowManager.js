@@ -83,7 +83,7 @@ nativeTheme.on('updated', () => {
 /**
  * 设置通用窗口事件：
  * - 拦截外部链接，使用系统浏览器打开
- * - 记录页面加载失败日志
+ * - 记录页面加载失败日志，并在首次失败时自动重载一次（规避冷启动偶发白屏/黑屏）
  * - 记录渲染进程崩溃日志
  * - ready-to-show 时显示窗口（autoShow=false 时跳过，由调用方控制显示时机）
  */
@@ -93,9 +93,21 @@ const setupWindow = (win, { autoShow = true } = {}) => {
     return { action: 'deny' } // 拒绝打开外部链接
   })
 
-  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
     if (win.isDestroyed()) return
     logger.error(`页面加载失败: ${errorDescription} (${errorCode}) at ${validatedURL}`)
+
+    // ERR_ABORTED (-3) 是正常导航中断（如用户主动跳转），不需要重试
+    // 仅对主框架失败重试，子资源失败由页面自身处理
+    if (errorCode === -3 || !isMainFrame) return
+
+    // 首次失败时自动重载一次：冷启动经由协议唤起时，app:// 资源加载可能因
+    // 时序问题偶发失败，重载可恢复；仅重试一次避免无限循环
+    if (!win.webContents._retriedLoad && validatedURL) {
+      win.webContents._retriedLoad = true
+      logger.info(`[Window] 自动重载窗口 (errorCode=${errorCode}): ${validatedURL}`)
+      win.webContents.loadURL(validatedURL)
+    }
   })
 
   win.webContents.on('render-process-gone', (_event, details) => {
@@ -117,6 +129,8 @@ const setupWindow = (win, { autoShow = true } = {}) => {
  * - 注册 DevTools 快捷键：开发模式 F12，生产环境 Ctrl+F12
  */
 const loadHash = (win, hash) => {
+  // 重置重试标记，使每次新加载都有一次重试机会
+  win.webContents._retriedLoad = false
   // 开发环境使用 loadURL 加载 Vite 开发服务器
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(hash ? `${VITE_DEV_SERVER_URL}#${hash}` : VITE_DEV_SERVER_URL)
