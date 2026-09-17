@@ -91,18 +91,13 @@ export default defineConfig(({ mode, command }) => {
             if (id.includes('node_modules/echarts/')) {
               return 'echarts'
             }
-            // 工具库
-            if (
-              id.includes('node_modules/axios/') ||
-              id.includes('node_modules/dayjs/') ||
-              id.includes('node_modules/lodash-es/')
-            ) {
-              return 'utils-vendor'
-            }
-            // qrcode
-            if (id.includes('node_modules/qrcode/')) {
-              return 'qrcode'
-            }
+            // 工具库（axios / dayjs / lodash-es）不强制合包：
+            // dayjs 是 UMD/CJS 模块，打包时需要 __commonJS interop helper。
+            // 该 helper 会被 Rolldown 放入其他 chunk（如 install），
+            // 而 install 又依赖 lodash-es 函数，形成循环依赖。
+            // 开发模式下 Vite 原生 ESM 能处理循环引用，但生产构建 manualChunks
+            // 强制分块后，chunk 求值顺序导致 interop helper 尚未初始化就被调用，
+            // 报 "e is not a function"。移除后由 Rolldown 自动拆分即可。
           },
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
