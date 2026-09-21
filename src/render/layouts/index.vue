@@ -145,7 +145,6 @@ import DualMenu from './components/global-dualMenu/index.vue'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { findTopLevelParent } from '@/config/menu'
-import { useRoute } from 'vue-router'
 
 const appStore = useAppStore()
 const route = useRoute()

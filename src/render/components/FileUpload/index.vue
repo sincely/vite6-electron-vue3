@@ -103,7 +103,6 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { ElImageViewer, ElMessage } from 'element-plus'
 import { Delete, Document, Picture, Upload, UploadFilled, View } from '@element-plus/icons-vue'
 

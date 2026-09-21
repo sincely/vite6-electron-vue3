@@ -48,7 +48,7 @@
 
 <script setup>
 import { Iphone, Lock } from '@element-plus/icons-vue'
-import { useRouter, useRoute } from 'vue-router'
+
 import { useUserStore } from '@/store/modules/user'
 
 const router = useRouter()

@@ -110,7 +110,6 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { visibleMenuItems, containsRoute, firstLeaf } from '@/config/menu'

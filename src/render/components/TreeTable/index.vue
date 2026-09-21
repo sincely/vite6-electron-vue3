@@ -166,7 +166,6 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import { parseTime } from '@/utils/time'
 import ColumnSetting from '@/components/ColumnSetting/index.vue'
 import StyleSetting from '@/components/StyleSetting/index.vue'

@@ -109,7 +109,7 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { Icon } from '@iconify/vue'
-import { useRoute } from 'vue-router'
+
 import { useUpdateStore } from '@/store/modules/version'
 
 // ==================== 功能开关 ====================

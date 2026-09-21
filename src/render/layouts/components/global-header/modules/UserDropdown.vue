@@ -88,7 +88,7 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import { useRouter } from 'vue-router'
+
 import { useUserStore } from '@/store/modules/user'
 import { useLockStore } from '@/store/modules/lock'
 

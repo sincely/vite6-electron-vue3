@@ -1,5 +1,4 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { nav, site } from '../config/site.js'
 
 const scrolled = ref(false)
@@ -36,24 +35,14 @@ onBeforeUnmount(() => {
       </a>
 
       <nav class="nav-desktop">
-        <a
-          v-for="item in nav"
-          :key="item.label"
-          :href="item.href"
-          class="nav-link"
-        >
+        <a v-for="item in nav" :key="item.label" :href="item.href" class="nav-link">
           {{ item.label }}
         </a>
       </nav>
 
       <div class="header-actions">
         <a href="#downloads" class="cta-button">下载</a>
-        <button
-          class="menu-toggle"
-          :aria-expanded="menuOpen"
-          aria-label="打开菜单"
-          @click="toggleMenu"
-        >
+        <button class="menu-toggle" :aria-expanded="menuOpen" aria-label="打开菜单" @click="toggleMenu">
           <span class="bar" />
           <span class="bar" />
         </button>
@@ -62,18 +51,10 @@ onBeforeUnmount(() => {
 
     <Transition name="drawer">
       <nav v-if="menuOpen" class="nav-mobile">
-        <a
-          v-for="item in nav"
-          :key="item.label"
-          :href="item.href"
-          class="nav-mobile-link"
-          @click="closeMenu"
-        >
+        <a v-for="item in nav" :key="item.label" :href="item.href" class="nav-mobile-link" @click="closeMenu">
           {{ item.label }}
         </a>
-        <a href="#downloads" class="nav-mobile-link strong" @click="closeMenu">
-          全部下载
-        </a>
+        <a href="#downloads" class="nav-mobile-link strong" @click="closeMenu">全部下载</a>
       </nav>
     </Transition>
   </header>

@@ -578,7 +578,7 @@ import { appPresetColors } from '@/settings/designSetting'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 import { useUpdateStore } from '@/store/modules/version'
-import { useRouter } from 'vue-router'
+
 import pkg from '../../../../package.json'
 
 const appStore = useAppStore()

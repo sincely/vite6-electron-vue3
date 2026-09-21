@@ -49,7 +49,6 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAppStore } from '@/store/modules/app'
 import { visibleMenuItems, findMenuPath, containsRoute, firstLeaf } from '@/config/menu'

@@ -43,7 +43,6 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useChatStore } from '@/store/modules/chat'
 import { useFastEnter } from '@/hooks/useFastEnter'

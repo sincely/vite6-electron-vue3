@@ -17,7 +17,6 @@
 <script setup>
 import { useAppStore } from '@/store/modules/app'
 import { isMac } from '@/utils/platform'
-import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
 const router = useRouter()

@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import { findMenuPath } from '@/config/menu'
 import MixedMenuItem from './MixedMenuItem.vue'

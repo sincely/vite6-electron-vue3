@@ -79,7 +79,6 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
 import AuthTitle from './AuthTitle.vue'
 import ThirdPartyLogin from './ThirdPartyLogin.vue'

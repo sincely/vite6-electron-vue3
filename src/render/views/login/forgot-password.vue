@@ -152,7 +152,7 @@
 <script setup>
 import { Iphone, Lock, Key } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+
 import AuthLayout from './components/AuthLayout.vue'
 import AuthTitle from './components/AuthTitle.vue'
 
