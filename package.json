@@ -1,6 +1,6 @@
 {
   "name": "lightning",
-  "version": "2.0.11",
+  "version": "2.0.1",
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
@@ -9,7 +9,7 @@
   "description": "A Vite6 Electron Vue3 project",
   "author": "chengzhou",
   "scripts": {
-    "dev": "concurrently -k \"npm run backend:dev\" \"npm run dev:win\"",
+    "dev": "concurrently -k -n server,web -c blue,green \"pnpm run backend:dev\" \"pnpm run dev:win\"",
     "dev:win": "node scripts/pre-dev.js && vite --mode development",
     "dev:mac": "vite --mode development",
     "build:dev": "vite build --mode development",
@@ -53,7 +53,7 @@
     "build:icons": "esno ./scripts/build-icons",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
-    "backend:dev": "cd apps/server && npm run dev"
+    "backend:dev": "cd apps/server && npm --silent run dev"
   },
   "dependencies": {
     "axios": "1.19.0",
