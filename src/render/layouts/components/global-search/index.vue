@@ -30,7 +30,12 @@
       </ElInput>
 
       <ElScrollbar ref="scrollbarRef" class="search-body" max-height="380px">
-        <p v-if="showHistoryTitle" class="search-history-title">搜索历史</p>
+        <div v-if="showHistoryTitle" class="search-history-header">
+          <p class="search-history-title">搜索历史</p>
+          <button class="search-history-clear" title="清空搜索历史" @click="clearHistory">
+            <Icon icon="lucide:trash-2" width="14" />
+          </button>
+        </div>
 
         <!-- 搜索结果 / 搜索历史 -->
         <div
@@ -337,6 +342,11 @@ const removeHistory = (index) => {
     activeIndex.value = Math.max(0, length - 1)
   }
 }
+
+const clearHistory = () => {
+  searchStore.clearSearchHistory()
+  activeIndex.value = 0
+}
 </script>
 
 <style lang="scss" scoped>
@@ -448,10 +458,38 @@ const removeHistory = (index) => {
     margin-top: 12px;
   }
 
+  .search-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
   .search-history-title {
-    margin: 0 0 8px;
+    margin: 0;
     font-size: 12px;
     color: var(--color-text-muted);
+  }
+
+  .search-history-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-left: 6px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: var(--color-danger);
+      background: color-mix(in srgb, var(--color-danger), transparent 85%);
+      border-color: color-mix(in srgb, var(--color-danger), transparent 75%);
+    }
   }
 
   .search-item {

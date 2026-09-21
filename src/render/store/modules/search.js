@@ -29,10 +29,16 @@ export const useSearchStore = defineStore(
       searchHistory.value.splice(index, 1)
     }
 
+    // 清空全部搜索历史
+    function clearSearchHistory() {
+      searchHistory.value = []
+    }
+
     return {
       searchHistory,
       addSearchHistory,
-      removeSearchHistory
+      removeSearchHistory,
+      clearSearchHistory
     }
   },
   { persist: true }
