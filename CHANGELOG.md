@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.2](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.1...v2.0.2) (2026-09-21)
+
+### ✨ Features
+
+* 增强请求模块，处理登录态失效并自动重载窗口，优化业务信封解析逻辑 ([58644ec](https://github.com/sincely/vite6-electron-vue3/commit/58644ec016255c9210aed3570bd9e3df4ad263a4))
+* 更新深链文档，明确仅唤起应用的链接格式及使用说明 ([c415722](https://github.com/sincely/vite6-electron-vue3/commit/c4157228cbbe9c68f31d42ce15517010d5bd06dc))
+* 添加深链支持，优化 IPC 和网络状态监听的挂载逻辑 ([731b1a9](https://github.com/sincely/vite6-electron-vue3/commit/731b1a97847f5743b74ffb12a5402d69beaecd1a))
+* 添加清空搜索历史功能，优化搜索历史展示样式 ([47cc6fe](https://github.com/sincely/vite6-electron-vue3/commit/47cc6fedee47ae513759acf9073227e60122a174))
+* 添加设置按钮并优化用户下拉菜单，移除不必要的设置选项 ([fb7f80b](https://github.com/sincely/vite6-electron-vue3/commit/fb7f80b3ae8e2422441d59734f92c1bf4a742fb3))
+
+### 🔧 Chores
+
+* 更新版本号至2.0.11，升级pinia及其持久化插件至最新版本 ([4ce312c](https://github.com/sincely/vite6-electron-vue3/commit/4ce312c62c729bfa61845d72bb94e1174a3c0e52))
+
+### ♻️ Code Refactoring
+
+* pinia 版本升级，使用Composition API风格 ([6d4a374](https://github.com/sincely/vite6-electron-vue3/commit/6d4a3749a12026096ecb4a9019d1b2071e254667))
+* 优化二级菜单伸缩把手样式，调整位置和边框属性 ([b57d04b](https://github.com/sincely/vite6-electron-vue3/commit/b57d04b9743dcded3eb4c4f75691d3b37b4d6d38))
+* 优化工具库的合包逻辑，解决循环依赖问题 ([f78ab42](https://github.com/sincely/vite6-electron-vue3/commit/f78ab42f10ce6fca9880fccf5defcbfe204b85f7))
+* 优化开发脚本，使用 pnpm 运行后端开发命令并添加颜色标识 ([6d1d0a9](https://github.com/sincely/vite6-electron-vue3/commit/6d1d0a930b6ef1afa0e827958011fb5d4f7818c5))
+* 注释掉构建配置中的 console 和 debugger 移除选项，优化代码可读性 ([1787736](https://github.com/sincely/vite6-electron-vue3/commit/1787736734d6db8880bc973323153507092bc747))
+* 移除 web-admin 相关的开发和构建脚本，修正后端开发命令路径 ([a1980a8](https://github.com/sincely/vite6-electron-vue3/commit/a1980a8bd541bbaae2d8abd8c5fa3031a2780131))
+* 移除不必要的通知逻辑，优化应用启动流程 ([093a42a](https://github.com/sincely/vite6-electron-vue3/commit/093a42a10ab5fba9214d7ca68d11496f25e7cc92))
+* 移除未使用的 vue-router 导入 ([abad3b1](https://github.com/sincely/vite6-electron-vue3/commit/abad3b1aee351d93795dc411aa5adc33aacc230c))
+
 ## [2.0.1](https://github.com/sincely/vite6-electron-vue3/compare/v1.0.11...v2.0.1) (2026-09-16)
 
 ### ✨ Features
