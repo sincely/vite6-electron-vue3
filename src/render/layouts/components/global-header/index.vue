@@ -56,6 +56,10 @@
           </button>
           <NotificationPanel :anchor-ref="bellBtnRef" />
         </div>
+        <!-- 设置 -->
+        <button class="icon-btn" title="设置" @click="appStore.toggleSettings(true)">
+          <SvgIcon icon-class="settings" width="18px" height="18px" />
+        </button>
         <!-- 主题切换 -->
         <button class="icon-btn" @click="appStore.toggleThemeWithTransition($event, isDark ? 'light' : 'dark')">
           <SvgIcon :icon-class="appStore.isDark ? 'sun' : 'moon'" width="16px" height="16px" />
@@ -91,6 +95,7 @@ import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
 import { useChatStore } from '@/store/modules/chat'
 import { isWindows, isMac } from '@/utils/platform'
+import { Icon } from '@iconify/vue'
 import GlobalLogo from '../global-logo/index.vue'
 import GlobalTopMenu from '../global-topMenu/index.vue'
 import UserDropdown from './modules/UserDropdown.vue'
@@ -224,8 +229,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   color: var(--color-text-primary);
   cursor: pointer;
   background: transparent;

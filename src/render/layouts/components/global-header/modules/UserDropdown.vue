@@ -89,12 +89,10 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
-import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
 import { useLockStore } from '@/store/modules/lock'
 
 const router = useRouter()
-const appStore = useAppStore()
 const userStore = useUserStore()
 const lockStore = useLockStore()
 
@@ -103,7 +101,6 @@ const avatarLoadFailed = ref(false)
 
 const primaryUserActions = [
   { action: 'center', label: '个人中心', icon: 'lucide:user' },
-  { action: 'profile', label: '设置', icon: 'lucide:settings' },
   { action: 'lock', label: '锁屏', icon: 'lucide:lock' },
   { action: 'docs', label: '文档', icon: 'lucide:file-text' },
   { action: 'help', label: '问题 & 帮助', icon: 'ri:question-line' }
@@ -145,8 +142,6 @@ const handleUserAction = async (action) => {
 
   if (action === 'center') {
     router.push('/profile')
-  } else if (action === 'profile') {
-    appStore.toggleSettings(true)
   } else if (action === 'docs') {
     openExternal('https://element-plus.org/zh-CN/')
   } else if (action === 'github') {
