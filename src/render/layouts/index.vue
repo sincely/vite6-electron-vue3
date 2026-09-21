@@ -68,7 +68,7 @@
         </Transition>
 
         <!-- 二级菜单伸缩把手（top-mixed 模式且设置中启用伸缩功能时显示，
-             吸附在子菜单栏右缘，收起后停靠在最左侧） -->
+             展开时吸附在子菜单栏右边线的左侧位置，收起后停靠在最左侧） -->
         <button
           v-if="showSubmenuCollapseHandle"
           class="submenu-collapse-handle"
@@ -386,41 +386,51 @@ provide('isFullscreen', isFullscreen)
     overflow: hidden;
   }
 
-  /* 二级菜单伸缩把手：吸附在子菜单栏（180px）右缘的悬浮小条，
-     收起后随左边缘滑动停靠到最左侧，left 过渡与 .mixed-submenu 宽度过渡同步 */
+  /* 二级菜单伸缩把手：展开时吸附在子菜单栏右边线的左侧位置（贴子菜单右缘内壁），
+     收起后停靠最左侧；边框 / border-radius 随停靠方向翻转 */
   .submenu-collapse-handle {
     position: absolute;
     top: 50%;
-    left: 180px;
+    left: 167px; // 180 - 15，贴子菜单右缘内壁
     z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 15px;
-    height: 60px;
+    width: 12px;
+    height: 64px;
     padding: 0;
     color: var(--color-text-muted);
     cursor: pointer;
     background: var(--sidebar-surface-bg);
     border: 1px solid var(--color-border);
-    border-left: none;
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    border-right-color: transparent; // 展开态贴子菜单内壁，不绘制右边框
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
     box-shadow: 2px 0 6px rgb(0 0 0 / 6%);
     transition:
       left 0.24s cubic-bezier(0.16, 1, 0.3, 1),
       color 0.2s ease,
       background-color 0.2s ease,
-      border-color 0.2s ease;
+      border-color 0.2s ease,
+      border-radius 0.24s cubic-bezier(0.16, 1, 0.3, 1);
     transform: translateY(-50%);
 
     &.is-collapsed {
       left: 0;
+      border-right-color: var(--color-border);
+      border-left-color: transparent; // 收起态贴窗口左缘，不绘制左边框
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
     }
 
     &:hover {
       color: var(--color-primary);
       background: var(--color-bg-hover);
       border-color: var(--color-border-light);
+      border-right-color: transparent;
+    }
+
+    &.is-collapsed:hover {
+      border-right-color: var(--color-border-light);
+      border-left-color: transparent;
     }
 
     &:active {
