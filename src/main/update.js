@@ -83,7 +83,7 @@ let manualCheckPending = false // 本次检查是否由用户手动触发（菜�
 
 /**
  * 手动检查更新且已是最新版本时的弹窗提示
- * 自动检查（启动/聚焦触发）保持静默，不打扰用户
+ * 自动检查（启动触发）保持静默，不打扰用户
  */
 function showUpToDateDialog(version) {
   const options = {
@@ -105,7 +105,7 @@ function showUpToDateDialog(version) {
  * - eligible=false 时禁止检查（跳过）
  * - 当前版本被远端禁用时推送强制升级信号（仍继续检查）
  * - manual=true 表示用户手动触发，已是最新版本时弹窗告知
- * 供启动检查、窗口聚焦、手动检查（ipc/update.js）共用
+ * 供启动检查、手动检查（ipc/update.js）共用
  */
 export async function checkForUpdates({ manual = false } = {}) {
   const config = getUpdateConfig()
@@ -139,16 +139,6 @@ export const initUpdater = async (win) => {
   })
   // 启动即检查更新（受门控控制）
   win.webContents.once('did-finish-load', () => {
-    checkForUpdates()
-  })
-  // 窗口聚焦时检查更新（由 checkOnFocus 控制，带 30 分钟冷却避免频繁打扰）
-  let lastFocusCheckAt = 0
-  const FOCUS_CHECK_COOLDOWN = 30 * 60 * 1000
-  win.on('focus', () => {
-    if (!getUpdateConfig().checkOnFocus) return
-    const now = Date.now()
-    if (now - lastFocusCheckAt < FOCUS_CHECK_COOLDOWN) return
-    lastFocusCheckAt = now
     checkForUpdates()
   })
 

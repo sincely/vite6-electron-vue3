@@ -104,8 +104,7 @@
      "schemaVersion": 1,
      "eligible": true,
      "disabledClientVersions": [],
-     "autoDownload": true,
-     "checkOnFocus": true
+     "autoDownload": true
    }
    ```
 
@@ -248,7 +247,6 @@ server {
 | `eligible` | boolean | true | 更新资格总开关。`false` 时客户端完全跳过更新检查（紧急停发） |
 | `disabledClientVersions` | string[] | `[]` | 禁用版本列表。命中则强制升级弹窗不可跳过，支持精确（`"1.0.1"`）与前缀（`"1.0"`） |
 | `autoDownload` | boolean | false | 发现新版本后是否自动下载（true 对齐 QoderWork），false 时用户点击"立即更新"后才下载 |
-| `checkOnFocus` | boolean | true | 窗口聚焦时是否自动检查更新 |
 
 ### 逐字段详细说明
 
@@ -262,7 +260,7 @@ server {
 
 - **作用**：远程控制"是否允许本应用检查更新"的总开关
 - **代码逻辑**：`checkForUpdates` 第一道门控，`false` 时**直接 return**，不执行 `autoUpdater.checkForUpdates()`
-- **生效时机**：启动检查 / 窗口聚焦 / 手动"检查更新"都会先走这个判断；手动检查会先刷新远端配置再判断
+- **生效时机**：启动检查 / 手动"检查更新"都会先走这个判断；手动检查会先刷新远端配置再判断
 - **典型场景**：紧急停发（改 `false` 全量客户端立刻停止检查）；暂停发布；恢复发布（改回 `true`，无需发版）
 - **注意事项**：`false` 时连检查动作都不会发生（不发网络请求、不读 latest.yml），客户端也不会报"检查更新失败"，是"静默跳过"
 
@@ -294,12 +292,6 @@ server {
 
 - **注意事项**：即使自动下载完成，**安装仍需用户点"立即重启安装"**，不会自动重启应用
 
-#### `checkOnFocus` — 窗口聚焦自动检查
-
-- **作用**：主窗口每次获得焦点时是否自动执行一次更新检查（对齐 QoderWork 的 "Window focused - checking for updates"）
-- **代码逻辑**：`win.on('focus')` 时若 `checkOnFocus=true` 则调用 `checkForUpdates()`
-- **典型场景**：桌面工具应用用户长时间挂着 → `true` 保证回到窗口能拿到新版本；多窗口频繁切换怕请求多 → `false`
-
 ### 字段优先级
 
 ```text
@@ -312,7 +304,7 @@ checkForUpdates() 执行顺序：
 
 - `eligible` 是总闸，`false` 时其他字段全部失效
 - `disabledClientVersions` 触发强制升级，语义是"必须升"
-- `autoDownload` / `checkOnFocus` 控制体验细节
+- `autoDownload` 控制体验细节
 
 ### 完整示例
 
@@ -321,12 +313,11 @@ checkForUpdates() 执行顺序：
   "schemaVersion": 1,
   "eligible": true,
   "disabledClientVersions": ["1.0.0"],
-  "autoDownload": true,
-  "checkOnFocus": true
+  "autoDownload": true
 }
 ```
 
-含义：更新通道开放；1.0.0 版本用户必须升级；其他用户发现新版本自动下载；窗口聚焦时自动检查更新。
+含义：更新通道开放；1.0.0 版本用户必须升级；其他用户发现新版本自动下载。
 
 ### 更新时机
 
@@ -338,7 +329,7 @@ checkForUpdates() 执行顺序：
 ## 八、客户端更新链路
 
 ```text
-应用启动 / 窗口聚焦
+应用启动
   │
   ├─► 主进程拉取 update-config.json（启动拉取 + 10 分钟轮询）
   │     ├─ eligible=false → 跳过检查（日志记录，推送配置给 UI）
@@ -364,7 +355,6 @@ checkForUpdates() 执行顺序：
 | 触发点 | 说明 |
 | --- | --- |
 | 主窗口加载完成 | 启动时自动检查一次 |
-| 主窗口聚焦 | 每次聚焦检查（受 `checkOnFocus` 控制） |
 | 用户手动 | 设置页"关于软件"→ 检查更新；菜单"检查更新" |
 
 ---
@@ -471,8 +461,7 @@ releaseDate: '2026-08-07T00:00:00.000Z'
   "schemaVersion": 1,
   "eligible": true,
   "disabledClientVersions": [],
-  "autoDownload": true,
-  "checkOnFocus": true
+  "autoDownload": true
 }
 ```
 
