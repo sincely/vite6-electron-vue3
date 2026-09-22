@@ -15,7 +15,7 @@
   },
   "removePackageScripts": true,
   // 打包后钩子：mac 清理 Framework 语言文件；win 移除 dxcompiler/dxil.dll（DX12 着色器编译器）
-  "afterPack": "./scripts/afterPack.cjs",
+  "afterPack": "",
   "extraResources": [],
   // 自定义 URL 协议：浏览器唤起应用（lightning://desktop/console?id=1）
   // macOS → 写入 Info.plist CFBundleURLTypes；Windows → NSIS 安装时写入注册表
