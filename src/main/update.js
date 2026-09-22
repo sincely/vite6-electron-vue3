@@ -141,11 +141,15 @@ export const initUpdater = async (win) => {
   win.webContents.once('did-finish-load', () => {
     checkForUpdates()
   })
-  // 窗口聚焦时检查更新（对齐 QoderWork，由 checkOnFocus 控制）
+  // 窗口聚焦时检查更新（由 checkOnFocus 控制，带 30 分钟冷却避免频繁打扰）
+  let lastFocusCheckAt = 0
+  const FOCUS_CHECK_COOLDOWN = 30 * 60 * 1000
   win.on('focus', () => {
-    if (getUpdateConfig().checkOnFocus) {
-      checkForUpdates()
-    }
+    if (!getUpdateConfig().checkOnFocus) return
+    const now = Date.now()
+    if (now - lastFocusCheckAt < FOCUS_CHECK_COOLDOWN) return
+    lastFocusCheckAt = now
+    checkForUpdates()
   })
 
   const autoUpdater = await getAutoUpdater() // 首次使用才加载 electron-updater
