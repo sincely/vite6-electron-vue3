@@ -14,7 +14,7 @@ on:
         options: [patch, minor, major, alpha, beta]
 
 env:
-  NODE_VERSION: '22.20.0'
+  NODE_VERSION: '24.18.0'
   PNPM_VERSION: '9'
 
 jobs:
