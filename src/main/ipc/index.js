@@ -6,6 +6,7 @@ import notificationIpc from './notification'
 import systemInfoIpc from './systemInfo'
 import logIpc from './log'
 import httpIpc from './http'
+import aiIpc from './ai'
 import { deepLinkIpc } from '../deeplink'
 
 // 注册所有 IPC 频道
@@ -18,6 +19,7 @@ export default function initIpc() {
     ...systemInfoIpc,
     ...logIpc,
     ...httpIpc,
+    ...aiIpc,
     ...deepLinkIpc
   ]
 

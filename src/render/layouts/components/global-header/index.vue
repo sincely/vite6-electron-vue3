@@ -46,6 +46,18 @@
           </button>
         </div>
 
+        <!-- AI 智能助手入口 -->
+        <div class="ai-btn-wrap">
+          <button
+            class="icon-btn"
+            :class="{ 'is-active': aiStore.visible }"
+            title="AI 智能助手"
+            @click="aiStore.togglePanel()"
+          >
+            <SvgIcon icon-class="ai-assistant" width="18px" height="18px" />
+          </button>
+        </div>
+
         <!-- 通知铃铛 -->
         <div class="notif-btn-wrap">
           <button ref="bellBtnRef" class="icon-btn" @click="handleNotice">
@@ -94,6 +106,7 @@ import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useNotificationStore } from '@/store/modules/notification'
 import { useChatStore } from '@/store/modules/chat'
+import { useAiAssistantStore } from '@/store/modules/aiAssistant'
 import { isWindows, isMac } from '@/utils/platform'
 import { Icon } from '@iconify/vue'
 import GlobalLogo from '../global-logo/index.vue'
@@ -106,6 +119,7 @@ const updateStore = useUpdateStore()
 const noticeStore = useNotificationStore()
 const bellBtnRef = ref(null)
 const chatStore = useChatStore()
+const aiStore = useAiAssistantStore()
 
 const handleNotice = () => {
   noticeStore.togglePanel()
@@ -358,6 +372,19 @@ onBeforeUnmount(() => {
   50% {
     opacity: 0.35;
     transform: scale(0.75);
+  }
+}
+
+// AI 助手入口包装
+.ai-btn-wrap {
+  position: relative;
+  -webkit-app-region: no-drag;
+
+  // 面板展开时高亮入口
+  .icon-btn.is-active {
+    color: var(--color-primary);
+    background-color: var(--color-bg-active);
+    border-color: var(--color-border-light);
   }
 }
 

@@ -6,6 +6,7 @@ import systemManageRouter from './modules/systemManageRouter.js'
 import operationLogRouter from '../modules/log/operationLogRouter.js'
 import loginLogRouter from '../modules/log/loginLogRouter.js'
 import { notificationUserRouter } from '../modules/notification/notificationRouter.js'
+import aiRouter from '../modules/ai/aiRouter.js'
 import { operationLogMiddleware } from '../middleware/logMiddleware.js'
 import { checkMySQL } from '../db/connection.js'
 import { checkRedis } from '../db/redis.js'
@@ -53,6 +54,9 @@ router.use(authRouter.routes(), authRouter.allowedMethods())
 
 // 用户侧消息路由（挂载在操作日志中间件之前，已读等轻量写操作不记录操作日志）
 router.use(notificationUserRouter.routes(), notificationUserRouter.allowedMethods())
+
+// AI 网关路由（SSE 流式会话不记录操作日志）
+router.use(aiRouter.routes(), aiRouter.allowedMethods())
 
 // 应用操作日志中间件（记录所有写操作）
 router.use(operationLogMiddleware)
