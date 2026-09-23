@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Lightning 系统功能架构（三进程 + 服务端）",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "output": "lightning-architecture.html",
+    "repository": {
+      "url": "https://github.com/sincely/vite6-electron-vue3.git",
+      "revision": "6da32690840f1355424b0aa1d0401140ae4abac3"
+    }
+  },
+  "components": [
+    {
+      "id": "rReq",
+      "type": "frontend",
+      "label": "请求层",
+      "sublabel": "utils/request · 信封拆层",
+      "pos": [
+        40,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/render/utils/request.js",
+          "label": "请求封装"
+        }
+      ]
+    },
+    {
+      "id": "rViews",
+      "type": "frontend",
+      "label": "业务视图",
+      "sublabel": "dashboard/login/system/表格",
+      "pos": [
+        376,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/render/views/dashboard/analysis/index.vue",
+          "label": "视图示例"
+        }
+      ]
+    },
+    {
+      "id": "rStore",
+      "type": "frontend",
+      "label": "状态管理",
+      "sublabel": "Pinia · persistedstate",
+      "pos": [
+        544,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/render/store/modules/app.js",
+          "label": "store 模块"
+        }
+      ]
+    },
+    {
+      "id": "rAi",
+      "type": "frontend",
+      "label": "AI 助手",
+      "sublabel": "AiAssistant · aiStream",
+      "pos": [
+        208,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/render/components/AiAssistant/index.vue",
+          "label": "助手组件"
+        }
+      ]
+    },
+    {
+      "id": "rRouter",
+      "type": "frontend",
+      "label": "路由守卫",
+      "sublabel": "vue-router · permission 鉴权",
+      "pos": [
+        712,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/render/permission.js",
+          "label": "路由守卫"
+        }
+      ]
+    },
+    {
+      "id": "rUi",
+      "type": "frontend",
+      "label": "布局与组件",
+      "sublabel": "layouts · Element Plus",
+      "pos": [
+        880,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/render/layouts/index.vue",
+          "label": "布局入口"
+        }
+      ]
+    },
+    {
+      "id": "pRequest",
+      "type": "security",
+      "label": "请求代理桥",
+      "sublabel": "window.request send/cancel",
+      "pos": [
+        40,
+        182
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/preload/index.mjs",
+          "label": "request 桥"
+        }
+      ]
+    },
+    {
+      "id": "pNotify",
+      "type": "security",
+      "label": "通知桥",
+      "sublabel": "notification · 点击/回复回调",
+      "pos": [
+        376,
+        182
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/preload/index.mjs",
+          "label": "notification 桥"
+        }
+      ]
+    },
+    {
+      "id": "pIpc",
+      "type": "security",
+      "label": "IPC 频道桥",
+      "sublabel": "on/off/send/invoke",
+      "pos": [
+        208,
+        182
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/preload/index.mjs",
+          "label": "ipcRenderer 桥"
+        }
+      ]
+    },
+    {
+      "id": "pEnv",
+      "type": "security",
+      "label": "环境信息桥 · setTitle",
+      "sublabel": "versions · process · systemInfo",
+      "pos": [
+        544,
+        182
+      ],
+      "size": [
+        210,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/preload/index.mjs",
+          "label": "环境桥"
+        }
+      ]
+    },
+    {
+      "id": "mHttp",
+      "type": "backend",
+      "label": "HTTP 代理",
+      "sublabel": "axios 拦截器 · Bearer 注入",
+      "pos": [
+        40,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/http/index.js",
+          "label": "HTTP 代理"
+        }
+      ]
+    },
+    {
+      "id": "mNotifyLog",
+      "type": "backend",
+      "label": "通知·系统·日志",
+      "sublabel": "notification/systemInfo/log",
+      "pos": [
+        376,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/notification.js",
+          "label": "通知模块"
+        }
+      ]
+    },
+    {
+      "id": "mWinLoad",
+      "type": "backend",
+      "label": "窗口与加载 · 三动画",
+      "sublabel": "windowManager · loading",
+      "pos": [
+        544,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/windowManager.js",
+          "label": "窗口管理"
+        }
+      ]
+    },
+    {
+      "id": "mIpc",
+      "type": "backend",
+      "label": "IPC 服务层",
+      "sublabel": "26 频道 handle/on 统一分发",
+      "pos": [
+        208,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/ipc/index.js",
+          "label": "IPC 注册"
+        }
+      ]
+    },
+    {
+      "id": "mShell",
+      "type": "backend",
+      "label": "菜单·托盘·主题",
+      "sublabel": "menu · tray · theme · 自启",
+      "pos": [
+        712,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/tray.js",
+          "label": "托盘模块"
+        }
+      ]
+    },
+    {
+      "id": "mUpdate",
+      "type": "backend",
+      "label": "自动更新",
+      "sublabel": "electron-updater",
+      "pos": [
+        880,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/autoUpdater.js",
+          "label": "更新模块"
+        }
+      ]
+    },
+    {
+      "id": "mLink",
+      "type": "backend",
+      "label": "deeplink·协议·单实例",
+      "sublabel": "lightning:// · app://",
+      "pos": [
+        1048,
+        294
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "src/main/deeplink.js",
+          "label": "deeplink"
+        }
+      ]
+    },
+    {
+      "id": "koaApi",
+      "type": "backend",
+      "label": "Koa REST API",
+      "sublabel": "auth/user/role/menu 等模块",
+      "pos": [
+        40,
+        406
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "apps/server/src/app.js",
+          "label": "服务入口"
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "type": "database",
+      "label": "MySQL",
+      "sublabel": "mysql2 · 迁移/备份",
+      "pos": [
+        40,
+        518
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "apps/server/src/db/connection.js",
+          "label": "连接池"
+        }
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "ioredis · 缓存 · Bull 队列",
+      "pos": [
+        208,
+        518
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "apps/server/src/db/redis.js",
+          "label": "Redis 客户端"
+        }
+      ]
+    },
+    {
+      "id": "aiGateway",
+      "type": "backend",
+      "label": "AI 网关",
+      "sublabel": "SSE · 鉴权/限流/模型路由",
+      "pos": [
+        208,
+        406
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "apps/server/src/modules/ai/aiService.js",
+          "label": "网关 Service"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "上游 LLM API",
+      "sublabel": "/chat/completions",
+      "pos": [
+        376,
+        406
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "apps/server/src/modules/ai/aiService.js",
+          "line": 12,
+          "label": "上游配置"
+        }
+      ]
+    },
+    {
+      "id": "updateServer",
+      "type": "external",
+      "label": "更新服务器",
+      "sublabel": "generic provider",
+      "pos": [
+        880,
+        406
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "dev-app-update.yml",
+          "label": "更新配置"
+        }
+      ]
+    },
+    {
+      "id": "mock",
+      "type": "backend",
+      "label": "Nitro mock 后端",
+      "sublabel": "apps/backend · :5320",
+      "pos": [
+        1048,
+        406
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "sources": [
+        {
+          "path": "apps/backend/nitro.config.mjs",
+          "label": "Nitro 配置"
+        }
+      ],
+      "tag": "开发默认"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "渲染进程 · src/render",
+      "wraps": [
+        "rReq",
+        "rViews",
+        "rStore",
+        "rAi",
+        "rRouter",
+        "rUi"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Preload · src/preload（contextBridge 暴露面）",
+      "wraps": [
+        "pRequest",
+        "pNotify",
+        "pIpc",
+        "pEnv"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "主进程 · src/main",
+      "wraps": [
+        "mHttp",
+        "mNotifyLog",
+        "mWinLoad",
+        "mIpc",
+        "mShell",
+        "mUpdate",
+        "mLink"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "服务端 · apps/server（Koa）",
+      "wraps": [
+        "koaApi",
+        "mysql",
+        "redis",
+        "aiGateway"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "rreq-to-preq",
+      "from": "rReq",
+      "to": "pRequest",
+      "label": "window.request.send",
+      "labelAt": [
+        115,
+        154
+      ]
+    },
+    {
+      "id": "rviews-to-pnotify",
+      "from": "rViews",
+      "to": "pNotify",
+      "label": "window.notification",
+      "labelAt": [
+        451,
+        154
+      ]
+    },
+    {
+      "id": "rai-to-pipc",
+      "from": "rAi",
+      "to": "pIpc",
+      "label": "ai:chat-stream · invoke/on",
+      "labelAt": [
+        283,
+        154
+      ]
+    },
+    {
+      "id": "preq-to-mhttp",
+      "from": "pRequest",
+      "to": "mHttp",
+      "label": "http:request",
+      "labelAt": [
+        115,
+        266
+      ]
+    },
+    {
+      "id": "pnotify-to-mnotify",
+      "from": "pNotify",
+      "to": "mNotifyLog",
+      "label": "show-native-notification",
+      "labelAt": [
+        451,
+        266
+      ]
+    },
+    {
+      "id": "pipc-to-mipc",
+      "from": "pIpc",
+      "to": "mIpc",
+      "label": "ipcMain.handle/on",
+      "labelAt": [
+        283,
+        266
+      ]
+    },
+    {
+      "id": "mhttp-to-koa",
+      "from": "mHttp",
+      "to": "koaApi",
+      "label": "axios 代理 · Bearer 注入",
+      "variant": "emphasis",
+      "labelAt": [
+        115,
+        378
+      ]
+    },
+    {
+      "id": "mipc-to-gateway",
+      "from": "mIpc",
+      "to": "aiGateway",
+      "label": "SSE 逐帧中继（原生 fetch）",
+      "variant": "emphasis",
+      "labelAt": [
+        283,
+        378
+      ]
+    },
+    {
+      "id": "mupdate-to-server",
+      "from": "mUpdate",
+      "to": "updateServer",
+      "label": "electron-updater",
+      "variant": "dashed",
+      "labelAt": [
+        955,
+        378
+      ]
+    },
+    {
+      "id": "koa-to-mysql",
+      "from": "koaApi",
+      "to": "mysql",
+      "label": "mysql2 · SQL",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        60,
+        490
+      ]
+    },
+    {
+      "id": "koa-to-redis",
+      "from": "koaApi",
+      "to": "redis",
+      "label": "缓存/会话 · Bull 入队",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        211,
+        498
+      ]
+    },
+    {
+      "id": "gateway-to-llm",
+      "from": "aiGateway",
+      "to": "llm",
+      "label": "OpenAI 兼容 · 流式",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "labelAt": [
+        367,
+        486
+      ]
+    }
+  ]
+}
