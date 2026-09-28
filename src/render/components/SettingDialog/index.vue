@@ -1516,7 +1516,6 @@ const handleClose = () => {
   &:hover:not(:disabled) {
     box-shadow: var(--shadow-md);
     opacity: 0.92;
-    transform: translateY(-1px);
   }
 
   &:disabled {
