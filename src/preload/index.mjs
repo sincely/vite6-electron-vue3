@@ -1,14 +1,11 @@
 import { ipcRenderer, contextBridge } from 'electron'
 import useLoading from '../main/loading/stairway'
-// api 暴露的方法
 const api = {}
-// 监听器包装函数缓存：on 会用匿名函数包装 listener，
-// 缓存起来保证 off(channel, listener) 能命中同一包装函数，正确移除监听
-const listenerWrapperMap = new WeakMap()
-// contextBridge: 安全地向渲染进程暴露 API 的桥梁
-// ipcRenderer: 渲染进程与主进程通信的模块
 // 如果上下文隔离已启用 ，则使用 contextBridge 暴露 API
 if (process.contextIsolated) {
+  // 监听器包装函数缓存：on 会用匿名函数包装 listener，
+  // 缓存起来保证 off(channel, listener) 能命中同一包装函数，正确移除监听
+  const listenerWrapperMap = new WeakMap()
   contextBridge.exposeInMainWorld('ipcRenderer', {
     // 添加事件监听器
     on(...args) {
@@ -53,50 +50,12 @@ if (process.contextIsolated) {
     arch: process.arch
   })
 
-  /**
-   * 向渲染进程暴露统一请求 API（主进程 axios 代理入口）
-   * 渲染进程只传「普通对象」参数，由主进程负责真实 HTTP / 表单构造 / Token 注入
-   *
-   * @example
-   * const { data, mimeType } = await window.request.send({
-   *   url: '/user/info',
-   *   method: 'get',
-   *   responseType: 'json'
-   * })
-   *
-   * // 取消正在进行的请求
-   * window.request.cancel(requestId)
-   */
   contextBridge.exposeInMainWorld('request', {
-    /**
-     * 通过 IPC 调用主进程 axios 发起请求
-     * @param {Object} config - 请求配置（见 src/main/http/index.js 协议）
-     * @returns {Promise<{status, headers, dataType, data, mimeType?, filename?}>}
-     */
+    // 通过 IPC 调用主进程 axios 发起请求
     send: (config) => ipcRenderer.invoke('http:request', config),
-    /**
-     * 取消正在进行的请求
-     * @param {string} requestId - 与 send 时一致的 requestId
-     */
+    // 取消正在进行的请求
     cancel: (requestId) => ipcRenderer.send('http:cancel', requestId)
   })
-  /**
-   * 向渲染进程暴露自定义的 electron API
-   * 创建一个安全的 window.electron 对象，包含 setTitle 方法
-   * @param {string} title - 要设置的窗口标题
-   */
-  contextBridge.exposeInMainWorld('electron', {
-    setTitle: (title) => ipcRenderer.send('set-title', title)
-  })
-
-  /**
-   * 向渲染进程暴露系统信息 API
-   * 调用 window.systemInfo.getSystemInfo() 获取系统运行环境信息
-   */
-  contextBridge.exposeInMainWorld('systemInfo', {
-    getSystemInfo: () => ipcRenderer.invoke('get-system-info')
-  })
-
   /**
    * 向渲染进程暴露通知 API
    * 调用 window.notification.show(options) 显示原生通知
@@ -226,10 +185,24 @@ if (process.contextIsolated) {
     }
   })
 
+  contextBridge.exposeInMainWorld('electronAPI', {
+    // 读取文件
+    readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
+    // 保存文件
+    saveFile: (filePath, content) => ipcRenderer.invoke('save-file', filePath, content),
+    // 选择文件夹
+    selectFolder: () => ipcRenderer.invoke('select-folder'),
+    // 获取系统运行环境信息
+    getSystemInfo: () => ipcRenderer.invoke('get-system-info'),
+    // 监听主进程消息
+    // onNotification: (callback) => ipcRenderer.on('notification', (_, data) => callback(data)),
+    // 设置窗口标题
+    setTitle: (title) => ipcRenderer.send('set-title', title)
+  })
+
   /**
    * 向渲染进程暴露日志 API
    * 调用 window.logger.info('message') 将日志转发到主进程统一记录
-   *
    * @example
    * window.logger.info('用户登录成功')
    * window.logger.error('请求失败', error)
