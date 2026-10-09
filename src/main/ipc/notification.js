@@ -1,119 +1,54 @@
-import { Notification } from 'electron'
-import { getMainWindow } from '../windowManager'
-import logger from '../log'
-
 /**
- * 辅助函数：向渲染进程发送 toast 通知
+ * 通知相关 IPC 频道，供 src/main/ipc/index.js 统一注册
+ *
+ * 渲染进程的"原生通知"请求经 preload 的 window.notification 走 show / close 频道，
+ * 最终统一由主进程 src/main/notification.js 的 createNotification 创建
+ * （原生通知只在主进程构造，避免多份实现）；
+ * 另含 open-notification-settings，用于 macOS 通知权限被拒（UNErrorDomain 错误 1）
+ * 时引导用户直达系统设置开启授权。
  */
-export function sendNotificationToRenderer(options) {
-  const mainWindow = getMainWindow()
-  if (mainWindow) {
-    mainWindow.webContents.send('show-notification', options)
-  }
-}
+import { shell } from 'electron'
+import logger from '../log'
+import { createNotification } from '../notification'
+
+// 渲染进程发起的原生通知：通知 ID → 通知句柄（用于关闭）
+const activeNotifications = new Map()
 
 /**
  * 通知相关 IPC 频道
  * 供 src/main/ipc/index.js 统一注册
  */
 export default [
-  // 渲染进程请求发送 toast 通知（兼容旧接口）
-  {
-    channel: 'send-notification',
-    type: 'on',
-    handler: (event, options) => {
-      sendNotificationToRenderer(options)
-    }
-  },
-
-  // 渲染进程请求显示原生通知（新版 invoke 接口）
+  // 渲染进程请求显示原生通知（preload window.notification.show → invoke）
   {
     channel: 'show-native-notification',
     type: 'handle',
-    handler: async (event, options) => {
-      const {
-        id: notifId,
-        title,
-        body,
-        subtitle,
-        silent,
-        urgency,
-        timeoutType,
-        hasReply,
-        closeButtonText,
-        icon,
-        sound,
-        actions,
-        toastXml
-      } = options
+    handler: async (event, options = {}) => {
+      // id 单独取出：回调无法跨 IPC 传输，这里把通知事件转发回发起方，
+      // 由 preload 监听对应频道还原成渲染进程侧的回调
+      const { id: notifId, ...rest } = options
+      const sender = event.sender
+      const forward = (channel) => {
+        return (...args) => {
+          if (!sender.isDestroyed()) sender.send(channel, notifId, ...args)
+        }
+      }
 
       try {
-        const notifOpts = {
-          title: title || '',
-          body: body || '',
-          silent: !!silent,
-          urgency: urgency || 'normal',
-          timeoutType: timeoutType || 'default',
-          hasReply: !!hasReply,
-          closeButtonText: closeButtonText || '关闭'
-        }
-
-        if (subtitle) notifOpts.subtitle = subtitle
-        if (icon) notifOpts.icon = icon
-        if (sound) notifOpts.sound = sound
-        if (actions && actions.length > 0) notifOpts.actions = actions
-        if (toastXml) notifOpts.toastXml = toastXml
-
-        const notif = new Notification(notifOpts)
-
-        // 事件 → 回传给渲染进程
-        const sender = event.sender
-        if (sender && !sender.isDestroyed()) {
-          notif.once('click', () => {
-            if (!sender.isDestroyed()) {
-              sender.send('native-notification-clicked', notifId)
-            }
-          })
-
-          notif.once('close', () => {
-            if (!sender.isDestroyed()) {
-              sender.send('native-notification-closed', notifId)
-            }
-          })
-
-          notif.on('action', (_event, index) => {
-            if (!sender.isDestroyed()) {
-              sender.send('native-notification-action', notifId, index)
-            }
-          })
-
-          notif.on('reply', (_event, reply) => {
-            if (!sender.isDestroyed()) {
-              sender.send('native-notification-reply', notifId, reply)
-            }
-          })
-
-          notif.once('show', () => {
-            if (!sender.isDestroyed()) {
-              sender.send('native-notification-show', notifId)
-            }
-          })
-
-          notif.once('failed', (_event, error) => {
-            if (!sender.isDestroyed()) {
-              sender.send('native-notification-failed', notifId, error?.message || 'unknown')
-            }
-          })
-        }
-
-        notif.show()
-
-        // 存储通知引用，以便渲染进程关闭
-        if (!event.sender._activeNotifications) {
-          event.sender._activeNotifications = new Map()
-        }
-        event.sender._activeNotifications.set(notifId, notif)
-
+        const handle = await createNotification({
+          ...rest,
+          noToast: true, // 原生通知不自动推应用内通知，渲染层需要时自己调 notify()
+          onClick: forward('native-notification-clicked'),
+          onClose: forward('native-notification-closed'),
+          onAction: forward('native-notification-action'),
+          onReply: forward('native-notification-reply'),
+          onShow: forward('native-notification-show'),
+          // createNotification 的失败回调第二参数已是翻译后的错误信息字符串，直接转发
+          onFailed: (_event, message) => {
+            if (!sender.isDestroyed()) sender.send('native-notification-failed', notifId, message)
+          }
+        })
+        activeNotifications.set(notifId, handle)
         return { success: true, id: notifId }
       } catch (err) {
         logger.error('[Notification IPC] 创建原生通知失败:', err)
@@ -122,22 +57,35 @@ export default [
     }
   },
 
-  // 渲染进程请求关闭原生通知
+  // 渲染进程请求关闭原生通知（preload 通知句柄的 close()）
   {
     channel: 'close-native-notification',
     type: 'on',
-    handler: (event, notifId) => {
-      const activeMap = event.sender._activeNotifications
-      if (activeMap) {
-        const notif = activeMap.get(notifId)
-        if (notif) {
-          try {
-            notif.close()
-          } catch (_) {
-            /* 忽略 */
-          }
-          activeMap.delete(notifId)
+    handler: (_event, notifId) => {
+      const handle = activeNotifications.get(notifId)
+      if (handle) {
+        handle.close()
+        activeNotifications.delete(notifId)
+      }
+    }
+  },
+
+  // 打开系统通知设置页（通知权限被拒时引导用户去授权，macOS / Windows）
+  {
+    channel: 'open-notification-settings',
+    type: 'handle',
+    handler: async () => {
+      try {
+        if (process.platform === 'darwin') {
+          await shell.openExternal('x-apple.systempreferences:com.apple.Notifications-Settings')
+        } else if (process.platform === 'win32') {
+          await shell.openExternal('ms-settings:notifications')
+        } else {
+          return { success: false, error: '当前平台没有可直接打开的系统通知设置页' }
         }
+        return { success: true }
+      } catch (err) {
+        return { success: false, error: err.message }
       }
     }
   }

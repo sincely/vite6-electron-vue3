@@ -130,7 +130,6 @@ export default defineConfig(({ mode, command }) => {
     resolve: {
       alias: {
         '@': resolve(import.meta.dirname, './src/render'),
-        '@shared': resolve(import.meta.dirname, './src/shared'),
         '@/styles': resolve(import.meta.dirname, 'src/render/styles'),
         '@/router': resolve(import.meta.dirname, 'src/render/router'),
         '@/views': resolve(import.meta.dirname, 'src/render/views'),

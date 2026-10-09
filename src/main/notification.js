@@ -1,8 +1,10 @@
 /**
- * 主进程通知模块（方案一）
+ * 主进程通知模块
  *
- * 基于 Electron 原生 Notification + IPC 封装，用于发送系统级通知：
+ * 主进程唯一的通知实现，基于 Electron 原生 Notification，发送系统级通知：
  * Windows 操作中心 / macOS 通知中心 / Linux 桌面通知。
+ * 渲染进程请使用 src/render/utils/notification.js（应用内通知），
+ * 其原生通知也是经 preload → IPC 委托到这里创建，不要在渲染进程直接构造。
  *
  * ── 特性 ──
  * 1. 支持 Electron Notification 全量配置（subtitle / silent / icon / actions /
@@ -11,11 +13,12 @@
  *    - Windows: 推荐 .ico
  *    - macOS  : 推荐 .png 或 .icns（不传时系统默认使用应用图标）
  *    - Linux  : 必须 .png
- * 3. 同时通过 IPC 推送应用内 toast（复用已注册的 show-notification 频道，
- *    无需修改 ipc/notification.js 与 preload 脚本）
+ * 3. 默认同时把通知推给渲染层（'show-notification' 频道），由渲染层
+ *    src/render/utils/notification.js 的 initNotificationListener 写入通知中心；
+ *    可通过 noToast / noNative 分别关闭应用内推送或原生通知
  *
  * ── 用法（主进程）──
- *   import createNotification from './notification'
+ *   import { createNotification } from './notification'
  *
  *   createNotification({
  *     title: '下载完成',
@@ -23,15 +26,12 @@
  *     type: 'success',
  *     onClick: () => console.log('通知被点击')
  *   })
- *
- * 💡 简单的应用内通知推荐方案二：渲染进程直接使用 Element Plus ElNotification，
- *    见 src/render/utils/toast.js，代码更简洁，无需经过主进程。
  */
 import { app, Notification } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 import logger from './log'
-import { sendNotificationToRenderer } from './ipc/notification.js'
+import { getMainWindow } from './windowManager'
 
 // ─── 平台图标解析 ─────────────────────────────────────────────────────────
 
@@ -76,6 +76,21 @@ export const getNotificationIcon = () => {
   }
 }
 
+// ─── 渲染层推送 ───────────────────────────────────────────────────────────
+
+/**
+ * 把应用内通知推送到主窗口渲染层
+ * 渲染层由 src/render/utils/notification.js 的 initNotificationListener 接收
+ *
+ * @param {Object} options - { title, body, type }
+ */
+export function sendNotificationToRenderer(options) {
+  const mainWindow = getMainWindow()
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('show-notification', options)
+  }
+}
+
 // ─── 通知创建 ─────────────────────────────────────────────────────────────
 
 /** 生成唯一通知 ID */
@@ -89,6 +104,24 @@ const emptyHandle = (isClosed = false) => ({
   getNative: () => null,
   isClosed: () => isClosed
 })
+
+/**
+ * 翻译原生通知的系统级失败信息
+ * macOS 通知权限被拒时 show() 不会抛错，只在 'failed' 事件异步给出
+ * "未能完成操作。（UNErrorDomain错误1。）"（UNErrorCodeNotificationsNotAllowed），
+ * 原样透传给用户无从下手，这里转成可操作的指引
+ * @param {Error|string|*} error - 'failed' 事件携带的错误
+ * @returns {string} 面向用户的信息
+ */
+const describeNativeError = (error) => {
+  const message = error?.message || String(error ?? '')
+  // 本地化文案中仍保留 "UNErrorDomain…1" 域码，1 = 系统未授权本应用通知
+  if (/UNErrorDomain[^\d]*1(?!\d)/.test(message)) {
+    const appName = app.isPackaged ? app.getName() : 'Electron'
+    return `系统未授权本应用显示通知（UNErrorDomain 错误 1）。请到 系统设置 > 通知 > 「${appName}」开启「允许通知」后重试；开发模式运行的应用在列表中显示为 Electron，授权后无需重启应用`
+  }
+  return message
+}
 
 /**
  * 创建通知（主进程入口）
@@ -120,7 +153,7 @@ const emptyHandle = (isClosed = false) => ({
  * @param {Function} options.onAction       - 操作按钮回调 (event, index)（macOS only）
  * @param {Function} options.onReply        - 内联回复回调 (event, reply)（macOS only）
  * @param {Function} options.onShow         - 显示回调
- * @param {Function} options.onFailed       - 失败回调
+ * @param {Function} options.onFailed       - 失败回调 (event, message)，message 为面向用户的信息字符串
  * @returns {Promise<Object>} 通知句柄 { id, close, getNative, isClosed }
  */
 const createNotification = async (options = {}) => {
@@ -171,7 +204,14 @@ const createNotification = async (options = {}) => {
     if (typeof onAction === 'function') notif.on('action', onAction)
     if (typeof onReply === 'function') notif.on('reply', onReply)
     if (typeof onShow === 'function') notif.once('show', onShow)
-    if (typeof onFailed === 'function') notif.once('failed', onFailed)
+    // 系统级失败（如 macOS 通知权限被拒）不会让 show() 抛错，只从这里异步暴露；
+    // 传给 onFailed 的是 describeNativeError 翻译后的信息字符串，
+    // 渲染层经 IPC 'native-notification-failed' 收到的即是这段文案
+    notif.once('failed', (_event, error) => {
+      const message = describeNativeError(error)
+      logger.warn('[Notification] 原生通知显示失败:', message)
+      if (typeof onFailed === 'function') onFailed(_event, message)
+    })
 
     notif.show()
 
@@ -201,4 +241,5 @@ const createNotification = async (options = {}) => {
   }
 }
 
+export { createNotification }
 export default createNotification

@@ -182,7 +182,14 @@ if (process.contextIsolated) {
           ipcRenderer.send('close-native-notification', notifId)
         }
       }
-    }
+    },
+
+    /**
+     * 打开系统通知设置页（macOS 通知权限被拒 UNErrorDomain 错误 1 时，
+     * 引导用户到 系统设置 > 通知 开启「允许通知」；Windows 同理）
+     * @returns {Promise<{success: boolean, error?: string}>}
+     */
+    openSettings: () => ipcRenderer.invoke('open-notification-settings')
   })
 
   contextBridge.exposeInMainWorld('electronAPI', {

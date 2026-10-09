@@ -112,28 +112,27 @@
 │   │   └── windowManager.js       # 窗口管理
 │   ├── preload/                   # 预加载脚本（对应 electron/preload）
 │   │   └── index.mjs              # Preload 入口
-│   ├── render/                    # 渲染进程（Vue 前端）
-│   │   ├── api/                   # 请求封装入口
-│   │   ├── assets/                # 图片与静态素材
-│   │   ├── components/            # 通用业务组件
-│   │   ├── config/                # 前端运行时配置
-│   │   ├── core/                  # 跨页面核心能力，例如更新桥接
-│   │   ├── directives/            # 自定义指令
-│   │   ├── enums/                 # 枚举定义
-│   │   ├── hooks/                 # 组合式函数
-│   │   ├── icons/                 # SVG 图标资源
-│   │   ├── layouts/               # 桌面主布局
-│   │   ├── plugins/               # 前端插件注册，例如图标与 ECharts
-│   │   ├── router/                # 路由配置
-│   │   ├── settings/              # 主题与设计配置
-│   │   ├── store/                 # Pinia 状态管理
-│   │   ├── styles/                # 全局样式与主题样式
-│   │   ├── utils/                 # 通用工具
-│   │   ├── views/                 # 页面级视图
-│   │   ├── App.vue                # 根组件
-│   │   ├── index.js               # 渲染进程入口
-│   │   └── permission.js          # 路由权限
-│   └── shared/                    # 主进程与渲染进程共享代码
+│   └── render/                    # 渲染进程（Vue 前端）
+│       ├── api/                   # 请求封装入口
+│       ├── assets/                # 图片与静态素材
+│       ├── components/            # 通用业务组件
+│       ├── config/                # 前端运行时配置
+│       ├── core/                  # 跨页面核心能力，例如更新桥接
+│       ├── directives/            # 自定义指令
+│       ├── enums/                 # 枚举定义
+│       ├── hooks/                 # 组合式函数
+│       ├── icons/                 # SVG 图标资源
+│       ├── layouts/               # 桌面主布局
+│       ├── plugins/               # 前端插件注册，例如图标与 ECharts
+│       ├── router/                # 路由配置
+│       ├── settings/              # 主题与设计配置
+│       ├── store/                 # Pinia 状态管理
+│       ├── styles/                # 全局样式与主题样式
+│       ├── utils/                 # 通用工具
+│       ├── views/                 # 页面级视图
+│       ├── App.vue                # 根组件
+│       ├── index.js               # 渲染进程入口
+│       └── permission.js          # 路由权限
 ├── electron-builder.json5         # Electron 打包配置
 ├── vite.config.js                 # Vite 配置
 └── package.json                   # 脚本、依赖、版本信息
@@ -422,7 +421,6 @@ server {
 | `minimize-window` | Renderer -> Main | `electron/ipc/win-control.js` | 最小化当前窗口 | `src/views/login/components/CustomTitleBar.vue`、`src/layouts/components/global-header/index.vue` |
 | `maximize-window` | Renderer -> Main | `electron/ipc/win-control.js` | 最大化/还原当前窗口 | `src/layouts/components/global-header/index.vue` |
 | `close-window` | Renderer -> Main | `electron/ipc/win-control.js` | 关闭当前窗口 | `src/views/login/components/CustomTitleBar.vue`、`src/layouts/components/global-header/index.vue` |
-| `send-notification` | Renderer -> Main | `electron/ipc/notification.js` | 请求主进程把通知转发到主窗口渲染层 | 当前代码中已注册，暂未发现直接调用 |
 | `set-title` | Renderer -> Main | 无处理器 | 由 `window.electron.setTitle` 预留，但当前主进程未注册对应频道 | 当前未实际使用 |
 
 #### B. 请求响应型通信 `ipcRenderer.invoke` / `ipcMain.handle`
@@ -442,7 +440,7 @@ server {
 | `show-main-loading` | Main -> Preload/Renderer | `electron/main/windowManager.js` | 主窗口 ready-to-show 时触发预加载 loading 覆盖层 | `electron/preload/index.mjs` |
 | `main-process-message` | Main -> Renderer | `electron/main/windowManager.js` | 主窗口首次加载完成后发送时间戳消息 | 当前未发现渲染层监听 |
 | `system-theme-updated` | Main -> Renderer | `electron/main/index.js` | 系统主题变化时广播 dark/light | 当前未发现渲染层监听 |
-| `show-notification` | Main -> Renderer | `electron/ipc/notification.js`、`electron/main/windowManager.js` 间接触发 | 向渲染层展示通知 | `src/main.js` |
+| `show-notification` | Main -> Renderer | `electron/main/notification.js`（`createNotification` 默认推送） | 把应用内通知推给渲染层，写入通知中心并弹 Toast | `src/render/utils/notification.js`（`initNotificationListener`） |
 | `checking-for-update` | Main -> Renderer | `electron/main/update.js` | 正在检查更新 | 当前未发现渲染层监听 |
 | `update-not-available` | Main -> Renderer | `electron/main/update.js` | 没有可用更新 | `src/core/update.js`、`src/components/UpdateDialog/index.vue` |
 | `update-available` | Main -> Renderer | `electron/main/update.js` | 检测到可用更新 | `src/core/update.js` |
@@ -516,12 +514,11 @@ server {
 
 ### 7.3 通知体系
 
-通知支持两条路径：
+通知按进程职责分离，各自只走自己的通道：
 
-- 主进程主动创建系统/应用内通知，再通过 `show-notification` 推给渲染层
-- 渲染层可通过 `send-notification` 请求主进程转发通知
-
-通知中心状态由 Pinia 中的 `notification` store 负责维护。
+- 主进程（`electron/main/notification.js`）：唯一创建系统原生通知的地方（Electron Notification 只能在主进程发起），默认同时通过 `show-notification` 频道把应用内通知推给渲染层；`electron/ipc/notification.js` 注册渲染层的原生通知请求频道
+- 渲染进程（`src/render/utils/notification.js`）：应用内通知 `notify()` 直接写入 Pinia 通知 store（Toast 组件监听 store 自动弹出）；需要系统级通知时经 preload 的 `window.notification` 走 `show-native-notification` 频道委托主进程创建
+- 通知中心状态由 Pinia 中的 `notification` store 负责维护
 
 ### 7.4 自定义协议 (app://)
 
@@ -740,7 +737,7 @@ npm run build-linux:prod
 
 - `main-process-message`、`system-theme-updated`、`checking-for-update`、`quit-and-install` 已具备发送逻辑，但当前渲染层未实际消费
 - `window.electron.setTitle` 已暴露，但缺少主进程 `set-title` 处理器
-- `open-win` 与 `send-notification` 已具备注册能力，但当前业务中未见明确调用
+- `open-win` 已具备注册能力，但当前业务中未见明确调用
 - 预加载中的 `window.onmessage -> removeLoading` 是预留兜底能力，当前仓库内未发现调用方
 
 这些能力不一定是问题，但在继续演进时应明确哪些是“预留接口”，哪些是“正式通道”，避免后续维护者误判。

@@ -2,7 +2,7 @@
   <div class="notification-demo">
     <div class="demo-header">
       <h1>🔔 Electron 通知系统演示</h1>
-      <p class="demo-subtitle">支持原生 OS 通知 + 应用内 Toast，主进程 & 渲染进程均可使用</p>
+      <p class="demo-subtitle">应用内通知走渲染进程（通知中心 + Toast），系统原生通知由主进程创建</p>
     </div>
 
     <div class="demo-grid">
@@ -22,16 +22,16 @@
         </div>
       </el-card>
 
-      <!-- Toast 模式 -->
+      <!-- 应用内通知 -->
       <el-card class="demo-card" shadow="hover">
         <template #header>
           <div class="card-header">
             <el-icon :size="20"><Bell /></el-icon>
-            <span>Toast 通知模式</span>
+            <span>应用内通知</span>
           </div>
         </template>
         <div class="btn-group">
-          <el-button type="primary" :icon="Bell" @click="sendToastOnly">仅 Toast 通知</el-button>
+          <el-button type="primary" :icon="Bell" @click="sendToastOnly">仅应用内通知</el-button>
           <el-button type="primary" :icon="Document" @click="sendToastWithLongContent">长文本通知</el-button>
           <el-button type="primary" :icon="List" @click="sendMultipleToasts">连续发送 5 条</el-button>
         </div>
@@ -49,11 +49,19 @@
           <el-button type="primary" :icon="Promotion" @click="sendNative">原生通知（带回调）</el-button>
           <el-button type="primary" :icon="MuteNotification" @click="sendSilent">静默通知</el-button>
           <el-button type="primary" :icon="Warning" @click="sendCritical">紧急通知 (critical)</el-button>
+          <el-button :icon="Setting" @click="openNotificationSettings">打开系统通知设置</el-button>
         </div>
         <div v-if="nativeResult" class="native-result">
-          <el-tag :type="nativeResult.success ? 'success' : 'danger'" size="small">
-            {{ nativeResult.success ? '✓ 原生通知已发送' : '✗ 发送失败: ' + nativeResult.error }}
-          </el-tag>
+          <el-tag v-if="nativeResult.success" type="success" size="small">✓ 原生通知已发送</el-tag>
+          <!-- 失败信息由主进程翻译为可操作指引（如 macOS 权限被拒），较长，用 alert 展示 -->
+          <el-alert
+            v-else
+            type="error"
+            :closable="false"
+            show-icon
+            title="发送失败"
+            :description="nativeResult.error || '未知原因'"
+          />
         </div>
       </el-card>
 
@@ -67,10 +75,10 @@
         </template>
         <div class="btn-group">
           <el-button type="primary" :icon="Connection" @click="sendViaPreload">window.notification.show()</el-button>
-          <el-button :icon="Files" @click="sendViaImport">import { showNotification }</el-button>
+          <el-button :icon="Files" @click="sendViaImport">import { showNativeNotification }</el-button>
         </div>
         <div class="code-hint">
-          <code>window.notification.show({ title, body, onClick })</code>
+          <code>showNativeNotification({ title, body, onClick }) → 主进程创建原生通知</code>
         </div>
       </el-card>
 
@@ -85,24 +93,22 @@
         <div class="info-list">
           <div class="info-item">
             <span class="info-label">运行环境：</span>
-            <el-tag size="small" :type="isMain ? 'warning' : 'success'">
-              {{ isMain ? '主进程' : '渲染进程' }}
-            </el-tag>
+            <el-tag size="small" type="success">渲染进程</el-tag>
           </div>
           <div class="info-item">
             <span class="info-label">当前平台：</span>
-            <el-tag size="small">{{ platformInfo.platform }}</el-tag>
+            <el-tag size="small">{{ platform }}</el-tag>
           </div>
           <div class="info-item">
-            <span class="info-label">原生通知支持：</span>
+            <span class="info-label">原生通知通道：</span>
             <el-tag size="small" :type="nativeSupported ? 'success' : 'danger'">
-              {{ nativeSupported ? '✓ 支持' : '✗ 不支持' }}
+              {{ nativeSupported ? '✓ window.notification 可用' : '✗ 不可用' }}
             </el-tag>
           </div>
           <div class="info-item">
             <span class="info-label">macOS 特性：</span>
-            <el-tag size="small" :type="platformInfo.isMac ? 'success' : 'info'">
-              {{ platformInfo.isMac ? '✓ actions / reply / subtitle' : '仅基础功能' }}
+            <el-tag size="small" :type="isMac ? 'success' : 'info'">
+              {{ isMac ? '✓ actions / reply / subtitle' : '仅基础功能' }}
             </el-tag>
           </div>
         </div>
@@ -160,62 +166,58 @@ import {
   Monitor,
   Document,
   List,
-  ChatDotRound
+  ChatDotRound,
+  Setting
 } from '@element-plus/icons-vue'
 import { useNotificationStore } from '@/store/modules/notification'
-import {
-  showNotification,
-  isNativeNotificationSupported,
-  isMain as checkIsMain,
-  getPlatformInfo
-} from '../../../shared/notification'
+import { notify, showNativeNotification } from '@/utils/notification'
 
 const store = useNotificationStore()
 const nativeResult = ref(null)
-const isMain = checkIsMain()
-const platformInfo = getPlatformInfo()
-const nativeSupported = isNativeNotificationSupported()
+const platform = window.process?.platform || 'unknown'
+const isMac = platform === 'darwin'
+const nativeSupported = !!window.notification
 
-// ─── 基础通知类型 ─────────────────────────────────────
-const sendSuccess = () => {
-  store.push({
+// ─── 基础通知类型（应用内：通知中心 + Toast）─────────
+const sendSuccess = () =>
+  notify({
     title: '操作成功',
-    body: '数据已成功保存到服务器',
+    body: '数据已保存到数据库',
     type: 'success'
   })
-}
 
-const sendWarning = () => {
-  store.push({
+const sendWarning = () =>
+  notify({
     title: '警告提示',
     body: '磁盘空间不足，请及时清理',
     type: 'warning'
   })
-}
 
-const sendError = () => {
-  store.push({ title: '操作失败', body: '网络连接超时，请重试', type: 'error' })
-}
+const sendError = () =>
+  notify({
+    title: '操作失败',
+    body: '网络连接超时，请重试',
+    type: 'error'
+  })
 
-const sendInfo = () => {
-  store.push({
+const sendInfo = () =>
+  notify({
     title: '温馨提示',
     body: '系统将于凌晨 2:00 进行维护',
     type: 'info'
   })
-}
 
-// ─── Toast 模式 ───────────────────────────────────────
+// ─── 应用内通知（不走系统通知）───────────────────────
 const sendToastOnly = () => {
-  store.push({
-    title: 'Toast 通知',
-    body: '这是一条仅应用内显示的 Toast 通知，不会触发系统原生通知',
+  notify({
+    title: '应用内通知',
+    body: '这是一条仅应用内显示的通知，只出现在通知中心和右上角 Toast，不会触发系统原生通知',
     type: 'info'
   })
 }
 
 const sendToastWithLongContent = () => {
-  store.push({
+  notify({
     title: '长文本通知',
     body: '这是一条包含较长文本内容的通知消息，用于测试 Toast 组件在显示多行文本时的布局效果。超长文本会被自动截断并显示省略号。',
     type: 'info'
@@ -226,7 +228,7 @@ const sendMultipleToasts = () => {
   const types = ['info', 'success', 'warning', 'error', 'celebrate']
   types.forEach((type, i) => {
     setTimeout(() => {
-      store.push({
+      notify({
         title: `通知 #${i + 1}`,
         body: `这是第 ${i + 1} 条连续通知，类型为 ${type}`,
         type
@@ -235,69 +237,105 @@ const sendMultipleToasts = () => {
   })
 }
 
-// ─── 原生通知 ─────────────────────────────────────────
+// ─── 系统原生通知（经 preload 委托主进程创建）────────
 const sendNative = async () => {
   nativeResult.value = null
   try {
-    const result = await showNotification({
+    const handle = await showNativeNotification({
       title: '🎉 原生通知测试',
-      body: '这是一条系统原生通知，同时应用内也会显示 Toast',
+      body: '这是一条系统原生通知，由主进程创建，仅出现在系统通知中心',
       onClick: () => {
         ElMessage.success('你点击了原生通知！')
       },
       onClose: () => {
         console.log('原生通知已关闭')
+      },
+      // 权限被拒等系统级失败不会抛异常，只从这里异步回调
+      onFailed: (error) => {
+        nativeResult.value = { success: false, error: error?.message || error || '系统拒绝显示通知' }
       }
     })
-    nativeResult.value = { success: true }
+    // onFailed 若已先触发则保留失败结果
+    if (!nativeResult.value) nativeResult.value = { success: handle?.success ?? false }
   } catch (err) {
     nativeResult.value = { success: false, error: err.message }
   }
 }
 
 const sendSilent = async () => {
-  await showNotification({
+  await showNativeNotification({
     title: '🔇 静默通知',
     body: '这条通知不会发出提示音',
-    silent: true
+    silent: true,
+    onFailed: (error) => {
+      ElMessage.error('原生通知失败: ' + (error?.message || error))
+    }
   })
   ElMessage.info('静默通知已发送')
 }
 
 const sendCritical = async () => {
-  await showNotification({
+  await showNativeNotification({
     title: '🚨 紧急通知',
     body: '这是一条紧急程度为 critical 的通知（Linux 上可见效果）',
-    urgency: 'critical'
+    urgency: 'critical',
+    onFailed: (error) => {
+      ElMessage.error('原生通知失败: ' + (error?.message || error))
+    }
   })
-  ElMessage.info('紧急通知已发送')
+  // ElMessage.info('紧急通知已发送')
+}
+
+// macOS / Windows 通知权限被拒时，直达系统通知设置页去授权
+const openNotificationSettings = async () => {
+  if (!window.notification?.openSettings) {
+    ElMessage.warning('window.notification.openSettings 不可用（需重启应用加载新 preload）')
+    return
+  }
+  const result = await window.notification.openSettings()
+  if (result?.success === false) {
+    ElMessage.warning(result.error || '打开系统通知设置失败')
+  }
 }
 
 // ─── Preload / Import 调用 ────────────────────────────
 const sendViaPreload = async () => {
   if (window.notification) {
-    await window.notification.show({
+    const result = await window.notification.show({
       title: 'Preload API',
       body: '通过 window.notification.show() 发送的原生通知',
       onClick: () => {
         ElMessage.success('Preload API 通知被点击！')
+      },
+      onFailed: (error) => {
+        ElMessage.error('原生通知失败: ' + (error?.message || error))
       }
     })
-    ElMessage.success('已通过 Preload API 发送通知')
+    if (result?.success === false) {
+      ElMessage.error('发送失败: ' + result.error)
+    }
+    // ElMessage.success('已通过 Preload API 发送通知')
   } else {
     ElMessage.warning('window.notification 不可用')
   }
 }
 
 const sendViaImport = async () => {
-  await showNotification({
+  const result = await showNativeNotification({
     title: 'ES6 Import',
-    body: '通过 import { showNotification } 发送的原生通知',
+    body: '通过 import { showNativeNotification } 发送的原生通知',
     onClick: () => {
       ElMessage.success('Import API 通知被点击！')
+    },
+    onFailed: (error) => {
+      ElMessage.error('原生通知失败: ' + (error?.message || error))
     }
   })
-  ElMessage.success('已通过 ES6 Import 发送通知')
+  if (result?.success === false) {
+    ElMessage.error('发送失败: ' + result.error)
+  } else {
+    ElMessage.success('已通过 ES6 Import 发送通知')
+  }
 }
 </script>
 

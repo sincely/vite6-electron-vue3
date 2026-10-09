@@ -10,6 +10,7 @@ import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useUserStore } from '@/store/modules/user'
 import { useNotificationStore } from '@/store/modules/notification'
+import { initNotificationListener } from '@/utils/notification'
 async function setupApp() {
   const app = createApp(App)
   setupIcon(app)
@@ -22,6 +23,9 @@ async function setupApp() {
   const appStore = useAppStore()
   const notifStore = useNotificationStore()
   appStore.initTheme()
+
+  // 接收主进程推送的应用内通知（主进程 createNotification → 'show-notification' 频道）
+  initNotificationListener()
 
   // 从主进程拉取 token（auth 状态的唯一权威在主进程持有的 auth.json）。
   // 必须 await 后再 app.mount()，否则路由守卫会拿到空 token 误判未登录、跳转 /login，
