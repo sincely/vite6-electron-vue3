@@ -166,10 +166,13 @@ const tableStyle = reactive({
   border: props.config?.table?.border ?? true,
   headerBg: props.config?.table?.headerBg ?? true
 })
-// 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）
+// 表头背景开关 -> CSS 变量（开启用主题浅/深色最佳背景色，关闭则透明）。
+// --smart-table-fixed-header-bg 供固定列表头使用：固定列会遮挡横向滚动的单元格，
+// 背景必须始终不透明，关闭表头背景时退化为表格底色
 const headerBgCssVar = computed(() => {
   return {
-    '--smart-table-header-bg': tableStyle.headerBg ? 'var(--color-bg-input)' : 'transparent'
+    '--smart-table-header-bg': tableStyle.headerBg ? 'var(--color-bg-input)' : 'transparent',
+    '--smart-table-fixed-header-bg': tableStyle.headerBg ? 'var(--color-bg-input)' : 'var(--el-table-bg-color)'
   }
 })
 const tableData = ref([])
@@ -475,12 +478,19 @@ watch(
 :deep(.el-table) {
   --el-table-border-color: var(--color-border-light);
   --el-table-header-bg-color: transparent;
-  --el-table-tr-bg-color: transparent;
+
+  // 行背景必须不透明：Element Plus 固定列单元格（sticky）用 background:inherit 继承行背景，
+  // 透明会导致横向滚动时滚过的内容从固定列下方透出。表格底色与透明行的实际视觉一致，观感不变
+  --el-table-tr-bg-color: var(--el-table-bg-color);
   --el-table-row-hover-bg-color: var(--color-bg-hover);
   --el-table-current-row-bg-color: var(--color-bg-active);
   --el-table-header-text-color: var(--color-text-secondary);
   --el-table-text-color: var(--color-text-primary);
   --el-fill-color-lighter: var(--color-bg-hover);
+
+  // 固定列阴影（Element Plus 通过这两个变量绘制固定列投影）
+  --el-table-fixed-left-column: inset 10px 0 10px -10px rgb(0 0 0 / 8%);
+  --el-table-fixed-right-column: inset -10px 0 10px -10px rgb(0 0 0 / 8%);
 
   overflow: hidden;
   border-radius: 10px;
@@ -497,6 +507,13 @@ watch(
     th.el-table__cell {
       border-bottom: 1px solid var(--color-border);
     }
+  }
+
+  // 固定列表头：横向滚动时会盖住滚过的表头单元格，背景必须不透明。
+  // 普通表头透明无碍（其下方没有滚动内容），表头背景开关关闭时退化为表格底色
+  .el-table__header-wrapper th.el-table-fixed-column--left,
+  .el-table__header-wrapper th.el-table-fixed-column--right {
+    background: var(--smart-table-fixed-header-bg, var(--color-bg-input));
   }
 
   // 斑马纹行使用极浅底色
@@ -523,12 +540,6 @@ watch(
   .el-table__inner-wrapper::before,
   .el-table__border-left-patch {
     background-color: var(--color-border-light);
-  }
-
-  // 固定列阴影更柔和
-  .el-table-fixed-column--right::after,
-  .el-table-fixed-column--left::after {
-    box-shadow: -4px 0 8px -4px rgb(0 0 0 / 8%);
   }
 }
 
