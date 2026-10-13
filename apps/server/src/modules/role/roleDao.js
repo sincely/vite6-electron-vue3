@@ -18,6 +18,8 @@ const ROLE_LIST_COLUMNS = `
   r.description,
   r.status,
   r.is_system,
+  r.create_time,
+  r.update_time,
   count(distinct ur.user_id) as userCount
 `
 
@@ -61,7 +63,7 @@ const listRoles = async ({ page = 1, pageSize = 10, role_name = '', role_code = 
     from Roles r
     left join UserRole ur on ur.role_id = r.role_id
     ${whereSql}
-    group by r.role_id, r.role_code, r.role_name, r.role_sort, r.description, r.status, r.is_system
+    group by r.role_id, r.role_code, r.role_name, r.role_sort, r.description, r.status, r.is_system, r.create_time, r.update_time
     order by r.role_sort asc, r.role_id asc
     limit ? offset ?
   `

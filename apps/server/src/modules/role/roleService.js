@@ -34,6 +34,8 @@ const formatRoleRow = (role) => ({
   status: toFrontendStatus(role.status),
   isSystem: Boolean(role.is_system),
   userCount: Number(role.userCount || 0),
+  createTime: role.create_time ?? '',
+  updateTime: role.update_time ?? '',
   routeIds: role.routeIds || []
 })
 

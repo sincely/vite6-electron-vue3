@@ -128,19 +128,6 @@ const columns = [
     minWidth: 220,
     showOverflowTooltip: true
   },
-  // {
-  //   prop: 'permissions',
-  //   label: '权限数量',
-  //   width: 110,
-  //   align: 'center',
-  //   slot: 'permissions'
-  // },
-  // {
-  //   prop: 'userCount',
-  //   label: '关联用户',
-  //   width: 110,
-  //   align: 'center'
-  // },
   {
     prop: 'status',
     label: '角色状态',
