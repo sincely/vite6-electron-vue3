@@ -1,7 +1,7 @@
 import { getConnection, query } from '../../db/connection.js'
 
 /**
- * 菜单查询的公共字段（与新 RouteAuth schema 对齐：path / sort / visible / is_cache 等）。
+ * 菜单查询的公共字段（与新 sys_menu schema 对齐：path / sort / visible / is_cache 等）。
  */
 const MENU_COLUMNS = `
   ra.id, ra.parent_id, ra.menu_type, ra.menu_name, ra.route_name, ra.path,
@@ -31,8 +31,8 @@ const findMenusByRoleId = async (role_id) => {
   const sql = `
     select distinct
       ${MENU_COLUMNS}
-    from RoleRoute rr
-    inner join RouteAuth ra on ra.id = rr.route_id
+    from sys_role_menu rr
+    inner join sys_menu ra on ra.id = rr.route_id
     where rr.role_id in (${buildInClause(roleIds)})
       and ra.deleted = '0'
     order by coalesce(ra.parent_id, 0), ra.sort asc, ra.id asc
@@ -42,7 +42,7 @@ const findMenusByRoleId = async (role_id) => {
 }
 
 /**
- * 根据角色 ID 查询按钮权限节点（menu_type='BUTTON' 的 RouteAuth 行）。
+ * 根据角色 ID 查询按钮权限节点（menu_type='BUTTON' 的 sys_menu 行）。
  * @param {number|number[]} role_id
  * @returns {Promise<Array<any>>}
  */
@@ -60,8 +60,8 @@ const findButtonsByRoleId = async (role_id) => {
       ra.menu_name as button_name,
       ra.menu_name as button_label,
       ra.permission
-    from RoleRoute rr
-    inner join RouteAuth ra on ra.id = rr.route_id
+    from sys_role_menu rr
+    inner join sys_menu ra on ra.id = rr.route_id
     where rr.role_id in (${buildInClause(roleIds)})
       and ra.menu_type = 'BUTTON'
       and ra.deleted = '0'

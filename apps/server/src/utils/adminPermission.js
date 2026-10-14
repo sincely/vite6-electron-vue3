@@ -75,7 +75,7 @@ export const buildMenuTree = (menuList) => {
  * 提取权限编码集合：
  * - routePaths: 允许访问的路径
  * - routeNames: 允许访问的路由名称
- * - buttons: 允许使用的按钮权限编码（RouteAuth.permission，如 system:user:add）
+ * - buttons: 允许使用的按钮权限编码（sys_menu.permission，如 system:user:add）
  * @param {Array<{path?:string,route_name:string}>} menus
  * @param {Array<{button_code?:string,button_name?:string}>} buttons
  * @returns {{routePaths:string[], routeNames:string[], buttons:string[]}}

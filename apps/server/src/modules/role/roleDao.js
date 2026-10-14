@@ -37,7 +37,7 @@ const buildRoleFilters = ({ role_name, role_code, status } = {}) => {
     params.push(`%${role_code}%`)
   }
 
-  // status 在 Roles 表中为 char(1) '0'/'1'，按字符串比较
+  // status 在 sys_role 表中为 char(1) '0'/'1'，按字符串比较
   if (status !== undefined && status !== null && status !== '') {
     where.push('r.status = ?')
     params.push(String(status))
@@ -60,8 +60,8 @@ const listRoles = async ({ page = 1, pageSize = 10, role_name = '', role_code = 
   const sql = `
     select
       ${ROLE_LIST_COLUMNS}
-    from Roles r
-    left join UserRole ur on ur.role_id = r.role_id
+    from sys_role r
+    left join sys_user_role ur on ur.role_id = r.role_id
     ${whereSql}
     group by r.role_id, r.role_code, r.role_name, r.role_sort, r.description, r.status, r.is_system, r.create_time, r.update_time
     order by r.role_sort asc, r.role_id asc
@@ -85,7 +85,7 @@ const listAllRoles = async () => {
       description,
       status,
       is_system
-    from Roles
+    from sys_role
     order by role_sort asc, role_id asc
   `
 
@@ -99,7 +99,7 @@ const listAllRoles = async () => {
  */
 const countRoles = async ({ role_name = '', role_code = '', status } = {}) => {
   const { whereSql, params } = buildRoleFilters({ role_name, role_code, status })
-  const sql = `select count(*) as total from Roles r${whereSql}`
+  const sql = `select count(*) as total from sys_role r${whereSql}`
   const rows = await query(sql, params)
   return rows[0]?.total || 0
 }
@@ -111,7 +111,7 @@ const countRoles = async ({ role_name = '', role_code = '', status } = {}) => {
  */
 const findRoleById = async (role_id) => {
   const sql =
-    'select role_id, role_code, role_name, role_sort, description, status, is_system from Roles where role_id = ? limit 1'
+    'select role_id, role_code, role_name, role_sort, description, status, is_system from sys_role where role_id = ? limit 1'
   const rows = await query(sql, [role_id])
   return rows[0] || null
 }
@@ -127,7 +127,7 @@ const findRolesByIds = async (role_ids) => {
   }
 
   const placeholders = role_ids.map(() => '?').join(', ')
-  const sql = `select role_id from Roles where role_id in (${placeholders})`
+  const sql = `select role_id from sys_role where role_id in (${placeholders})`
   return query(sql, role_ids)
 }
 
@@ -138,7 +138,7 @@ const findRolesByIds = async (role_ids) => {
  * @returns {Promise<any | null>}
  */
 const findRoleByName = async (role_name, role_code = role_name) => {
-  const sql = 'select role_id, role_code, role_name from Roles where role_name = ? or role_code = ? limit 1'
+  const sql = 'select role_id, role_code, role_name from sys_role where role_name = ? or role_code = ? limit 1'
   const rows = await query(sql, [role_name, role_code])
   return rows[0] || null
 }
@@ -149,26 +149,26 @@ const findRoleByName = async (role_name, role_code = role_name) => {
  * @returns {Promise<number[]>}
  */
 const getRouteIdsByRoleId = async (role_id) => {
-  const sql = 'select route_id from RoleRoute where role_id = ? order by route_id asc'
+  const sql = 'select route_id from sys_role_menu where role_id = ? order by route_id asc'
   const rows = await query(sql, [role_id])
   return rows.map((item) => item.route_id)
 }
 
 /**
- * 创建角色（仅 Roles 表，不涉及路由绑定）。
+ * 创建角色（仅 sys_role 表，不涉及路由绑定）。
  * @param {{role_name:string,role_code:string,description:string,status:number}} payload
  * @returns {Promise<{role_id:number, affectedRows:number}>}
  */
 const createRole = async ({ role_name, role_code, role_sort = 0, description, status }) => {
   const result = await query(
-    'insert into Roles (role_code, role_name, role_sort, description, status) values (?, ?, ?, ?, ?)',
+    'insert into sys_role (role_code, role_name, role_sort, description, status) values (?, ?, ?, ?, ?)',
     [role_code || buildRoleCode(role_name), role_name, Number(role_sort) || 0, description, String(status ?? '1')]
   )
   return { role_id: result.insertId, affectedRows: result.affectedRows }
 }
 
 /**
- * 更新角色（仅 Roles 表，不涉及路由绑定）。
+ * 更新角色（仅 sys_role 表，不涉及路由绑定）。
  * @param {number} role_id
  * @param {{role_name:string,role_code:string,role_sort?:number,description:string,status:string}} payload
  * @returns {Promise<{affectedRows:number}>}
@@ -182,7 +182,7 @@ const updateRole = async (role_id, { role_name, role_code, role_sort, descriptio
     params.splice(2, 0, Number(role_sort) || 0)
   }
 
-  const result = await query(`update Roles set ${fields.join(', ')} where role_id = ?`, [...params, role_id])
+  const result = await query(`update sys_role set ${fields.join(', ')} where role_id = ?`, [...params, role_id])
   return { affectedRows: result.affectedRows }
 }
 
@@ -195,9 +195,9 @@ const deleteRole = async (role_id) => {
   const connection = await getConnection()
   try {
     await connection.beginTransaction()
-    // 按钮权限已折叠进 RouteAuth（menu_type='BUTTON'），由 RoleRoute 统一承载
-    await connection.execute('delete from RoleRoute where role_id = ?', [role_id])
-    const [result] = await connection.execute('delete from Roles where role_id = ?', [role_id])
+    // 按钮权限已折叠进 sys_menu（menu_type='BUTTON'），由 sys_role_menu 统一承载
+    await connection.execute('delete from sys_role_menu where role_id = ?', [role_id])
+    const [result] = await connection.execute('delete from sys_role where role_id = ?', [role_id])
     await connection.commit()
     return result
   } catch (error) {
@@ -214,7 +214,7 @@ const deleteRole = async (role_id) => {
  * @returns {Promise<number>}
  */
 const countUsersByRoleId = async (role_id) => {
-  const sql = 'select count(*) as total from UserRole where role_id = ?'
+  const sql = 'select count(*) as total from sys_user_role where role_id = ?'
   const rows = await query(sql, [role_id])
   return rows[0]?.total || 0
 }

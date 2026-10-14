@@ -17,7 +17,7 @@ const MENU_COLUMNS = `
 const listMenus = async () => {
   const sql = `
     select ${MENU_COLUMNS}
-    from RouteAuth
+    from sys_menu
     order by coalesce(parent_id, 0), sort asc, id asc
   `
 
@@ -32,7 +32,7 @@ const listMenus = async () => {
 const findMenuById = async (id) => {
   const sql = `
     select ${MENU_COLUMNS}
-    from RouteAuth
+    from sys_menu
     where id = ?
     limit 1
   `
@@ -46,7 +46,7 @@ const findMenuById = async (id) => {
  * @returns {Promise<any | null>}
  */
 const findMenuByPath = async (path) => {
-  const sql = 'select id, path from RouteAuth where path = ? limit 1'
+  const sql = 'select id, path from sys_menu where path = ? limit 1'
   const rows = await query(sql, [path])
   return rows[0] || null
 }
@@ -57,7 +57,7 @@ const findMenuByPath = async (path) => {
  * @returns {Promise<any | null>}
  */
 const findMenuByName = async (route_name) => {
-  const sql = 'select id, route_name from RouteAuth where menu_type = ? and route_name = ? limit 1'
+  const sql = 'select id, route_name from sys_menu where menu_type = ? and route_name = ? limit 1'
   const rows = await query(sql, ['MENU', route_name])
   return rows[0] || null
 }
@@ -69,7 +69,7 @@ const findMenuByName = async (route_name) => {
  */
 const createMenu = async (payload) => {
   const sql = `
-    insert into RouteAuth (
+    insert into sys_menu (
       parent_id, menu_type, menu_name, sort, icon, route_name, path,
       component, redirect, permission, frame, link, is_cache, visible, status, is_system, remark
     ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -117,7 +117,7 @@ const updateMenu = async (id, payload) => {
     return { affectedRows: 0 }
   }
 
-  const sql = `update RouteAuth set ${fields.join(', ')} where id = ?`
+  const sql = `update sys_menu set ${fields.join(', ')} where id = ?`
   return query(sql, [...params, id])
 }
 
@@ -127,7 +127,7 @@ const updateMenu = async (id, payload) => {
  * @returns {Promise<number>}
  */
 const countChildren = async (id) => {
-  const sql = 'select count(*) as total from RouteAuth where parent_id = ?'
+  const sql = 'select count(*) as total from sys_menu where parent_id = ?'
   const rows = await query(sql, [id])
   return rows[0]?.total || 0
 }
@@ -143,8 +143,8 @@ const deleteMenu = async (id) => {
   const connection = await getConnection()
   try {
     await connection.beginTransaction()
-    await connection.execute('delete from RoleRoute where route_id = ?', [id])
-    const [result] = await connection.execute('delete from RouteAuth where id = ?', [id])
+    await connection.execute('delete from sys_role_menu where route_id = ?', [id])
+    const [result] = await connection.execute('delete from sys_menu where id = ?', [id])
     await connection.commit()
     return result
   } catch (error) {
@@ -172,7 +172,7 @@ const listMenusPaginated = async ({ page = 1, pageSize = 10, keyword = '' } = {}
 
   const sql = `
     select ${MENU_COLUMNS}
-    from RouteAuth
+    from sys_menu
     ${whereClause}
     order by coalesce(parent_id, 0), sort asc, id asc
     limit ? offset ?
@@ -195,7 +195,7 @@ const countMenus = async ({ keyword = '' } = {}) => {
     params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`)
   }
 
-  const sql = `select count(*) as total from RouteAuth${whereClause}`
+  const sql = `select count(*) as total from sys_menu${whereClause}`
   const rows = await query(sql, params)
   return rows[0]?.total || 0
 }
@@ -212,8 +212,8 @@ const deleteMenus = async (ids) => {
   try {
     await connection.beginTransaction()
     for (const id of safeIds) {
-      await connection.execute('delete from RoleRoute where route_id = ?', [id])
-      await connection.execute('delete from RouteAuth where id = ?', [id])
+      await connection.execute('delete from sys_role_menu where route_id = ?', [id])
+      await connection.execute('delete from sys_menu where id = ?', [id])
     }
     await connection.commit()
   } catch (error) {

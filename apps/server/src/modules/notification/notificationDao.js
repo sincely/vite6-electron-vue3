@@ -304,7 +304,7 @@ const deleteExpiredNotifications = async (nowTime) => {
           `
           : `
             select count(*) as pending
-            from Users u
+            from sys_user u
             where u.status = 1
               and not exists (
                 select 1 from NotificationRead r

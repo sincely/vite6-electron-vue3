@@ -359,7 +359,7 @@ export const frontendLogin = async ({ userName, password, loginIp, userAgent }) 
 
   // 将 sessionId、登录信息写入用户表
   const sql = `
-    UPDATE Users SET
+    UPDATE sys_user SET
       session_id = ?,
       current_refresh_token = ?,
       last_login_ip = ?,
@@ -409,7 +409,7 @@ export const frontendGetUserInfo = async (userId) => {
   const roleIds = parseRoleIds(currentUser.roleIds, currentUser.role_id)
   const roleCodes = parseRoleCodes(currentUser.roleCodes, currentUser.role_code)
   const buttons = await adminPermissionDao.findButtonsByRoleId(roleIds)
-  // 权限码存储在 RouteAuth.permission（如 system:user:add），menu_name 只是展示名
+  // 权限码存储在 sys_menu.permission（如 system:user:add），menu_name 只是展示名
   const buttonCodes = [...new Set(buttons.map((b) => b.permission).filter(Boolean))]
 
   return {
@@ -473,7 +473,7 @@ export const frontendRefreshToken = async (refreshToken) => {
 export const frontendLogout = async (userId) => {
   if (userId) {
     const sql = `
-      UPDATE Users SET
+      UPDATE sys_user SET
         session_id = NULL,
         current_refresh_token = NULL,
         last_login_ip = NULL,

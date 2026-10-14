@@ -1,6 +1,6 @@
 /**
  * @module 菜单管理 Service
- * @description 封装菜单 CRUD、树结构构建、按钮管理等业务逻辑（适配新 RouteAuth schema）
+ * @description 封装菜单 CRUD、树结构构建、按钮管理等业务逻辑（适配新 sys_menu schema）
  */
 
 import adminMenuDao from './menuDao.js'

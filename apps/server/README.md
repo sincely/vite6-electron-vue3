@@ -385,14 +385,14 @@ const createUser = async (user) => {
 
     // 插入用户表
     const [result] = await connection.query(
-      'INSERT INTO Users (username, email, password, ...) VALUES (?, ?, ?, ...)',
+      'INSERT INTO sys_user (username, email, password, ...) VALUES (?, ?, ?, ...)',
       [user.username, user.email, user.passwordHash, ...]
     )
     const userId = result.insertId
 
     // 插入用户-角色关联表
     await connection.query(
-      'INSERT INTO UserRole (userId, roleId) VALUES (?, ?)',
+      'INSERT INTO sys_user_role (userId, roleId) VALUES (?, ?)',
       [userId, user.roleId]
     )
 
@@ -413,7 +413,7 @@ const createUser = async (user) => {
 
 ```
 ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
-│    Users     │         │   UserRole   │         │    Roles     │
+│    sys_user     │         │   sys_user_role   │         │    sys_role     │
 ├──────────────┤         ├──────────────┤         ├──────────────┤
 │ id (PK)      │◄────────│ userId (FK)  │         │ roleId (PK)  │
 │ username     │         │ roleId (FK)  │────────►│ roleName     │
@@ -423,7 +423,7 @@ const createUser = async (user) => {
 │ sessionId    │                                   └──────────────┘
 │ sessionExpire│
 │ currentToken │         ┌──────────────┐         ┌──────────────┐
-└──────────────┘         │  RoleRoute   │         │  RouteAuth   │
+└──────────────┘         │  sys_role_menu   │         │  sys_menu   │
                          ├──────────────┤         ├──────────────┤
                          │ roleId (FK)  │         │ routeId (PK) │
                          │ routeId (FK) │────────►│ routeName    │
@@ -437,7 +437,7 @@ const createUser = async (user) => {
                          └──────────────┘         │ ButtonAuth   │
                                                   ├──────────────┤
 ┌──────────────┐         ┌──────────────┐         │ buttonId (PK)│
-│  LoginLog    │         │OperationLog  │         │ routeId (FK) │
+│  sys_login_log    │         │sys_operation_log  │         │ routeId (FK) │
 ├──────────────┤         ├──────────────┤         │ buttonName   │
 │ logId (PK)   │         │ logId (PK)   │         │ buttonLabel  │
 │ userId       │         │ userId       │         └──────────────┘
@@ -459,15 +459,15 @@ const createUser = async (user) => {
 
 | 表名 | 说明 | 关键字段 |
 |------|------|----------|
-| `Users` | 用户表 | id, username, email, password, status, sessionId, sessionExpire, currentRefreshToken |
-| `Roles` | 角色表 | roleId, roleName, roleCode, description, status |
-| `UserRole` | 用户-角色关联表 | userId, roleId |
-| `RouteAuth` | 菜单/路由权限表 | routeId, routeName, routePath, component, parentId, orderNum |
-| `RoleRoute` | 角色-菜单关联表 | roleId, routeId |
+| `sys_user` | 用户表 | id, username, email, password, status, sessionId, sessionExpire, currentRefreshToken |
+| `sys_role` | 角色表 | roleId, roleName, roleCode, description, status |
+| `sys_user_role` | 用户-角色关联表 | userId, roleId |
+| `sys_menu` | 菜单/路由权限表 | routeId, routeName, routePath, component, parentId, orderNum |
+| `sys_role_menu` | 角色-菜单关联表 | roleId, routeId |
 | `ButtonAuth` | 按钮权限表 | buttonId, routeId, buttonName, buttonLabel |
 | `RoleButton` | 角色-按钮关联表 | roleId, buttonId |
-| `LoginLog` | 登录日志表 | logId, userId, username, loginType, ipAddress, status, message |
-| `OperationLog` | 操作日志表 | logId, userId, username, action, method, requestUrl, responseStatus |
+| `sys_login_log` | 登录日志表 | logId, userId, username, loginType, ipAddress, status, message |
+| `sys_operation_log` | 操作日志表 | logId, userId, username, action, method, requestUrl, responseStatus |
 
 ## API 接口
 
