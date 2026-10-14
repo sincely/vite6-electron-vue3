@@ -40,7 +40,7 @@ const visibleFromBody = (body) => {
 
 // 前端 camelCase → DB 字段映射（适配新 schema）
 const toMenuPayload = (body) => {
-  const isButton = body.menuType === 'BUTTON' || Number(body.menuType) === 3
+  const isButton = normalizeMenuType(body.menuType) === 'BUTTON'
   if (isButton) {
     // 按钮：permission 字段才是关键标识，path/route_name 用内部合成键避免与菜单冲突
     const parentId = body.parentId ?? 0
@@ -87,9 +87,13 @@ const toMenuPayload = (body) => {
   }
 }
 
+// 菜单类型统一为大写字符串：DIR / MENU / BUTTON
+const normalizeMenuType = (menuType) => String(menuType ?? '').toUpperCase()
+
 // DB → 前端 camelCase 字段映射（适配新 schema）
 const formatMenuRow = (row) => {
-  const isButton = row.menu_type === 'BUTTON' || Number(row.menu_type) === 3
+  const menuType = normalizeMenuType(row.menu_type)
+  const isButton = menuType === 'BUTTON'
 
   // 按钮类型：route_name 是内部合成键 _btn_{parentId}_{code}_{ts}，提取真实权限标识
   let displayRouteName = row.route_name || ''
@@ -113,7 +117,7 @@ const formatMenuRow = (row) => {
     updateTime: row.update_time || '',
     status: toFrontendStatus(row.status),
     parentId: row.parent_id ?? 0,
-    menuType: String(row.menu_type),
+    menuType,
     menuName: row.menu_name,
     routeName: displayRouteName,
     path: displayPath,
@@ -131,15 +135,25 @@ const formatMenuRow = (row) => {
   }
 }
 
-// 前端表格树构建：
-// - 目录（DIR）可包含：菜单（MENU）、目录（DIR）
-// - 菜单（MENU）可包含：按钮（BUTTON）
-// - 按钮（BUTTON）不包含子节点
+// 前端表格树构建（严格层级）：
+// - 目录（DIR）下只能放：菜单（MENU）、目录（DIR）
+// - 菜单（MENU）下只能放：按钮（BUTTON）
+// - 按钮（BUTTON）为叶子节点
+// 不满足层级规则的节点按顶级平铺，避免父子错乱展示
+const canNest = (parentType, childType) => {
+  if (parentType === 'DIR') {
+    return childType === 'DIR' || childType === 'MENU'
+  }
+  if (parentType === 'MENU') {
+    return childType === 'BUTTON'
+  }
+  return false
+}
+
 const buildMenuRecordTree = (rows) => {
   const nodeMap = new Map(
     rows.map((row) => {
-      const canHaveChildren =
-        row.menuType === 'DIR' || row.menuType === '1' || row.menuType === 'MENU' || row.menuType === '2'
+      const canHaveChildren = row.menuType === 'DIR' || row.menuType === 'MENU'
       return [row.id, canHaveChildren ? { ...row, children: [] } : { ...row }]
     })
   )
@@ -148,24 +162,13 @@ const buildMenuRecordTree = (rows) => {
   for (const row of rows) {
     const currentNode = nodeMap.get(row.id)
     const parentId = Number(row.parentId) || 0
+    const parentNode = parentId !== 0 ? nodeMap.get(parentId) : null
 
-    if (parentId !== 0 && nodeMap.has(parentId)) {
-      const parentNode = nodeMap.get(parentId)
-      const parentType = parentNode.menuType
-      if (
-        parentType === 'DIR' ||
-        parentType === '1' ||
-        (parentType === 'MENU' && row.menuType === 'BUTTON') ||
-        (parentType === '2' && row.menuType === '3')
-      ) {
-        if (Array.isArray(parentNode.children)) {
-          parentNode.children.push(currentNode)
-          continue
-        }
-      }
+    if (parentNode && canNest(parentNode.menuType, row.menuType)) {
+      parentNode.children.push(currentNode)
+    } else {
+      roots.push(currentNode)
     }
-
-    roots.push(currentNode)
   }
 
   // 清理空的 children 数组
@@ -178,8 +181,47 @@ const buildMenuRecordTree = (rows) => {
   return roots
 }
 
+// 列表筛选：menuName（名称/路由名称/路由路径模糊）+ menuType + status；
+// 命中节点保留其祖先链，保证筛选结果仍是完整的层级树
+const filterMenuRows = (rows, { keyword, menuType, status }) => {
+  if (!keyword && !menuType && !status) {
+    return rows
+  }
+
+  const matched = rows.filter((row) => {
+    if (menuType && row.menuType !== menuType) {
+      return false
+    }
+    if (status && row.status !== status) {
+      return false
+    }
+    if (keyword) {
+      const kw = String(keyword).toLowerCase()
+      return [row.menuName, row.routeName, row.path].some((field) =>
+        String(field || '')
+          .toLowerCase()
+          .includes(kw)
+      )
+    }
+    return true
+  })
+
+  const byId = new Map(rows.map((row) => [row.id, row]))
+  const keep = new Set()
+  for (const row of matched) {
+    let cursor = row
+    while (cursor && !keep.has(cursor.id)) {
+      keep.add(cursor.id)
+      cursor = byId.get(Number(cursor.parentId) || 0)
+    }
+  }
+  return rows.filter((row) => keep.has(row.id))
+}
+
 /**
  * 获取菜单列表
+ * 菜单管理页依赖完整层级树（rows 内含 children），不做行级分页切片；
+ * isV2 保留对根节点分页的旧契约（保持子树完整，仅切片顶层节点）。
  */
 export const listMenus = async (query, isV2 = false) => {
   const { current, size, page, pageSize, pageNum, keyword, menuName, menuType, status } = query
@@ -187,49 +229,36 @@ export const listMenus = async (query, isV2 = false) => {
   // 前端搜索栏用 menuName 作为关键词字段
   const normalizedKeyword = keyword || menuName || ''
 
-  if (isV2) {
-    const menus = await adminMenuDao.listMenus()
-    const filteredMenus = normalizedKeyword
-      ? menus.filter((item) => {
-          const matchedKeyword = String(normalizedKeyword).toLowerCase()
-          return [item.menu_name, item.path, item.route_name].some((field) =>
-            String(field || '')
-              .toLowerCase()
-              .includes(matchedKeyword)
-          )
-        })
-      : menus
+  const menus = await adminMenuDao.listMenus()
+  const filteredRows = filterMenuRows(
+    menus.map((item) => formatMenuRow(item)),
+    {
+      keyword: normalizedKeyword,
+      menuType,
+      status
+    }
+  )
+  const tree = buildMenuRecordTree(filteredRows)
 
-    const formattedRows = filteredMenus.map((item) => formatMenuRow(item))
-    const tree = buildMenuRecordTree(formattedRows)
-
-    // 对根节点分页：保持子树完整，仅切片顶层节点
-    const start = (actualPage - 1) * actualPageSize
-    const pagedTree = tree.slice(start, start + actualPageSize)
-
+  if (!isV2) {
     return {
-      records: pagedTree,
-      rows: pagedTree,
+      records: tree,
+      rows: tree,
       current: actualPage,
       size: actualPageSize,
       total: tree.length
     }
   }
 
-  const [list, total] = await Promise.all([
-    adminMenuDao.listMenusPaginated({ page: actualPage, pageSize: actualPageSize, keyword: normalizedKeyword }),
-    adminMenuDao.countMenus({ keyword: normalizedKeyword })
-  ])
-
-  const records = list.map((item) => formatMenuRow(item))
+  const start = (actualPage - 1) * actualPageSize
+  const pagedTree = tree.slice(start, start + actualPageSize)
 
   return {
-    // records 为新契约；rows 兼容前端 AdvanceTable / 菜单下拉树读取约定
-    records,
-    rows: records,
+    records: pagedTree,
+    rows: pagedTree,
     current: actualPage,
     size: actualPageSize,
-    total: Number(total)
+    total: tree.length
   }
 }
 
@@ -242,12 +271,50 @@ export const getMenuTree = async () => {
   return { success: true, data: buildMenuTree(menus) }
 }
 
+// 校验父子层级（严格）：
+// - 顶级不允许按钮
+// - 目录（DIR）下只能放目录/菜单
+// - 菜单（MENU）下只能放按钮
+const validateMenuHierarchy = (parentId, menuType, parentMenu) => {
+  const childType = normalizeMenuType(menuType)
+
+  if (!parentId) {
+    return childType === 'BUTTON' ? '按钮只能挂在菜单下' : null
+  }
+  if (!parentMenu) {
+    return '父级菜单不存在'
+  }
+
+  const parentType = normalizeMenuType(parentMenu.menu_type)
+  if (parentType === 'DIR' && childType !== 'DIR' && childType !== 'MENU') {
+    return '目录下只能添加目录或菜单'
+  }
+  if (parentType === 'MENU' && childType !== 'BUTTON') {
+    return '菜单下只能添加按钮'
+  }
+  return null
+}
+
+// 目标父级是否在当前菜单的子树下（是则移动后会形成环形引用）
+const isParentInSubtree = async (id, targetParentId) => {
+  const menus = await adminMenuDao.listMenus()
+  const byId = new Map(menus.map((menu) => [menu.id, menu]))
+  let cursor = byId.get(Number(targetParentId))
+  while (cursor) {
+    if (Number(cursor.id) === Number(id)) {
+      return true
+    }
+    cursor = byId.get(Number(cursor.parent_id) || 0)
+  }
+  return false
+}
+
 /**
  * 创建菜单
  */
 export const createMenu = async (body) => {
   const { path, routeName, parentId, menuType } = body
-  const isButton = menuType === 'BUTTON' || Number(menuType) === 3
+  const isButton = normalizeMenuType(menuType) === 'BUTTON'
 
   // 按钮类型不需要路由字段校验
   if (!isButton) {
@@ -265,15 +332,10 @@ export const createMenu = async (body) => {
     }
   }
 
-  if (parentId) {
-    const parentMenu = await adminMenuDao.findMenuById(parentId)
-    if (!parentMenu) {
-      return { success: false, code: businessCode.paramError, msg: '父级菜单不存在' }
-    }
-    // 按钮类型只能挂在菜单（MENU）下
-    if (isButton && !(parentMenu.menu_type === 'MENU' || Number(parentMenu.menu_type) === 2)) {
-      return { success: false, code: businessCode.paramError, msg: '按钮只能挂在菜单下' }
-    }
+  const parentMenu = parentId ? await adminMenuDao.findMenuById(parentId) : null
+  const hierarchyError = validateMenuHierarchy(parentId, menuType, parentMenu)
+  if (hierarchyError) {
+    return { success: false, code: businessCode.paramError, msg: hierarchyError }
   }
 
   const result = await adminMenuDao.createMenu(toMenuPayload(body))
@@ -292,11 +354,7 @@ export const updateMenu = async (body) => {
     return { success: false, code: businessCode.error, msg: '菜单不存在' }
   }
 
-  const isButton =
-    menuType === 'BUTTON' ||
-    Number(menuType) === 3 ||
-    currentMenu.menu_type === 'BUTTON' ||
-    Number(currentMenu.menu_type) === 3
+  const isButton = normalizeMenuType(menuType) === 'BUTTON' || normalizeMenuType(currentMenu.menu_type) === 'BUTTON'
 
   if (!isButton && path) {
     const existedPath = await adminMenuDao.findMenuByPath(path)
@@ -312,16 +370,37 @@ export const updateMenu = async (body) => {
     }
   }
 
-  if (parentId !== undefined) {
-    if (parentId === id) {
-      return { success: false, code: businessCode.paramError, msg: '父级菜单不能选择自己' }
+  // 生效的父子关系（未传字段沿用当前值），做严格层级校验
+  const effectiveType = menuType ?? currentMenu.menu_type
+  const effectiveParentId = parentId !== undefined ? parentId : currentMenu.parent_id
+
+  if (effectiveParentId !== null && Number(effectiveParentId) === Number(id)) {
+    return { success: false, code: businessCode.paramError, msg: '父级菜单不能选择自己' }
+  }
+
+  if (effectiveParentId) {
+    const parentMenu = await adminMenuDao.findMenuById(effectiveParentId)
+    const hierarchyError = validateMenuHierarchy(effectiveParentId, effectiveType, parentMenu)
+    if (hierarchyError) {
+      return { success: false, code: businessCode.paramError, msg: hierarchyError }
     }
 
-    if (parentId !== null) {
-      const parentMenu = await adminMenuDao.findMenuById(parentId)
-      if (!parentMenu) {
-        return { success: false, code: businessCode.paramError, msg: '父级菜单不存在' }
-      }
+    // 移动到自己的子树下会形成环形引用
+    if (parentId !== undefined && (await isParentInSubtree(id, parentId))) {
+      return { success: false, code: businessCode.paramError, msg: '父级菜单不能选择自己的子节点' }
+    }
+  }
+
+  // 类型变更时，已有子节点必须仍符合层级规则（目录→目录/菜单，菜单→按钮）
+  if (menuType !== undefined && normalizeMenuType(menuType) !== normalizeMenuType(currentMenu.menu_type)) {
+    const allMenus = await adminMenuDao.listMenus()
+    const hasIncompatibleChild = allMenus.some(
+      (menu) =>
+        Number(menu.parent_id) === Number(id) &&
+        !canNest(normalizeMenuType(menuType), normalizeMenuType(menu.menu_type))
+    )
+    if (hasIncompatibleChild) {
+      return { success: false, code: businessCode.paramError, msg: '子节点不符合新菜单类型的层级规则，请先处理子节点' }
     }
   }
 

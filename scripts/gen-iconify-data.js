@@ -73,7 +73,15 @@ const ICON_PLAN = {
       // 设置弹窗侧边栏页签
       'circle-user-round', // 个人资料
       'palette', // 外观显示
-      'info' // 关于软件
+      'info', // 关于软件
+      // 菜单管理（sys_menu.icon 为 lucide 命名，需离线收录保证与侧边栏一致）
+      'square-arrow-out-up-right', // 内嵌网页（一级菜单）
+      'upload', // 文件上传
+      'cloud-upload', // 大文件上传
+      'layers-3', // 容器变形
+      'atom', // Vue 官网（外部链接）
+      'zap', // Electron 官网（内嵌）
+      'github' // GitHub（外部链接）
     ]
   },
   ri: {
@@ -144,9 +152,7 @@ function loadCollection(prefix) {
 /** 读取项目内已有离线数据（不存在则返回空结构，并确保继承源集合的默认宽高） */
 function loadLocalData(file, prefix, collection) {
   const filePath = path.join(PLUGINS_DIR, file)
-  const local = existsSync(filePath)
-    ? JSON.parse(readFileSync(filePath, 'utf-8'))
-    : { prefix, icons: {} }
+  const local = existsSync(filePath) ? JSON.parse(readFileSync(filePath, 'utf-8')) : { prefix, icons: {} }
   // 回填缺失的默认宽高（Iconify 缺省按 16x16 渲染，会导致图标偏小）
   if (!local.width && collection.width) local.width = collection.width
   if (!local.height && collection.height) local.height = collection.height
@@ -179,9 +185,7 @@ for (const [prefix, plan] of Object.entries(ICON_PLAN)) {
 
   const filePath = path.join(PLUGINS_DIR, plan.file)
   writeFileSync(filePath, `${JSON.stringify(local, null, 2)}\n`)
-  console.log(
-    `✅ [${prefix}] 新增 ${added} 个，共 ${Object.keys(local.icons).length} 个 → ${plan.file}`
-  )
+  console.log(`✅ [${prefix}] 新增 ${added} 个，共 ${Object.keys(local.icons).length} 个 → ${plan.file}`)
   totalAdded += added
 }
 

@@ -25,7 +25,8 @@
       <template #icon="{ row }">
         <div class="icon-cell">
           <div v-if="row.icon" class="icon-box">
-            <SvgIcon :icon-class="row.icon" width="16px" height="16px" />
+            <!-- 与侧边栏菜单一致：DB 图标名为 lucide 命名，走 Iconify 离线集合渲染 -->
+            <Icon :icon="`lucide:${row.icon}`" width="16px" height="16px" />
           </div>
           <span v-else class="text-muted">-</span>
         </div>
@@ -77,6 +78,7 @@
 defineOptions({ name: 'system-menu' })
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete, Plus } from '@element-plus/icons-vue'
+import { Icon } from '@iconify/vue'
 import { createMenu, deleteMenus, getMenuList, updateMenu } from '@/api/system'
 
 const tableRef = ref()
@@ -107,9 +109,11 @@ const tableConfig = {
   selection: true,
   useAction: true,
   requestDelay: 200,
+  // 菜单树需一次性展示完整层级，不做分页；默认收起，搜索命中时再展开
+  notPagination: true,
   table: {
     rowKey: 'id',
-    defaultExpandAll: true
+    defaultExpandAll: false
   }
 }
 
@@ -135,13 +139,6 @@ const columns = [
     minWidth: 120,
     align: 'center',
     slot: 'icon'
-  },
-  {
-    prop: 'routeName',
-    label: '路由名称',
-    minWidth: 120,
-    align: 'center',
-    showOverflowTooltip: true
   },
   {
     prop: 'path',
@@ -175,6 +172,13 @@ const columns = [
     label: '排序',
     width: 80,
     align: 'center'
+  },
+  {
+    prop: 'updateTime',
+    label: '更新时间',
+    minWidth: 180,
+    align: 'center',
+    showOverflowTooltip: true
   }
 ]
 
@@ -224,12 +228,14 @@ const createDefaultForm = () => ({
 
 const formModel = ref(createDefaultForm())
 
+// 父级候选：只有目录/菜单可作为父节点（按钮是叶子），携带 menuType 供类型联动
 const buildMenuOptions = (list, excludeId) => {
   return list
-    .filter((item) => item.id !== excludeId)
+    .filter((item) => (item.menuType === 'DIR' || item.menuType === 'MENU') && item.id !== excludeId)
     .map((item) => ({
       label: item.menuName,
       value: item.id,
+      menuType: item.menuType,
       disabled: isDescendant(item, excludeId),
       children: item.children?.length ? buildMenuOptions(item.children, excludeId) : undefined
     }))
@@ -240,6 +246,21 @@ const isDescendant = (node, targetId) => {
   return node.children.some((child) => {
     return child.id === targetId || isDescendant(child, targetId)
   })
+}
+
+const findMenuOption = (options, value) => {
+  for (const option of options) {
+    if (option.value === value) return option
+    const found = option.children?.length ? findMenuOption(option.children, value) : null
+    if (found) return found
+  }
+  return null
+}
+
+// 层级规则：顶级/目录下只能是目录或菜单，菜单下只能是按钮
+const allowedMenuTypes = (parentId) => {
+  const parent = parentId ? findMenuOption(menuTreeOptions.value, parentId) : null
+  return parent?.menuType === 'MENU' ? ['BUTTON'] : ['DIR', 'MENU']
 }
 
 const formSchemas = computed(() => [
@@ -254,10 +275,12 @@ const formSchemas = computed(() => [
     prop: 'menuType',
     type: 'select',
     required: true,
-    options: menuTypeOptions.map((item) => ({
-      label: item.label,
-      value: item.value
-    }))
+    options: menuTypeOptions
+      .filter((item) => allowedMenuTypes(formModel.value.parentId).includes(item.value))
+      .map((item) => ({
+        label: item.label,
+        value: item.value
+      }))
   },
   {
     label: '菜单名称',
@@ -338,6 +361,17 @@ const formSchemas = computed(() => [
 
 const dialogTitle = computed(() => (isEdit.value ? '编辑菜单' : '新增菜单'))
 
+// 切换父级后联动修正菜单类型，保证父子层级始终合规
+watch(
+  () => formModel.value.parentId,
+  (parentId) => {
+    const allowed = allowedMenuTypes(parentId)
+    if (formModel.value.menuType && !allowed.includes(formModel.value.menuType)) {
+      formModel.value.menuType = allowed[0]
+    }
+  }
+)
+
 const loadMenuOptions = async (excludeId) => {
   const res = await getMenuList({})
   menuTreeOptions.value = buildMenuOptions(res.rows || [], excludeId)
@@ -348,13 +382,33 @@ const refreshTable = async () => {
   tableRef.value?.getList()
 }
 
-const handleQuery = () => {
-  tableRef.value?.getList()
+// 展开全部含子节点的行（el-table 树形表格逐行切换展开状态）
+const expandAllRows = () => {
+  const table = tableRef.value?.tableRef
+  const walk = (rows) => {
+    for (const row of rows || []) {
+      if (row.children?.length) {
+        table?.toggleRowExpansion(row, true)
+        walk(row.children)
+      }
+    }
+  }
+  walk(tableRef.value?.tableData)
 }
 
-const handleReset = () => {
-  tableRef.value?.resetQuery()
+const handleQuery = async () => {
+  // 等搜索栏把最新参数同步进 TreeTable 后再请求，避免重置时带着旧条件查询
+  await nextTick()
+  await tableRef.value?.getList()
+  // 有筛选条件时展开全部层级让命中节点直接可见；无筛选保持默认收起
+  if (searchParams.menuName || searchParams.menuType || searchParams.status) {
+    await nextTick()
+    expandAllRows()
+  }
 }
+
+// 搜索栏重置时会同时触发 query 与 reset，刷新统一交给 handleQuery，避免重复请求
+const handleReset = () => {}
 
 const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map((item) => item.id)

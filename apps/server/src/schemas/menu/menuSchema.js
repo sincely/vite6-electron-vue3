@@ -9,6 +9,12 @@ export const MenuListQuerySchema = createPaginatedQuerySchema({
     .max(100)
     .optional()
     .transform((v) => v || ''),
+  // 前端搜索栏以 menuName 作为关键词字段
+  menuName: z
+    .string()
+    .max(100)
+    .optional()
+    .transform((v) => v || ''),
   menuType: menuTypeEnum,
   status: statusCoerce
 })
