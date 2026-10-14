@@ -75,16 +75,16 @@ export const buildMenuTree = (menuList) => {
  * 提取权限编码集合：
  * - routePaths: 允许访问的路径
  * - routeNames: 允许访问的路由名称
- * - buttons: 允许使用的按钮权限编码
- * @param {Array<{routePath:string,routeName:string}>} menus
- * @param {Array<{buttonName?:string}>} buttons
+ * - buttons: 允许使用的按钮权限编码（RouteAuth.permission，如 system:user:add）
+ * @param {Array<{path?:string,route_name:string}>} menus
+ * @param {Array<{button_code?:string,button_name?:string}>} buttons
  * @returns {{routePaths:string[], routeNames:string[], buttons:string[]}}
  */
 export const extractPermissionCodes = (menus, buttons) => {
   return {
-    routePaths: menus.map((menu) => menu.route_path).filter(Boolean),
+    routePaths: menus.map((menu) => menu.path).filter(Boolean),
     routeNames: menus.map((menu) => menu.route_name).filter(Boolean),
-    buttons: buttons.map((button) => button.button_name).filter(Boolean)
+    buttons: buttons.map((button) => button.button_code || button.button_name).filter(Boolean)
   }
 }
 

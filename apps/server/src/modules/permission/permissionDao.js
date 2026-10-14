@@ -58,7 +58,8 @@ const findButtonsByRoleId = async (role_id) => {
       ra.parent_id as route_id,
       ra.route_name,
       ra.menu_name as button_name,
-      ra.menu_name as button_label
+      ra.menu_name as button_label,
+      ra.permission
     from RoleRoute rr
     inner join RouteAuth ra on ra.id = rr.route_id
     where rr.role_id in (${buildInClause(roleIds)})

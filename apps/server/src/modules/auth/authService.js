@@ -63,21 +63,19 @@ const formatUserInfo = (user) => ({
 
 const buildPermissionSnapshot = async (roleIds) => {
   const allRows = await adminPermissionDao.findMenusByRoleId(roleIds)
-  // 分离菜单（目录/菜单）和按钮（menu_type=3）
-  const menus = allRows.filter((row) => Number(row.menu_type) !== 3)
-  const buttons = allRows
-    .filter((row) => Number(row.menu_type) === 3)
-    .map((row) => ({
-      button_name: row.route_name || row.menu_name,
-      button_label: row.menu_name,
-      route_id: row.parent_id,
-      route_name: row.route_name || ''
-    }))
+  // 分离菜单（目录/菜单）和按钮（menu_type='BUTTON'）
+  const isButton = (row) => String(row.menu_type).toUpperCase() === 'BUTTON'
+  const menus = allRows.filter((row) => !isButton(row))
+  const buttons = allRows.filter(isButton).map((row) => ({
+    button_code: row.permission || '',
+    button_name: row.menu_name,
+    route_id: row.parent_id,
+    route_name: row.route_name || ''
+  }))
 
   return {
     menuTree: buildMenuTree(menus),
-    buttons,
-    permissionCodes: extractPermissionCodes(menus, buttons)
+    buttons
   }
 }
 
@@ -411,7 +409,8 @@ export const frontendGetUserInfo = async (userId) => {
   const roleIds = parseRoleIds(currentUser.roleIds, currentUser.role_id)
   const roleCodes = parseRoleCodes(currentUser.roleCodes, currentUser.role_code)
   const buttons = await adminPermissionDao.findButtonsByRoleId(roleIds)
-  const buttonCodes = buttons.map((b) => b.button_name)
+  // 权限码存储在 RouteAuth.permission（如 system:user:add），menu_name 只是展示名
+  const buttonCodes = [...new Set(buttons.map((b) => b.permission).filter(Boolean))]
 
   return {
     success: true,

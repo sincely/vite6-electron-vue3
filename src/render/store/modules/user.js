@@ -51,7 +51,8 @@ export const useUserStore = defineStore(
       try {
         const payload = await getUserInfo()
         userInfo.value = payload
-        permissions.value = payload?.permissions || []
+        // 后端按钮权限码（如 system:user:add）通过 buttons 字段返回
+        permissions.value = payload?.buttons || []
         roles.value = payload?.roles || []
         return payload
       } catch (error) {
