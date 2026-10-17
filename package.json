@@ -9,7 +9,7 @@
   "description": "A Vite6 Electron Vue3 project",
   "author": "chengzhou",
   "scripts": {
-    "dev:all": "concurrently -k -n server,web -c blue,green \"ppnpm run backend:dev\" \"ppnpm run dev\"",
+    "dev:all": "concurrently -k -n server,web -c blue,green \"pnpm run backend:dev\" \"pnpm run dev\"",
     "dev": "node scripts/pre-dev.js && vite --mode development",
     "build:dev": "vite build --mode development",
     "build:test": "vite build --mode test",
