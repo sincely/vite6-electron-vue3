@@ -3,6 +3,59 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.3](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.2...v2.0.3) (2026-10-17)
+
+### ✨ Features
+
+* github添加 skills ([1a014b2](https://github.com/sincely/vite6-electron-vue3/commit/1a014b2a44b73e6ff3078180093f0c221d7d0eeb))
+* 优化 API 暴露，添加 electronAPI 以支持文件操作和系统信息获取 ([2c18d02](https://github.com/sincely/vite6-electron-vue3/commit/2c18d0288b6b6fbeec506ec3264a400c3b4dbae4))
+* 优化菜单管理逻辑，增强菜单层级校验和搜索功能 ([7759c5d](https://github.com/sincely/vite6-electron-vue3/commit/7759c5dddb24c6b34bab96f7e3abe2b855eeb6e9))
+* 优化表格样式，增强固定列和表头背景处理 ([87d16c8](https://github.com/sincely/vite6-electron-vue3/commit/87d16c8f64de727915056533dd68ef70b6e3aeec))
+* 实现AI assistant功能 ([6da3269](https://github.com/sincely/vite6-electron-vue3/commit/6da32690840f1355424b0aa1d0401140ae4abac3))
+* 提升node版本为 24.18.0 ([eb1c784](https://github.com/sincely/vite6-electron-vue3/commit/eb1c784fd1c3f03e44af04f53866b13dc5e5582f))
+* 更新权限管理逻辑，优化按钮权限码提取和用户信息处理 ([25d74a2](https://github.com/sincely/vite6-electron-vue3/commit/25d74a200073e2543a99b1f23b05ab9f1d6259c2))
+* 更新问题反馈面板为右下角悬浮按钮，优化用户体验 ([081572e](https://github.com/sincely/vite6-electron-vue3/commit/081572e46b2950c5d91359966b5143e1a11b67ea))
+* 添加 AI 网关配置并修复数据库名称 ([36653fc](https://github.com/sincely/vite6-electron-vue3/commit/36653fcf9e6a623005b5fcdd7384b884e9896ab1))
+* 添加技术架构文档 ([6379c89](https://github.com/sincely/vite6-electron-vue3/commit/6379c89d446558dcd759d2bed2db5d0f5d8fa102))
+* 添加技能 ([2f08e1d](https://github.com/sincely/vite6-electron-vue3/commit/2f08e1d89225876b6eda452cb0f5cccb08f3080f))
+* 添加更新提示按钮，支持下载进度显示和安装提示 ([a7f2a1e](https://github.com/sincely/vite6-electron-vue3/commit/a7f2a1e5495eca9868ef246163a5ea8940a83a9a))
+* 添加窗口管理功能，支持平铺、居中和最大化/还原操作 ([3eb97c0](https://github.com/sincely/vite6-electron-vue3/commit/3eb97c0aa1461615f1fc56aa8294fe1fb02e7e37))
+* 添加角色创建和更新时间字段到角色列表和服务 ([7346aaa](https://github.com/sincely/vite6-electron-vue3/commit/7346aaab12e0627b15b16d20d46dfeeeb36e9c3c))
+* 添加问题反馈面板图标，优化用户反馈体验 ([16d4778](https://github.com/sincely/vite6-electron-vue3/commit/16d47784e1553c04ebfa9e43fc3e5efb3d09ab56))
+* 添加静默启动功能，支持开机自启时不显示窗口，仅驻留系统托盘 ([c559afb](https://github.com/sincely/vite6-electron-vue3/commit/c559afb97c7a97a023592b620f6569b1da83d984))
+
+### 🐞 Bug Fixes
+
+* 优化更新检查逻辑，调整状态管理以支持更灵活的用户反馈 ([fa5e71b](https://github.com/sincely/vite6-electron-vue3/commit/fa5e71b31f4d3c35884435cc6c6264476fabb0a6))
+* 优化聊天窗口抽屉打开时的滚动逻辑，移除延迟滚动处理 ([eed230c](https://github.com/sincely/vite6-electron-vue3/commit/eed230ced93519985e991f44c87f851d495943a7))
+* 修复 dev:all 脚本中的 pnpm 调用错误 ([1c20b5c](https://github.com/sincely/vite6-electron-vue3/commit/1c20b5c97d64ac055a7d8feb125a340414c29177))
+* 修复平台标签获取逻辑，支持更广泛的环境检测 ([ae8c9e9](https://github.com/sincely/vite6-electron-vue3/commit/ae8c9e95d33c6d810b6a29f143324df10fe12eb3))
+* 修复开发脚本，合并 Windows 和 Mac 开发命令 ([aed7409](https://github.com/sincely/vite6-electron-vue3/commit/aed7409c3c784d873b88772e041374e50a8bcb08))
+* 去除backend项目 ([0e6f19d](https://github.com/sincely/vite6-electron-vue3/commit/0e6f19d18e85b70b44f2d7b910aa58d591f8f1b8))
+* 去除无用的 sql 文件 ([4149456](https://github.com/sincely/vite6-electron-vue3/commit/41494560ea421d13d2788ae278d4ee9b3377634f))
+* 去除无用的ide 配置文件 ([fa17b60](https://github.com/sincely/vite6-electron-vue3/commit/fa17b60469cc2d05b705b2cec002108eb57851c2))
+* 更新 afterPack 钩子路径并移除无用的资源配置 ([561676c](https://github.com/sincely/vite6-electron-vue3/commit/561676cab8b5211a6770c700b22e333f2dd44a51))
+* 更新文档和组件中的 Vite 版本为 8 ([7c37c19](https://github.com/sincely/vite6-electron-vue3/commit/7c37c199fc7d7f026ec818ad959ef5eda409aa27))
+* 更新版本号至 2.0.13，并修正脚本中的 pnpm 调用 ([4881ac7](https://github.com/sincely/vite6-electron-vue3/commit/4881ac717aa7ca745ec72a1fc9e6927063f01dd0))
+* 注释掉设置按钮的hover效果中的translateY属性 ([5a3a30a](https://github.com/sincely/vite6-electron-vue3/commit/5a3a30a40aca7d4ed7f10455be302f32e634a463))
+* 移除未使用的通知状态管理模块 ([9f1d4c8](https://github.com/sincely/vite6-electron-vue3/commit/9f1d4c829cb19c6c144fbcd829391fd338916bdd))
+* 移除筛选图标模板，添加全局样式以支持筛选面板 ([73e4fcb](https://github.com/sincely/vite6-electron-vue3/commit/73e4fcbd56ef874c7a037a9bf18d5f79c9713681))
+* 移除表格组件中的冗余样式，优化布局 ([91d8728](https://github.com/sincely/vite6-electron-vue3/commit/91d8728a3e806d0bdbb59093106da8d358b47782))
+
+### 🔧 Chores
+
+* 升级 husky 到 9.1.7 版本 ([7d8bace](https://github.com/sincely/vite6-electron-vue3/commit/7d8bace3d74101bf89910ec1f2a86711afc63758))
+* 更新 husky 版本并简化钩子脚本 ([64be0db](https://github.com/sincely/vite6-electron-vue3/commit/64be0db9aa37e4440f906a8b719af21ed7676467))
+
+### ♻️ Code Refactoring
+
+* 优化窗口聚焦时检查更新逻辑，添加 30 分钟冷却时间以减少频繁打扰 ([254170b](https://github.com/sincely/vite6-electron-vue3/commit/254170b5dff02f855c28360da69f94dcd9c3b64e))
+* 移除 afterPack 配置，简化打包后钩子逻辑 ([ab12cb2](https://github.com/sincely/vite6-electron-vue3/commit/ab12cb2faeeaea16596f1a78b6a35d9ec2ff2b1e))
+* 移除窗口聚焦时自动检查更新的配置，简化更新逻辑 ([4566089](https://github.com/sincely/vite6-electron-vue3/commit/4566089bb51c4c490f89782691a1770a70520caf))
+* 简化托盘图标加载逻辑，移除冗余代码 ([f8eb912](https://github.com/sincely/vite6-electron-vue3/commit/f8eb9129e571a115aa0c95e5c5210163fd290bfe))
+* 重构数据库表名 ([702e850](https://github.com/sincely/vite6-electron-vue3/commit/702e850b88ec80d9de3c0541789cad04f930be5d))
+* 重构消息通知模式 ([9e96899](https://github.com/sincely/vite6-electron-vue3/commit/9e968997ab14607bd38d6d6f98df2fe2874c8ec5))
+
 ## [2.0.2](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.1...v2.0.2) (2026-09-21)
 
 ### ✨ Features
