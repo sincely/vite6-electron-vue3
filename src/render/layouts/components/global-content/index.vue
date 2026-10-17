@@ -17,7 +17,6 @@
       </router-view>
     </div>
   </div>
-  <BackTop />
 </template>
 
 <script setup>

@@ -126,7 +126,7 @@
   <ChatBot />
   <!-- AI 智能助手（服务端 AI 网关 · 流式会话；显隐由头部入口控制） -->
   <AiAssistant />
-  <!-- 问题反馈（吸附内容区右侧；显示由组件内部开关 PROBLEM_FEEDBACK_ENABLED 控制） -->
+  <!-- 问题反馈面板（由标题栏入口触发） -->
   <ProblemFeedback />
   <!-- 全局水印 -->
   <Watermark />

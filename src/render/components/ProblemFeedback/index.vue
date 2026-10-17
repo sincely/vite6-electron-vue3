@@ -1,22 +1,20 @@
 <!--
-  问题反馈：吸附在内容区域右侧边缘的抽屉式反馈面板
-  - 功能开关 PROBLEM_FEEDBACK_ENABLED：组件内部常量，false 时整个组件不渲染
+  问题反馈：全局右下角“?”悬浮按钮 + 向上滑出的反馈面板
   - 提交流程与 FeedbackDialog 一致：拼装 GitHub Issue 内容由系统浏览器打开
 -->
 <template>
-  <div v-if="PROBLEM_FEEDBACK_ENABLED" class="problem-feedback">
-    <!-- 吸附把手：贴内容区右缘垂直居中 -->
+  <div class="problem-feedback">
     <button
       type="button"
-      class="pf-handle"
+      class="pf-fab"
+      :class="{ 'is-open': panelOpen }"
       :title="panelOpen ? '收起反馈面板' : '问题反馈'"
       @click="panelOpen = !panelOpen"
     >
-      <Icon :icon="panelOpen ? 'lucide:chevrons-right' : 'lucide:message-square-text'" width="15" height="15" />
-      <span class="pf-handle-text">问题反馈</span>
+      <Icon :icon="panelOpen ? 'lucide:x' : 'ri:question-line'" width="20" height="20" />
     </button>
 
-    <!-- 滑出面板：挂在把手左侧，浮层定位不挤压内容区 -->
+    <!-- 滑出面板：浮层定位，不挤压内容区 -->
     <Transition name="pf-panel">
       <section v-show="panelOpen" class="pf-panel">
         <header class="pf-panel-header">
@@ -111,10 +109,6 @@ import { ElMessage } from 'element-plus'
 import { Icon } from '@iconify/vue'
 
 import { useUpdateStore } from '@/store/modules/version'
-
-// ==================== 功能开关 ====================
-// 问题反馈组件显示开关：需要时改为 true 开启，false 时整个组件不渲染
-const PROBLEM_FEEDBACK_ENABLED = true
 
 const ISSUE_URL = 'https://github.com/sincely/vite6-electron-vue3/issues/new'
 
@@ -226,62 +220,50 @@ const handleSubmit = async () => {
 <style lang="scss" scoped>
 .problem-feedback {
   position: fixed;
-  top: 50%;
-  right: 0;
-  z-index: 90;
-  transform: translateY(-50%);
+  right: 30px;
+  bottom: 50px;
+  z-index: 1100;
 }
 
-/* 吸附把手：竖排文字贴右缘 */
-.pf-handle {
-  position: relative;
-  z-index: 1;
+/* 右下角圆形悬浮按钮 */
+.pf-fab {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
   align-items: center;
-  padding: 16px 7px;
-  color: var(--color-text-secondary);
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--el-color-primary);
   cursor: pointer;
-  background: var(--glass-surface);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--color-border);
-  border-right: none;
-  border-radius: 10px 0 0 10px;
-  box-shadow: var(--shadow-md, var(--shadow-lg));
+  background: var(--el-bg-color-overlay);
+  border: none;
+  border-radius: 50%;
+  box-shadow: var(--el-box-shadow-lighter);
   transition:
     color 0.2s ease,
-    background 0.2s ease;
+    background-color 0.2s ease;
 
-  &:hover {
-    color: var(--color-primary);
-    background: var(--color-bg-hover, var(--glass-surface));
-  }
-
-  .pf-handle-text {
-    font-size: 12px;
-    letter-spacing: 3px;
-    writing-mode: vertical-rl;
+  &:hover,
+  &.is-open {
+    background-color: var(--el-color-primary-light-9);
   }
 }
 
-/* 滑出面板：浮层挂在把手左侧，不挤压内容区布局 */
+/* 滑出面板：按钮正上方向上展开，不挤压内容区布局 */
 .pf-panel {
   position: absolute;
-  top: 50%;
-  right: 100%;
+  right: 0;
+  bottom: 52px;
   display: flex;
   flex-direction: column;
   width: 420px;
-  max-height: min(78vh, 720px);
+  max-height: calc(100vh - var(--titlebar-height) - 120px);
   overflow: hidden;
   background: var(--glass-surface);
   backdrop-filter: blur(20px);
   border: 1px solid var(--color-border);
-  border-right: none;
-  border-radius: 12px 0 0 12px;
+  border-radius: 12px;
   box-shadow: var(--shadow-lg);
-  transform: translateY(-50%);
 }
 
 .pf-panel-header {
@@ -378,6 +360,6 @@ const handleSubmit = async () => {
 .pf-panel-enter-from,
 .pf-panel-leave-to {
   opacity: 0;
-  transform: translate(12px, -50%);
+  transform: translateY(12px);
 }
 </style>
