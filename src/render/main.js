@@ -9,7 +9,6 @@ import { setupDirectives } from '@/directives' // 全局自定义指令（v-perm
 import { useAppStore } from '@/store/modules/app'
 import { useUpdateStore } from '@/store/modules/version'
 import { useUserStore } from '@/store/modules/user'
-import { useNotificationStore } from '@/store/modules/notification'
 import { initNotificationListener } from '@/utils/notification'
 async function setupApp() {
   const app = createApp(App)
@@ -21,7 +20,6 @@ async function setupApp() {
   // persist插件在useAppStore()首次调用时同步从localStorage 恢复状态
   // 在mount前调用initTheme确保首次渲染时data-theme已正确设置
   const appStore = useAppStore()
-  const notifStore = useNotificationStore()
   appStore.initTheme()
 
   // 接收主进程推送的应用内通知（主进程 createNotification → 'show-notification' 频道）
