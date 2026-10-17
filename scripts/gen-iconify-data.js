@@ -81,7 +81,15 @@ const ICON_PLAN = {
       'layers-3', // 容器变形
       'atom', // Vue 官网（外部链接）
       'zap', // Electron 官网（内嵌）
-      'github' // GitHub（外部链接）
+      'github', // GitHub（外部链接）
+      // 问题反馈面板
+      'message-square-text', // 面板标题
+      'lightbulb', // 功能建议
+      'bug', // Bug 反馈
+      'mouse-pointer-click', // 体验问题
+      'gauge', // 性能问题
+      'ellipsis', // 其他
+      'send' // 提交反馈
     ]
   },
   ri: {

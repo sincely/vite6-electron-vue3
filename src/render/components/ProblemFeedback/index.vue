@@ -18,9 +18,14 @@
     <Transition name="pf-panel">
       <section v-show="panelOpen" class="pf-panel">
         <header class="pf-panel-header">
-          <div>
-            <div class="pf-panel-title">问题反馈</div>
-            <div class="pf-panel-subtitle">欢迎提交功能建议或 Bug，帮助我们持续改进产品</div>
+          <div class="pf-panel-heading">
+            <span class="pf-panel-heading-icon">
+              <Icon icon="lucide:message-square-text" width="18" height="18" />
+            </span>
+            <div>
+              <div class="pf-panel-title">问题反馈</div>
+              <div class="pf-panel-subtitle">欢迎提交功能建议或 Bug，帮助我们持续改进产品</div>
+            </div>
           </div>
           <button type="button" class="pf-panel-close" title="收起" @click="panelOpen = false">
             <Icon icon="lucide:x" width="16" height="16" />
@@ -31,8 +36,11 @@
           <el-form ref="formRef" :model="form" :rules="rules" label-position="top" @submit.prevent>
             <el-form-item label="反馈类型" prop="type">
               <el-radio-group v-model="form.type">
-                <el-radio v-for="item in typeOptions" :key="item" :value="item">
-                  {{ item }}
+                <el-radio v-for="item in typeOptions" :key="item.label" :value="item.label">
+                  <span class="pf-radio-label">
+                    <Icon :icon="item.icon" width="14" height="14" />
+                    {{ item.label }}
+                  </span>
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -97,7 +105,10 @@
 
         <footer class="pf-panel-footer">
           <el-button @click="handleLater">稍后再说</el-button>
-          <el-button type="primary" :loading="submitting" @click="handleSubmit">提交反馈</el-button>
+          <el-button type="primary" :loading="submitting" @click="handleSubmit">
+            <Icon v-if="!submitting" icon="lucide:send" width="14" height="14" class="pf-btn-icon" />
+            提交反馈
+          </el-button>
         </footer>
       </section>
     </Transition>
@@ -119,7 +130,13 @@ const panelOpen = ref(false)
 const submitting = ref(false)
 const formRef = ref(null)
 
-const typeOptions = ['功能建议', 'Bug 反馈', '体验问题', '性能问题', '其他']
+const typeOptions = [
+  { label: '功能建议', icon: 'lucide:lightbulb' },
+  { label: 'Bug 反馈', icon: 'lucide:bug' },
+  { label: '体验问题', icon: 'lucide:mouse-pointer-click' },
+  { label: '性能问题', icon: 'lucide:gauge' },
+  { label: '其他', icon: 'lucide:ellipsis' }
+]
 const urgencyOptions = ['低', '中', '高', '紧急']
 const frequencyOptions = ['偶尔', '经常出现', '稳定复现']
 const scopeOptions = ['自己', '小范围用户', '核心流程/大范围用户']
@@ -274,6 +291,23 @@ const handleSubmit = async () => {
   padding: 16px 20px 12px;
   border-bottom: 1px solid var(--color-border-light);
 
+  .pf-panel-heading {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .pf-panel-heading-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border-radius: 8px;
+  }
+
   .pf-panel-title {
     font-size: 16px;
     font-weight: 600;
@@ -339,6 +373,16 @@ const handleSubmit = async () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.pf-radio-label {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pf-btn-icon {
+  margin-right: 4px;
 }
 
 .pf-panel-footer {
