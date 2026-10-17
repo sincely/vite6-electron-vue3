@@ -98,6 +98,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ needs.prepare-release.outputs.tag }}
           fetch-depth: 0
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v4
@@ -107,6 +108,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+      - name: Generate release notes
+        run: |
+          node scripts/release-notes.js
+          [ -f RELEASE_NOTES.md ] || echo "详见 CHANGELOG.md" > RELEASE_NOTES.md
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -123,6 +128,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare-release.outputs.tag }}
           name: ${{ needs.prepare-release.outputs.tag }}
+          body_path: RELEASE_NOTES.md
           files: |
             release/**/*.dmg
             release/**/*.zip
