@@ -72,10 +72,6 @@
           :filter-multiple="column.filterMultiple ?? true"
           show-overflow-tooltip
         >
-          <!-- 筛选图标 -->
-          <template #filter-icon>
-            <Icon icon="ri:filter-line" />
-          </template>
           <!-- 自定义表头（headerSlot 在列配置上，el-table 内部 column 对象不携带该字段） -->
           <template #header="scope">
             <template v-if="getColConfig(scope.column)?.headerSlot">
@@ -980,5 +976,36 @@ const tableSize = ref(props.config?.table?.size || 'default')
 
 :deep(.el-table__row.sortable-chosen) {
   background: var(--color-bg-hover);
+}
+</style>
+
+<!-- 筛选面板被 teleport 到 body，scoped 样式无法命中，需全局样式 -->
+<style lang="scss">
+.el-table-filter {
+  background-color: var(--el-bg-color-overlay);
+  border-color: var(--el-border-color-light);
+  border-radius: 8px;
+
+  // 单选模式（filterMultiple: false）：默认的实心主色高亮 + 硬编码白字在深色主题下突兀
+  .el-table-filter__list {
+    padding: 4px;
+  }
+
+  .el-table-filter__list-item {
+    color: var(--el-text-color-regular);
+    border-radius: 6px;
+
+    &:hover,
+    &:focus {
+      color: var(--el-color-primary);
+      background-color: var(--el-color-primary-light-9);
+    }
+
+    &.is-active {
+      font-weight: 500;
+      color: var(--el-color-primary);
+      background-color: var(--el-color-primary-light-9);
+    }
+  }
 }
 </style>
