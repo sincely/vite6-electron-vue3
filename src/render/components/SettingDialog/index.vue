@@ -73,72 +73,72 @@
 
                 <!-- Profile / Personal Info -->
                 <div v-else-if="currentTab === 'profile'" key="profile" class="tab-pane">
-                  <!-- Avatar Section -->
-                  <div class="profile-avatar-section">
-                    <div class="avatar-container">
-                      <div class="avatar-wrapper">
+                  <!-- Profile Card -->
+                  <section class="profile-card">
+                    <div class="profile-card__banner"></div>
+                    <div class="profile-card__body">
+                      <div class="profile-avatar">
                         <img
                           v-if="userAvatar && !avatarLoadFailed"
                           :src="userAvatar"
                           :alt="displayName"
-                          class="profile-avatar-img"
+                          class="profile-avatar__img"
                           @error="avatarLoadFailed = true"
                         />
-                        <span v-else class="profile-avatar-fallback">
-                          {{ userInitial }}
-                        </span>
-                        <div class="avatar-overlay">
-                          <el-upload :show-file-list="false" accept="image/*" :before-upload="handleAvatarUpload">
-                            <button class="avatar-edit-btn" type="button">
-                              <SvgIcon icon-class="edit" />
-                              <span>更换头像</span>
-                            </button>
-                          </el-upload>
-                        </div>
+                        <span v-else class="profile-avatar__fallback">{{ userInitial }}</span>
+                        <el-upload
+                          class="profile-avatar__upload"
+                          :show-file-list="false"
+                          accept="image/*"
+                          :before-upload="handleAvatarUpload"
+                        >
+                          <button class="profile-avatar__edit" type="button" aria-label="更换头像">
+                            <SvgIcon icon-class="edit" />
+                          </button>
+                        </el-upload>
+                        <span class="profile-avatar__status" title="在线"></span>
                       </div>
-                      <span class="avatar-status-dot"></span>
+                      <div class="profile-card__meta">
+                        <h3 class="profile-card__name">{{ displayName }}</h3>
+                        <p class="profile-card__email">{{ userEmail }}</p>
+                      </div>
+                      <span class="profile-card__role">{{ userRole }}</span>
                     </div>
-                    <div class="avatar-meta">
-                      <h3 class="avatar-name">{{ displayName }}</h3>
-                      <span class="avatar-badge">{{ userRole }}</span>
-                    </div>
-                  </div>
+                  </section>
 
-                  <!-- Info Cards -->
+                  <!-- Basic Info -->
                   <div class="setting-section">
                     <h3 class="section-title">基本信息</h3>
-                    <div class="profile-info-list">
-                      <div class="profile-info-item">
-                        <div class="info-icon">
+                    <dl class="profile-info">
+                      <div class="profile-info__row">
+                        <dt>
                           <SvgIcon icon-class="user" />
-                        </div>
-                        <div class="info-content">
-                          <span class="info-label">姓名</span>
-                          <span class="info-value">{{ displayName }}</span>
-                        </div>
-                        <SvgIcon icon-class="chevron-right" class="info-arrow" />
+                          姓名
+                        </dt>
+                        <dd>{{ displayName }}</dd>
                       </div>
-                      <div class="profile-info-item">
-                        <div class="info-icon">
+                      <div class="profile-info__row">
+                        <dt>
                           <SvgIcon icon-class="phone" />
-                        </div>
-                        <div class="info-content">
-                          <span class="info-label">手机号</span>
-                          <span class="info-value">{{ userPhone }}</span>
-                        </div>
-                        <SvgIcon icon-class="chevron-right" class="info-arrow" />
+                          手机号
+                        </dt>
+                        <dd>{{ userPhone }}</dd>
                       </div>
-                      <div class="profile-info-item">
-                        <div class="info-icon">
+                      <div class="profile-info__row">
+                        <dt>
                           <SvgIcon icon-class="email" />
-                        </div>
-                        <div class="info-content">
-                          <span class="info-label">邮箱</span>
-                          <span class="info-value">{{ userEmail }}</span>
-                        </div>
-                        <SvgIcon icon-class="chevron-right" class="info-arrow" />
+                          邮箱
+                        </dt>
+                        <dd>{{ userEmail }}</dd>
                       </div>
-                    </div>
+                      <div class="profile-info__row">
+                        <dt>
+                          <SvgIcon icon-class="settings" />
+                          角色
+                        </dt>
+                        <dd>{{ userRole }}</dd>
+                      </div>
+                    </dl>
                   </div>
 
                   <!-- Logout -->
@@ -501,31 +501,26 @@
                 <!-- About Settings -->
                 <div v-else-if="currentTab === 'about'" key="about" class="tab-pane">
                   <!-- Identity -->
-                  <div class="about-identity">
+                  <section class="about-identity">
                     <div class="about-identity__logo">
                       <img src="@/assets/bar/app.png" class="about-identity__logo-img" alt="Lightning 图标" />
                     </div>
-                    <div class="about-hero__info">
-                      <h3 class="about-hero__name">Lightning</h3>
-                      <p class="about-hero__desc">高效、智能的桌面工作台</p>
-                    </div>
-                    <div class="about-hero__version">
-                      <span class="version-badge">
-                        <span class="version-badge__dot"></span>
-                        v{{ appVersion }}
-                      </span>
-                    </div>
-                  </div>
+                    <h3 class="about-identity__name">Lightning</h3>
+                    <p class="about-identity__tagline">高效、智能的桌面工作台</p>
+                    <span class="about-identity__version">v{{ appVersion }}</span>
+                  </section>
 
                   <!-- Update Section -->
                   <div class="about-update">
                     <div class="about-update__card">
                       <div class="about-update__info">
-                        <span class="about-update__label">当前版本</span>
+                        <span class="about-update__label">软件更新</span>
                         <span class="about-update__version-row">
-                          <span class="about-update__version">
-                            {{ appVersion }}
+                          <span v-if="updateStateText" class="about-update__status" :class="`is-${updateCheckState}`">
+                            {{ updateStateText }}
                           </span>
+                          <span v-else class="about-update__hint">当前版本 v{{ appVersion }}</span>
+                          <span v-if="lastCheckTime" class="about-update__hint">上次检查 {{ lastCheckTime }}</span>
                         </span>
                       </div>
 
@@ -560,6 +555,17 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Runtime Info -->
+                  <div class="setting-section">
+                    <h3 class="section-title">运行环境</h3>
+                    <dl class="about-spec">
+                      <div v-for="row in runtimeRows" :key="row.label" class="about-spec__row">
+                        <dt>{{ row.label }}</dt>
+                        <dd>{{ row.value }}</dd>
+                      </div>
+                    </dl>
+                  </div>
+
                   <div class="about-copyright">Copyright © 2024 Lightning Team. All rights reserved.</div>
                 </div>
               </Transition>
@@ -752,6 +758,13 @@ const platformLabel = computed(() => {
   const platformMap = { darwin: 'macOS', win32: 'Windows', linux: 'Linux' }
   return platformMap[runtimeVersions.platform] || runtimeVersions.platform || '未知'
 })
+
+const runtimeRows = computed(() => [
+  { label: '操作系统', value: platformLabel.value },
+  { label: 'Electron', value: runtimeVersions.electron || '-' },
+  { label: 'Chromium', value: runtimeVersions.chrome || '-' },
+  { label: 'Node.js', value: runtimeVersions.node || '-' }
+])
 
 // 版本号旁的状态标签文案：仅非空闲态展示
 const updateStateText = computed(() => {
@@ -1329,73 +1342,95 @@ const handleClose = () => {
 
 /* About Page */
 .about-identity {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 0 28px;
+  padding: 28px 0 24px;
+  margin-bottom: 20px;
+  overflow: hidden;
   text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--color-primary), transparent 80%), transparent 70%),
+    var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
 
   &__logo {
     display: grid;
     place-items: center;
-    width: 68px;
-    height: 68px;
+    width: 72px;
+    height: 72px;
     margin-bottom: 14px;
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-box-border);
-    border-radius: 18px;
-    box-shadow: var(--shadow-md);
+    background: var(--color-bg-window);
+    border: 1px solid var(--color-border-light);
+    border-radius: 20px;
+    box-shadow:
+      var(--shadow-md),
+      0 0 0 6px color-mix(in srgb, var(--color-primary), transparent 92%);
 
     &-img {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
     }
   }
 
   &__name {
     margin: 0;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--color-text-primary);
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
   }
 
   &__tagline {
-    margin: 5px 0 0;
+    margin: 6px 0 14px;
     font-size: 13px;
     color: var(--color-text-secondary);
   }
+
+  &__version {
+    padding: 3px 12px;
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 70%);
+    border-radius: 999px;
+  }
 }
 
-/* 运行时规格表：标签左、等宽值右，发丝线分隔 */
+/* 运行环境列表：标签左、等宽值右，分组卡片内发丝线分隔 */
 .about-spec {
-  margin: 0 0 28px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
 
   &__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 9px 2px;
+    min-height: 44px;
+    padding: 0 16px;
 
     & + & {
       border-top: 1px solid var(--color-border-light);
     }
 
-    &:last-child {
-      border-bottom: 1px solid var(--color-border-light);
-    }
-
     dt {
-      font-size: 12px;
-      color: var(--color-text-muted);
+      font-size: 13px;
+      color: var(--color-text-secondary);
     }
 
     dd {
       margin: 0;
       font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace;
-      font-size: 12px;
+      font-size: 13px;
       font-variant-numeric: tabular-nums;
-      color: var(--color-text-secondary);
+      color: var(--color-text-primary);
     }
   }
 }
@@ -1439,13 +1474,14 @@ const handleClose = () => {
 
   &__version-row {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px 10px;
     align-items: center;
   }
 
-  &__version {
-    font-size: 16px;
-    color: var(--color-text-primary);
+  &__hint {
+    font-size: 12px;
+    color: var(--color-text-secondary);
   }
 
   &__status {
@@ -1652,191 +1688,188 @@ const handleClose = () => {
 }
 
 /* Profile Page */
-.profile-avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 0 32px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.avatar-container {
-  position: relative;
-  margin-bottom: 16px;
-
-  .avatar-status-dot {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    z-index: 2;
-    width: 14px;
-    height: 14px;
-    background: #10b981;
-    border: 3px solid var(--color-bg-window);
-    border-radius: 50%;
-  }
-}
-
-.avatar-wrapper {
-  position: relative;
-  width: 88px;
-  height: 88px;
+.profile-card {
+  margin-bottom: 28px;
   overflow: hidden;
-  border: 3px solid var(--color-border);
-  border-radius: 50%;
-  transition: border-color 0.2s;
-
-  &:hover {
-    border-color: var(--color-primary);
-
-    .avatar-overlay {
-      opacity: 1;
-    }
-  }
-}
-
-.profile-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-avatar-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 32px;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
-}
-
-.avatar-overlay {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgb(0 0 0 / 50%);
-  backdrop-filter: blur(2px);
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.avatar-edit-btn {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  padding: 6px 12px;
-  font-size: 12px;
-  color: #fff;
-  cursor: pointer;
-  background: rgb(255 255 255 / 20%);
-  border: 1px solid rgb(255 255 255 / 30%);
-  border-radius: 20px;
-  transition: all 0.2s;
-
-  &:hover {
-    background: rgb(255 255 255 / 30%);
-  }
-}
-
-.avatar-meta {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.avatar-name {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.avatar-badge {
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-primary);
-  background: var(--brand-accent-soft);
-  border: 1px solid color-mix(in srgb, var(--color-primary), transparent 40%);
-  border-radius: 10px;
-}
-
-.profile-info-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.profile-info-item {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  padding: 14px 16px;
-  cursor: pointer;
   background: var(--color-bg-card);
-  border: 1px solid transparent;
-  border-radius: 12px;
-  transition: all 0.2s;
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
 
-  &:hover {
-    border-color: var(--color-border);
-    box-shadow: var(--shadow-sm);
-
-    .info-arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
+  &__banner {
+    height: 72px;
+    background: linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--color-primary), transparent 55%),
+      color-mix(in srgb, var(--brand-accent), transparent 75%)
+    );
   }
 
-  .info-icon {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    color: var(--color-primary);
-    background: var(--brand-accent-soft);
-    border-radius: 10px;
-
-    :deep(.svg-icon) {
-      font-size: 18px;
-    }
-  }
-
-  .info-content {
+  &__body {
     display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    padding: 0 20px 20px;
+    margin-top: -36px;
+  }
+
+  &__meta {
     flex: 1;
-    flex-direction: column;
-    gap: 2px;
     min-width: 0;
+    padding-bottom: 4px;
   }
 
-  .info-label {
-    font-size: 12px;
-    color: var(--color-text-muted);
-  }
-
-  .info-value {
+  &__name {
+    margin: 0;
     overflow: hidden;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
     color: var(--color-text-primary);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .info-arrow {
+  &__email {
+    margin: 2px 0 0;
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__role {
     flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    color: var(--color-text-muted);
-    opacity: 0;
-    transition: all 0.2s;
-    transform: translateX(-4px);
+    padding: 3px 10px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.4px;
+    background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 70%);
+    border-radius: 999px;
+  }
+}
+
+.profile-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+
+  &__img,
+  &__fallback {
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--color-bg-card);
+    border-radius: 50%;
+  }
+
+  &__img {
+    object-fit: cover;
+  }
+
+  &__fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
+  }
+
+  &__upload {
+    position: absolute;
+    right: -4px;
+    bottom: -2px;
+    line-height: 0;
+  }
+
+  &__edit {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    background: var(--color-bg-window);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--color-primary), transparent 50%);
+      outline-offset: 2px;
+    }
+  }
+
+  &__status {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 12px;
+    height: 12px;
+    background: var(--color-success);
+    border: 2px solid var(--color-bg-card);
+    border-radius: 50%;
+  }
+}
+
+.profile-info {
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+
+  &__row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 16px;
+
+    & + & {
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    dt {
+      display: flex;
+      flex-shrink: 0;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+
+      :deep(.svg-icon) {
+        font-size: 16px;
+        color: var(--color-text-muted);
+      }
+    }
+
+    dd {
+      min-width: 0;
+      margin: 0;
+      overflow: hidden;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 
