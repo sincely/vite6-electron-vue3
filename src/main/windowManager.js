@@ -7,6 +7,7 @@ import { initUpdater } from './update' // 更新器
 import createNotification from './notification' // 创建通知
 import logger from './log'
 import { bindMaximizeListener } from './ipc/win-control' // 窗口最大化状态监听
+import { isSilentStart, clearSilentStart } from './launch'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)) // 获取当前文件所在目录的绝对路径
 const preload = path.join(__dirname, '../preload/index.mjs') // preload 脚本的绝对路径
@@ -258,7 +259,7 @@ export function createLoginWindow({ skipSplash = false } = {}) {
   // 已登录场景由渲染进程路由守卫发送 'toMain' IPC，主进程会在 'toMain'
   // 处理里设置 _skipShow=true 并隐藏登录窗口，从而跳过这里的显示。
   win.once('ready-to-show', () => {
-    if (win.isDestroyed() || win._skipShow) return
+    if (win.isDestroyed() || win._skipShow || isSilentStart()) return
     if (!win.isVisible()) win.show()
   })
 
@@ -323,6 +324,11 @@ export function createMainWindow() {
   // 渲染完成并准备好显示时，给它发个消息，告诉它需要展示 loading
   win.once('ready-to-show', () => {
     win.webContents.send('show-main-loading')
+    // 静默启动：主窗口保持隐藏，驻留托盘，仅影响本次冷启动
+    if (isSilentStart()) {
+      clearSilentStart()
+      return
+    }
     win.show()
   })
 
@@ -332,7 +338,7 @@ export function createMainWindow() {
   // 监听Electron窗口完成首次加载（或刷新后加载完成）完成
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString())
-    win.focus() // 聚焦窗口，提升用户体验
+    if (win.isVisible()) win.focus() // 聚焦窗口，提升用户体验（静默启动时不抢焦点）
   })
 
   // 加载主页面
@@ -412,6 +418,7 @@ export function createWindow(options = {}) {
 
 // 恢复主窗口
 export function restoreMainWindow() {
+  clearSilentStart()
   if (mainWindowId) {
     // 恢复主窗口
     const win = windows.get(mainWindowId)

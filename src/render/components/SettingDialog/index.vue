@@ -50,9 +50,9 @@
                     <div class="setting-item">
                       <div class="item-info">
                         <span class="item-label">静默启动</span>
-                        <span class="item-desc">启动时最小化到系统托盘</span>
+                        <span class="item-desc">开机自启时不显示窗口，仅驻留系统托盘</span>
                       </div>
-                      <el-switch v-model="form.silentLaunch" />
+                      <el-switch v-model="silentLaunch" :disabled="!autoLaunch" />
                     </div>
                   </div>
 
@@ -599,6 +599,11 @@ const visible = computed({
 const autoLaunch = computed({
   get: () => appStore.isAutoLaunch,
   set: (val) => appStore.toggleAutoLaunch(val)
+})
+
+const silentLaunch = computed({
+  get: () => appStore.silentLaunch,
+  set: (val) => appStore.setSilentLaunch(val)
 })
 
 const closeAction = computed({

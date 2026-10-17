@@ -36,6 +36,7 @@ export const useAppStore = defineStore(
     const loading = ref(false) // 是否显示加载中状态
     const loadingTargets = ref([]) // 加载中状态的目标元素
     const autoLaunch = ref(false) // 开机自启
+    const silentLaunch = ref(false) // 静默启动（开机自启时不显示窗口）
     const closeAction = ref('minimize') // 关闭窗口行为：minimize | quit
     const themeColors = ref({
       useAlgorithm: false,
@@ -88,6 +89,12 @@ export const useAppStore = defineStore(
       }
     }
 
+    function setSilentLaunch(value) {
+      silentLaunch.value = !!value
+      window.ipcRenderer?.send('set-silent-launch', silentLaunch.value)
+      window.store?.set('appSettings.silentLaunch', silentLaunch.value).catch(() => {})
+    }
+
     function setCloseAction(action) {
       const value = action === 'quit' ? 'quit' : 'minimize'
       closeAction.value = value
@@ -133,6 +140,7 @@ export const useAppStore = defineStore(
         // 从主进程获取 autoLaunch 状态（以系统实际值为准）
         const value = await window.ipcRenderer.invoke('get-auto-launch')
         autoLaunch.value = !!value
+        silentLaunch.value = !!(await window.ipcRenderer.invoke('get-silent-launch'))
       } catch (error) {
         console.error('获取开机自启状态失败:', error)
       } finally {
@@ -419,6 +427,7 @@ export const useAppStore = defineStore(
       loading,
       loadingTargets,
       autoLaunch,
+      silentLaunch,
       closeAction,
       themeColors,
       isDark,
@@ -429,6 +438,7 @@ export const useAppStore = defineStore(
       setDualMenuShowText,
       toggleSettings,
       toggleAutoLaunch,
+      setSilentLaunch,
       setCloseAction,
       syncDesktopSettings,
       initDesktopSettings,

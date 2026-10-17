@@ -8,6 +8,7 @@ import {
   setCloseAction
 } from '../windowManager'
 import { setAppTheme } from '../theme'
+import { LOGIN_ARG, getSilentLaunch, setSilentLaunch } from '../launch'
 import { app } from 'electron'
 
 export default [
@@ -78,10 +79,23 @@ export default [
       if (process.platform === 'darwin' || process.platform === 'win32') {
         app.setLoginItemSettings({
           openAtLogin: enable,
-          openAsHidden: false
+          openAsHidden: false,
+          args: [LOGIN_ARG]
         })
       }
     }
+  },
+  {
+    channel: 'set-silent-launch',
+    type: 'on',
+    handler: (event, enable) => {
+      setSilentLaunch(enable)
+    }
+  },
+  {
+    channel: 'get-silent-launch',
+    type: 'handle',
+    handler: () => getSilentLaunch()
   },
   {
     channel: 'get-auto-launch',
@@ -90,7 +104,7 @@ export default [
       if (process.platform !== 'darwin' && process.platform !== 'win32') {
         return false
       }
-      return app.getLoginItemSettings().openAtLogin
+      return app.getLoginItemSettings({ args: [LOGIN_ARG] }).openAtLogin
     }
   },
   {
