@@ -4,7 +4,7 @@
 
 ## 项目概览
 
-当前项目为 Vite 6 + Vue 3 + Electron 桌面应用，构建与发布主要依赖以下文件：
+当前项目为 Vite 8 + Vue 3 + Electron 桌面应用，构建与发布主要依赖以下文件：
 
 - `package.json`：定义本地开发、构建、打包、校验与 release-it 脚本
 - `electron-builder.json5`：定义 Electron 打包目标、产物命名、输出目录与自动更新发布源

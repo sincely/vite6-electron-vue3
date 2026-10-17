@@ -20,7 +20,7 @@
       <div class="brand-tags">
         <span class="brand-tag">Electron</span>
         <span class="brand-tag">Vue 3</span>
-        <span class="brand-tag">Vite 6</span>
+        <span class="brand-tag">Vite 8</span>
         <span class="brand-tag">Element Plus</span>
       </div>
     </div>

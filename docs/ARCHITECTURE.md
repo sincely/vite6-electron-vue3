@@ -8,7 +8,7 @@
 
 - 核心框架：Electron 42.2.0
 - 前端框架：Vue 3.5.30
-- 构建工具：Vite 6.4.1
+- 构建工具：Vite 8.4.1
 - 路由管理：Vue Router 4.5.1
 - 状态管理：Pinia 2.3.1
 - UI 组件库：Element Plus 2.11.9

@@ -1,6 +1,6 @@
-# lightning — Vite 6 + Electron 28 + Vue 3 桌面应用
+# lightning — Vite 8 + Electron 28 + Vue 3 桌面应用
 
-基于 **Vite 6 / Electron 28 / Vue 3** 构建的跨平台桌面客户端，集成 Element Plus UI、Pinia 状态管理、GSAP 动画及 electron-updater 自动更新。
+基于 **Vite 8 / Electron 28 / Vue 3** 构建的跨平台桌面客户端，集成 Element Plus UI、Pinia 状态管理、GSAP 动画及 electron-updater 自动更新。
 
 ---
 
@@ -10,7 +10,7 @@
 |------|------|
 | 桌面框架 | Electron 28.3.3 |
 | 前端框架 | Vue 3.5.29 (Composition API) |
-| 构建工具 | Vite 6.4.1 |
+| 构建工具 | Vite 8.4.1 |
 | UI 组件库 | Element Plus 2.9.11 |
 | 状态管理 | Pinia 2.3.1 + pinia-plugin-persistedstate |
 | 路由 | Vue Router 4.5.1 |
