@@ -751,7 +751,8 @@ const runtimeVersions = window.versions || {}
 
 const platformLabel = computed(() => {
   const platformMap = { darwin: 'macOS', win32: 'Windows', linux: 'Linux' }
-  return platformMap[runtimeVersions.platform] || runtimeVersions.platform || '未知'
+  const platform = window.process?.platform
+  return platformMap[platform] || platform || '未知'
 })
 
 const runtimeRows = computed(() => [
