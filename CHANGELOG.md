@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.4](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.3...v2.0.4) (2026-10-17)
+
+### ✨ Features
+
+* 添加生成发布说明的功能，更新工作流以包含 RELEASE_NOTES.md ([182c7f1](https://github.com/sincely/vite6-electron-vue3/commit/182c7f12cd3b5c8464dc4bd03575b512f4243e64))
+
 ## [2.0.3](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.2...v2.0.3) (2026-10-17)
 
 ### ✨ Features
