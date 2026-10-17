@@ -808,8 +808,6 @@ const tableSize = ref(props.config?.table?.size || 'default')
   align-items: center;
   justify-content: space-between;
   padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--color-border-light);
 
   .toolbar-left {
     display: flex;
