@@ -35,79 +35,24 @@ const getIconsRoot = () =>
     ? path.join(process.resourcesPath, 'icons')
     : path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'icons')
 
-/**
- * 按平台加载托盘图标
- *
- * macOS  → icons/mac/tray@2x.png（灰度模板图像，系统自动适配深色/浅色）
- * Windows→ icons/win/tray.ico 或 tray.png（16×16）
- * Linux  → icons/linux/tray.png（22×22）
- * 降级   → icons/<platform>/<size>.png 动态缩放
- */
-/**
- * 开发模式下 app.png 所在的绝对路径（resources/app.png）
- */
-const getDevIconPath = () => path.join(process.env.APP_ROOT || process.cwd(), 'resources', 'app.png')
+// 每个平台固定使用一张托盘图标（开发/打包一致）；mac 的 tray@2x.png 由 nativeImage 自动匹配
+const TRAY_ICON_FILES = {
+  darwin: path.join('mac', 'tray.png'), // 22×22 + @2x
+  win32: path.join('win', 'tray.ico'), // 16×16
+  linux: path.join('linux', 'tray.png') // 22×22
+}
 
 const createTrayIcon = () => {
-  const iconsRoot = getIconsRoot()
+  const relPath = TRAY_ICON_FILES[process.platform] || TRAY_ICON_FILES.linux
+  const iconPath = path.join(getIconsRoot(), relPath)
 
-  const tryLoad = (...candidates) => {
-    for (const p of candidates) {
-      if (fs.existsSync(p)) return p
-    }
-    return null
+  if (!fs.existsSync(iconPath)) {
+    logger.warn(`[Tray] Icon not found: ${iconPath}`)
+    return nativeImage.createEmpty()
   }
 
-  // ── 开发模式：直接使用 resources/app.png ──────────────────────────
-  if (!app.isPackaged && process.platform === 'darwin') {
-    const devIcon = getDevIconPath()
-    logger.info(`[Tray] Using dev icon: ${devIcon}`)
-    if (fs.existsSync(devIcon)) {
-      return nativeImage.createFromPath(devIcon).resize({
-        width: 22,
-        height: 22,
-        quality: 'best'
-      })
-    }
-  }
-
-  if (process.platform === 'darwin') {
-    const iconPath = tryLoad(path.join(iconsRoot, 'mac', 'tray.png'))
-    if (iconPath) {
-      const image = nativeImage.createFromPath(iconPath)
-      // 模板图像：系统自动将黑色渲染为适合当前菜单栏的颜
-      return image
-    }
-  }
-
-  if (process.platform === 'win32') {
-    const iconPath = tryLoad(path.join(iconsRoot, 'win', 'tray.ico'), path.join(iconsRoot, 'win', 'tray.png'))
-    if (iconPath) return nativeImage.createFromPath(iconPath)
-  }
-
-  if (process.platform === 'linux') {
-    const iconPath = tryLoad(path.join(iconsRoot, 'linux', 'tray.png'))
-    if (iconPath) return nativeImage.createFromPath(iconPath)
-  }
-
-  // ── 降级：从各平台目录中选取合适尺寸 ──
-  const fallbackSize = process.platform === 'darwin' ? 18 : process.platform === 'linux' ? 22 : 16
-  const platformDir = process.platform === 'darwin' ? 'mac' : process.platform === 'linux' ? 'linux' : 'win'
-  const fallback = tryLoad(
-    path.join(iconsRoot, platformDir, '256.png'),
-    path.join(iconsRoot, platformDir, '128.png'),
-    path.join(iconsRoot, 'linux', '256.png')
-  )
-  if (fallback) {
-    const base = nativeImage.createFromPath(fallback)
-    return base.resize({
-      width: fallbackSize,
-      height: fallbackSize,
-      quality: 'best'
-    })
-  }
-
-  return nativeImage.createEmpty()
+  logger.info(`[Tray] Using icon: ${iconPath}`)
+  return nativeImage.createFromPath(iconPath)
 }
 
 const getActiveWindow = () => {
