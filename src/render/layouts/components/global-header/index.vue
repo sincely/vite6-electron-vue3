@@ -38,6 +38,39 @@
         <!-- 右侧插槽（搜索等） -->
         <slot name="right" />
 
+        <!-- 更新提示：下载中实时显示环形进度，下载完成提示安装，点击重新打开更新弹窗 -->
+        <button
+          v-if="updateAvailable"
+          class="icon-btn update-btn"
+          :class="{ 'is-downloading': isUpdating, 'is-downloaded': updateDownloaded }"
+          :title="updateButtonTitle"
+          @click="showUpdateDialog"
+        >
+          <span v-if="isUpdating" class="update-ring-wrap">
+            <svg class="update-ring" viewBox="0 0 32 32">
+              <circle class="update-ring__track" cx="16" cy="16" r="13" pathLength="100" />
+              <circle
+                class="update-ring__fill"
+                cx="16"
+                cy="16"
+                r="13"
+                pathLength="100"
+                transform="rotate(-90 16 16)"
+                :style="{ strokeDashoffset: ringDashOffset }"
+              />
+            </svg>
+            <SvgIcon icon-class="download" class="update-ring-icon" width="10px" height="10px" />
+          </span>
+          <SvgIcon
+            v-else
+            :icon-class="updateDownloaded ? 'success' : 'update'"
+            class="update-icon"
+            width="16px"
+            height="16px"
+          />
+          <span class="update-btn-text">{{ updateButtonText }}</span>
+        </button>
+
         <!-- 聊天窗口入口 -->
         <div class="chat-btn-wrap">
           <button class="icon-btn" title="Lightning Bot" @click="openChat">
@@ -120,6 +153,32 @@ const noticeStore = useNotificationStore()
 const bellBtnRef = ref(null)
 const chatStore = useChatStore()
 const aiStore = useAiAssistantStore()
+
+const updateAvailable = computed(
+  () => !!updateStore.latestVersion && updateStore.latestVersion !== updateStore.currentVersion
+)
+const isUpdating = computed(() => updateStore.isUpdating)
+const downloadProgress = computed(() => updateStore.downloadProgress)
+const updateDownloaded = computed(() => updateStore.updateDownloaded)
+
+// pathLength="100" 归一化，dashoffset 与几何周长解耦
+const ringDashOffset = computed(() => 100 - downloadProgress.value)
+
+const updateButtonText = computed(() => {
+  if (isUpdating.value) return `${Math.floor(downloadProgress.value)}%`
+  if (updateDownloaded.value) return '安装'
+  return '更新'
+})
+
+const updateButtonTitle = computed(() => {
+  if (isUpdating.value) return '正在后台下载更新，点击查看详情'
+  if (updateDownloaded.value) return '更新已就绪，点击重启安装'
+  return '发现新版本，点击查看'
+})
+
+const showUpdateDialog = () => {
+  window.dispatchEvent(new Event('update:open-dialog'))
+}
 
 const handleNotice = () => {
   noticeStore.togglePanel()
@@ -262,6 +321,45 @@ onBeforeUnmount(() => {
   &:active {
     background-color: var(--color-bg-active);
     transform: scale(0.94);
+  }
+}
+
+.update-btn {
+  gap: 6px;
+  width: auto;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-primary);
+  background: var(--brand-accent-soft);
+  border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
+
+  &:hover {
+    background: var(--color-bg-active);
+    box-shadow: var(--shadow-glow-primary);
+  }
+
+  .update-icon {
+    color: var(--color-primary);
+  }
+
+  // 下载中：百分比文本等宽，避免数字跳动
+  &.is-downloading .update-btn-text {
+    min-width: 34px;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+  }
+
+  // 下载完成：成功色呼吸提示，引导点击安装
+  &.is-downloaded {
+    color: var(--color-success);
+    background: color-mix(in srgb, var(--color-success), transparent 90%);
+    border-color: color-mix(in srgb, var(--color-success), transparent 40%);
+    animation: downloaded-pulse 2s ease-in-out infinite;
+
+    .update-icon {
+      color: var(--color-success);
+    }
   }
 }
 
