@@ -1,6 +1,13 @@
 <!-- 系统聊天窗口（Lightning Bot） -->
 <template>
-  <el-drawer v-model="visible" size="480px" :with-header="false" class="chat-bot-drawer">
+  <el-drawer
+    v-model="visible"
+    size="480px"
+    :with-header="false"
+    class="chat-bot-drawer"
+    @open="handleOpen"
+    @opened="scrollToBottom"
+  >
     <div class="chat-bot">
       <!-- 头部 -->
       <div class="chat-bot__header">
@@ -74,8 +81,10 @@ import botAvatar from '@/assets/bar/app.png'
 defineOptions({ name: 'ChatBot' })
 
 // 常量定义
-const SCROLL_DELAY = 100
 const BOT_NAME = 'Lightning Bot'
+
+// 预加载头像，避免首次打开时图片异步出现造成闪动
+new Image().src = botAvatar
 
 const chatStore = useChatStore()
 const userStore = useUserStore()
@@ -176,11 +185,9 @@ const formatCurrentTime = () => {
 
 const scrollToBottom = () => {
   nextTick(() => {
-    setTimeout(() => {
-      if (messageContainer.value) {
-        messageContainer.value.scrollTop = messageContainer.value.scrollHeight
-      }
-    }, SCROLL_DELAY)
+    if (messageContainer.value) {
+      messageContainer.value.scrollTop = messageContainer.value.scrollHeight
+    }
   })
 }
 
@@ -205,13 +212,11 @@ const closeChat = () => {
   chatStore.toggleChat(false)
 }
 
-// 打开抽屉时滚动到底部
-watch(visible, (val) => {
-  if (val) {
-    avatarLoadFailed.value = false
-    scrollToBottom()
-  }
-})
+// 抽屉内容渲染后、动画开始前即滚动到底部
+const handleOpen = () => {
+  avatarLoadFailed.value = false
+  scrollToBottom()
+}
 </script>
 
 <style lang="scss">
