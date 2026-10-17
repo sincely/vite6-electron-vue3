@@ -20,10 +20,11 @@ export default [
   {
     channel: 'check-for-updates',
     type: 'on',
-    handler: async () => {
+    handler: async (_event, options) => {
       logger.info('[ipc] 手动触发检查更新')
       await refreshUpdateConfig() // 检查前先刷新远端配置（同步 eligible/禁用列表）
-      checkForUpdates({ manual: true }) // 手动检查：已是最新版本时弹窗告知用户
+      // 默认手动检查：已是最新版本时弹窗告知；调用方有行内反馈时传 { manual: false } 避免重复提示
+      checkForUpdates({ manual: options?.manual ?? true })
     }
   },
   // 用户确认后开始下载全量包

@@ -515,8 +515,8 @@
                     <div class="about-update__card">
                       <div class="about-update__info">
                         <span class="about-update__label">软件更新</span>
-                        <span class="about-update__version-row">
-                          <span v-if="updateStateText" class="about-update__status" :class="`is-${updateCheckState}`">
+                        <span class="about-update__version-row" aria-live="polite">
+                          <span v-if="updateStateText" class="about-update__status" :class="`is-${updateStatus}`">
                             {{ updateStateText }}
                           </span>
                           <span v-else class="about-update__hint">当前版本 v{{ appVersion }}</span>
@@ -526,31 +526,18 @@
 
                       <div class="about-update__action">
                         <button
-                          v-if="updateCheckState === 'available' || updateCheckState === 'force'"
-                          class="update-action-btn update-action-btn--primary"
-                          @click="handleStartUpdate"
-                        >
-                          <SvgIcon icon-class="download" />
-                          <span>立即更新</span>
-                        </button>
-                        <button
-                          v-else
                           class="update-action-btn"
-                          :class="{
-                            'update-action-btn--loading': updateCheckState === 'checking'
-                          }"
-                          :disabled="updateCheckState === 'checking'"
-                          @click="handleCheckUpdate"
+                          :class="{ 'update-action-btn--primary': updateAction.primary }"
+                          :disabled="updateAction.disabled"
+                          @click="updateAction.handler"
                         >
                           <SvgIcon
-                            v-if="updateCheckState === 'checking'"
-                            icon-class="refresh"
-                            class="is-spinning"
+                            :icon-class="updateAction.icon"
+                            :class="{ 'is-spinning': updateStatus === 'checking' }"
                             width="16px"
                             height="16px"
                           />
-                          <SvgIcon v-else icon-class="refresh" width="16px" height="16px" />
-                          <span>{{ updateCheckBtnText }}</span>
+                          <span>{{ updateAction.text }}</span>
                         </button>
                       </div>
                     </div>
@@ -752,9 +739,12 @@ const handleLogout = async () => {
 }
 
 // ─── About Tab: Update Check ──────────────────────────────────────────
-const updateCheckState = ref('idle') // idle | checking | up-to-date | available | error | paused | force
-const latestVersionDisplay = ref('')
+// 版本/下载状态以 updateStore 为准；本地仅记录"检查中"与最近一次检查结果
+const isChecking = ref(false)
+const checkResult = ref('') // '' | up-to-date | error
 const lastCheckTime = ref('')
+const CHECK_TIMEOUT = 30000
+let checkTimer = null
 
 // 运行时环境信息（preload 经 contextBridge 暴露；纯浏览器环境下兜底为空对象）
 const runtimeVersions = window.versions || {}
@@ -771,13 +761,32 @@ const runtimeRows = computed(() => [
   { label: 'Node.js', value: runtimeVersions.node || '-' }
 ])
 
+const hasNewVersion = computed(
+  () => !!updateStore.latestVersion && updateStore.latestVersion !== updateStore.currentVersion
+)
+
+// 优先级：强制升级 > 已下载 > 下载中 > 检查中 > 有新版本 > 已暂停 > 最近检查结果
+const updateStatus = computed(() => {
+  if (updateStore.forceUpdate) return 'force'
+  if (updateStore.updateDownloaded) return 'downloaded'
+  if (updateStore.isUpdating) return 'downloading'
+  if (isChecking.value) return 'checking'
+  if (hasNewVersion.value) return 'available'
+  if (!updateStore.updateEligible) return 'paused'
+  return checkResult.value || 'idle'
+})
+
 // 版本号旁的状态标签文案：仅非空闲态展示
 const updateStateText = computed(() => {
-  switch (updateCheckState.value) {
+  switch (updateStatus.value) {
     case 'checking':
       return '检查中'
     case 'available':
-      return latestVersionDisplay.value ? `新版本 v${latestVersionDisplay.value}` : '发现新版本'
+      return `新版本 v${updateStore.latestVersion}`
+    case 'downloading':
+      return `下载中 ${Math.floor(updateStore.downloadProgress)}%`
+    case 'downloaded':
+      return '已下载，待重启安装'
     case 'up-to-date':
       return '已是最新'
     case 'error':
@@ -791,92 +800,73 @@ const updateStateText = computed(() => {
   }
 })
 
-const updateCheckBtnText = computed(() => {
-  switch (updateCheckState.value) {
-    case 'checking':
-      return '检查中...'
-    case 'up-to-date':
-      return '已是最新'
-    case 'error':
-      return '重新检查'
-    case 'force':
-      return '立即升级'
-    default:
-      return '检查更新'
+const finishCheck = (result = '') => {
+  if (!isChecking.value) return
+  clearTimeout(checkTimer)
+  isChecking.value = false
+  checkResult.value = result
+  if (result) {
+    lastCheckTime.value = new Date().toLocaleTimeString('zh-CN', { hour12: false })
   }
-})
-
-const handleCheckUpdate = () => {
-  updateCheckState.value = 'checking'
-  window.ipcRenderer.send('check-for-updates')
 }
 
-const handleStartUpdate = () => {
-  // Trigger the UpdateDialog to show
+const handleCheckUpdate = () => {
+  if (isChecking.value) return
+  isChecking.value = true
+  checkResult.value = ''
+  clearTimeout(checkTimer)
+  checkTimer = setTimeout(() => finishCheck('error'), CHECK_TIMEOUT)
+  // 卡片内已有行内反馈，关闭主进程"已是最新"原生弹窗
+  window.ipcRenderer.send('check-for-updates', { manual: false })
+}
+
+// 打开更新弹窗：发现新版本 / 下载中 / 待安装 / 强制升级均复用同一入口
+const handleOpenUpdateDialog = () => {
   window.dispatchEvent(new Event('update:open-dialog'))
 }
 
-// Listen for update events in the About tab
-let onAboutUpdateAvailable = null
-let onAboutUpdateNotAvailable = null
-let onAboutUpdateError = null
-let onAboutUpdateConfig = null
-let onAboutUpdateForce = null
+// 主按钮随状态切换：有可操作的更新时直达更新弹窗，否则为检查更新
+const updateAction = computed(() => {
+  switch (updateStatus.value) {
+    case 'checking':
+      return { text: '检查中...', icon: 'refresh', disabled: true, handler: handleCheckUpdate }
+    case 'force':
+      return { text: '立即升级', icon: 'download', primary: true, handler: handleOpenUpdateDialog }
+    case 'available':
+      return { text: '立即更新', icon: 'download', primary: true, handler: handleOpenUpdateDialog }
+    case 'downloading':
+      return { text: '查看进度', icon: 'download', handler: handleOpenUpdateDialog }
+    case 'downloaded':
+      return { text: '重启安装', icon: 'download', primary: true, handler: handleOpenUpdateDialog }
+    case 'error':
+      return { text: '重新检查', icon: 'refresh', handler: handleCheckUpdate }
+    default:
+      return { text: '检查更新', icon: 'refresh', handler: handleCheckUpdate }
+  }
+})
+
+// 检查结果事件：仅在本卡片发起检查时响应；发现新版本由 store（useUpdater）同步
+const onAboutUpdateAvailable = () => finishCheck()
+const onAboutUpdateNotAvailable = () => finishCheck('up-to-date')
+const onAboutUpdateError = () => finishCheck('error')
+// 远端禁止更新时主进程不会发出检查结果，需在此结束检查态
+const onAboutUpdateConfig = (event) => {
+  if (event.detail?.eligible === false) finishCheck()
+}
 
 onMounted(() => {
-  onAboutUpdateAvailable = (_event, info) => {
-    if (updateCheckState.value === 'checking') {
-      updateCheckState.value = 'available'
-      latestVersionDisplay.value = info?.version || ''
-      if (info?.version) {
-        updateStore.setLatestVersion(info.version)
-      }
-    }
-  }
-
-  onAboutUpdateNotAvailable = (_event, info) => {
-    if (updateCheckState.value === 'checking') {
-      updateCheckState.value = 'up-to-date'
-      const now = new Date()
-      lastCheckTime.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
-      if (info?.version) {
-        latestVersionDisplay.value = info.version
-      }
-    }
-  }
-
-  onAboutUpdateError = () => {
-    if (updateCheckState.value === 'checking') {
-      updateCheckState.value = 'error'
-    }
-  }
-
-  // 远端配置变化：eligible=false 时更新卡片显示"更新已暂停"
-  onAboutUpdateConfig = (event) => {
-    const config = event.detail || {}
-    if (typeof config.eligible === 'boolean' && !config.eligible) {
-      updateCheckState.value = 'paused'
-    }
-  }
-
-  // 强制升级信号：当前版本被禁用，更新卡片显示"需要强制升级"
-  onAboutUpdateForce = () => {
-    updateCheckState.value = 'force'
-  }
-
   window.ipcRenderer.on('update-available', onAboutUpdateAvailable)
   window.ipcRenderer.on('update-not-available', onAboutUpdateNotAvailable)
   window.ipcRenderer.on('update-error', onAboutUpdateError)
   window.addEventListener('update:config', onAboutUpdateConfig)
-  window.addEventListener('update:force', onAboutUpdateForce)
 })
 
 onUnmounted(() => {
+  clearTimeout(checkTimer)
   window.ipcRenderer.off('update-available', onAboutUpdateAvailable)
   window.ipcRenderer.off('update-not-available', onAboutUpdateNotAvailable)
   window.ipcRenderer.off('update-error', onAboutUpdateError)
   window.removeEventListener('update:config', onAboutUpdateConfig)
-  window.removeEventListener('update:force', onAboutUpdateForce)
 })
 
 const handleClose = () => {
@@ -1507,12 +1497,14 @@ const handleClose = () => {
     }
 
     &.is-checking,
-    &.is-available {
+    &.is-available,
+    &.is-downloading {
       color: var(--color-primary);
       background: color-mix(in srgb, var(--color-primary), transparent 90%);
     }
 
-    &.is-up-to-date {
+    &.is-up-to-date,
+    &.is-downloaded {
       color: var(--color-success);
       background: color-mix(in srgb, var(--color-success), transparent 90%);
     }
@@ -1554,6 +1546,10 @@ const handleClose = () => {
     font-size: 16px;
   }
 
+  :deep(.is-spinning) {
+    animation: spin 1s linear infinite;
+  }
+
   &:hover:not(:disabled) {
     box-shadow: var(--shadow-md);
     opacity: 0.92;
@@ -1578,12 +1574,6 @@ const handleClose = () => {
     &:hover {
       filter: brightness(1.08);
       box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary), transparent 30%);
-    }
-  }
-
-  &--loading {
-    :deep(.is-spinning) {
-      animation: spin 1s linear infinite;
     }
   }
 }
