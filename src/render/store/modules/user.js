@@ -9,7 +9,7 @@ export const useUserStore = defineStore(
     const userInfo = ref(null)
     const permissions = ref([])
     const roles = ref([])
-
+    const menuPaths = ref(null)
     function setToken(value) {
       token.value = value
     }
@@ -32,6 +32,7 @@ export const useUserStore = defineStore(
       userInfo.value = null
       permissions.value = []
       roles.value = []
+      menuPaths.value = null
     }
 
     // 登录
@@ -54,6 +55,7 @@ export const useUserStore = defineStore(
         // 后端按钮权限码（如 system:user:add）通过 buttons 字段返回
         permissions.value = payload?.buttons || []
         roles.value = payload?.roles || []
+        menuPaths.value = payload?.menuPaths ?? null
         return payload
       } catch (error) {
         return Promise.reject(error)
@@ -87,6 +89,7 @@ export const useUserStore = defineStore(
       userInfo,
       permissions,
       roles,
+      menuPaths,
       setToken,
       setUserInfo,
       setPermissions,

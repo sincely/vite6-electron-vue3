@@ -47,6 +47,46 @@ function genRequestId() {
 }
 
 /**
+ * 深度普通化：把 value 转成可被 Electron IPC 结构化克隆的普通数据。
+ *
+ * Vue 的 reactive/ref 包装是 Proxy，V8 结构化克隆不支持 Proxy，
+ * 直接发 IPC 会抛 "An object could not be cloned"。toRaw 只能剥掉顶层
+ * Proxy；组件里 `...reactiveRow` 这类浅拷贝会把嵌套的 reactive 数组/对象
+ * （如列表行的 roleNames）原样存进表单模型，提交时仍然触发克隆失败，
+ * 因此发 IPC 前必须逐层 toRaw + 浅拷贝：
+ *   - 每层节点先 toRaw 再复制到普通对象/数组
+ *   - 函数 / symbol 等不可克隆成员直接丢弃（HTTP 载荷中本就不应出现）
+ *   - Date / Map / 类实例等非普通对象原样透传，交由 IPC 原生克隆
+ *   - seen 记录已复制节点，保留（合法的）循环引用结构
+ */
+function toPlainDeep(value, seen = new WeakMap()) {
+  const raw = toRaw(value)
+  if (raw === null || typeof raw !== 'object') return raw
+  if (seen.has(raw)) return seen.get(raw)
+
+  if (Array.isArray(raw)) {
+    const list = []
+    seen.set(raw, list)
+    for (const item of raw) {
+      if (typeof item === 'function' || typeof item === 'symbol') continue
+      list.push(toPlainDeep(item, seen))
+    }
+    return list
+  }
+
+  const proto = Object.getPrototypeOf(raw)
+  if (proto !== Object.prototype && proto !== null) return raw
+
+  const plain = {}
+  seen.set(raw, plain)
+  for (const [key, item] of Object.entries(raw)) {
+    if (typeof item === 'function' || typeof item === 'symbol') continue
+    plain[key] = toPlainDeep(item, seen)
+  }
+  return plain
+}
+
+/**
  * 业务信封拆层：
  *   - 识别带 code 字段的对象视为业务信封
  *   - code === 200 → 返回业务本体（envelope.data）
@@ -83,14 +123,14 @@ function unwrapBusinessEnvelope(body) {
  */
 async function request(config = {}) {
   const userStore = useUserStore()
-  // Vue reactive() 返回的 Proxy 无法被 Electron IPC 结构化克隆，
-  // toRaw 仅剥离 Proxy 包装，保留原始数据结构（Date / 嵌套对象等不变）。
+  // params / data / headers 深度剥离 reactive Proxy 后再走 IPC，
+  // 否则嵌套代理会触发结构化克隆失败（详见 toPlainDeep 注释）
   const result = await window.request.send({
     url: config.url,
     method: (config.method || 'get').toLowerCase(),
-    params: toRaw(config.params),
-    data: toRaw(config.data),
-    headers: toRaw(config.headers),
+    params: toPlainDeep(config.params),
+    data: toPlainDeep(config.data),
+    headers: toPlainDeep(config.headers),
     isForm: !!config.isForm,
     responseType: config.responseType || 'json',
     timeout: config.timeout,

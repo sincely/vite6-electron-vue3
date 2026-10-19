@@ -5,6 +5,7 @@ import routeRouter from '../modules/route/routeRouter.js'
 import systemManageRouter from './modules/systemManageRouter.js'
 import operationLogRouter from '../modules/log/operationLogRouter.js'
 import loginLogRouter from '../modules/log/loginLogRouter.js'
+import monitorRouter from '../modules/monitor/monitorRouter.js'
 import { notificationUserRouter } from '../modules/notification/notificationRouter.js'
 import aiRouter from '../modules/ai/aiRouter.js'
 import { operationLogMiddleware } from '../middleware/logMiddleware.js'
@@ -65,5 +66,6 @@ router.use(routeRouter.routes(), routeRouter.allowedMethods())
 router.use(systemManageRouter.routes(), systemManageRouter.allowedMethods())
 router.use(operationLogRouter.routes(), operationLogRouter.allowedMethods())
 router.use(loginLogRouter.routes(), loginLogRouter.allowedMethods())
+router.use(monitorRouter.routes(), monitorRouter.allowedMethods())
 
 export default router

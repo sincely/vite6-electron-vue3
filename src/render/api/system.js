@@ -23,6 +23,10 @@ export const updateRole = (data) => request({ url: '/system/roles/update', metho
 
 export const deleteRoles = (data) => request({ url: '/system/roles/delete', method: 'post', data })
 
+export const getRoleMenuIds = (params) => request({ url: '/system/roles/menuIds', method: 'get', params })
+
+export const updateRoleMenuIds = (data) => request({ url: '/system/roles/menuIds', method: 'post', data })
+
 // ---------- 菜单 ----------
 export const getMenuList = (params) => request({ url: '/system/menus/list', method: 'get', params })
 

@@ -412,13 +412,22 @@ export const frontendGetUserInfo = async (userId) => {
   // 权限码存储在 sys_menu.permission（如 system:user:add），menu_name 只是展示名
   const buttonCodes = [...new Set(buttons.map((b) => b.permission).filter(Boolean))]
 
+  // 仅返回角色已授权的菜单路径（不含按钮），前端据此展示侧边栏
+  const grantedRows = await adminPermissionDao.findMenusByRoleId(roleIds)
+  const menuPaths = [
+    ...new Set(
+      grantedRows.filter((row) => String(row.menu_type).toUpperCase() !== 'BUTTON' && row.path).map((row) => row.path)
+    )
+  ]
+
   return {
     success: true,
     data: {
       userId: currentUser.id,
       userName: currentUser.username,
       roles: roleCodes,
-      buttons: buttonCodes
+      buttons: buttonCodes,
+      menuPaths
     }
   }
 }

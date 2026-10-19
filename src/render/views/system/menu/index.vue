@@ -76,7 +76,6 @@
 
 <script setup>
 defineOptions({ name: 'system-menu' })
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete, Plus } from '@element-plus/icons-vue'
 import { Icon } from '@iconify/vue'
 import { createMenu, deleteMenus, getMenuList, updateMenu } from '@/api/system'

@@ -300,6 +300,43 @@ export const asyncRouteTree = [
       }
     ]
   },
+  //  系统监控
+  {
+    path: '/monitor',
+    component: Layout,
+    redirect: '/monitor/overview',
+    meta: {
+      title: '系统监控',
+      icon: 'activity',
+      order: 4.5,
+      sidebar: true,
+      roles: ['admin', 'super']
+    },
+    children: [
+      {
+        path: 'overview',
+        name: 'monitor-overview',
+        component: () => import('@/views/monitor/overview/index.vue'),
+        meta: {
+          title: '监控总览',
+          icon: 'gauge',
+          group: '/monitor',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'online',
+        name: 'monitor-online',
+        component: () => import('@/views/monitor/online/index.vue'),
+        meta: {
+          title: '在线用户',
+          icon: 'users',
+          group: '/monitor',
+          keepAlive: true
+        }
+      }
+    ]
+  },
   //  嵌套菜单（三级菜单案例）
   {
     path: '/nested',

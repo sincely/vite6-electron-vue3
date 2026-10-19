@@ -23,7 +23,6 @@
 
 <script setup>
 defineOptions({ name: 'example-table-tree' })
-import { ElMessage, ElMessageBox } from 'element-plus'
 
 const treeTableRef = ref()
 

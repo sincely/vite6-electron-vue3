@@ -14,7 +14,7 @@ import { getRedisClient } from '../db/redis.js'
 import logger from '../config/logger.js'
 
 const KEY_PREFIX = 'login:lock:'
-const MAX_ATTEMPTS = 3
+export const MAX_ATTEMPTS = 3
 const LOCK_WINDOW_SECONDS = 15 * 60 // 15 分钟
 
 /**

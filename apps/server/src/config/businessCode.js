@@ -38,7 +38,9 @@ export const businessCode = {
   dictNameExist: 40023, // 字典名称或编码已存在
   dictNotFound: 40024, // 字典不存在
   notificationNotFound: 40025, // 公告不存在
-  notificationTargetEmpty: 40026 // 定向发送目标用户为空
+  notificationTargetEmpty: 40026, // 定向发送目标用户为空
+  sessionNotFound: 40027, // 会话不存在或已失效
+  sessionKickSelfDenied: 40028 // 不能强制下线当前会话
 }
 
 export const businessMsg = {
@@ -70,5 +72,7 @@ export const businessMsg = {
   [businessCode.dictNameExist]: '字典名称或编码已存在',
   [businessCode.dictNotFound]: '字典不存在',
   [businessCode.notificationNotFound]: '公告不存在',
-  [businessCode.notificationTargetEmpty]: '定向发送时至少选择一个目标用户'
+  [businessCode.notificationTargetEmpty]: '定向发送时至少选择一个目标用户',
+  [businessCode.sessionNotFound]: '会话不存在或已失效',
+  [businessCode.sessionKickSelfDenied]: '不能强制下线当前登录会话'
 }

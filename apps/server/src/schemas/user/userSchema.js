@@ -58,7 +58,13 @@ export const UserCreateBodySchema = z.object({
   password: z.string().min(6, '密码至少 6 位').max(20, '密码最长 20 位').optional(),
   gender: genderEnum.default('男'),
   age: z.coerce.number().int().min(0).max(150).nullable().optional(),
-  idCard: z.string().min(6, '身份证号不能为空').max(20, '身份证号最长 20 位').optional(),
+  // 身份证号不做强校验：前端编辑用户时会把行数据整体透传（无身份证则为空串），
+  // 空串归一为 undefined，服务端按“未提供该字段”处理（不参与更新/唯一性检查）
+  idCard: z
+    .string()
+    .max(20, '身份证号最长 20 位')
+    .optional()
+    .transform((v) => v || undefined),
   email: z.email('邮箱格式不正确'),
   nickname: z.string().max(50, '昵称最长 50 位').optional(),
   nickName: z.string().max(50, '昵称最长 50 位').optional(),
@@ -79,7 +85,12 @@ export const UserUpdateBodySchema = z
     username: z.string().min(2).max(50).optional(),
     gender: genderEnum,
     age: z.coerce.number().int().min(0).max(150).nullable().optional(),
-    idCard: z.string().min(6, '身份证号不能为空').max(20, '身份证号最长 20 位').optional(),
+    // 同创建 schema：不做非空强校验，空串归一为 undefined
+    idCard: z
+      .string()
+      .max(20, '身份证号最长 20 位')
+      .optional()
+      .transform((v) => v || undefined),
     email: z.email('邮箱格式不正确').optional(),
     nickname: z.string().max(50, '昵称最长 50 位').optional(),
     nickName: z.string().max(50, '昵称最长 50 位').optional(),

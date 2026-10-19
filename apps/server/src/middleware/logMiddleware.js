@@ -230,7 +230,8 @@ const extractModule = (path) => {
   const moduleMap = {
     user: '用户认证',
     route: '路由管理',
-    log: '日志管理'
+    log: '日志管理',
+    monitor: '系统监控'
   }
   return moduleMap[parts[1]] || '其他'
 }

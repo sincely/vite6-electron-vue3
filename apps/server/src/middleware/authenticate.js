@@ -3,6 +3,7 @@ import { businessCode, businessMsg } from '../config/businessCode.js'
 import { createFailResponse } from '../utils/createResponse.js'
 import { query } from '../db/connection.js'
 import logger from '../config/logger.js'
+import { touchSessionActivity } from '../utils/sessionActivity.js'
 
 async function authenticate(ctx, next) {
   // 从请求头获取 Token
@@ -70,6 +71,8 @@ async function authenticate(ctx, next) {
       ctx.body = createFailResponse(businessCode.accountKicked, '账号在其他设备登录，请重新登录')
       return
     }
+
+    touchSessionActivity(jwtSessionId)
   }
 
   await next()

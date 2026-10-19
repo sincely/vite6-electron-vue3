@@ -11,11 +11,30 @@
  Target Server Version : 80411 (8.4.11)
  File Encoding         : 65001
 
- Date: 14/10/2026 21:25:15
+ Date: 19/10/2026 22:01:29
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for migrations
+-- ----------------------------
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `batch` int NOT NULL,
+  `executedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of migrations
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_dict
@@ -68,7 +87,7 @@ CREATE TABLE `sys_login_log` (
   KEY `idx_ip_address` (`ip_address`),
   KEY `idx_status` (`status`),
   KEY `idx_create_time` (`create_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='登录日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='登录日志表';
 
 -- ----------------------------
 -- Records of sys_login_log
@@ -148,317 +167,26 @@ INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_addr
 INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (72, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '8963cd2f-6e29-4407-bd19-5b1d3a9cc924', '2026-10-14 13:13:48');
 INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (73, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'curl/8.7.1', '1', '登录成功', '6f0e1e74-fe92-4fea-b569-6480c0120882', '2026-10-14 13:15:59');
 INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (74, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'a377e157-8f99-47f6-9e99-5d91acee8a57', '2026-10-14 13:16:16');
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_operation_log
--- ----------------------------
-DROP TABLE IF EXISTS `sys_operation_log`;
-CREATE TABLE `sys_operation_log` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL COMMENT '操作用户ID',
-  `username` varchar(50) DEFAULT NULL COMMENT '操作用户名',
-  `action` varchar(100) DEFAULT NULL COMMENT '操作类型',
-  `module` varchar(50) DEFAULT NULL COMMENT '系统模块',
-  `method` varchar(10) DEFAULT NULL COMMENT '请求方法 GET/POST/PUT/DELETE',
-  `request_url` varchar(255) DEFAULT NULL COMMENT '请求URL',
-  `request_params` text COMMENT '请求参数(JSON)',
-  `response_status` varchar(10) DEFAULT NULL COMMENT '响应状态码',
-  `response_msg` varchar(255) DEFAULT NULL COMMENT '响应消息',
-  `response_body` text COMMENT '响应体(JSON)',
-  `ip_address` varchar(45) DEFAULT NULL COMMENT 'IP地址',
-  `user_agent` varchar(500) DEFAULT NULL COMMENT '浏览器标识',
-  `execute_time` int DEFAULT NULL COMMENT '执行时间(毫秒)',
-  `status` char(1) NOT NULL DEFAULT '1' COMMENT '操作状态：1=成功 0=失败',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_user_id` (`user_id`),
-  KEY `idx_username` (`username`),
-  KEY `idx_action` (`action`),
-  KEY `idx_module` (`module`),
-  KEY `idx_create_time` (`create_time`),
-  KEY `idx_status` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志表';
-
--- ----------------------------
--- Records of sys_operation_log
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (1, 2, 'admin', '编辑', '用户管理', 'POST', '', '{\"id\":1,\"status\":\"1\"}', '', '更新用户状态成功', '{\"code\":200,\"msg\":\"更新用户状态成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-03 23:49:43');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (2, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":4,\"parentId\":3,\"menuType\":2,\"menuName\":\"子菜单一\",\"routeName\":\"function_hide-child_one\",\"routePath\":\"/function/hide-child/one\",\"component\":\"view.function_hide-child_one\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"material-symbols:filter-list-off\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"function_hide-child\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 00:13:12');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (3, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":5,\"parentId\":3,\"menuType\":2,\"menuName\":\"子菜单三\",\"routeName\":\"function_hide-child_three\",\"routePath\":\"/function/hide-child/three\",\"component\":\"view.function_hide-child_three\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"function_hide-child\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 00:13:16');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (4, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":6,\"parentId\":3,\"menuType\":2,\"menuName\":\"子菜单二\",\"routeName\":\"function_hide-child_two\",\"routePath\":\"/function/hide-child/two\",\"component\":\"view.function_hide-child_two\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"function_hide-child\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 00:13:20');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (5, 2, 'admin', '编辑', '用户管理', 'POST', '', '{\"id\":2,\"gender\":\"1\",\"email\":\"bob@example.com\",\"phone\":\"15374536782\",\"nickName\":\"Bob\",\"status\":\"1\",\"roleIds\":[1,2,3]}', '', '更新用户成功', '{\"code\":200,\"msg\":\"更新用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 21:39:59');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (6, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":13,\"menuType\":2,\"menuName\":\"字典管理\",\"routeName\":\"manage_dict\",\"routePath\":\"/manage/dict\",\"component\":\"view.manage_dict\",\"orderNum\":4,\"icon\":\"icon-park-o11utline:all-application\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":null,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":40}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 21:46:00');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (7, 2, 'admin', '编辑', '角色管理', 'POST', '', '{\"roleId\":3,\"routeIds\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]}', '', '更新角色菜单成功', '{\"code\":200,\"msg\":\"更新角色菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 21:46:19');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (12, 2, 'admin', '删除', '菜单管理', 'POST', '', '{\"id\":40}', '', '删除菜单成功', '{\"code\":200,\"msg\":\"删除菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:09:45');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (13, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":13,\"menuType\":2,\"menuName\":\"字典管理\",\"routeName\":\"manage_dict\",\"routePath\":\"/manage/dict\",\"component\":\"view.manage_dict\",\"orderNum\":4,\"icon\":\"ic:baseline-block\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":null,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":41}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:11:30');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (15, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":17,\"parentId\":13,\"menuType\":2,\"menuName\":\"用户详情\",\"routeName\":\"manage_user-detail\",\"routePath\":\"/manage/user-detail/:id\",\"component\":\"view.manage_user-detail\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"manage_user\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:12:18');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (16, 2, 'admin', '新增', '系统管理', 'POST', '', '{\"dictName\":\"111\",\"dictCode\":\"11\",\"status\":\"1\",\"remark\":\"\"}', '', '创建字典成功', '{\"code\":200,\"msg\":\"创建字典成功\",\"data\":{\"id\":1}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:20:22');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (17, 2, 'admin', '编辑', '系统管理', 'POST', '', '{\"id\":1,\"dictId\":1,\"dictName\":\"111\",\"dictCode\":\"11\",\"status\":\"1\",\"remark\":\"1111111\"}', '', '更新字典成功', '{\"code\":200,\"msg\":\"更新字典成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:27:09');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (18, 2, 'admin', '新增', '系统管理', 'POST', '', '{\"dictName\":\"去玩儿去玩儿\",\"dictCode\":\"code\",\"status\":\"1\",\"remark\":\"111\"}', '', '创建字典成功', '{\"code\":200,\"msg\":\"创建字典成功\",\"data\":{\"id\":2}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:28:43');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (19, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":41,\"menuType\":3,\"menuName\":\"新增\",\"routeName\":\"add\",\"routePath\":\"\",\"orderNum\":1,\"iconType\":1,\"hideInMenu\":false,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":42}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:29:48');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (20, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":41,\"menuType\":3,\"menuName\":\"编辑\",\"routeName\":\"edit\",\"routePath\":\"\",\"orderNum\":2,\"iconType\":1,\"hideInMenu\":false,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":43}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:30:00');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (21, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":41,\"menuType\":3,\"menuName\":\"删除\",\"routeName\":\"delete\",\"routePath\":\"\",\"orderNum\":2,\"iconType\":1,\"hideInMenu\":false,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":44}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:30:09');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (32, 2, 'admin', '新增', '用户管理', 'POST', '', '{\"username\":\"111\",\"password\":\"***\",\"gender\":\"1\",\"email\":\"1738248428@qq.com\",\"phone\":\"15651376329\",\"status\":\"1\",\"roleIds\":[1,2]}', '', '邮箱已存在', '{\"code\":40013,\"msg\":\"邮箱已存在\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '0', '2026-08-04 23:20:42');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (33, 2, 'admin', '新增', '用户管理', 'POST', '', '{\"username\":\"111\",\"password\":\"***\",\"gender\":\"1\",\"email\":\"1738248421@qq.com\",\"phone\":\"15651376329\",\"status\":\"1\",\"roleIds\":[1,2]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":9}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 23:20:46');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (34, 2, 'admin', '重置', '用户管理', 'POST', '', '{\"id\":9}', '', '密码重置成功，默认密码: 123456', '{\"code\":200,\"msg\":\"密码重置成功，默认密码: 123456\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:10');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (35, 2, 'admin', '重置', '用户管理', 'POST', '', '{\"id\":8}', '', '密码重置成功，默认密码: 123456', '{\"code\":200,\"msg\":\"密码重置成功，默认密码: 123456\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:13');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (36, 2, 'admin', '删除', '用户管理', 'POST', '', '{\"id\":7}', '', '删除用户成功', '{\"code\":200,\"msg\":\"删除用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:15');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (37, 2, 'admin', '删除', '用户管理', 'POST', '', '{\"id\":8}', '', '删除用户成功', '{\"code\":200,\"msg\":\"删除用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:17');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (38, 2, 'admin', '删除', '用户管理', 'POST', '', '{\"id\":9}', '', '删除用户成功', '{\"code\":200,\"msg\":\"删除用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:19');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (39, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"e2e_test01\",\"gender\":\"男\",\"email\":\"e2e_test01@example.com\",\"nickname\":\"端到端测试\",\"mobile\":\"13800138000\",\"status\":\"1\",\"remark\":\"e2e\",\"roleIds\":[2]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":10}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:00:55');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (40, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[10]}', '', '成功删除 1 个用户', '{\"code\":200,\"msg\":\"成功删除 1 个用户\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:01:05');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (41, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"e2e_u1\",\"gender\":\"男\",\"email\":\"e2e_u1@example.com\",\"nickname\":\"测试甲\",\"mobile\":\"13800138001\",\"status\":\"1\",\"roleIds\":[2]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":11}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:35');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (42, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":11,\"username\":\"e2e_u1\",\"gender\":\"女\",\"email\":\"e2e_u1@example.com\",\"nickname\":\"测试甲改\",\"mobile\":\"13900139001\",\"status\":\"0\",\"roleIds\":[1,2]}', '', '更新用户成功', '{\"code\":200,\"msg\":\"更新用户成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:46');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (43, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[11]}', '', '成功删除 1 个用户', '{\"code\":200,\"msg\":\"成功删除 1 个用户\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:46');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (44, 2, 'admin', '新增', '其他', 'POST', '', '{\"roleName\":\"端到端测试角色\",\"roleCode\":\"e2e_test_role\",\"roleDesc\":\"\",\"description\":\"\",\"remark\":\"e2e 测试用\",\"sort\":9,\"status\":\"1\"}', '', '创建角色成功', '{\"code\":200,\"msg\":\"创建角色成功\",\"data\":{\"roleId\":4,\"id\":4}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:58');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (45, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":4,\"roleName\":\"端到端测试角色改\",\"roleCode\":\"e2e_test_role\",\"roleDesc\":\"\",\"description\":\"\",\"remark\":\"改后描述\",\"sort\":8,\"status\":\"0\"}', '', '更新角色成功', '{\"code\":200,\"msg\":\"更新角色成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:58');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (46, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[4]}', '', '删除角色成功', '{\"code\":200,\"msg\":\"删除角色成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:58');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (47, 2, 'admin', '新增', '其他', 'POST', '', '{\"parentId\":0,\"menuType\":\"MENU\",\"menuName\":\"端到端测试菜单\",\"routeName\":\"e2e-test-menu\",\"path\":\"/e2e-test\",\"component\":\"@/views/e2e/index.vue\",\"sort\":99,\"orderNum\":0,\"icon\":\"flask-conical\",\"permission\":\"e2e:view\",\"frame\":\"0\",\"isCache\":\"1\",\"visible\":\"1\",\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":200}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:03:11');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (48, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[]}', '', '至少提供一个菜单ID', '{\"code\":400,\"msg\":\"至少提供一个菜单ID\"}', '', 'curl/8.7.1', 0, '0', '2026-09-16 00:03:11');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (49, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":200,\"menuName\":\"端到端测试菜单改\",\"routeName\":\"e2e-test-menu\",\"path\":\"/e2e-test-v2\",\"sort\":98,\"visible\":\"0\",\"status\":\"0\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:03:23');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (50, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[200]}', '', '删除菜单成功', '{\"code\":200,\"msg\":\"删除菜单成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:03:23');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (51, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"3\",\"nickname\":\"234\",\"gender\":\"男\",\"mobile\":\"15615376325\",\"email\":\"1738248938@qq.com\",\"roleIds\":[3],\"status\":\"1\",\"remark\":\"；；；\"}', '', '用户名至少 2 位', '{\"code\":400,\"msg\":\"用户名至少 2 位\"}', '', 'axios/1.19.0', 0, '0', '2026-10-09 22:55:07');
-INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (52, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"3444\",\"gender\":\"男\",\"email\":\"1738248938@qq.com\",\"nickname\":\"234\",\"mobile\":\"15615376325\",\"status\":\"1\",\"remark\":\"；；；\",\"roleIds\":[3]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":12}}', '', 'axios/1.19.0', 0, '1', '2026-10-09 22:55:11');
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_role_menu
--- ----------------------------
-DROP TABLE IF EXISTS `sys_role_menu`;
-CREATE TABLE `sys_role_menu` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `role_id` int NOT NULL COMMENT '角色ID',
-  `route_id` int NOT NULL COMMENT '菜单ID',
-  `create_by` varchar(50) DEFAULT '' COMMENT '创建人',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_role_route` (`role_id`,`route_id`),
-  KEY `idx_role_route_route_id` (`route_id`),
-  CONSTRAINT `fk_role_route_role` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`role_id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_role_route_route` FOREIGN KEY (`route_id`) REFERENCES `sys_menu` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=682 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色菜单权限关联表';
-
--- ----------------------------
--- Records of sys_role_menu
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (500, 2, 1, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (501, 2, 11, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (502, 2, 12, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (503, 2, 13, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (504, 2, 14, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (505, 2, 15, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (506, 2, 16, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (507, 2, 17, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (508, 2, 18, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (509, 2, 19, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (510, 2, 2, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (511, 2, 20, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (512, 2, 21, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (513, 2, 70, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (514, 1, 1, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (515, 1, 2, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (516, 1, 3, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (517, 1, 4, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (518, 1, 5, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (519, 1, 6, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (520, 1, 7, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (521, 1, 8, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (522, 1, 9, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (523, 1, 10, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (524, 1, 11, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (525, 1, 12, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (526, 1, 13, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (527, 1, 14, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (528, 1, 15, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (529, 1, 16, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (530, 1, 17, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (531, 1, 18, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (532, 1, 19, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (533, 1, 20, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (534, 1, 21, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (535, 1, 22, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (536, 1, 23, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (537, 1, 24, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (538, 1, 25, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (539, 1, 26, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (540, 1, 80, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (541, 1, 81, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (542, 1, 82, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (543, 1, 83, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (544, 1, 84, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (545, 1, 85, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (546, 1, 90, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (547, 1, 91, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (548, 1, 92, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (549, 1, 93, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (550, 1, 94, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (551, 1, 100, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (552, 1, 101, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (553, 1, 102, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (554, 1, 27, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (555, 1, 28, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (556, 1, 29, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (557, 1, 30, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (558, 1, 31, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (559, 1, 32, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (560, 1, 33, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (561, 1, 34, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (562, 1, 35, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (563, 1, 36, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (564, 1, 37, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (565, 1, 38, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (566, 1, 39, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (567, 1, 40, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (568, 1, 41, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (569, 1, 42, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (570, 1, 43, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (571, 1, 44, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (572, 1, 45, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (573, 1, 46, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (574, 1, 47, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (575, 1, 48, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (576, 1, 49, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (577, 1, 50, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (578, 1, 51, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (579, 1, 52, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (580, 1, 53, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (581, 1, 54, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (582, 1, 55, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (583, 1, 56, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (584, 1, 57, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (585, 1, 58, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (586, 1, 59, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (587, 1, 60, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (588, 1, 61, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (589, 1, 62, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (590, 1, 63, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (591, 1, 64, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (592, 1, 65, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (593, 1, 66, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (594, 1, 67, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (595, 1, 68, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (596, 1, 69, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (597, 1, 70, 'system', '2026-08-04 21:39:59');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (598, 3, 1, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (599, 3, 2, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (600, 3, 3, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (601, 3, 4, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (602, 3, 5, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (603, 3, 6, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (604, 3, 7, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (605, 3, 8, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (606, 3, 9, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (607, 3, 10, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (608, 3, 11, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (609, 3, 12, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (610, 3, 13, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (611, 3, 14, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (612, 3, 15, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (613, 3, 16, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (614, 3, 17, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (615, 3, 18, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (616, 3, 19, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (617, 3, 20, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (618, 3, 21, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (619, 3, 22, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (620, 3, 23, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (621, 3, 24, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (622, 3, 25, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (623, 3, 26, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (624, 3, 27, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (625, 3, 28, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (626, 3, 29, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (627, 3, 30, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (628, 3, 31, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (629, 3, 32, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (630, 3, 33, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (631, 3, 34, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (632, 3, 35, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (633, 3, 36, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (634, 3, 37, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (635, 3, 38, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (636, 3, 39, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (637, 3, 40, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (638, 3, 41, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (639, 3, 42, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (640, 3, 43, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (641, 3, 44, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (642, 3, 45, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (643, 3, 46, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (644, 3, 47, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (645, 3, 48, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (646, 3, 49, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (647, 3, 50, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (648, 3, 51, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (649, 3, 52, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (650, 3, 53, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (651, 3, 54, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (652, 3, 55, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (653, 3, 56, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (654, 3, 57, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (655, 3, 58, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (656, 3, 59, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (657, 3, 60, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (658, 3, 61, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (659, 3, 62, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (660, 3, 63, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (661, 3, 64, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (662, 3, 65, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (663, 3, 66, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (664, 3, 67, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (665, 3, 68, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (666, 3, 69, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (667, 3, 70, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (668, 3, 80, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (669, 3, 81, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (670, 3, 82, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (671, 3, 83, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (672, 3, 84, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (673, 3, 85, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (674, 3, 90, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (675, 3, 91, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (676, 3, 92, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (677, 3, 93, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (678, 3, 94, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (679, 3, 100, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (680, 3, 101, 'system', '2026-09-15 23:46:23');
-INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (681, 3, 102, 'system', '2026-09-15 23:46:23');
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_role
--- ----------------------------
-DROP TABLE IF EXISTS `sys_role`;
-CREATE TABLE `sys_role` (
-  `role_id` int NOT NULL AUTO_INCREMENT,
-  `role_name` varchar(50) NOT NULL COMMENT '角色名称',
-  `role_code` varchar(50) NOT NULL COMMENT '角色编码（程序内唯一标识，用于前端路由 meta.roles）',
-  `role_sort` int NOT NULL DEFAULT '0' COMMENT '显示排序，数值越小越靠前',
-  `data_scope` char(1) NOT NULL DEFAULT '1' COMMENT '数据权限：1=全部 2=本部门 3=本部门及下级 4=本人 5=自定义',
-  `status` char(1) NOT NULL DEFAULT '1' COMMENT '状态：1=启用 0=禁用',
-  `is_system` char(1) NOT NULL DEFAULT '0' COMMENT '是否系统内置：1=是 0=否（内置不可删除）',
-  `description` varchar(500) DEFAULT NULL COMMENT '角色描述',
-  `create_by` varchar(50) DEFAULT '' COMMENT '创建人',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_by` varchar(50) DEFAULT '' COMMENT '更新人',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` char(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除：1=是 0=否',
-  PRIMARY KEY (`role_id`),
-  UNIQUE KEY `uk_role_code` (`role_code`),
-  UNIQUE KEY `uk_role_name` (`role_name`),
-  KEY `idx_role_status` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色表';
-
--- ----------------------------
--- Records of sys_role
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_code`, `role_sort`, `data_scope`, `status`, `is_system`, `description`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (1, '管理员', 'admin', 1, '1', '1', '1', '系统内置管理员，可访问后台管理能力', 'system', '2026-08-04 00:13:45', 'admin', '2026-08-03 22:50:44', '0');
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_code`, `role_sort`, `data_scope`, `status`, `is_system`, `description`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (2, '普通用户', 'user', 3, '4', '1', '1', '系统内置普通用户，仅查看仪表板/结果页', 'system', '2026-08-04 00:13:45', 'admin', '2026-08-03 22:50:44', '0');
-INSERT INTO `sys_role` (`role_id`, `role_name`, `role_code`, `role_sort`, `data_scope`, `status`, `is_system`, `description`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (3, '超级管理员', 'super', 0, '1', '1', '1', '系统内置超级管理员，拥有全部菜单与按钮权限', 'system', '2026-08-04 00:13:45', 'admin', '2026-08-04 21:46:19', '0');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (75, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'c8d22d14-3b28-45e4-992c-bc408bc66d0a', '2026-10-19 12:34:58');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (76, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '59613994-60fb-47a9-b276-ed22d36edbc5', '2026-10-19 12:36:13');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (77, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '7fd588af-d000-419a-bb9f-35c6f667c422', '2026-10-19 12:52:45');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (78, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '3332996d-27d6-4112-a036-03d7d8094cd7', '2026-10-19 12:54:41');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (79, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'c047fe62-7708-4334-b4bf-239161655e3e', '2026-10-19 13:07:26');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (80, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '88f19bcf-0174-47cf-9208-7cccf49a8bbd', '2026-10-19 13:11:23');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (81, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '71cb0df7-c433-4f59-b359-efb1cc6ff6bb', '2026-10-19 13:14:58');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (82, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'c22495d1-76cf-4147-b374-d5f92b1b905b', '2026-10-19 13:15:50');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (83, 1, 'user', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'f142caff-4e1e-4120-9d09-06aa48fb27db', '2026-10-19 13:16:44');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (84, 1, 'user', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'b9949ed6-e4dd-4e2e-aadf-1f9ff1c528bf', '2026-10-19 13:20:16');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (85, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '48d08bb4-ef3c-46fb-89b3-7a9f99dbab8f', '2026-10-19 13:20:51');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (86, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', 'bb643c3d-d99e-4c1b-aa34-d1a1073285f1', '2026-10-19 13:21:29');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (87, NULL, 'editor', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '0', '用户名或密码错误', NULL, '2026-10-19 13:23:10');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (88, NULL, 'super', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '0', '用户名或密码错误', NULL, '2026-10-19 13:26:20');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (89, NULL, 'super', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '0', '用户名或密码错误', NULL, '2026-10-19 13:26:21');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (90, NULL, 'super', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '0', '登录失败次数过多，账号已锁定', NULL, '2026-10-19 13:26:22');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (91, 1, 'user', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '83f3aeb6-c370-4ed0-b77a-14a86eb38d1a', '2026-10-19 13:26:44');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (92, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '18c12f2f-f829-46c9-97ad-3e3b4b4c2c59', '2026-10-19 13:30:34');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (93, 5, 'super', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '909643bf-12a9-43b5-84bb-a869794e0644', '2026-10-19 13:43:33');
+INSERT INTO `sys_login_log` (`id`, `user_id`, `username`, `login_type`, `ip_address`, `location`, `browser`, `os`, `user_agent`, `status`, `message`, `session_id`, `create_time`) VALUES (94, 2, 'admin', 'password', '::1', '本地访问', 'Unknown', 'Unknown', 'axios/1.19.0', '1', '登录成功', '1026e6ed-2c0e-4334-8d73-ae4041aaa933', '2026-10-19 13:56:11');
 COMMIT;
 
 -- ----------------------------
@@ -572,6 +300,9 @@ INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `ic
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (68, 10, 'MENU', 'Electron 官网(内嵌)', 2, 'zap', 'external-electron', '/external/electron', '@/views/iframe/route', '', 'external:view', '1', 'https://www.electronjs.org', '1', '1', '1', '1', 'meta.iframe=true', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (69, 10, 'MENU', 'GitHub(内嵌)', 3, 'github', 'external-github', '/external/github', '@/views/iframe/route', '', 'external:view', '1', 'https://github.com', '1', '1', '1', '1', 'meta.iframe=true', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (70, 0, 'MENU', '个人中心', 99, 'user-round', 'profile', '/profile', '@/views/profile/index.vue', '', 'profile:view', '0', NULL, '1', '0', '1', '1', '前端 router: /profile，hideInMenu', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
+INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (71, 0, 'DIR', '系统监控', 11, 'activity', NULL, '/monitor', 'Layout', '/monitor/overview', '', '0', NULL, '0', '1', '1', '1', '前端 router: /monitor', '', '2026-10-19 00:00:00', '', '2026-10-19 00:00:00', '0');
+INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (72, 71, 'MENU', '监控总览', 1, 'gauge', 'monitor-overview', '/monitor/overview', '@/views/monitor/overview/index.vue', '', 'monitor:overview:view', '0', NULL, '1', '1', '1', '1', '', '', '2026-10-19 00:00:00', '', '2026-10-19 00:00:00', '0');
+INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (73, 71, 'MENU', '在线用户', 2, 'users', 'monitor-online', '/monitor/online', '@/views/monitor/online/index.vue', '', 'monitor:online:view', '0', NULL, '1', '1', '1', '1', '', '', '2026-10-19 00:00:00', '', '2026-10-19 00:00:00', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (80, 24, 'BUTTON', '新增', 1, NULL, NULL, '', NULL, '', 'system:user:add', '0', NULL, '0', '1', '1', '0', '', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (81, 24, 'BUTTON', '编辑', 2, NULL, NULL, '', NULL, '', 'system:user:edit', '0', NULL, '0', '1', '1', '0', '', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (82, 24, 'BUTTON', '删除', 3, NULL, NULL, '', NULL, '', 'system:user:delete', '0', NULL, '0', '1', '1', '0', '', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
@@ -586,6 +317,323 @@ INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `ic
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (100, 26, 'BUTTON', '新增', 1, NULL, NULL, '', NULL, '', 'system:menu:add', '0', NULL, '0', '1', '1', '0', '', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (101, 26, 'BUTTON', '编辑', 2, NULL, NULL, '', NULL, '', 'system:menu:edit', '0', NULL, '0', '1', '1', '0', '', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (102, 26, 'BUTTON', '删除', 3, NULL, NULL, '', NULL, '', 'system:menu:delete', '0', NULL, '0', '1', '1', '0', '', '', '2026-09-15 23:46:23', '', '2026-09-15 23:46:23', '0');
+INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_type`, `menu_name`, `sort`, `icon`, `route_name`, `path`, `component`, `redirect`, `permission`, `frame`, `link`, `is_cache`, `visible`, `status`, `is_system`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (110, 73, 'BUTTON', '强制下线', 1, NULL, NULL, '', NULL, '', 'monitor:online:kick', '0', NULL, '0', '1', '1', '0', '', '', '2026-10-19 00:00:00', '', '2026-10-19 00:00:00', '0');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_operation_log
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_operation_log`;
+CREATE TABLE `sys_operation_log` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL COMMENT '操作用户ID',
+  `username` varchar(50) DEFAULT NULL COMMENT '操作用户名',
+  `action` varchar(100) DEFAULT NULL COMMENT '操作类型',
+  `module` varchar(50) DEFAULT NULL COMMENT '系统模块',
+  `method` varchar(10) DEFAULT NULL COMMENT '请求方法 GET/POST/PUT/DELETE',
+  `request_url` varchar(255) DEFAULT NULL COMMENT '请求URL',
+  `request_params` text COMMENT '请求参数(JSON)',
+  `response_status` varchar(10) DEFAULT NULL COMMENT '响应状态码',
+  `response_msg` varchar(255) DEFAULT NULL COMMENT '响应消息',
+  `response_body` text COMMENT '响应体(JSON)',
+  `ip_address` varchar(45) DEFAULT NULL COMMENT 'IP地址',
+  `user_agent` varchar(500) DEFAULT NULL COMMENT '浏览器标识',
+  `execute_time` int DEFAULT NULL COMMENT '执行时间(毫秒)',
+  `status` char(1) NOT NULL DEFAULT '1' COMMENT '操作状态：1=成功 0=失败',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_username` (`username`),
+  KEY `idx_action` (`action`),
+  KEY `idx_module` (`module`),
+  KEY `idx_create_time` (`create_time`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='操作日志表';
+
+-- ----------------------------
+-- Records of sys_operation_log
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (1, 2, 'admin', '编辑', '用户管理', 'POST', '', '{\"id\":1,\"status\":\"1\"}', '', '更新用户状态成功', '{\"code\":200,\"msg\":\"更新用户状态成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-03 23:49:43');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (2, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":4,\"parentId\":3,\"menuType\":2,\"menuName\":\"子菜单一\",\"routeName\":\"function_hide-child_one\",\"routePath\":\"/function/hide-child/one\",\"component\":\"view.function_hide-child_one\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"material-symbols:filter-list-off\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"function_hide-child\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 00:13:12');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (3, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":5,\"parentId\":3,\"menuType\":2,\"menuName\":\"子菜单三\",\"routeName\":\"function_hide-child_three\",\"routePath\":\"/function/hide-child/three\",\"component\":\"view.function_hide-child_three\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"function_hide-child\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 00:13:16');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (4, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":6,\"parentId\":3,\"menuType\":2,\"menuName\":\"子菜单二\",\"routeName\":\"function_hide-child_two\",\"routePath\":\"/function/hide-child/two\",\"component\":\"view.function_hide-child_two\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"function_hide-child\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 00:13:20');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (5, 2, 'admin', '编辑', '用户管理', 'POST', '', '{\"id\":2,\"gender\":\"1\",\"email\":\"bob@example.com\",\"phone\":\"15374536782\",\"nickName\":\"Bob\",\"status\":\"1\",\"roleIds\":[1,2,3]}', '', '更新用户成功', '{\"code\":200,\"msg\":\"更新用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 21:39:59');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (6, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":13,\"menuType\":2,\"menuName\":\"字典管理\",\"routeName\":\"manage_dict\",\"routePath\":\"/manage/dict\",\"component\":\"view.manage_dict\",\"orderNum\":4,\"icon\":\"icon-park-o11utline:all-application\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":null,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":40}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 21:46:00');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (7, 2, 'admin', '编辑', '角色管理', 'POST', '', '{\"roleId\":3,\"routeIds\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]}', '', '更新角色菜单成功', '{\"code\":200,\"msg\":\"更新角色菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 21:46:19');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (12, 2, 'admin', '删除', '菜单管理', 'POST', '', '{\"id\":40}', '', '删除菜单成功', '{\"code\":200,\"msg\":\"删除菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:09:45');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (13, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":13,\"menuType\":2,\"menuName\":\"字典管理\",\"routeName\":\"manage_dict\",\"routePath\":\"/manage/dict\",\"component\":\"view.manage_dict\",\"orderNum\":4,\"icon\":\"ic:baseline-block\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":null,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":41}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:11:30');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (15, 2, 'admin', '编辑', '菜单管理', 'POST', '', '{\"id\":17,\"parentId\":13,\"menuType\":2,\"menuName\":\"用户详情\",\"routeName\":\"manage_user-detail\",\"routePath\":\"/manage/user-detail/:id\",\"component\":\"view.manage_user-detail\",\"redirect\":\"\",\"orderNum\":0,\"icon\":\"\",\"iconType\":1,\"hideInMenu\":false,\"activeMenu\":\"manage_user\",\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:12:18');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (16, 2, 'admin', '新增', '系统管理', 'POST', '', '{\"dictName\":\"111\",\"dictCode\":\"11\",\"status\":\"1\",\"remark\":\"\"}', '', '创建字典成功', '{\"code\":200,\"msg\":\"创建字典成功\",\"data\":{\"id\":1}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:20:22');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (17, 2, 'admin', '编辑', '系统管理', 'POST', '', '{\"id\":1,\"dictId\":1,\"dictName\":\"111\",\"dictCode\":\"11\",\"status\":\"1\",\"remark\":\"1111111\"}', '', '更新字典成功', '{\"code\":200,\"msg\":\"更新字典成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:27:09');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (18, 2, 'admin', '新增', '系统管理', 'POST', '', '{\"dictName\":\"去玩儿去玩儿\",\"dictCode\":\"code\",\"status\":\"1\",\"remark\":\"111\"}', '', '创建字典成功', '{\"code\":200,\"msg\":\"创建字典成功\",\"data\":{\"id\":2}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:28:43');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (19, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":41,\"menuType\":3,\"menuName\":\"新增\",\"routeName\":\"add\",\"routePath\":\"\",\"orderNum\":1,\"iconType\":1,\"hideInMenu\":false,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":42}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:29:48');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (20, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":41,\"menuType\":3,\"menuName\":\"编辑\",\"routeName\":\"edit\",\"routePath\":\"\",\"orderNum\":2,\"iconType\":1,\"hideInMenu\":false,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":43}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:30:00');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (21, 2, 'admin', '新增', '菜单管理', 'POST', '', '{\"parentId\":41,\"menuType\":3,\"menuName\":\"删除\",\"routeName\":\"delete\",\"routePath\":\"\",\"orderNum\":2,\"iconType\":1,\"hideInMenu\":false,\"multiTab\":false,\"keepAlive\":false,\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":44}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 22:30:09');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (32, 2, 'admin', '新增', '用户管理', 'POST', '', '{\"username\":\"111\",\"password\":\"***\",\"gender\":\"1\",\"email\":\"1738248428@qq.com\",\"phone\":\"15651376329\",\"status\":\"1\",\"roleIds\":[1,2]}', '', '邮箱已存在', '{\"code\":40013,\"msg\":\"邮箱已存在\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '0', '2026-08-04 23:20:42');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (33, 2, 'admin', '新增', '用户管理', 'POST', '', '{\"username\":\"111\",\"password\":\"***\",\"gender\":\"1\",\"email\":\"1738248421@qq.com\",\"phone\":\"15651376329\",\"status\":\"1\",\"roleIds\":[1,2]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":9}}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-04 23:20:46');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (34, 2, 'admin', '重置', '用户管理', 'POST', '', '{\"id\":9}', '', '密码重置成功，默认密码: 123456', '{\"code\":200,\"msg\":\"密码重置成功，默认密码: 123456\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:10');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (35, 2, 'admin', '重置', '用户管理', 'POST', '', '{\"id\":8}', '', '密码重置成功，默认密码: 123456', '{\"code\":200,\"msg\":\"密码重置成功，默认密码: 123456\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:13');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (36, 2, 'admin', '删除', '用户管理', 'POST', '', '{\"id\":7}', '', '删除用户成功', '{\"code\":200,\"msg\":\"删除用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:15');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (37, 2, 'admin', '删除', '用户管理', 'POST', '', '{\"id\":8}', '', '删除用户成功', '{\"code\":200,\"msg\":\"删除用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:17');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (38, 2, 'admin', '删除', '用户管理', 'POST', '', '{\"id\":9}', '', '删除用户成功', '{\"code\":200,\"msg\":\"删除用户成功\"}', '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 0, '1', '2026-08-05 00:17:19');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (39, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"e2e_test01\",\"gender\":\"男\",\"email\":\"e2e_test01@example.com\",\"nickname\":\"端到端测试\",\"mobile\":\"13800138000\",\"status\":\"1\",\"remark\":\"e2e\",\"roleIds\":[2]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":10}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:00:55');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (40, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[10]}', '', '成功删除 1 个用户', '{\"code\":200,\"msg\":\"成功删除 1 个用户\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:01:05');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (41, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"e2e_u1\",\"gender\":\"男\",\"email\":\"e2e_u1@example.com\",\"nickname\":\"测试甲\",\"mobile\":\"13800138001\",\"status\":\"1\",\"roleIds\":[2]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":11}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:35');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (42, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":11,\"username\":\"e2e_u1\",\"gender\":\"女\",\"email\":\"e2e_u1@example.com\",\"nickname\":\"测试甲改\",\"mobile\":\"13900139001\",\"status\":\"0\",\"roleIds\":[1,2]}', '', '更新用户成功', '{\"code\":200,\"msg\":\"更新用户成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:46');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (43, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[11]}', '', '成功删除 1 个用户', '{\"code\":200,\"msg\":\"成功删除 1 个用户\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:46');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (44, 2, 'admin', '新增', '其他', 'POST', '', '{\"roleName\":\"端到端测试角色\",\"roleCode\":\"e2e_test_role\",\"roleDesc\":\"\",\"description\":\"\",\"remark\":\"e2e 测试用\",\"sort\":9,\"status\":\"1\"}', '', '创建角色成功', '{\"code\":200,\"msg\":\"创建角色成功\",\"data\":{\"roleId\":4,\"id\":4}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:58');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (45, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":4,\"roleName\":\"端到端测试角色改\",\"roleCode\":\"e2e_test_role\",\"roleDesc\":\"\",\"description\":\"\",\"remark\":\"改后描述\",\"sort\":8,\"status\":\"0\"}', '', '更新角色成功', '{\"code\":200,\"msg\":\"更新角色成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:58');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (46, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[4]}', '', '删除角色成功', '{\"code\":200,\"msg\":\"删除角色成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:02:58');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (47, 2, 'admin', '新增', '其他', 'POST', '', '{\"parentId\":0,\"menuType\":\"MENU\",\"menuName\":\"端到端测试菜单\",\"routeName\":\"e2e-test-menu\",\"path\":\"/e2e-test\",\"component\":\"@/views/e2e/index.vue\",\"sort\":99,\"orderNum\":0,\"icon\":\"flask-conical\",\"permission\":\"e2e:view\",\"frame\":\"0\",\"isCache\":\"1\",\"visible\":\"1\",\"status\":\"1\"}', '', '创建菜单成功', '{\"code\":200,\"msg\":\"创建菜单成功\",\"data\":{\"id\":200}}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:03:11');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (48, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[]}', '', '至少提供一个菜单ID', '{\"code\":400,\"msg\":\"至少提供一个菜单ID\"}', '', 'curl/8.7.1', 0, '0', '2026-09-16 00:03:11');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (49, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":200,\"menuName\":\"端到端测试菜单改\",\"routeName\":\"e2e-test-menu\",\"path\":\"/e2e-test-v2\",\"sort\":98,\"visible\":\"0\",\"status\":\"0\"}', '', '更新菜单成功', '{\"code\":200,\"msg\":\"更新菜单成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:03:23');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (50, 2, 'admin', '删除', '其他', 'POST', '', '{\"ids\":[200]}', '', '删除菜单成功', '{\"code\":200,\"msg\":\"删除菜单成功\"}', '', 'curl/8.7.1', 0, '1', '2026-09-16 00:03:23');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (51, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"3\",\"nickname\":\"234\",\"gender\":\"男\",\"mobile\":\"15615376325\",\"email\":\"1738248938@qq.com\",\"roleIds\":[3],\"status\":\"1\",\"remark\":\"；；；\"}', '', '用户名至少 2 位', '{\"code\":400,\"msg\":\"用户名至少 2 位\"}', '', 'axios/1.19.0', 0, '0', '2026-10-09 22:55:07');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (52, 2, 'admin', '新增', '其他', 'POST', '', '{\"username\":\"3444\",\"gender\":\"男\",\"email\":\"1738248938@qq.com\",\"nickname\":\"234\",\"mobile\":\"15615376325\",\"status\":\"1\",\"remark\":\"；；；\",\"roleIds\":[3]}', '', '创建用户成功', '{\"code\":200,\"msg\":\"创建用户成功\",\"data\":{\"id\":12}}', '', 'axios/1.19.0', 0, '1', '2026-10-09 22:55:11');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (53, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":3,\"roleName\":\"超级管理员\",\"roleCode\":\"super\",\"roleDesc\":\"\",\"description\":\"\",\"remark\":\"系统内置超级管理员，拥有全部菜单与按钮权限\",\"sort\":0,\"status\":\"1\"}', '', '更新角色成功', '{\"code\":200,\"msg\":\"更新角色成功\"}', '', 'axios/1.19.0', 0, '1', '2026-10-19 13:11:13');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (54, 2, 'admin', '新增', '其他', 'POST', '', '{\"roleId\":3,\"routeIds\":[13,14,15,16,17,18,19,2,20,21,3,22,23,4,24,80,81,82,83,84,85,25,90,91,92,93,94,26,100,101,102,5,27,28,29,30,31,32,6,33,34,7,35,36,37,38,39,40,41,42,43,44,45,46,47,48,8,49,50,51,52,53,54,9,55,56,57,58,59,60,61,62,63,64,65,66,10,67,68,69,71,72,73,110,70,1]}', '', '更新角色菜单成功', '{\"code\":200,\"msg\":\"更新角色菜单成功\"}', '', 'axios/1.19.0', 0, '1', '2026-10-19 13:11:13');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (55, 2, 'admin', '编辑', '其他', 'PUT', '', '{\"id\":3,\"roleName\":\"超级管理员\",\"roleCode\":\"super\",\"roleDesc\":\"\",\"description\":\"\",\"remark\":\"系统内置超级管理员，拥有全部菜单与按钮权限\",\"sort\":0,\"status\":\"1\"}', '', '更新角色成功', '{\"code\":200,\"msg\":\"更新角色成功\"}', '', 'axios/1.19.0', 0, '1', '2026-10-19 13:15:45');
+INSERT INTO `sys_operation_log` (`id`, `user_id`, `username`, `action`, `module`, `method`, `request_url`, `request_params`, `response_status`, `response_msg`, `response_body`, `ip_address`, `user_agent`, `execute_time`, `status`, `create_time`) VALUES (56, 2, 'admin', '新增', '其他', 'POST', '', '{\"roleId\":3,\"routeIds\":[18,19,2,20,21,3,22,23,4,24,80,81,82,83,84,85,25,90,91,92,93,94,26,100,101,102,5,27,28,29,30,31,32,6,33,34,7,35,36,37,38,39,40,41,42,43,44,45,46,47,48,8,49,50,51,52,53,54,9,55,56,57,58,59,60,61,62,63,64,65,66,10,67,68,69,71,72,73,110,70,1]}', '', '更新角色菜单成功', '{\"code\":200,\"msg\":\"更新角色菜单成功\"}', '', 'axios/1.19.0', 0, '1', '2026-10-19 13:15:45');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role`;
+CREATE TABLE `sys_role` (
+  `role_id` int NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(50) NOT NULL COMMENT '角色名称',
+  `role_code` varchar(50) NOT NULL COMMENT '角色编码（程序内唯一标识，用于前端路由 meta.roles）',
+  `role_sort` int NOT NULL DEFAULT '0' COMMENT '显示排序，数值越小越靠前',
+  `data_scope` char(1) NOT NULL DEFAULT '1' COMMENT '数据权限：1=全部 2=本部门 3=本部门及下级 4=本人 5=自定义',
+  `status` char(1) NOT NULL DEFAULT '1' COMMENT '状态：1=启用 0=禁用',
+  `is_system` char(1) NOT NULL DEFAULT '0' COMMENT '是否系统内置：1=是 0=否（内置不可删除）',
+  `description` varchar(500) DEFAULT NULL COMMENT '角色描述',
+  `create_by` varchar(50) DEFAULT '' COMMENT '创建人',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` varchar(50) DEFAULT '' COMMENT '更新人',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` char(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除：1=是 0=否',
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY `uk_role_code` (`role_code`),
+  UNIQUE KEY `uk_role_name` (`role_name`),
+  KEY `idx_role_status` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色表';
+
+-- ----------------------------
+-- Records of sys_role
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role` (`role_id`, `role_name`, `role_code`, `role_sort`, `data_scope`, `status`, `is_system`, `description`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (1, '管理员', 'admin', 1, '1', '1', '1', '系统内置管理员，可访问后台管理能力', 'system', '2026-08-04 00:13:45', 'admin', '2026-08-03 22:50:44', '0');
+INSERT INTO `sys_role` (`role_id`, `role_name`, `role_code`, `role_sort`, `data_scope`, `status`, `is_system`, `description`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (2, '普通用户', 'user', 3, '4', '1', '1', '系统内置普通用户，仅查看仪表板/结果页', 'system', '2026-08-04 00:13:45', 'admin', '2026-08-03 22:50:44', '0');
+INSERT INTO `sys_role` (`role_id`, `role_name`, `role_code`, `role_sort`, `data_scope`, `status`, `is_system`, `description`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (3, '超级管理员', 'super', 0, '1', '1', '1', '系统内置超级管理员，拥有全部菜单与按钮权限', 'system', '2026-08-04 00:13:45', 'admin', '2026-08-04 21:46:19', '0');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_menu`;
+CREATE TABLE `sys_role_menu` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `role_id` int NOT NULL COMMENT '角色ID',
+  `route_id` int NOT NULL COMMENT '菜单ID',
+  `create_by` varchar(50) DEFAULT '' COMMENT '创建人',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_role_route` (`role_id`,`route_id`),
+  KEY `idx_role_route_route_id` (`route_id`),
+  CONSTRAINT `fk_role_route_role` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`role_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_role_route_route` FOREIGN KEY (`route_id`) REFERENCES `sys_menu` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=863 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色菜单权限关联表';
+
+-- ----------------------------
+-- Records of sys_role_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (500, 2, 1, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (501, 2, 11, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (502, 2, 12, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (503, 2, 13, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (504, 2, 14, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (505, 2, 15, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (506, 2, 16, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (507, 2, 17, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (508, 2, 18, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (509, 2, 19, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (510, 2, 2, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (511, 2, 20, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (512, 2, 21, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (513, 2, 70, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (514, 1, 1, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (515, 1, 2, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (516, 1, 3, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (517, 1, 4, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (518, 1, 5, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (519, 1, 6, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (520, 1, 7, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (521, 1, 8, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (522, 1, 9, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (523, 1, 10, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (524, 1, 11, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (525, 1, 12, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (526, 1, 13, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (527, 1, 14, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (528, 1, 15, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (529, 1, 16, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (530, 1, 17, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (531, 1, 18, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (532, 1, 19, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (533, 1, 20, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (534, 1, 21, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (535, 1, 22, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (536, 1, 23, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (537, 1, 24, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (538, 1, 25, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (539, 1, 26, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (540, 1, 80, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (541, 1, 81, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (542, 1, 82, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (543, 1, 83, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (544, 1, 84, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (545, 1, 85, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (546, 1, 90, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (547, 1, 91, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (548, 1, 92, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (549, 1, 93, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (550, 1, 94, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (551, 1, 100, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (552, 1, 101, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (553, 1, 102, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (554, 1, 27, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (555, 1, 28, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (556, 1, 29, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (557, 1, 30, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (558, 1, 31, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (559, 1, 32, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (560, 1, 33, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (561, 1, 34, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (562, 1, 35, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (563, 1, 36, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (564, 1, 37, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (565, 1, 38, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (566, 1, 39, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (567, 1, 40, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (568, 1, 41, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (569, 1, 42, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (570, 1, 43, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (571, 1, 44, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (572, 1, 45, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (573, 1, 46, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (574, 1, 47, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (575, 1, 48, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (576, 1, 49, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (577, 1, 50, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (578, 1, 51, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (579, 1, 52, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (580, 1, 53, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (581, 1, 54, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (582, 1, 55, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (583, 1, 56, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (584, 1, 57, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (585, 1, 58, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (586, 1, 59, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (587, 1, 60, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (588, 1, 61, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (589, 1, 62, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (590, 1, 63, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (591, 1, 64, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (592, 1, 65, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (593, 1, 66, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (594, 1, 67, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (595, 1, 68, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (596, 1, 69, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (597, 1, 70, 'system', '2026-08-04 21:39:59');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (689, 1, 71, 'system', '2026-10-19 12:54:27');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (690, 1, 72, 'system', '2026-10-19 12:54:27');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (691, 1, 73, 'system', '2026-10-19 12:54:27');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (692, 1, 110, 'system', '2026-10-19 12:54:27');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (782, 3, 18, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (783, 3, 19, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (784, 3, 2, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (785, 3, 20, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (786, 3, 21, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (787, 3, 3, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (788, 3, 22, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (789, 3, 23, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (790, 3, 4, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (791, 3, 24, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (792, 3, 80, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (793, 3, 81, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (794, 3, 82, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (795, 3, 83, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (796, 3, 84, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (797, 3, 85, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (798, 3, 25, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (799, 3, 90, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (800, 3, 91, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (801, 3, 92, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (802, 3, 93, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (803, 3, 94, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (804, 3, 26, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (805, 3, 100, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (806, 3, 101, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (807, 3, 102, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (808, 3, 5, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (809, 3, 27, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (810, 3, 28, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (811, 3, 29, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (812, 3, 30, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (813, 3, 31, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (814, 3, 32, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (815, 3, 6, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (816, 3, 33, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (817, 3, 34, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (818, 3, 7, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (819, 3, 35, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (820, 3, 36, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (821, 3, 37, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (822, 3, 38, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (823, 3, 39, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (824, 3, 40, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (825, 3, 41, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (826, 3, 42, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (827, 3, 43, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (828, 3, 44, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (829, 3, 45, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (830, 3, 46, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (831, 3, 47, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (832, 3, 48, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (833, 3, 8, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (834, 3, 49, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (835, 3, 50, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (836, 3, 51, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (837, 3, 52, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (838, 3, 53, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (839, 3, 54, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (840, 3, 9, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (841, 3, 55, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (842, 3, 56, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (843, 3, 57, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (844, 3, 58, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (845, 3, 59, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (846, 3, 60, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (847, 3, 61, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (848, 3, 62, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (849, 3, 63, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (850, 3, 64, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (851, 3, 65, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (852, 3, 66, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (853, 3, 10, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (854, 3, 67, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (855, 3, 68, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (856, 3, 69, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (857, 3, 71, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (858, 3, 72, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (859, 3, 73, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (860, 3, 110, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (861, 3, 70, '', '2026-10-19 13:15:45');
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `route_id`, `create_by`, `create_time`) VALUES (862, 3, 1, '', '2026-10-19 13:15:45');
 COMMIT;
 
 -- ----------------------------
@@ -610,36 +658,6 @@ INSERT INTO `sys_tag` (`id`, `name`, `create_time`, `update_time`) VALUES ('tag3
 INSERT INTO `sys_tag` (`id`, `name`, `create_time`, `update_time`) VALUES ('tag4', '营养', '2024-06-27 18:26:44', '2024-06-27 18:26:44');
 INSERT INTO `sys_tag` (`id`, `name`, `create_time`, `update_time`) VALUES ('tag5', '旅行', '2024-06-27 18:26:44', '2024-06-27 18:26:44');
 INSERT INTO `sys_tag` (`id`, `name`, `create_time`, `update_time`) VALUES ('tag6', '爱好', '2024-06-27 18:26:44', '2024-06-27 18:26:44');
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_user_role
--- ----------------------------
-DROP TABLE IF EXISTS `sys_user_role`;
-CREATE TABLE `sys_user_role` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL COMMENT '用户ID',
-  `role_id` int NOT NULL COMMENT '角色ID',
-  `create_by` varchar(50) DEFAULT '' COMMENT '创建人',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_role` (`user_id`,`role_id`),
-  KEY `idx_user_role_role_id` (`role_id`),
-  CONSTRAINT `fk_user_role_role` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`role_id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_user_role_user` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户角色关联表';
-
--- ----------------------------
--- Records of sys_user_role
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (1, 1, 2, 'system', '2026-08-04 00:13:45');
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (2, 2, 1, 'system', '2026-08-04 00:13:45');
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (3, 2, 2, 'system', '2026-08-04 00:13:45');
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (4, 2, 3, 'system', '2026-08-04 00:13:45');
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (5, 5, 1, 'admin', '2026-05-27 23:50:03');
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (6, 6, 1, 'admin', '2026-05-28 00:05:17');
-INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (24, 12, 3, '', '2026-10-09 22:55:11');
 COMMIT;
 
 -- ----------------------------
@@ -686,30 +704,41 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (1, 'user', '$2b$10$Lsz9OdgKyuShCfzxQL7AcewmJKvQz47Xx.33E5MZCOA8a5GnSD1Hm', 'Alice', NULL, 'female', NULL, 'avatar1.png', 'alice@example.com', '15374536782', NULL, NULL, NULL, '1', '0', '::1', '2026-10-14 12:46:10', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoidXNlciIsInJvbGVJZCI6Miwicm9sZUlkcyI6WzJdLCJyb2xlQ29kZSI6InVzZXIiLCJyb2xlQ29kZXMiOlsidXNlciJdLCJyb2xlTmFtZSI6IuaZrumAmueUqOaItyIsInJvbGVOYW1lcyI6WyLmma7pgJrnlKjmiLciXSwic2Vzc2lvbklkIjoiMGRmM2M4MTEtNTc1Zi00M2E3LWFhMjAtN2M4MTcxYTgwNmIyIiwiaWF0IjoxNzkxOTgxOTcwLCJleHAiOjE3OTI1ODY3NzB9._zz49omlrhmownDc7Hdc8IiBCGkTEa4uESsC3jyOKVE', '0df3c811-575f-43a7-aa20-7c8171a806b2', '2026-10-21 20:46:10', '普通用户 Alice', 'system', '2026-08-04 00:13:45', 'system', '2026-10-14 12:46:10', '0');
-INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (2, 'admin', '$2b$10$Lsz9OdgKyuShCfzxQL7AcewmJKvQz47Xx.33E5MZCOA8a5GnSD1Hm', 'Bob', NULL, 'male', NULL, 'avatar2.png', 'bob@example.com', '15374536782', NULL, NULL, NULL, '1', '1', '::1', '2026-10-14 13:16:16', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlSWQiOjEsInJvbGVJZHMiOlsxLDIsM10sInJvbGVDb2RlIjoiYWRtaW4iLCJyb2xlQ29kZXMiOlsiYWRtaW4iLCJ1c2VyIiwic3VwZXIiXSwicm9sZU5hbWUiOiLnrqHnkIblkZgiLCJyb2xlTmFtZXMiOlsi566h55CG5ZGYIiwi5pmu6YCa55So5oi3Iiwi6LaF57qn566h55CG5ZGYIl0sInNlc3Npb25JZCI6ImEzNzdlMTU3LThmOTktNDdmNi05ZTk5LTVkOTFhY2VlOGE1NyIsImlhdCI6MTc5MTk4Mzc3NiwiZXhwIjoxNzkyNTg4NTc2fQ.Ru5alacsgUxZ0vH1tM2qhsHW-E7etS5f6nfhakMFI78', 'a377e157-8f99-47f6-9e99-5d91acee8a57', '2026-10-21 21:16:17', '系统内置管理员', 'system', '2026-08-04 00:13:45', 'system', '2026-10-14 13:16:16', '0');
-INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (5, 'werwer', '$2b$10$Rjh2GERNOJocRFHPuyfmouty3/89LJdl7UCDW2Fgdwoj8E8/KMv56', '12312', NULL, 'male', NULL, NULL, '1738248422@qq.com', '15651376329', NULL, NULL, NULL, '1', '0', NULL, NULL, NULL, NULL, NULL, '', 'admin', '2026-05-27 23:50:03', 'admin', '2026-05-27 23:50:03', '0');
+INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (1, 'user', '$2b$10$Lsz9OdgKyuShCfzxQL7AcewmJKvQz47Xx.33E5MZCOA8a5GnSD1Hm', 'Alice', NULL, 'female', NULL, 'avatar1.png', 'alice@example.com', '15374536782', NULL, NULL, NULL, '1', '0', NULL, NULL, NULL, NULL, NULL, '普通用户 Alice', 'system', '2026-08-04 00:13:45', 'system', '2026-10-19 13:26:58', '0');
+INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (2, 'admin', '$2b$10$Lsz9OdgKyuShCfzxQL7AcewmJKvQz47Xx.33E5MZCOA8a5GnSD1Hm', 'Bob', NULL, 'male', NULL, 'avatar2.png', 'bob@example.com', '15374536782', NULL, NULL, NULL, '1', '1', '::1', '2026-10-19 13:56:11', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlSWQiOjEsInJvbGVJZHMiOlsxLDIsM10sInJvbGVDb2RlIjoiYWRtaW4iLCJyb2xlQ29kZXMiOlsiYWRtaW4iLCJ1c2VyIiwic3VwZXIiXSwicm9sZU5hbWUiOiLnrqHnkIblkZgiLCJyb2xlTmFtZXMiOlsi566h55CG5ZGYIiwi5pmu6YCa55So5oi3Iiwi6LaF57qn566h55CG5ZGYIl0sInNlc3Npb25JZCI6IjEwMjZlNmVkLTJjMGUtNDMzNC04ZDczLWFlNDA0MWFhYTkzMyIsImlhdCI6MTc5MjQxODE3MSwiZXhwIjoxNzkzMDIyOTcxfQ.dzSmeajXUssGHhELfGCjtk3jQmhQuMULbhPTOu_Ok0Y', '1026e6ed-2c0e-4334-8d73-ae4041aaa933', '2026-10-26 21:56:11', '系统内置管理员', 'system', '2026-08-04 00:13:45', 'system', '2026-10-19 13:56:11', '0');
+INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (5, 'super', '$2b$10$Lsz9OdgKyuShCfzxQL7AcewmJKvQz47Xx.33E5MZCOA8a5GnSD1Hm', 'chengzhou', NULL, 'male', NULL, NULL, '1738248422@qq.com', '15651376329', NULL, NULL, NULL, '1', '1', '::1', '2026-10-19 13:43:33', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInVzZXJuYW1lIjoic3VwZXIiLCJyb2xlSWQiOjEsInJvbGVJZHMiOlsxXSwicm9sZUNvZGUiOiJhZG1pbiIsInJvbGVDb2RlcyI6WyJhZG1pbiJdLCJyb2xlTmFtZSI6IueuoeeQhuWRmCIsInJvbGVOYW1lcyI6WyLnrqHnkIblkZgiXSwic2Vzc2lvbklkIjoiOTA5NjQzYmYtMTJhOS00M2I1LTg0YmItYTg2OTc5NGUwNjQ0IiwiaWF0IjoxNzkyNDE3NDEzLCJleHAiOjE3OTMwMjIyMTN9.1DmqllhwSayFubehQvBv8mSJyDgCeQ6IuRY9Q4vkV-o', '909643bf-12a9-43b5-84bb-a869794e0644', '2026-10-26 21:43:33', '', 'admin', '2026-05-27 23:50:03', 'admin', '2026-10-19 13:43:33', '0');
 INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (6, '123', '$2b$10$3QPEF0fhZGZp7EjY0JqZZOBTut03FEp9NqfVC9yOKEBhLh8c8p2Zy', '123123', NULL, 'male', NULL, NULL, '1738248432@qq.com', '15651376322', NULL, NULL, NULL, '1', '0', NULL, NULL, NULL, NULL, NULL, '', 'admin', '2026-05-28 00:05:17', 'admin', '2026-05-28 00:05:17', '0');
 INSERT INTO `sys_user` (`id`, `username`, `password`, `nick_name`, `real_name`, `gender`, `age`, `avatar`, `email`, `phone`, `id_card`, `address`, `dept_id`, `status`, `is_system`, `last_login_ip`, `last_login_time`, `current_refresh_token`, `session_id`, `session_expire`, `remark`, `create_by`, `create_time`, `update_by`, `update_time`, `deleted`) VALUES (12, '3444', '$2b$10$DVt/4YEVPlctvYCb50qVHe.lkI8Rv/cScKadHsw3AI8EQyTKwMxKa', '234', NULL, 'male', NULL, NULL, '1738248938@qq.com', '15615376325', NULL, NULL, NULL, '1', '0', NULL, NULL, NULL, NULL, NULL, '', '', '2026-10-09 22:55:11', '', '2026-10-09 22:55:11', '0');
 COMMIT;
 
 -- ----------------------------
--- Table structure for migrations
+-- Table structure for sys_user_role
 -- ----------------------------
-DROP TABLE IF EXISTS `migrations`;
-CREATE TABLE `migrations` (
+DROP TABLE IF EXISTS `sys_user_role`;
+CREATE TABLE `sys_user_role` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `batch` int NOT NULL,
-  `executedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `role_id` int NOT NULL COMMENT '角色ID',
+  `create_by` varchar(50) DEFAULT '' COMMENT '创建人',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uk_user_role` (`user_id`,`role_id`),
+  KEY `idx_user_role_role_id` (`role_id`),
+  CONSTRAINT `fk_user_role_role` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`role_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_user_role_user` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户角色关联表';
 
 -- ----------------------------
--- Records of migrations
+-- Records of sys_user_role
 -- ----------------------------
 BEGIN;
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (1, 1, 2, 'system', '2026-08-04 00:13:45');
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (2, 2, 1, 'system', '2026-08-04 00:13:45');
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (3, 2, 2, 'system', '2026-08-04 00:13:45');
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (4, 2, 3, 'system', '2026-08-04 00:13:45');
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (5, 5, 1, 'admin', '2026-05-27 23:50:03');
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (6, 6, 1, 'admin', '2026-05-28 00:05:17');
+INSERT INTO `sys_user_role` (`id`, `user_id`, `role_id`, `create_by`, `create_time`) VALUES (24, 12, 3, '', '2026-10-09 22:55:11');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

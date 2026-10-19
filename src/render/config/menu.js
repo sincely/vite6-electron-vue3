@@ -73,16 +73,18 @@ export const menuItems = buildMenuItems(asyncRoutes)
  *   声明了 roles 的菜单项需与用户角色有交集才可见
  *   分组菜单的子项全部被过滤时，整个分组一并隐藏
  */
-function filterMenuByRoles(items, roles) {
+function filterMenuByRoles(items, roles, allowedPaths = null) {
   return items.reduce((acc, item) => {
     if (item.roles?.length && !item.roles.some((role) => roles.includes(role))) {
       return acc
     }
     if (item.children?.length) {
-      const children = filterMenuByRoles(item.children, roles)
+      const children = filterMenuByRoles(item.children, roles, allowedPaths)
       if (!children.length) return acc
       acc.push({ ...item, children })
     } else {
+      // allowedPaths 为 null（尚未拉取授权）时不做授权过滤
+      if (allowedPaths && !allowedPaths.has(item.route)) return acc
       acc.push(item)
     }
     return acc
@@ -91,7 +93,8 @@ function filterMenuByRoles(items, roles) {
 
 export const visibleMenuItems = computed(() => {
   const userStore = useUserStore()
-  return filterMenuByRoles(menuItems, userStore.roles)
+  const paths = Array.isArray(userStore.menuPaths) ? new Set(userStore.menuPaths) : null
+  return filterMenuByRoles(menuItems, userStore.roles, paths)
 })
 
 /**

@@ -73,7 +73,7 @@
 
 <script setup>
 defineOptions({ name: 'system-user' })
-import { ElMessage, ElMessageBox } from 'element-plus'
+// import { ElMessage } from 'element-plus'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { createUser, deleteUsers, getRoleList, getUserList, updateUser } from '@/api/system'
 
@@ -358,6 +358,7 @@ const handleDeleteByIds = async (ids) => {
   try {
     await ElMessageBox.confirm('删除后不可恢复，是否继续？', '提示', {
       type: 'warning',
+      customClass: 'modal-message-box',
       confirmButtonText: '确定',
       cancelButtonText: '取消'
     })

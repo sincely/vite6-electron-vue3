@@ -50,15 +50,45 @@
       </template>
     </AdvanceTable>
 
-    <ModalDialog v-model="dialogVisible" :title="dialogTitle" width="920px" @close="handleDialogClose">
+    <ModalDialog v-model="dialogVisible" :title="dialogTitle" width="760px" @close="handleDialogClose">
       <AdvanceForm
         ref="formRef"
         v-model="formModel"
         :schemas="formSchemas"
         :is-edit="true"
-        :form-props="{ labelWidth: '100px' }"
+        :form-props="{ labelWidth: '90px' }"
         :col-props="{ xl: 12, lg: 12, md: 12 }"
-      />
+      >
+        <template #menuTree>
+          <div class="menu-tree-panel">
+            <div class="menu-tree-toolbar">
+              <span class="menu-tree-count">已选 {{ checkedCount }} 项</span>
+            </div>
+            <el-tree
+              :key="treeKey"
+              ref="menuTreeRef"
+              v-loading="menuTreeLoading"
+              class="menu-tree"
+              node-key="id"
+              show-checkbox
+              :data="menuTree"
+              :props="{ label: 'menuName', children: 'children' }"
+              :default-checked-keys="initialCheckedKeys"
+              :expand-on-click-node="false"
+              @check="updateCheckedCount"
+            >
+              <template #default="{ data }">
+                <span class="menu-node">
+                  <span class="menu-node-label">{{ data.menuName }}</span>
+                  <el-tag v-if="data.menuType === 'BUTTON'" size="small" type="warning" effect="plain">按钮</el-tag>
+                  <el-tag v-else-if="data.menuType === 'DIR'" size="small" type="info" effect="plain">目录</el-tag>
+                  <el-tag v-else size="small" effect="plain">菜单</el-tag>
+                </span>
+              </template>
+            </el-tree>
+          </div>
+        </template>
+      </AdvanceForm>
 
       <template #footer>
         <el-button @click="handleDialogClose">取消</el-button>
@@ -70,9 +100,19 @@
 
 <script setup>
 defineOptions({ name: 'system-role' })
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { Edit, Delete } from '@element-plus/icons-vue'
-import { createRole, deleteRoles, getRoleList, updateRole } from '@/api/system'
+import {
+  createRole,
+  deleteRoles,
+  getMenuList,
+  getRoleList,
+  getRoleMenuIds,
+  updateRole,
+  updateRoleMenuIds
+} from '@/api/system'
+import { useUserStore } from '@/store/modules/user'
+
+const userStore = useUserStore()
 
 const tableRef = ref()
 const formRef = ref()
@@ -80,16 +120,51 @@ const dialogVisible = ref(false)
 const isEdit = ref(false)
 const selectedIds = ref([])
 
-const permissionOptions = [
-  { label: '用户查看', value: 'system:user:view' },
-  { label: '用户新增', value: 'system:user:create' },
-  { label: '用户编辑', value: 'system:user:update' },
-  { label: '用户删除', value: 'system:user:delete' },
-  { label: '角色查看', value: 'system:role:view' },
-  { label: '角色编辑', value: 'system:role:update' },
-  { label: '菜单查看', value: 'system:menu:view' },
-  { label: '菜单编辑', value: 'system:menu:update' }
-]
+const menuTreeRef = ref()
+const menuTree = ref([])
+const menuTreeLoading = ref(false)
+const treeKey = ref(0)
+const initialCheckedKeys = ref([])
+const checkedCount = ref(0)
+
+// 只回填叶子节点，避免父节点把子节点全部勾选
+const collectLeafIds = (nodes, idSet, result = []) => {
+  nodes.forEach((node) => {
+    if (node.children?.length) collectLeafIds(node.children, idSet, result)
+    else if (idSet.has(node.id)) result.push(node.id)
+  })
+  return result
+}
+
+const getSelectedMenuIds = () => {
+  const tree = menuTreeRef.value
+  if (!tree) return initialSelectedIds.value
+  return [...tree.getCheckedKeys(), ...tree.getHalfCheckedKeys()]
+}
+
+const initialSelectedIds = ref([])
+
+const updateCheckedCount = () => {
+  checkedCount.value = menuTreeRef.value ? menuTreeRef.value.getCheckedKeys().length : 0
+}
+
+const applyCheckedKeys = async (ids) => {
+  initialSelectedIds.value = ids
+  initialCheckedKeys.value = collectLeafIds(menuTree.value, new Set(ids))
+  treeKey.value += 1
+  await nextTick()
+  updateCheckedCount()
+}
+
+const loadMenuTree = async () => {
+  menuTreeLoading.value = true
+  try {
+    const res = await getMenuList({})
+    menuTree.value = res.rows || []
+  } finally {
+    menuTreeLoading.value = false
+  }
+}
 
 const searchParams = reactive({
   roleName: '',
@@ -166,9 +241,7 @@ const createDefaultForm = () => ({
   id: undefined,
   roleName: '',
   roleCode: '',
-  sort: 1,
   status: '1',
-  permissions: ['system:user:view', 'system:role:view', 'system:menu:view'],
   remark: ''
 })
 
@@ -190,15 +263,6 @@ const formSchemas = computed(() => [
     rules: [{ required: true, message: '请输入角色编码', trigger: 'blur' }]
   },
   {
-    label: '显示顺序',
-    prop: 'sort',
-    type: 'number',
-    componentProps: {
-      min: 1,
-      max: 999
-    }
-  },
-  {
     label: '状态',
     prop: 'status',
     type: 'switch',
@@ -210,22 +274,21 @@ const formSchemas = computed(() => [
     }
   },
   {
-    label: '权限配置',
-    prop: 'permissions',
-    type: 'checkbox-group',
-    // colProps: { span: 24 },
-    options: permissionOptions
-  },
-  {
     label: '备注',
     prop: 'remark',
     type: 'textarea',
-    // colProps: { span: 12 },
+    colProps: { span: 24 },
     componentProps: {
-      rows: 4,
+      rows: 2,
       maxlength: 200,
       showWordLimit: true
     }
+  },
+  {
+    label: '菜单权限',
+    prop: 'menuTree',
+    slot: 'menuTree',
+    colProps: { span: 24 }
   }
 ])
 
@@ -243,20 +306,20 @@ const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map((item) => item.id)
 }
 
-const handleCreate = () => {
+const handleCreate = async () => {
   isEdit.value = false
   formModel.value = createDefaultForm()
   dialogVisible.value = true
+  await loadMenuTree()
+  await applyCheckedKeys([])
 }
 
-const handleEdit = (row) => {
+const handleEdit = async (row) => {
   isEdit.value = true
-  formModel.value = {
-    ...createDefaultForm(),
-    ...row,
-    permissions: [...(row.permissions || [])]
-  }
+  formModel.value = { ...createDefaultForm(), ...row }
   dialogVisible.value = true
+  const [, menuIds] = await Promise.all([loadMenuTree(), getRoleMenuIds({ roleId: row.id })])
+  await applyCheckedKeys(menuIds || [])
 }
 
 const handleDialogClose = () => {
@@ -268,13 +331,21 @@ const handleSubmit = async () => {
   const valid = await formRef.value?.validate()
   if (!valid) return
 
+  const menuIds = [...getSelectedMenuIds()]
+  // 只提交必要字段：行数据里的嵌套响应式对象（如 routeIds）无法经 IPC 克隆
+  const { id, roleName, roleCode, sort, status, remark } = formModel.value
+  const payload = { id, roleName, roleCode, sort, status, remark }
+  let roleId = id
   if (isEdit.value) {
-    await updateRole(formModel.value)
-    ElMessage.success('角色信息已更新')
+    await updateRole(payload)
   } else {
-    await createRole(formModel.value)
-    ElMessage.success('角色创建成功')
+    const created = await createRole(payload)
+    roleId = created?.roleId ?? created?.id
   }
+  await updateRoleMenuIds({ roleId, routeIds: menuIds })
+  // 刷新当前用户权限，侧边栏立即按新授权显示
+  await userStore.getUserInfoAction()
+  ElMessage.success(isEdit.value ? '角色信息已更新' : '角色创建成功')
 
   dialogVisible.value = false
   tableRef.value?.getList()
@@ -283,7 +354,10 @@ const handleSubmit = async () => {
 const handleDeleteByIds = async (ids) => {
   if (!ids.length) return
   await ElMessageBox.confirm('删除角色后无法恢复，是否继续？', '提示', {
-    type: 'warning'
+    type: 'warning',
+    customClass: 'modal-message-box',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消'
   })
   await deleteRoles({ ids })
   ElMessage.success('删除成功')
@@ -335,6 +409,43 @@ const handleBatchDelete = () => {
   .role-name-text {
     font-weight: 600;
     color: var(--color-text-primary);
+  }
+}
+
+.menu-tree-panel {
+  width: 100%;
+
+  .menu-tree-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .menu-tree-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  .menu-tree {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 120px;
+    max-height: 280px;
+    padding: 8px 12px;
+    overflow: auto;
+    background: var(--el-fill-color-blank);
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 8px;
+  }
+
+  .menu-node {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
   }
 }
 

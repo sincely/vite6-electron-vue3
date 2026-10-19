@@ -2,6 +2,12 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由
+// ElMessageBox 基础样式兜底：confirm 等命令式组件只能 JS 引入，而手动
+// `import { ElMessageBox } from 'element-plus'` 只带 JS 不带样式（unplugin
+// 的样式注入仅对未手动导入的标识符生效），各页面手动导入导致基础样式缺失。
+// 此处全局引入其样式链（含 button/input/overlay/base），自定义外观见
+// styles/message-box.scss（在后面的 index.scss 中加载，覆盖基础样式）。
+// import 'element-plus/es/components/message-box/style/index'
 import '@/styles/index.scss' // 全局样式
 import '@/plugins/iconify' // Iconify 离线图标
 import { setupIcon } from './plugins'

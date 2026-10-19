@@ -99,17 +99,17 @@ const accounts = [
     desc: '超级管理员，持有通配权限 *:*:*，可访问所有页面与全部按钮。'
   },
   {
-    username: 'editor',
+    username: 'super',
     password: '123456',
-    name: '运营编辑',
-    roles: ['editor'],
+    name: '超级管理员',
+    roles: ['super'],
     color: 'var(--color-violet)',
-    desc: '内容运营角色，持有新增 / 编辑 / 查看权限，无删除与导出权限。'
+    desc: '超级管理员，持有通配权限 *:*:*，可访问所有页面与全部按钮。'
   },
   {
     username: 'user',
     password: '123456',
-    name: '测试用户',
+    name: '普通用户',
     roles: ['user'],
     color: 'var(--color-teal)',
     desc: '普通访客角色，仅持有查看权限，受限页面在菜单中不可见。'

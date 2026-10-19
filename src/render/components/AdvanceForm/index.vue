@@ -403,8 +403,13 @@ const getPlaceholder = (item) => {
 
 const validate = async (callback) => {
   if (!formRef.value) return false
-  const result = await formRef.value.validate(callback)
-  return result
+  try {
+    return await formRef.value.validate(callback)
+  } catch {
+    // el-form 校验失败时以 reject 抛出字段错误（行内提示已展示），
+    // 统一转为 false，避免调用方 await 时产生未捕获的 Promise 异常
+    return false
+  }
 }
 
 const validateField = async (props) => {

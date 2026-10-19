@@ -89,7 +89,9 @@ const ICON_PLAN = {
       'mouse-pointer-click', // 体验问题
       'gauge', // 性能问题
       'ellipsis', // 其他
-      'send' // 提交反馈
+      'send', // 提交反馈
+      // 系统监控菜单
+      'activity' // 系统监控（一级菜单）
     ]
   },
   ri: {

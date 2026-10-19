@@ -95,9 +95,9 @@ const loading = ref(false)
 
 // vben MOCK_USER_OPTIONS：快速选择账号（与 mock 后端用户一致）
 const MOCK_ACCOUNTS = [
-  { label: '超级管理员', value: 'admin' },
-  { label: '运营编辑', value: 'editor' },
-  { label: '测试用户', value: 'user' }
+  { label: '超级管理员', value: 'super' },
+  { label: '管理员', value: 'admin' },
+  { label: '普通用户', value: 'user' }
 ]
 
 const form = reactive({
@@ -130,12 +130,8 @@ const handleAccountChange = (value) => {
 }
 
 onMounted(() => {
-  if (localUsername) {
-    form.username = localUsername
-  } else {
-    form.selectAccount = 'admin'
-    handleAccountChange('admin')
-  }
+  form.selectAccount = 'admin'
+  handleAccountChange('admin')
 })
 
 const handleSubmit = async () => {
