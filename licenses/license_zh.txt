@@ -1,52 +1,52 @@
-This project is issued based on the Apache License 2.0 license. The following agreements are supplemental to the Apache License 2.0. In the event of a conflict, the following agreements shall prevail.
+lightning 桌面端软件许可协议与隐私说明
 
-DEFINITIONS:
+本协议是您与 lightning 项目之间关于「lightning 桌面端」软件（以下称"本应用"）的法律协议。安装或使用本应用即表示您已阅读并同意本协议全部条款；若不同意，请停止使用并卸载本应用。
 
-"This Project" refers to the LX Music Desktop Edition (aka lx-music-desktop) project. "User" refers to the user who signed this agreement. "Official Music Streaming Service" refers to collectively the official streaming service corresponding to the music source. "Copyrighted Data" refers to data including, but not limited to, pictures, audio, names, etc., for which others own the copyright.
+一、词语约定
+本协议中的"本项目"指 lightning 桌面管理端项目；"使用者"指签署本协议并使用本应用的人员；"管理端服务"指与本应用配套的后端服务，负责账号、权限与审计数据的存储与校验；"用户数据目录"指本应用在本机存放配置与凭证的系统目录。
 
-1. Data Source
+二、授权范围
+1. 本应用授权使用者在所属单位内部业务管理场景中使用，包括账号管理、角色与菜单授权、系统监控等桌面端功能。
+2. 未经许可，使用者不得对本应用进行逆向工程、反编译，不得删除或遮挡版权声明，不得将本应用用于商业转售或提供予第三方运营。
+3. 本应用为免费内部使用版本，按"现状"提供，不附带任何形式的明示或默示担保。
 
-1.1 The principle of the online data sources of the various official music streaming services of this project is to draw data from its open servers (the same as the data obtained in the unlogged-in state in the official music streaming service app). After simply screening and merging the data, this project is responsible for the legitimacy and accuracy of the data.
+三、我们收集的信息
+本应用作为后台管理工具，仅围绕账号与安全审计收集必要信息：
+1. 账户信息：用户名、昵称、手机号、邮箱、所属角色及账号状态。以上信息由所属单位管理员录入，用于登录与权限控制。
+2. 安全与审计日志：登录记录、操作日志与在线会话信息，含 IP 地址、浏览器与操作系统特征、登录/操作时间。用于身份核验、异常登录提醒（如异地登录、账号被踢下线）与安全追责。
+3. 运行信息：应用版本号与更新检查请求。用于自动更新与版本管理，不包含个人操作内容。
 
-1.2 The ability of this project itself does not obtain certain audio data. The online audio data source used in this project comes from the online link provided by the "API" selected in the software settings. For example, when playing a song, this project only transmits information such as the song title, artist, and other information to the "API". If the "API" returns a link, this project will think that this is the audio data of the song for use, but as for whether this is the correct audio data, this project cannot verify its accuracy. So, in the process of using this project, there may be a problem that the audio you want to play does not correspond to the audio you actually play, or you cannot play it.
+四、本地存储与凭证安全
+1. 登录令牌保存在本机用户数据目录，用于维持登录状态与免密刷新，请勿拷贝至他人设备。
+2. 锁屏密码仅以不可逆哈希形式存储在本机，任何人（包括管理员）均无法还原明文。
+3. 主题、开机自启等应用偏好仅保存在本机，不上传服务端。
+4. 退出登录或卸载本应用会清除上述本地凭证与偏好。
 
-1.3 Data in this project other than official music streaming service (such as lists in "Your Library") comes from the user's local system or a synchronization service that the user connected to. This project is not responsible for the legality and accuracy of this data.
+五、数据用途
+收集的信息仅用于：身份验证与会话管理、基于角色的访问控制、安全审计与风险提示、系统运行维护。我们不会将上述信息用于协议约定以外的任何目的。
 
-2. Copyrighted Data
+六、存储与传输
+1. 账户与日志数据存储于所属单位部署的管理端服务数据库中。
+2. 本应用与管理端服务之间的请求经后端接口传输；请确认所属单位已按其安全规范为服务配置加密通道。
+3. 自动更新仅向更新服务发送应用版本号以判断是否有新版本。
 
-2.1 During the process of using this project, copyrighted data may be generated. For this copyrighted data, this project does not have their ownership. In order to avoid infringement, users must remove copyrighted data generated during the process of using this project ** within  24 hours **.
+七、共享与披露
+除以下情形外，我们不会向任何第三方提供、出售或共享您的信息：
+1. 获得您的明确同意；
+2. 法律法规、监管或司法机关的强制性要求；
+3. 所属单位基于内部安全审计制度的调取。
 
-3. Alias of Music Streaming Service
+八、您的权利
+1. 您可在"个人中心"查看并更正昵称、手机号、邮箱等个人资料。
+2. 您可联系系统管理员查询、导出或删除与您账号相关的审计记录，以及注销账号。
+3. 您可随时退出登录以清除本机令牌；卸载应用即可清理本机全部用户数据。
 
-3.1 The official music streaming service alias within this project is a term used within this project to refer to the official music streaming service and does not contain malicious intent. If the operator of the official music streaming service feels it is inappropriate, you can contact this project to request changes or removals.
+九、协议变更
+本协议如有重大变更，新版本应用将在启动时提示您重新阅读并再次确认同意；在您同意新版本前，可选择停止使用并卸载本应用。
 
-4. Use of Resources
+十、其他
+1. 本协议的订立、执行与解释适用所属单位认可的法律。
+2. 本协议与第三方开源组件的许可相互独立，本应用所含开源组件的权利义务以其自身许可证为准。
+3. 若本协议任何条款被认定无效，不影响其余条款的效力。
 
-4.1 The parts used in this project include, but are not limited to, fonts, pictures, and other resources from the Internet. If infringement occurs, you can contact this project.
-
-5. Disclaimer
-
-5.1 The use of this project includes any direct, indirect, special, accidental, or result damage due to any nature caused by this agreement or use or inability to use this item (including but not limited to the loss of goodwill, stop work, computer, computer Damage compensation caused by faults or any or all other commercial damage or losses) is the responsibility of users.
-
-6. Use Restrictions
-
-6.1 This project is completely free and open source and is published on GitHub for the learning exchanges of technology for people all over the world. This project does not guarantee that the technology in this project may violate local laws and regulations.
-
-6.2 ** This project is prohibited in violation of local laws and regulations. ** The user is solely responsible for any violation of law caused by the use of this project that the user knows or does not know is not permitted by local law and regulations.
-
-7. Copyright Protection
-
-7.1 The operation of a music streaming service is not an easy task. Please respect copyrights and support the genuine.
-
-8. Non-commercial Nature
-
-8.1 This project is only used for exploring and research on technical feasibility and does not accept any business (including but not limited to advertising, etc.) cooperation and donations.
-
-9. Accepting Agreement
-
-9.1 If you use this project, it will represent you accept this agreement.
-
-* If the agreement is updated, you will not be notified separately. You can check it out by visiting the project address.
-* The content of this agreement is translated from the Chinese version of the agreement.
-
-By: 成舟
+如您对协议内容或个人数据处理有疑问，请联系所属单位的系统管理员。
