@@ -1,0 +1,274 @@
+/**
+ * @see https://www.electron.build/configuration/configuration
+ * JSON5 支持注释；此文件可按需添加行注释或块注释。
+ */
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "ichengzhou@icloud.com",
+  "asar": true,
+  "asarUnpack": [],
+  "productName": "lightning",
+  "copyright": "Copyright © 2024 dyy.dongyuanwai",
+  "directories": {
+    "output": "release/${version}",
+    "buildResources": "resources"
+  },
+  "removePackageScripts": true,
+  // 打包后钩子：mac 清理 Framework 语言文件；win 移除 dxcompiler/dxil.dll（DX12 着色器编译器）
+  "afterPack": "./scripts/afterPack.cjs",
+  "extraResources": [],
+  // 自定义 URL 协议：浏览器唤起应用（lightning://desktop/console?id=1）
+  // macOS → 写入 Info.plist CFBundleURLTypes；Windows → NSIS 安装时写入注册表
+  "protocols": [
+    {
+      "name": "lightning",
+      "schemes": [
+        "lightning"
+      ]
+    }
+  ],
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*",
+    // apps/ 是开发用的 mock 后端源码，生产环境通过 simulatedLoginService 绕过，不打包
+    "!apps/**",
+    "!dist/**/*.map",
+    "!dist-electron/**/*.map",
+    "!.vscode",
+    "!.zcode",
+    "!.husky",
+    "!.trae",
+    "!.qoder",
+    "!.github",
+    // packages/ 是构建工具配置（eslint/prettier/stylelint）和共享子包，运行时不引用
+    "!packages/**",
+    "!*.log",
+    "!dist/dev",
+    "!README.md",
+    "package.json",
+    "!docs/**",
+    "!node_modules/**/*.md",
+    "node_modules/**/*",
+    "!**/node_modules/*/{CHANGELOG.md,CHANGELOG,changelog.md,CHANGELOG.txt}",
+    "!**/node_modules/*/{README.md,README,readme.md,readme,Readme.md}",
+    "!**/node_modules/*/{LICENSE,LICENSE.md,license.md,LICENCE,licence}",
+    "!**/node_modules/*/{.eslintrc,.eslintrc.js,.eslintrc.json,.prettierrc}",
+    "!**/node_modules/**/{test,tests,__tests__,spec,specs,__mocks__,jest,jest.config.*}/**",
+    "!**/node_modules/**/{example,examples,demo,demos,sample,samples}/**",
+    "!**/node_modules/**/{docs,doc,documentation,website,gh-pages,.github}/**",
+    "!**/node_modules/**/*.{ts,d.ts,map,coffee,flow,gyp}",
+    "!**/node_modules/**/.{travis.yml,nycrc,npmignore,gitignore,gitattributes,editorconfig}",
+    "!**/node_modules/**/Makefile",
+    "!**/node_modules/**/{.bin}/**",
+    "!node_modules/.bin/**",
+    "!**/node_modules/**/*.{png,jpg,jpeg,gif,svg,bmp,ico,webp,tif,tiff}",
+    // 预构建 bundle（.min.js/.min.mjs/.min.cjs）运行时从不使用，Node.js 走 lib/src 入口
+    "!**/node_modules/**/*.min.js",
+    "!**/node_modules/**/*.min.mjs",
+    "!**/node_modules/**/*.min.cjs",
+    // CLI 脚本目录，运行时不 require
+    "!**/node_modules/**/bin/**",
+    "!**/node_modules/**/{*.min.js.map,*.min.css.map,*.map}",
+    "!**/node_modules/**/bench/**",
+    "!**/node_modules/**/benchmark/**",
+    "!**/node_modules/**/perf/**",
+    "!**/node_modules/**/fixtures/**",
+    "!**/node_modules/**/coverage/**",
+    "!**/node_modules/**/CONTRIBUTING*",
+    "!**/node_modules/**/HISTORY*",
+    "!**/node_modules/**/AUTHORS*",
+    "!**/node_modules/**/NOTICE*",
+    "!**/node_modules/**/*.md",
+    "!**/node_modules/**/*.txt",
+    "!**/node_modules/**/package-lock.json",
+    "!**/node_modules/**/yarn.lock",
+    "!**/node_modules/**/.nyc_output/**",
+    "!**/node_modules/**/.git/**",
+    "!**/node_modules/**/.gitignore",
+    "!**/node_modules/**/.npmignore",
+    "!**/node_modules/**/electron-builder/**",
+    "!**/node_modules/vite/**",
+    "!**/node_modules/rollup/**",
+    "!**/node_modules/esbuild/**",
+    "!**/node_modules/esbuild-*/**",
+    "!**/node_modules/typescript/**",
+    "!**/node_modules/eslint*/**",
+    "!**/node_modules/prettier/**",
+    "!**/node_modules/stylelint*/**",
+    "!**/node_modules/postcss*/**",
+    "!**/node_modules/sass/**",
+    "!**/node_modules/sharp/**",
+    "!**/node_modules/png-to-ico/**",
+    "!**/node_modules/@vitejs/**",
+    "!**/node_modules/vite-plugin-*/**",
+    "!**/node_modules/unplugin-*/**",
+    "!**/node_modules/vue-eslint-parser/**",
+    "!**/node_modules/husky/**",
+    "!**/node_modules/lint-staged/**",
+    "!**/node_modules/@commitlint/**",
+    "!**/node_modules/release-it/**",
+    "!**/node_modules/@release-it/**",
+    "!**/node_modules/conventional-changelog*/**",
+    "!**/node_modules/inquirer/**",
+    "!**/node_modules/directory-tree/**",
+    "!**/node_modules/treeify/**",
+    "!**/node_modules/esno/**",
+    "!**/node_modules/tsx/**",
+    "!**/node_modules/rimraf/**",
+    "!**/node_modules/concurrently/**",
+    "!**/node_modules/gsap/dist/gsap.map*",
+    "!**/node_modules/element-plus/docs/**",
+    "!**/node_modules/element-plus/*.d.ts",
+    "!**/node_modules/echarts/dist/ecStat/**"
+  ],
+  "mac": {
+    "icon": "resources/icons/mac/app.icns",
+    "darkModeSupport": true,
+    // ============ macOS 签名 + 公证 ============
+    // 前置条件（当前均缺失，需要准备）：
+    // 1. Apple 开发者账号（$99/年，developer.apple.com）
+    // 2. 生成 "Developer ID Application" 证书并导出 .p12
+    // 本地打包：钥匙串里有该证书即可自动签名；CI：设置环境变量
+    //   CSC_LINK（base64 的 .p12）+ CSC_KEY_PASSWORD（.p12 密码）
+    // "identity": null,        // ← 未填写：跳过签名（当前状态）。填 "Developer ID Application: YourName (TEAM_ID)" 启用签名
+    // 公证（notarization，macOS 10.15+ 分发必备，否则用户首次打开被 Gatekeeper 拦截）：
+    //   需在 appleid.apple.com 生成 App 专用密码，然后设置环境变量
+    //   APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID
+    // "notarize": true,        // ← 启用公证（需上面三个环境变量）
+    // "notarize": { "teamId": "YOUR_TEAM_ID" },  // 或 @electron/notarize 新版写法
+    // ============
+    // mac的lproj目录为下划线命名；electron-builder只清理应用级 lproj，
+    // framework 内的 locale.pak 由 scripts/afterPack.cjs 按同一白名单裁剪
+    "electronLanguages": [
+      "en",
+      "zh_CN"
+    ],
+    "target": [
+      {
+        "target": "dmg",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      },
+      {
+        "target": "zip",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icons/mac",
+        "to": "icons/mac",
+        "filter": [
+          "tray.png",
+          "tray@2x.png"
+        ]
+      }
+    ],
+    "artifactName": "${productName}-${platform}-${version}-${arch}.${ext}"
+  },
+  "linux": {
+    "icon": "resources/icons/linux",
+    // win/linux 的 locale 文件为连字符命名（zh-CN.pak），此处与文件名严格一致
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icons/linux",
+        "to": "icons/linux",
+        "filter": [
+          "tray.png",
+          "256.png",
+          "512.png"
+        ]
+      }
+    ],
+    "target": [
+      "AppImage"
+    ],
+    "artifactName": "${productName}-Linux-${version}.${ext}"
+  },
+  "win": {
+    // 生产环境注意：signAndEditExecutable 已删除！
+    // 原配置曾设为 false，该选项为 false 时 electron-builder 不仅跳过代码签名，
+    // 还会跳过 rcedit 对 exe 的图标/版本信息编辑，导致任务管理器显示 Electron 默认图标。
+    // 删除该字段（默认 true）后：未配置签名证书时仅跳过签名（打印警告），图标编辑正常执行。
+    //
+    // ============ Windows 代码签名 ============
+    // 前置条件（当前缺失，需要准备，三选一）：
+    // 1. OV 代码签名证书（.pfx 文件，数百~上千元/年）
+    // 2. EV 代码签名证书（USB token，SmartScreen 信誉积累快，~¥3000+/年）
+    // 3. Azure Trusted Signing（$9.99/月，微软托管，个人推荐）
+    // 方式一（证书文件）：取消下方 certificateFile/certificatePassword 注释，
+    //   把 .pfx 放到 build/cert.pfx，密码走环境变量 WIN_CERT_PASSWORD
+    // 方式二（CI 环境变量）：GitHub Secrets 设置
+    //   CSC_LINK（base64 的 .pfx）+ CSC_KEY_PASSWORD（密码），electron-builder 自动读取
+    // "certificateFile": "build/cert.pfx",
+    // "certificatePassword": "${env.WIN_CERT_PASSWORD}",
+    // "signingHashAlgorithms": ["sha256"],
+    // "rfc3161TimeStampServer": "http://timestamp.digicert.com",
+    // 签名后若用 electron-updater 自动更新，需保证证书的发布者名称与此处一致：
+    // "publisherName": "Your Company Name",
+    // ============
+    "icon": "resources/icons/win/app.ico",
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icons/win",
+        "to": "icons/win",
+        "filter": [
+          "app.ico",
+          "tray.ico",
+          "tray.png"
+        ]
+      }
+    ],
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "${productName}-${platform}-${version}-Setup.${ext}"
+  },
+  "publish": [
+    {
+      // 发布到泛型服务器
+      "provider": "generic",
+      // 发布到的URL
+      "url": "http://10.10.24.52:8089/electron-update"
+    }
+  ],
+  "compression": "maximum",
+  "nsis": {
+    // 不允许一键安装
+    "oneClick": false,
+    // 每台机器只安装一次，不是根据用户进行安装的
+    "perMachine": false,
+    // 是否允许用户选择安装目录
+    "allowToChangeInstallationDirectory": true,
+    // 是否创建桌面快捷方式
+    "createDesktopShortcut": true,
+    // 是否创建开始菜单快捷方式
+    "createStartMenuShortcut": true,
+    // 开始菜单快捷方式名称
+    "shortcutName": "lightning",
+    // 是否在安装完成后运行应用程序
+    "runAfterFinish": true,
+    // 安装脚本文件
+    "include": "./scripts/installer.nsh",
+    // 是否在卸载时删除应用程序数据目录
+    "deleteAppDataOnUninstall": true
+  }
+}
