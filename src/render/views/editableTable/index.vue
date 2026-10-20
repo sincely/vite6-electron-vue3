@@ -357,10 +357,10 @@ const createSeedData = () => [
 
 // 搜索栏配置（DynamicSearchBar）：姓名/角色/启用状态
 const searchItems = [
-  { prop: 'name', label: '姓名', type: 'input' },
+  { prop: 'name', label: '姓名:', type: 'input' },
   {
     prop: 'role',
-    label: '角色',
+    label: '角色:',
     type: 'select',
     component: {
       options: [
@@ -371,7 +371,7 @@ const searchItems = [
   },
   {
     prop: 'enabled',
-    label: '状态',
+    label: '状态:',
     type: 'select',
     component: {
       options: [

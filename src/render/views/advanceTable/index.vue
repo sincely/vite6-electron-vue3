@@ -263,10 +263,10 @@ const config = {
 
 // 搜索项
 const searchItems = [
-  { prop: 'name', label: '用户名', type: 'input' },
+  { prop: 'name', label: '用户名:', type: 'input' },
   {
     prop: 'department',
-    label: '部门',
+    label: '部门:',
     type: 'select',
     component: {
       placeholder: '选择部门',
@@ -283,7 +283,7 @@ const searchItems = [
   },
   {
     prop: 'status',
-    label: '状态',
+    label: '状态:',
     type: 'select',
     component: {
       placeholder: '选择状态',

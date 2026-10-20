@@ -166,10 +166,10 @@ const columns = [
 ]
 
 const searchItems = [
-  { prop: 'username', label: '用户名', type: 'input', permi: 'user:query' },
+  { prop: 'username', label: '用户名:', type: 'input', permi: 'user:query' },
   {
     prop: 'gender',
-    label: '性别',
+    label: '性别:',
     type: 'select',
     permi: 'user:query',
     component: {
@@ -179,12 +179,12 @@ const searchItems = [
       ]
     }
   },
-  { prop: 'nickname', label: '昵称', type: 'input', permi: 'user:query' },
-  { prop: 'mobile', label: '手机号', type: 'input', permi: 'user:query' },
-  { prop: 'email', label: '邮箱', type: 'input', permi: 'user:query' },
+  { prop: 'nickname', label: '昵称:', type: 'input', permi: 'user:query' },
+  { prop: 'mobile', label: '手机号:', type: 'input', permi: 'user:query' },
+  { prop: 'email', label: '邮箱:', type: 'input', permi: 'user:query' },
   {
     prop: 'status',
-    label: '用户状态',
+    label: '用户状态: ',
     type: 'select',
     permi: 'user:query',
     component: {

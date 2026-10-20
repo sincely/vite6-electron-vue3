@@ -221,11 +221,11 @@ const columns = [
 ]
 
 const searchItems = [
-  { prop: 'roleName', label: '角色名称', type: 'input', permi: 'role:query' },
-  { prop: 'roleCode', label: '角色编码', type: 'input', permi: 'role:query' },
+  { prop: 'roleName', label: '角色名称:', type: 'input', permi: 'role:query' },
+  { prop: 'roleCode', label: '角色编码:', type: 'input', permi: 'role:query' },
   {
     prop: 'status',
-    label: '角色状态',
+    label: '角色状态:',
     type: 'select',
     permi: 'role:query',
     component: {

@@ -182,10 +182,10 @@ const columns = [
 ]
 
 const searchItems = [
-  { prop: 'menuName', label: '菜单名称', type: 'input', permi: 'menu:query' },
+  { prop: 'menuName', label: '菜单名称:', type: 'input', permi: 'menu:query' },
   {
     prop: 'menuType',
-    label: '菜单类型',
+    label: '菜单类型:',
     type: 'select',
     permi: 'menu:query',
     component: {
@@ -197,7 +197,7 @@ const searchItems = [
   },
   {
     prop: 'status',
-    label: '菜单状态',
+    label: '菜单状态:',
     type: 'select',
     permi: 'menu:query',
     component: {

@@ -45,7 +45,7 @@ function handleReset() {
 }
 
 // 搜索项
-const searchItems = [{ prop: 'name', label: '用户名', type: 'input' }]
+const searchItems = [{ prop: 'name', label: '用户名:', type: 'input' }]
 
 const searchParams = reactive({
   name: ''
