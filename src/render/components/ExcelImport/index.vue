@@ -1,7 +1,7 @@
 <!-- 导入 Excel 文件 -->
 <template>
   <div class="inline-block">
-    <ElUpload :auto-upload="false" accept=".xlsx, .xls" :show-file-list="false" @change="handleFileChange">
+    <ElUpload :auto-upload="false" accept=".xlsx" :show-file-list="false" @change="handleFileChange">
       <ElButton type="primary">
         <slot>导入 Excel</slot>
       </ElButton>
@@ -10,33 +10,25 @@
 </template>
 
 <script setup>
-import * as XLSX from 'xlsx'
+import { readSheet } from 'read-excel-file/universal'
 
 defineOptions({ name: 'ExcelImport' })
 
 const emit = defineEmits(['import-success', 'import-error'])
 
-// Excel 导入工具函数
-function importExcel(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-
-    reader.onload = (e) => {
-      try {
-        const data = e.target?.result
-        const workbook = XLSX.read(data, { type: 'array' })
-        const firstSheetName = workbook.SheetNames[0]
-        const worksheet = workbook.Sheets[firstSheetName]
-        const results = XLSX.utils.sheet_to_json(worksheet)
-        resolve(results)
-      } catch (error) {
-        reject(error)
-      }
-    }
-
-    reader.onerror = (error) => reject(error)
-    reader.readAsArrayBuffer(file)
-  })
+// 读取首个工作表，首行作表头，转为对象数组（跳过空单元格与空行）
+async function importExcel(file) {
+  const [header = [], ...rows] = await readSheet(file)
+  return rows
+    .map((row) => {
+      const item = {}
+      header.forEach((key, index) => {
+        const value = row[index]
+        if (key != null && value != null && value !== '') item[key] = value
+      })
+      return item
+    })
+    .filter((item) => Object.keys(item).length > 0)
 }
 
 // 处理文件导入

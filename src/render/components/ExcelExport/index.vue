@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import * as XLSX from 'xlsx'
+import writeExcelFile from 'write-excel-file/universal'
 import FileSaver from 'file-saver'
 import { Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -35,7 +35,6 @@ defineOptions({ name: 'ExcelExport' })
  * @property {number} maxRows 最大导出行数
  * @property {boolean} showSuccessMessage 是否显示成功消息
  * @property {boolean} showErrorMessage 是否显示错误消息
- * @property {object} workbookOptions 工作簿配置
  */
 const props = defineProps({
   data: { type: Array, default: () => [] },
@@ -55,8 +54,7 @@ const props = defineProps({
   headers: { type: Object, default: () => ({}) },
   maxRows: { type: Number, default: 100000 },
   showSuccessMessage: { type: Boolean, default: true },
-  showErrorMessage: { type: Boolean, default: true },
-  workbookOptions: { type: Object, default: () => ({}) }
+  showErrorMessage: { type: Boolean, default: true }
 })
 
 const emit = defineEmits(['before-export', 'export-success', 'export-error', 'export-progress'])
@@ -132,17 +130,16 @@ const processData = (data) =>
   })
 
 /** 计算列宽度 */
-const calculateColumnWidths = (data) => {
+const calculateColumnWidths = (data, columns) => {
   if (data.length === 0) return []
 
   const sampleSize = Math.min(data.length, 100) // 只取前 100 行计算列宽
-  const columns = Object.keys(data[0])
 
   return columns.map((column) => {
     // 使用配置的列宽度
     const configWidth = Object.values(props.columns).find((col) => col.title === column)?.width
 
-    if (configWidth) return { wch: configWidth }
+    if (configWidth) return { width: configWidth }
 
     // 自动计算列宽度
     const maxLength = Math.max(
@@ -152,7 +149,7 @@ const calculateColumnWidths = (data) => {
 
     // 限制最小和最大宽度
     const width = Math.min(Math.max(maxLength + 2, 8), 50)
-    return { wch: width }
+    return { width }
   })
 }
 
@@ -164,42 +161,16 @@ const exportToExcel = async (data, filename, sheetName) => {
     const processedData = processData(data)
     emit('export-progress', 30)
 
-    const workbook = XLSX.utils.book_new()
-
-    // 设置工作簿属性
-    if (props.workbookOptions) {
-      workbook.Props = {
-        Title: filename,
-        Subject: '数据导出',
-        Author: props.workbookOptions.creator || 'Lightning',
-        Manager: props.workbookOptions.lastModifiedBy || '',
-        Company: '系统导出',
-        Category: '数据',
-        Keywords: 'excel,export,data',
-        Comments: '由系统自动生成',
-        CreatedDate: props.workbookOptions.created || new Date(),
-        ModifiedDate: props.workbookOptions.modified || new Date()
-      }
-    }
-
+    // 表头取所有行字段的并集，保持首次出现顺序
+    const headers = [...new Set(processedData.flatMap((row) => Object.keys(row)))]
+    const sheetData = [headers, ...processedData.map((row) => headers.map((key) => row[key] ?? ''))]
     emit('export-progress', 50)
 
-    const worksheet = XLSX.utils.json_to_sheet(processedData)
-    worksheet['!cols'] = calculateColumnWidths(processedData)
+    const columns = calculateColumnWidths(processedData, headers)
     emit('export-progress', 70)
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
+    const blob = await writeExcelFile(sheetData, { sheet: sheetName, columns }).toBlob()
     emit('export-progress', 85)
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
-      compression: true
-    })
-
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    })
 
     emit('export-progress', 95)
 
