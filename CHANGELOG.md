@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.5](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.4...v2.0.5) (2026-10-20)
+
+### ✨ Features
+
+*  zcode添加系统架构图技能 ([8805616](https://github.com/sincely/vite6-electron-vue3/commit/88056161509895ea4d858b6add62f938a6c26e9e))
+* 更新许可证文件，添加英文和中文版本的桌面端软件许可协议与隐私说明 ([f9a66ee](https://github.com/sincely/vite6-electron-vue3/commit/f9a66eec6045c3bc1573a2d635375bd9a6c44f5b))
+* 添加无用的svg和重构路由权限 ([6c6ccb2](https://github.com/sincely/vite6-electron-vue3/commit/6c6ccb2f8d1871365a70810dac9c68b1628179a9))
+
+### 🐞 Bug Fixes
+
+* 在搜索项标签中添加冒号以统一格式 ([81960a6](https://github.com/sincely/vite6-electron-vue3/commit/81960a6872e4578e41935a0ad92e1ec9480041b3))
+* 更新 .editorconfig 以在文件末尾自动插入空行 ([459a720](https://github.com/sincely/vite6-electron-vue3/commit/459a720ee4097a034f8fc7bc3ae1c558125890f7))
+
+### ♻️ Code Refactoring
+
+* 取代XLSX用write-excel-file ([054f3fa](https://github.com/sincely/vite6-electron-vue3/commit/054f3fa80b2c3f463653eca66ca298f383abd225))
+* 清理 profile、menu、role、user 和 treeTable 组件中未使用的导入 ([40a71aa](https://github.com/sincely/vite6-electron-vue3/commit/40a71aafd82c4fdfbc2cb812139af980c7defc22))
+
 ## [2.0.4](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.3...v2.0.4) (2026-10-17)
 
 ### ✨ Features
