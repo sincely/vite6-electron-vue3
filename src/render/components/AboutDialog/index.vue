@@ -34,8 +34,6 @@ const rows = ref([
 
 const subtitle = computed(() => buildInfo.value.name || '')
 const hasValue = computed(() => rows.value.some((row) => row.value))
-const logoUrl = '/app.png'
-
 const hydrate = async () => {
   if (!window.ipcRenderer?.invoke) return
   try {

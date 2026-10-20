@@ -71,7 +71,7 @@ const router = createRouter({
 const whiteList = ['/login', '/404']
 
 // 全局前置守卫
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   NProgress.start()
 
   // 设置页面标题
@@ -83,11 +83,11 @@ router.beforeEach(async (to, from, next) => {
   if (token) {
     if (to.path === '/login') {
       // 已登录，跳转到首页
-      next({ path: '/' })
       NProgress.done()
+      return { path: '/' }
     } else {
       if (userStore.userInfo) {
-        next()
+        return
       } else {
         try {
           // 获取用户信息
@@ -100,23 +100,23 @@ router.beforeEach(async (to, from, next) => {
           })
 
           // 重定向到同一个路由会导致死循环，所以需要判断
-          next({ ...to, replace: true })
+          return { ...to, replace: true }
         } catch (error) {
           // 用户信息获取失败，登出
           userStore.resetUserState()
           showToast('登录状态已过期，请重新登录', 'error')
-          next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
           NProgress.done()
+          return `/login?redirect=${encodeURIComponent(to.fullPath)}`
         }
       }
     }
   } else {
     // 未登录
     if (whiteList.includes(to.path)) {
-      next()
+      return
     } else {
-      next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
       NProgress.done()
+      return `/login?redirect=${encodeURIComponent(to.fullPath)}`
     }
   }
 })

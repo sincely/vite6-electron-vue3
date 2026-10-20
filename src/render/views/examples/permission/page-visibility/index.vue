@@ -74,8 +74,7 @@ const steps = [
     code: `const requiredRoles = to.meta?.roles
 if (requiredRoles?.length && !requiredRoles.some((r) => userStore.roles.includes(r))) {
   ElMessage.warning('当前角色无权访问该页面')
-  next({ path: '/desktop' })
-  return
+  return { path: '/desktop' }
 }`
   }
 ]

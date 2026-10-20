@@ -17,12 +17,6 @@
       <img src="@/assets/images/background.svg" alt="Lightning" class="brand-logo animate-float" />
       <h2 class="brand-title">开箱即用的企业级桌面应用模版</h2>
       <p class="brand-desc">工程化、高性能、跨端一致的 Electron 桌面应用解决方案</p>
-      <div class="brand-tags">
-        <span class="brand-tag">Electron</span>
-        <span class="brand-tag">Vue 3</span>
-        <span class="brand-tag">Vite 8</span>
-        <span class="brand-tag">Element Plus</span>
-      </div>
     </div>
   </div>
 </template>
@@ -166,24 +160,6 @@ html[data-theme='dark'] .brand-streak {
   margin-top: 10px;
   font-size: 14px;
   color: var(--color-text-muted);
-}
-
-.brand-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 24px;
-
-  .brand-tag {
-    padding: 5px 14px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary), transparent 90%);
-    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 75%);
-    border-radius: 999px;
-  }
 }
 
 // vben enter-x 入场动画

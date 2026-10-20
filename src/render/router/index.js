@@ -956,7 +956,7 @@ export default router
 // 免登录白名单（登录窗口加载 /login，无需 token 即可访问）
 const whiteList = ['/login', '/forgot-password']
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to) => {
   const appStore = useAppStore()
   if (appStore.showNProgress) {
     NProgress.start()
@@ -968,8 +968,7 @@ router.beforeEach(async (to, _from, next) => {
   if (hasToken) {
     // 已登录访问登录页（如登录窗口残留导航），重定向到工作台
     if (to.path === '/login') {
-      next({ path: '/desktop' })
-      return
+      return { path: '/desktop' }
     }
     // 有 token 但缺少用户信息（如持久化恢复后首次进入），拉取一次
     if (!userStore.userInfo) {
@@ -977,22 +976,17 @@ router.beforeEach(async (to, _from, next) => {
         await userStore.getUserInfoAction()
       } catch {
         userStore.resetUserState()
-        next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
-        return
+        return `/login?redirect=${encodeURIComponent(to.fullPath)}`
       }
     }
     // 页面可见性：声明了 meta.roles 的路由仅允许对应角色访问
     const requiredRoles = to.meta?.roles
     if (requiredRoles?.length && !requiredRoles.some((role) => userStore.roles.includes(role))) {
       ElMessage.warning('当前角色无权访问该页面')
-      next({ path: '/desktop' })
-      return
+      return { path: '/desktop' }
     }
-    next()
-  } else if (whiteList.includes(to.path)) {
-    next()
-  } else {
-    next(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
+  } else if (!whiteList.includes(to.path)) {
+    return `/login?redirect=${encodeURIComponent(to.fullPath)}`
   }
 })
 
