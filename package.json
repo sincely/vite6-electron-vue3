@@ -1,6 +1,6 @@
 {
   "name": "lightning",
-  "version": "2.0.5",
+  "version": "2.0.11",
   "type": "module",
   "main": "dist-electron/main/index.js",
   "engines": {
@@ -78,7 +78,7 @@
     "directory-tree": "3.5.1",
     "dmg-license": "1.0.11",
     "echarts": "5.6.0",
-    "electron": "43.7.7",
+    "electron": "42.2.0",
     "electron-builder": "25.1.8",
     "element-plus": "2.14.5",
     "eslint": "9.39.4",
