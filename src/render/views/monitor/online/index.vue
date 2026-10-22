@@ -145,7 +145,12 @@ const handleForceLogout = async (row) => {
     await ElMessageBox.confirm(
       `确认强制下线账号「${row.username}」的该会话？对方将在下一次请求时被退出登录。`,
       '强制下线',
-      { type: 'warning', confirmButtonText: '确定下线', cancelButtonText: '取消' }
+      {
+        type: 'warning',
+        confirmButtonText: '确定下线',
+        customClass: 'modal-message-box',
+        cancelButtonText: '取消'
+      }
     )
   } catch {
     return
