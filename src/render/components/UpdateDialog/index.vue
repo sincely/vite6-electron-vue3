@@ -438,7 +438,7 @@ const handleInstall = () => {
 
 /**
  * 点击"稍后更新"/"稍后重启"或关闭按钮
- * 下载由主进程执行，收起弹窗不会中断下载（窗口聚焦时可重新打开查看进度）
+ * 下载由主进程执行，收起弹窗不会中断下载（可通过标题栏更新入口重新打开查看进度）
  * 仅强制升级时禁止关闭，防止跳过强制升级
  */
 const handleLater = () => {
@@ -449,7 +449,8 @@ const handleLater = () => {
 /**
  * 点击"后台运行"/"最小化到后台"按钮
  * 收起弹窗并最小化窗口，下载在主进程后台继续；
- * 下载完成后主进程通过系统通知/Dock 弹跳提醒，窗口聚焦时自动弹出安装视图
+ * 下载完成后主进程通过系统通知/Dock 弹跳提醒（窗口在后台时）；
+ * 安装入口：标题栏"安装"按钮 / 托盘菜单"重启安装更新"，窗口聚焦时不再自动弹窗打扰
  */
 const handleBackground = () => {
   if (isForce.value) return // 强制升级不允许后台跳过
@@ -467,8 +468,6 @@ let onOpenDialog = null
 let onConfig = null
 let onForce = null
 let onRemoveLoading = null
-let onWindowFocus = null
-let onVisibilityChange = null
 
 // ─── 组件挂载：注册所有事件监听 ────────────────────────────────────────
 
@@ -634,20 +633,6 @@ onMounted(() => {
     visible.value = true
   }
 
-  /**
-   * 窗口重新聚焦/恢复可见时：
-   * 若更新已在后台下载完成且弹窗处于收起状态，自动弹出"下载完成"视图引导安装
-   * （覆盖两种场景：窗口聚焦 focus / 托盘恢复显示 visibilitychange）
-   */
-  onWindowFocus = () => {
-    if (updateDownloaded.value && !visible.value) {
-      visible.value = true
-    }
-  }
-  onVisibilityChange = () => {
-    if (!document.hidden) onWindowFocus()
-  }
-
   // 注册 IPC 事件监听（直接来自主进程）
   window.ipcRenderer.on('download-progress', onProgress)
   window.ipcRenderer.on('update-downloaded', onDownloaded)
@@ -658,9 +643,6 @@ onMounted(() => {
   window.addEventListener('update:open-dialog', onOpenDialog)
   window.addEventListener('update:config', onConfig)
   window.addEventListener('update:force', onForce)
-  // 注册窗口焦点/可见性监听（后台下载完成后自动弹出安装视图）
-  window.addEventListener('focus', onWindowFocus)
-  document.addEventListener('visibilitychange', onVisibilityChange)
 })
 
 // ─── 组件卸载：清理所有监听和定时器 ───────────────────────────────────
@@ -678,9 +660,6 @@ onUnmounted(() => {
   window.removeEventListener('update:open-dialog', onOpenDialog)
   window.removeEventListener('update:config', onConfig)
   window.removeEventListener('update:force', onForce)
-  // 移除窗口焦点/可见性监听
-  window.removeEventListener('focus', onWindowFocus)
-  document.removeEventListener('visibilitychange', onVisibilityChange)
   // 移除 loading 消息监听
   window.removeEventListener('message', onRemoveLoading)
 })
