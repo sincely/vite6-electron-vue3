@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.12](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.5...v2.0.12) (2026-10-22)
+
+### ✨ Features
+
+* zcode添加vue技能 ([f1ef14d](https://github.com/sincely/vite6-electron-vue3/commit/f1ef14db4dd7a2d300aa5fec45bcb5d162749d4d))
+* 优化更新器配置，开发环境下使用默认配置并调整更新服务地址逻辑 ([e1404b4](https://github.com/sincely/vite6-electron-vue3/commit/e1404b4fff7f397e36a4411f1ba628cf1e1ef1f6))
+* 实现 macOS 手动窗口拖拽，优化登录窗用户体验 ([3a8cc6d](https://github.com/sincely/vite6-electron-vue3/commit/3a8cc6d1be3b2828b33a4044d2b5954cd9242683))
+* 更新 PNPM 版本至 10.28.0，修复因缺少 packages 字段导致的问题 ([4b8e3ff](https://github.com/sincely/vite6-electron-vue3/commit/4b8e3ff5b12437c5d39ef9c04f0fb8d7512bcc05))
+* 更新下载提示信息，优化后台下载完成后的用户体验 ([a750733](https://github.com/sincely/vite6-electron-vue3/commit/a7507338c0846159847c5702760e8b5357dfe2dd))
+* 更新同步脚本以支持多平台更新清单，优化错误提示信息 ([b67c74e](https://github.com/sincely/vite6-electron-vue3/commit/b67c74edbba14ab02aa23b05a5c9aae451f39835))
+* 添加更新服务器相关文件和配置 ([f3ffd0d](https://github.com/sincely/vite6-electron-vue3/commit/f3ffd0ddd9aa8cb982127b281eb11ea4720f8279))
+* 添加权限变更监听器，优化用户权限管理和页面访问控制 ([7aaaff0](https://github.com/sincely/vite6-electron-vue3/commit/7aaaff033bd4806f36706da6d957f6cc791754c3))
+* 添加构建配置文件 build.json5 ([a056045](https://github.com/sincely/vite6-electron-vue3/commit/a0560450d7237eb5ddf16cec39cfc4154cfc18c9))
+* 添加自定义类到强制下线确认对话框，优化用户界面 ([a4a8c66](https://github.com/sincely/vite6-electron-vue3/commit/a4a8c66f96ffd4bd67b0c5f25172903d1f699bb2))
+* 移除更新按钮的悬停和点击效果样式 ([2e20c30](https://github.com/sincely/vite6-electron-vue3/commit/2e20c30519d0dd477e3f6a597dd8921945d8b274))
+* 调整更新对话框和设置对话框按钮的高度和内边距 ([6d5140e](https://github.com/sincely/vite6-electron-vue3/commit/6d5140ecde431e24074e595c6b6fcd553542472d))
+
+### 🔧 Chores
+
+* add pnpm workspace configuration to allow specific builds ([3dd8849](https://github.com/sincely/vite6-electron-vue3/commit/3dd884998a2ea4501b9d25da325e4fab79c12fc0))
+
 ## [2.0.5](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.4...v2.0.5) (2026-10-20)
 
 ### ✨ Features
