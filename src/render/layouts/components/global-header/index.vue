@@ -311,17 +311,6 @@ onBeforeUnmount(() => {
   border-radius: var(--radius-sm);
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   -webkit-app-region: no-drag;
-
-  &:hover {
-    color: var(--color-text-primary);
-    background-color: var(--color-bg-hover);
-    border-color: var(--color-border-light);
-  }
-
-  &:active {
-    background-color: var(--color-bg-active);
-    transform: scale(0.94);
-  }
 }
 
 .update-btn {
