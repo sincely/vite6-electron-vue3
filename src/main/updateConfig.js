@@ -1,4 +1,4 @@
-import { net } from 'electron'
+import { app, net } from 'electron'
 import logger from './log'
 
 // 默认配置（远端配置拉取失败时的兜底值，保证不影响现有功能）
@@ -61,6 +61,8 @@ export function setConfigChangeHandler(handler) {
  * 失败：保留上次成功配置；无缓存则用默认配置（不影响现有功能）
  */
 export async function refreshUpdateConfig() {
+  // 开发环境不拉取远端配置，使用默认配置
+  if (!app.isPackaged) return false
   const url = getConfigUrl()
   if (!url) {
     logger.warn('[update-config] 未配置更新服务地址，跳过远端配置拉取')
@@ -113,7 +115,7 @@ export function isVersionDisabled(version, disabledList = config.disabledClientV
 
 // 启动配置轮询（每 10 分钟拉取一次，感知远端配置变化）
 export function startConfigPolling() {
-  if (pollingTimer) return
+  if (!app.isPackaged || pollingTimer) return
   pollingTimer = setInterval(() => {
     refreshUpdateConfig()
   }, POLL_INTERVAL)

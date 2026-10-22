@@ -145,10 +145,11 @@ export const initUpdater = async (win) => {
   const autoUpdater = await getAutoUpdater() // 首次使用才加载 electron-updater
   autoUpdater.logger = logger // 设置日志记录器
   autoUpdater.autoDownload = getUpdateConfig().autoDownload // 默认按兜底配置
-  autoUpdater.forceDevUpdateConfig = process.env.NODE_ENV === 'development' // 强制开发环境更新
+  autoUpdater.forceDevUpdateConfig = !app.isPackaged // 未打包（开发）时强制启用更新器，不依赖 NODE_ENV
   autoUpdater.allowDowngrade = false // 禁用降级更新
 
-  if (UPDATE_URL) {
+  // 生产：使用 .env 中的远程地址；开发：不设置，由 electron-updater 读取根目录 dev-app-update.yml
+  if (app.isPackaged && UPDATE_URL) {
     autoUpdater.setFeedURL({
       provider: 'generic',
       url: UPDATE_URL
@@ -161,7 +162,10 @@ export const initUpdater = async (win) => {
     sendToRenderer('update-config', config)
   })
 
-  logger.info('更新服务地址：', UPDATE_URL || '使用 electron-builder 默认 publish 配置')
+  logger.info(
+    '更新服务地址：',
+    app.isPackaged ? UPDATE_URL || '使用 electron-builder 默认 publish 配置' : '开发环境使用 dev-app-update.yml'
+  )
   const eventNames = [
     'checking-for-update',
     'update-not-available',
