@@ -15,7 +15,9 @@ on:
 
 env:
   NODE_VERSION: '24.18.0'
-  PNPM_VERSION: '9'
+  # 必须用 pnpm 10：仓库的 pnpm-workspace.yaml 只有 allowBuilds（pnpm 10 特性），
+  # pnpm 9 会因缺少 packages 字段报 "packages field missing or empty"（setup-node 缓存步骤的 pnpm store path 即触发）
+  PNPM_VERSION: '10.28.0'
 
 jobs:
   prepare-release:
