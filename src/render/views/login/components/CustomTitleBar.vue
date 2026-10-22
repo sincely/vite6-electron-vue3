@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-title-bar" style="-webkit-app-region: drag">
+  <div class="custom-title-bar" :style="dragRegionStyle" @mousedown="onBarMouseDown">
     <div class="window-controls">
       <!-- vben 认证页布局切换：图标按钮 + 单选下拉菜单（居左 / 居中 / 居右） -->
       <el-dropdown
@@ -85,6 +85,40 @@ const minimizeWindow = () => {
 const closeWindow = () => {
   window.ipcRenderer.send('close-window')
 }
+
+// ─── 标题栏拖拽 ────────────────────────────────────────────────
+// macOS 不声明 -webkit-app-region: drag：原生拖拽区上的双击会触发 AppKit
+// zoom，把固定尺寸的登录窗甩到屏幕左下角（Electron 的 windowShouldZoom
+// 不检查 maximizable/resizable，v42/v43 直至 main 分支均未修复；详见主进程
+// windowManager.js 的 guardMacZoomJump 注释），改用手动拖拽后双击不再有任何
+// 系统动作，与 maximizable:false 的意图一致。
+// Windows/Linux 的双击最大化由 Electron 按 maximizable:false 正确拦截，
+// 保留原生拖拽区以获得系统级拖拽手感。
+const isMacOS = isMac()
+const dragRegionStyle = computed(() => (isMacOS ? {} : { '-webkit-app-region': 'drag' }))
+
+// 手动拖拽：mousedown 通知主进程开始轮询光标并平移窗口（见主进程
+// win-control.js 的 window-drag-start），mouseup / 窗口失焦时结束
+let stopDrag = null
+
+const onBarMouseDown = (e) => {
+  if (!isMacOS || e.button !== 0 || stopDrag) return
+  // 按钮区（布局切换/主题/最小化/关闭）上的 mousedown 不启动窗口拖拽
+  if (e.target.closest('.window-controls')) return
+  e.preventDefault()
+  window.ipcRenderer.send('window-drag-start')
+  stopDrag = () => {
+    window.ipcRenderer.send('window-drag-end')
+    window.removeEventListener('mouseup', stopDrag)
+    window.removeEventListener('blur', stopDrag)
+    stopDrag = null
+  }
+  window.addEventListener('mouseup', stopDrag)
+  window.addEventListener('blur', stopDrag)
+}
+
+// 组件卸载兜底结束拖拽，避免残留主进程轮询
+onBeforeUnmount(() => stopDrag?.())
 </script>
 
 <style lang="scss" scoped>
@@ -95,6 +129,9 @@ const closeWindow = () => {
   justify-content: flex-end;
   width: 100%;
   height: 40px;
+
+  // macOS 手动拖拽时避免标题栏上的双击/拖动选中文字
+  user-select: none;
   background-color: transparent;
 }
 

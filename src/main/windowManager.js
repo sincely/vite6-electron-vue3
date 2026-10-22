@@ -87,6 +87,7 @@ nativeTheme.on('updated', () => {
  * - 记录页面加载失败日志，并在首次失败时自动重载一次（规避冷启动偶发白屏/黑屏）
  * - 记录渲染进程崩溃日志
  * - ready-to-show 时显示窗口（autoShow=false 时跳过，由调用方控制显示时机）
+ * - macOS：挂载双击 zoom 跳变防护（仅对非 resizable 窗口生效）
  */
 const setupWindow = (win, { autoShow = true } = {}) => {
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -232,7 +233,10 @@ export function createLoginWindow({ skipSplash = false } = {}) {
     frame: false,
     resizable: false,
     center: true,
-    maximizable: false, // 禁止最大化，从而禁止双击标题栏扩大
+    // 禁止最大化（Windows/Linux 上同时禁止双击标题栏扩大；macOS 的双击
+    // 拖拽区 zoom 不受该选项控制：标题栏已改为手动拖拽从源头规避，splash
+    // 等剩余拖拽区由 guardMacZoomJump 兜底恢复位置）
+    maximizable: false,
     webPreferences: {
       preload, // 预加载脚本
       // 关闭 Node 集成：渲染进程通过 contextBridge 暴露的 window.ipcRenderer 调用主进程，
