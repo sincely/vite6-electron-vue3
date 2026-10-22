@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router' // 路由
+import { setupPermissionWatcher } from '@/router/permissionWatcher' // 权限变更监听（失权页面踢出）
 // ElMessageBox 基础样式兜底：confirm 等命令式组件只能 JS 引入，而手动
 // `import { ElMessageBox } from 'element-plus'` 只带 JS 不带样式（unplugin
 // 的样式注入仅对未手动导入的标识符生效），各页面手动导入导致基础样式缺失。
@@ -22,6 +23,9 @@ async function setupApp() {
   setupDirectives(app)
   app.use(store)
   app.use(router)
+  // 监听 roles/permissions 刷新：beforeEach 只拦新导航，
+  // 这里负责把"已停留但已失权"的页面退回工作台（需在 pinia 安装后调用）
+  setupPermissionWatcher(router)
 
   // persist插件在useAppStore()首次调用时同步从localStorage 恢复状态
   // 在mount前调用initTheme确保首次渲染时data-theme已正确设置

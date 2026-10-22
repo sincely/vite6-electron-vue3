@@ -17,6 +17,42 @@ import { useUserStore } from '@/store/modules/user'
 // 需要自动退回登录页的业务码：token 过期 / 账号被踢下线
 const AUTH_EXPIRED_CODES = new Set([1001, 1002])
 
+// 视为"权限被收回"的信号，触发本地权限缓存静默重拉：
+//   - HTTP 403：后端 authorize 中间件直接拒绝（响应体可能不带业务信封）
+//   - 业务码 40012（permissionDenied 权限不足）
+//   - 业务码 401（unAuthorized：authorize 中间件在用户已无任何角色时返回）
+// 注意：1001/1002（token 过期/被踢）不在此列，它们走 handleAuthExpired 登出流程
+const PERMISSION_DENIED_HTTP_STATUS = 403
+const PERMISSION_DENIED_CODES = new Set([401, 40012])
+
+// 节流：一次权限收回往往让页面上多个并发请求同时失败，只重拉一次用户信息；
+// 刷新请求本身（api/user.js getUserInfo）带 skipPermissionRefresh，避免自我触发
+const PERMISSION_REFRESH_THROTTLE = 5000
+let lastPermissionRefreshAt = 0
+let permissionRefreshInFlight = null
+
+/**
+ * 静默重拉用户信息（roles / permissions / menuPaths），带并发去重 + 节流。
+ * 拉取成功后 store 更新：菜单与按钮响应式收敛，失权的当前页面由
+ * router/permissionWatcher.js 负责踢出。失败（网络抖动等）静默忽略，
+ * 等下一个权限拒绝信号再试。
+ */
+function refreshPermissionsThrottled() {
+  if (permissionRefreshInFlight) return permissionRefreshInFlight
+  const now = Date.now()
+  if (now - lastPermissionRefreshAt < PERMISSION_REFRESH_THROTTLE) return Promise.resolve()
+  lastPermissionRefreshAt = now
+
+  const userStore = useUserStore()
+  permissionRefreshInFlight = userStore
+    .getUserInfoAction()
+    .catch(() => {})
+    .finally(() => {
+      permissionRefreshInFlight = null
+    })
+  return permissionRefreshInFlight
+}
+
 // 并发请求可能同时返回 1001，用标志位防止重复弹窗 + 重复切换窗口
 let isHandlingAuthExpired = false
 
@@ -119,6 +155,7 @@ function unwrapBusinessEnvelope(body) {
  * @param {number} [config.timeout]    超时时间（ms）
  * @param {string} [config.token]      显式覆盖 Bearer token（默认读 userStore.token）
  * @param {string} [config.requestId]  取消标识（不传时自动生成）
+ * @param {boolean} [config.skipPermissionRefresh] 收到 403/权限拒绝信号时不触发权限重拉（权限刷新接口自身使用）
  * @returns {Promise<any>} 业务本体（envelope 已剥层）
  */
 async function request(config = {}) {
@@ -138,6 +175,12 @@ async function request(config = {}) {
     requestId: config.requestId || genRequestId()
   })
 
+  // HTTP 403：权限中间件直接拒绝（响应体可能不带业务信封，unwrap 识别不到），
+  // 同样触发权限静默重拉，让前端缓存尽快与后端对齐
+  if (!config.skipPermissionRefresh && result?.code === PERMISSION_DENIED_HTTP_STATUS) {
+    refreshPermissionsThrottled()
+  }
+
   console.log('主进程返回消息体', result)
   try {
     return unwrapBusinessEnvelope(result?.data)
@@ -145,6 +188,11 @@ async function request(config = {}) {
     // token 过期 / 账号被踢：自动清除登录态并退回登录窗口
     if (AUTH_EXPIRED_CODES.has(err.businessCode)) {
       handleAuthExpired(err)
+    }
+    // 权限被收回（角色被移除 / 接口未授权）：静默重拉用户信息，
+    // 刷新后菜单、按钮自动收敛，失权的当前页面由 permissionWatcher 踢出
+    if (!config.skipPermissionRefresh && PERMISSION_DENIED_CODES.has(err.businessCode)) {
+      refreshPermissionsThrottled()
     }
     throw err
   }

@@ -956,6 +956,13 @@ export default router
 // 免登录白名单（登录窗口加载 /login，无需 token 即可访问）
 const whiteList = ['/login', '/forgot-password']
 
+// 冷启动静默刷新标记：user store 是 persist 的，重启应用后 userInfo/roles 会从
+// localStorage 恢复，守卫看到 userInfo 存在就不再拉取——后端期间调整的权限
+// （如移除角色）将永远不生效。因此首次已登录导航时在后台重拉一次用户信息，
+// 不阻塞本次导航（离线/网络抖动时继续沿用持久化数据）；刷新结果若导致当前
+// 页面失权，由 permissionWatcher 负责踢出，登录态失效由 request.js 兜底。
+let hasBootRefreshedUser = false
+
 router.beforeEach(async (to) => {
   const appStore = useAppStore()
   if (appStore.showNProgress) {
@@ -974,10 +981,16 @@ router.beforeEach(async (to) => {
     if (!userStore.userInfo) {
       try {
         await userStore.getUserInfoAction()
+        hasBootRefreshedUser = true
       } catch {
         userStore.resetUserState()
         return `/login?redirect=${encodeURIComponent(to.fullPath)}`
       }
+    } else if (!hasBootRefreshedUser) {
+      // 冷启动：userInfo 来自 persist 缓存，后台静默刷新一次（不 await），
+      // 失败时保持缓存数据可用，不打断用户
+      hasBootRefreshedUser = true
+      userStore.getUserInfoAction().catch(() => {})
     }
     // 页面可见性：声明了 meta.roles 的路由仅允许对应角色访问
     const requiredRoles = to.meta?.roles

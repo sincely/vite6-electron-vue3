@@ -10,10 +10,12 @@ export const login = (data) => {
 }
 
 // 获取用户信息（token 由 request.js 自动从 userStore 注入）
+// skipPermissionRefresh：本接口就是权限重拉的数据源，其 403/401 不再触发刷新，避免自我调用
 export const getUserInfo = () => {
   return request({
     url: '/user/info',
-    method: 'get'
+    method: 'get',
+    skipPermissionRefresh: true
   })
 }
 
