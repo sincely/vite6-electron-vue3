@@ -1532,8 +1532,8 @@ const handleClose = () => {
   gap: 8px;
   align-items: center;
   justify-content: center;
-  height: 32px;
-  padding: 0 22px;
+  height: 28px;
+  padding: 0 20px;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-bg-window);
@@ -1570,7 +1570,6 @@ const handleClose = () => {
     color: #fff;
     background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
     border-color: transparent;
-    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary), transparent 40%);
 
     &:hover {
       filter: brightness(1.08);

@@ -1011,8 +1011,8 @@ onUnmounted(() => {
   gap: 6px;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  padding: 0 18px;
+  height: 30px;
+  padding: 0 14px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1035,11 +1035,9 @@ onUnmounted(() => {
   &--confirm {
     color: #fff;
     background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
-    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary), transparent 40%);
 
     &:hover {
       filter: brightness(1.08);
-      box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary), transparent 30%);
       transform: translateY(-1px);
     }
 
