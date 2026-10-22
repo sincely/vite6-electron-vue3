@@ -1,0 +1,12 @@
+{
+  "name": "update-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "本地模拟 Electron 更新服务器（静态服务）",
+  "scripts": {
+    "sync": "node scripts/sync.js",
+    "serve": "npx --yes http-server ./public -p 8090 --cors -c-1",
+    "start": "node scripts/sync.js && npm run serve"
+  }
+}

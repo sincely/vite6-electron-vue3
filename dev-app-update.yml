@@ -1,3 +1,2 @@
-version: 1.0.2 # 比当前 package.json 版本号高（开发环境测试更新用）
 provider: generic
-url: http://10.10.24.52:8089/electron-update/
+url: http://127.0.0.1:8090/electron-update/
