@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.13](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.12...v2.0.13) (2026-10-23)
+
 ## [2.0.12](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.5...v2.0.12) (2026-10-22)
 
 ### ✨ Features
