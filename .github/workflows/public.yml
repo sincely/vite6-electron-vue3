@@ -47,7 +47,7 @@ jobs:
       - name: Bump version and create tag
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-        run: pnpm exec release-it ${{ github.event.inputs.version-type }} --ci --no-github.release
+        run: pnpm exec release-it ${{ github.event.inputs.version-type }} --ci --no-github.release --no-git.requireCommits
       - name: Export release metadata
         id: release_meta
         run: |

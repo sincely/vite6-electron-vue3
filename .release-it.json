@@ -6,7 +6,7 @@
     "requireCleanWorkingDir": true,
     "requireBranch": "main",
     "requireUpstream": true,
-    "requireCommits": true,
+    "requireCommits": false,
     "addUntrackedFiles": false,
     "push": true,
     "pushArgs": ["--follow-tags"]
