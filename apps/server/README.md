@@ -531,6 +531,38 @@ const createUser = async (user) => {
 | GET | `/api/auth/menus` | 获取当前用户菜单 | ✅ |
 | GET | `/api/auth/permissions` | 获取当前用户权限 | ✅ |
 
+**前端兼容接口 `GET /api/user/info`（或 `/api/user/getUserInfo`）的响应结构：**
+
+```jsonc
+{
+  "code": 200,
+  "msg": "获取用户信息成功",
+  "data": {
+    "userId": 5,
+    "userName": "super",
+    "roles": ["super"],             // 角色编码
+    "buttons": ["system:user:add"], // 按钮权限码
+    "menus": [                      // 树形菜单（sys_menu 层级结构）
+      {
+        "id": 1,
+        "parentId": 0,
+        "path": "/desktop",
+        "name": "home",
+        "component": "Layout",
+        "redirect": "/desktop",
+        "meta": { "title": "仪表板", "menuType": "DIR", "icon": "home", "order": 1 },
+        "children": [ /* 同构子节点 */ ]
+      }
+    ],
+    "menuPaths": ["/desktop", "/manage/user"]  // 扁平路径集合，供前端过滤本地静态菜单树
+  }
+}
+```
+
+- `menus`：后端 RBAC 数据（`sys_menu`）的**树形层级**，按 `parent_id` 归组、同级按 `sort` 排序。
+- `menuPaths`：同一批菜单的**扁平路径集合**。前端拥有带组件引用（`component: () => import(...)`）的静态路由树，
+  后端无法提供组件，因此后端只负责「哪些路径被授权」，前端用该集合过滤自己的树。两者同源，`menus` 是 `menuPaths` 的层级化表达。
+
 ### 用户管理接口
 
 | 方法 | 路径 | 说明 | 权限 |

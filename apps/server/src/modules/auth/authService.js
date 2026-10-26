@@ -397,13 +397,15 @@ export const frontendGetUserInfo = async (userId) => {
   // 权限码存储在 sys_menu.permission（如 system:user:add），menu_name 只是展示名
   const buttonCodes = [...new Set(buttons.map((b) => b.permission).filter(Boolean))]
 
-  // 仅返回角色已授权的菜单路径（不含按钮），前端据此展示侧边栏
+  // 仅返回角色已授权的菜单（不含按钮），前端据此展示侧边栏
   const grantedRows = await permissionService.findMenusByRoleId(roleIds)
-  const menuPaths = [
-    ...new Set(
-      grantedRows.filter((row) => String(row.menu_type).toUpperCase() !== 'BUTTON' && row.path).map((row) => row.path)
-    )
-  ]
+  const grantedMenus = grantedRows.filter((row) => String(row.menu_type).toUpperCase() !== 'BUTTON')
+
+  // 扁平路径集合：前端用它过滤自己那套带组件引用的静态菜单树
+  const menuPaths = [...new Set(grantedMenus.map((row) => row.path).filter(Boolean))]
+
+  // 树形菜单：后端 RBAC 数据（sys_menu）的层级结构
+  const menus = buildMenuTree(grantedMenus)
 
   return {
     success: true,
@@ -412,6 +414,7 @@ export const frontendGetUserInfo = async (userId) => {
       userName: currentUser.username,
       roles: roleCodes,
       buttons: buttonCodes,
+      menus,
       menuPaths
     }
   }

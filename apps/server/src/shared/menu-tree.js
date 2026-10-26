@@ -1,52 +1,76 @@
 /**
- * 规范化数据库菜单结构，转换为前端路由树节点格式。
- * 新表结构已将 meta JSON 拆分为独立列，不再需要 parseMeta。
- * @param {object} menu - 数据库菜单行
- * @returns {object} 前端路由树节点
+ * 菜单树构建
+ *
+ * 把 sys_menu 的扁平行转换成前端可用的树形结构。
+ * 字段口径以 sys_menu 实际列为准：
+ *   id / parent_id / menu_type('DIR'|'MENU'|'BUTTON') / menu_name / route_name
+ *   path / component / redirect / sort / icon / visible / permission
  */
-// 注意：此函数接收的是 DAO 查询出的数据库原始行（snake_case 字段）
+
+/**
+ * 单行 → 树节点
+ * 注意：此函数接收的是 DAO 查询出的数据库原始行（snake_case 字段）
+ * @param {object} menu
+ * @returns {object} 树节点
+ */
 const normalizeMenu = (menu) => {
-  // button (menu_type=3) 节点
-  if (Number(menu.menu_type) === 3) {
-    // route_name 格式为 _btn_{parentId}_{code}，提取原始权限标识
-    const parts = String(menu.route_name || '').split('_')
-    const permissionCode = parts.length >= 4 ? parts.slice(3).join('_') : menu.route_name || ''
+  const menuType = String(menu.menu_type ?? '').toUpperCase()
+
+  // 按钮节点：menu_type='BUTTON'，权限码存放在 sys_menu.permission
+  if (menuType === 'BUTTON') {
+    const permissionCode = menu.permission || ''
 
     return {
       id: menu.id,
       parentId: menu.parent_id ?? 0,
       name: permissionCode || menu.menu_name,
-      meta: { title: menu.menu_name, isButton: true, permissionCode: permissionCode || '' }
+      meta: { title: menu.menu_name, isButton: true, permissionCode }
     }
   }
 
   // 目录 / 菜单节点
   const meta = {
     title: menu.menu_name,
+    menuType,
     ...(menu.icon ? { icon: menu.icon } : {}),
-    ...(menu.order_num ? { order: menu.order_num } : {}),
-    ...(menu.hide_in_menu ? { hideInMenu: Boolean(menu.hide_in_menu) } : {}),
-    ...(menu.active_menu ? { activeMenu: menu.active_menu } : {}),
-    ...(menu.multi_tab ? { multiTab: Boolean(menu.multi_tab) } : {}),
-    ...(menu.keep_alive ? { keepAlive: Boolean(menu.keep_alive) } : {})
+    ...(menu.sort !== undefined && menu.sort !== null ? { order: Number(menu.sort) } : {}),
+    // visible='1' 表示显示、'0' 表示隐藏；前端 hideInMenu 语义相反
+    ...(menu.visible === '0' || menu.visible === 0 ? { hideInMenu: true } : {}),
+    ...(menu.permission ? { permission: menu.permission } : {})
   }
 
   return {
     id: menu.id,
     parentId: menu.parent_id ?? 0,
-    path: menu.route_path,
-    name: menu.route_name,
-    component: menu.component,
-    redirect: menu.redirect,
+    path: menu.path ?? '',
+    name: menu.route_name || menu.path || '',
+    component: menu.component ?? '',
+    redirect: menu.redirect ?? '',
     meta,
     children: []
   }
 }
 
 /**
+ * 按 order、id 排序，保证同级顺序稳定
+ * @param {Array<object>} nodes
+ */
+const sortSiblings = (nodes) => {
+  nodes.sort((a, b) => {
+    const orderA = a.meta?.order ?? Number.MAX_SAFE_INTEGER
+    const orderB = b.meta?.order ?? Number.MAX_SAFE_INTEGER
+    if (orderA !== orderB) {
+      return orderA - orderB
+    }
+    return Number(a.id) - Number(b.id)
+  })
+  return nodes
+}
+
+/**
  * 根据扁平菜单列表构建树形菜单。
  * @param {Array<object>} menuList
- * @returns {Array<object>}
+ * @returns {Array<object>} 根节点数组
  */
 export const buildMenuTree = (menuList) => {
   const menuMap = new Map()
@@ -68,6 +92,13 @@ export const buildMenuTree = (menuList) => {
     roots.push(menu)
   }
 
+  sortSiblings(roots)
+  for (const menu of menuMap.values()) {
+    if (Array.isArray(menu.children) && menu.children.length > 0) {
+      sortSiblings(menu.children)
+    }
+  }
+
   return roots
 }
 
@@ -85,27 +116,5 @@ export const extractPermissionCodes = (menus, buttons) => {
     routePaths: menus.map((menu) => menu.path).filter(Boolean),
     routeNames: menus.map((menu) => menu.route_name).filter(Boolean),
     buttons: buttons.map((button) => button.button_code || button.button_name).filter(Boolean)
-  }
-}
-
-/**
- * 解析菜单 meta 字段（保留兼容，不再需要 JSON.parse）。
- * @deprecated 新表结构已将 meta 拆分为独立列，此函数仅做兼容保留
- * @param {unknown} meta
- * @returns {Record<string, any>}
- */
-export const parseMeta = (meta) => {
-  if (!meta) {
-    return {}
-  }
-
-  if (typeof meta === 'object') {
-    return meta
-  }
-
-  try {
-    return JSON.parse(meta)
-  } catch {
-    return {}
   }
 }
