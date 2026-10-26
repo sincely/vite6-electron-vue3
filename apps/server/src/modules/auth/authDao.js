@@ -1,4 +1,4 @@
-import { getConnection, query } from '../../db/connection.js'
+import { getConnection, query } from '../../infrastructure/database/connection.js'
 
 const ADMIN_USER_ROLE_AGGREGATE_SQL = `
   select
@@ -143,12 +143,54 @@ const createAdminUser = async ({ username, email, passwordHash, role_id }) => {
   }
 }
 
+/**
+ * 写入用户会话信息（登录成功时调用）。
+ * @param {number} user_id
+ * @param {string} sessionId
+ * @param {string} refreshToken
+ * @param {string} loginIp
+ * @param {Date} sessionExpire
+ * @returns {Promise<void>}
+ */
+const updateUserSession = async (user_id, sessionId, refreshToken, loginIp, sessionExpire) => {
+  const sql = `
+    update sys_user set
+      session_id = ?,
+      current_refresh_token = ?,
+      last_login_ip = ?,
+      last_login_time = now(),
+      session_expire = ?
+    where id = ?
+  `
+  await query(sql, [sessionId, refreshToken, loginIp, sessionExpire, user_id])
+}
+
+/**
+ * 清除用户会话信息（登出时调用）。
+ * @param {number} user_id
+ * @returns {Promise<void>}
+ */
+const clearUserSession = async (user_id) => {
+  const sql = `
+    update sys_user set
+      session_id = null,
+      current_refresh_token = null,
+      last_login_ip = null,
+      last_login_time = null,
+      session_expire = null
+    where id = ?
+  `
+  await query(sql, [user_id])
+}
+
 export default {
   findAdminUserByUsername,
   findAdminUserByEmail,
   findAdminUserById,
   updateUserRefreshToken,
   getUserRefreshToken,
+  updateUserSession,
+  clearUserSession,
   findRoleByName,
   createAdminUser
 }

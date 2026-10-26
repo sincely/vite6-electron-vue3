@@ -5,14 +5,14 @@
 
 import * as dictService from './dictService.js'
 import { businessCode, businessMsg } from '../../config/businessCode.js'
-import { createSuccessResponse, createFailResponse } from '../../utils/createResponse.js'
+import { createSuccessResponse, createFailResponse } from '../../core/response.js'
 
 /**
  * 获取字典列表
  */
 const listDicts = async (ctx) => {
-  const data = await dictService.listDicts(ctx.query)
-  ctx.body = createSuccessResponse(businessCode.success, '获取字典列表成功', data)
+  const result = await dictService.listDicts(ctx.query)
+  ctx.body = createSuccessResponse(businessCode.success, '获取字典列表成功', result.data)
 }
 
 /**

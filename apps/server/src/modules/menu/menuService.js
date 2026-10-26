@@ -1,26 +1,16 @@
 /**
  * @module 菜单管理 Service
- * @description 封装菜单 CRUD、树结构构建、按钮管理等业务逻辑（适配新 sys_menu schema）
+ * @description 封装菜单 CRUD、树结构构建、按钮管理等业务逻辑（适配新 sys_menu 表结构）
  */
 
-import adminMenuDao from './menuDao.js'
-import { buildMenuTree } from '../../utils/adminPermission.js'
+import menuDao from './menuDao.js'
+import { buildMenuTree } from '../../shared/menu-tree.js'
 import { businessCode } from '../../config/businessCode.js'
-import { normalizePagination } from '../../schemas/common/paginationSchema.js'
-
-const toDbStatus = (status) => {
-  if (status === '0' || status === '2' || Number(status) === 0) {
-    return '0'
-  }
-  return '1'
-}
-
-const toFrontendStatus = (status) => {
-  return String(status) === '1' ? '1' : '0'
-}
+import { normalizePagination } from '../../shared/pagination.js'
+import { toDbStatus, toFrontendStatus } from '../../shared/status.js'
 
 const truthyVisible = (value) => {
-  // 新 schema: visible='1' 表示显示；旧 hideInMenu=true 表示隐藏，逻辑相反
+  // 新表结构: visible='1' 表示显示；旧 hideInMenu=true 表示隐藏，逻辑相反
   if (value === '0' || value === 0 || value === false) {
     return false
   }
@@ -38,7 +28,7 @@ const visibleFromBody = (body) => {
   return '1'
 }
 
-// 前端 camelCase → DB 字段映射（适配新 schema）
+// 前端 camelCase → DB 字段映射（适配新 sys_menu 表结构）
 const toMenuPayload = (body) => {
   const isButton = normalizeMenuType(body.menuType) === 'BUTTON'
   if (isButton) {
@@ -90,7 +80,7 @@ const toMenuPayload = (body) => {
 // 菜单类型统一为大写字符串：DIR / MENU / BUTTON
 const normalizeMenuType = (menuType) => String(menuType ?? '').toUpperCase()
 
-// DB → 前端 camelCase 字段映射（适配新 schema）
+// DB → 前端 camelCase 字段映射（适配新 sys_menu 表结构）
 const formatMenuRow = (row) => {
   const menuType = normalizeMenuType(row.menu_type)
   const isButton = menuType === 'BUTTON'
@@ -229,7 +219,7 @@ export const listMenus = async (query, isV2 = false) => {
   // 前端搜索栏用 menuName 作为关键词字段
   const normalizedKeyword = keyword || menuName || ''
 
-  const menus = await adminMenuDao.listMenus()
+  const menus = await menuDao.listMenus()
   const filteredRows = filterMenuRows(
     menus.map((item) => formatMenuRow(item)),
     {
@@ -242,11 +232,14 @@ export const listMenus = async (query, isV2 = false) => {
 
   if (!isV2) {
     return {
-      records: tree,
-      rows: tree,
-      current: actualPage,
-      size: actualPageSize,
-      total: tree.length
+      success: true,
+      data: {
+        records: tree,
+        rows: tree,
+        current: actualPage,
+        size: actualPageSize,
+        total: tree.length
+      }
     }
   }
 
@@ -254,11 +247,14 @@ export const listMenus = async (query, isV2 = false) => {
   const pagedTree = tree.slice(start, start + actualPageSize)
 
   return {
-    records: pagedTree,
-    rows: pagedTree,
-    current: actualPage,
-    size: actualPageSize,
-    total: tree.length
+    success: true,
+    data: {
+      records: pagedTree,
+      rows: pagedTree,
+      current: actualPage,
+      size: actualPageSize,
+      total: tree.length
+    }
   }
 }
 
@@ -266,7 +262,7 @@ export const listMenus = async (query, isV2 = false) => {
  * 获取菜单树
  */
 export const getMenuTree = async () => {
-  const menus = await adminMenuDao.listMenus()
+  const menus = await menuDao.listMenus()
   // 构建包含目录→菜单→按钮 三级层级结构的树
   return { success: true, data: buildMenuTree(menus) }
 }
@@ -297,7 +293,7 @@ const validateMenuHierarchy = (parentId, menuType, parentMenu) => {
 
 // 目标父级是否在当前菜单的子树下（是则移动后会形成环形引用）
 const isParentInSubtree = async (id, targetParentId) => {
-  const menus = await adminMenuDao.listMenus()
+  const menus = await menuDao.listMenus()
   const byId = new Map(menus.map((menu) => [menu.id, menu]))
   let cursor = byId.get(Number(targetParentId))
   while (cursor) {
@@ -319,26 +315,26 @@ export const createMenu = async (body) => {
   // 按钮类型不需要路由字段校验
   if (!isButton) {
     if (path) {
-      const existedPath = await adminMenuDao.findMenuByPath(path)
+      const existedPath = await menuDao.findMenuByPath(path)
       if (existedPath) {
         return { success: false, code: businessCode.menuPathExist }
       }
     }
     if (routeName) {
-      const existedName = await adminMenuDao.findMenuByName(routeName)
+      const existedName = await menuDao.findMenuByName(routeName)
       if (existedName) {
         return { success: false, code: businessCode.menuNameExist }
       }
     }
   }
 
-  const parentMenu = parentId ? await adminMenuDao.findMenuById(parentId) : null
+  const parentMenu = parentId ? await menuDao.findMenuById(parentId) : null
   const hierarchyError = validateMenuHierarchy(parentId, menuType, parentMenu)
   if (hierarchyError) {
     return { success: false, code: businessCode.paramError, msg: hierarchyError }
   }
 
-  const result = await adminMenuDao.createMenu(toMenuPayload(body))
+  const result = await menuDao.createMenu(toMenuPayload(body))
 
   return { success: true, data: { id: result.insertId } }
 }
@@ -348,7 +344,7 @@ export const createMenu = async (body) => {
  */
 export const updateMenu = async (body) => {
   const { id, path, routeName, parentId, menuType } = body
-  const currentMenu = await adminMenuDao.findMenuById(id)
+  const currentMenu = await menuDao.findMenuById(id)
 
   if (!currentMenu) {
     return { success: false, code: businessCode.error, msg: '菜单不存在' }
@@ -357,14 +353,14 @@ export const updateMenu = async (body) => {
   const isButton = normalizeMenuType(menuType) === 'BUTTON' || normalizeMenuType(currentMenu.menu_type) === 'BUTTON'
 
   if (!isButton && path) {
-    const existedPath = await adminMenuDao.findMenuByPath(path)
+    const existedPath = await menuDao.findMenuByPath(path)
     if (existedPath && existedPath.id !== id) {
       return { success: false, code: businessCode.menuPathExist }
     }
   }
 
   if (!isButton && routeName) {
-    const existedName = await adminMenuDao.findMenuByName(routeName)
+    const existedName = await menuDao.findMenuByName(routeName)
     if (existedName && existedName.id !== id) {
       return { success: false, code: businessCode.menuNameExist }
     }
@@ -379,7 +375,7 @@ export const updateMenu = async (body) => {
   }
 
   if (effectiveParentId) {
-    const parentMenu = await adminMenuDao.findMenuById(effectiveParentId)
+    const parentMenu = await menuDao.findMenuById(effectiveParentId)
     const hierarchyError = validateMenuHierarchy(effectiveParentId, effectiveType, parentMenu)
     if (hierarchyError) {
       return { success: false, code: businessCode.paramError, msg: hierarchyError }
@@ -393,7 +389,7 @@ export const updateMenu = async (body) => {
 
   // 类型变更时，已有子节点必须仍符合层级规则（目录→目录/菜单，菜单→按钮）
   if (menuType !== undefined && normalizeMenuType(menuType) !== normalizeMenuType(currentMenu.menu_type)) {
-    const allMenus = await adminMenuDao.listMenus()
+    const allMenus = await menuDao.listMenus()
     const hasIncompatibleChild = allMenus.some(
       (menu) =>
         Number(menu.parent_id) === Number(id) &&
@@ -404,7 +400,7 @@ export const updateMenu = async (body) => {
     }
   }
 
-  // 构建动态更新 payload（前端 camelCase → DB 新 schema 字段）
+  // 构建动态更新 payload（前端 camelCase → DB 新表结构字段）
   const payload = {}
   const fieldMap = {
     menuName: 'menu_name',
@@ -438,7 +434,7 @@ export const updateMenu = async (body) => {
     }
   }
 
-  await adminMenuDao.updateMenu(id, payload)
+  await menuDao.updateMenu(id, payload)
 
   return { success: true }
 }
@@ -451,22 +447,22 @@ export const deleteMenu = async (body) => {
 
   for (const rawId of ids) {
     const id = Number(rawId)
-    const currentMenu = await adminMenuDao.findMenuById(id)
+    const currentMenu = await menuDao.findMenuById(id)
 
     if (!currentMenu) {
       return { success: false, code: businessCode.error, msg: '菜单不存在' }
     }
 
-    const childrenCount = await adminMenuDao.countChildren(id)
+    const childrenCount = await menuDao.countChildren(id)
     if (childrenCount > 0) {
       return { success: false, code: businessCode.menuHasChildren }
     }
   }
 
   if (ids.length > 1) {
-    await adminMenuDao.deleteMenus(ids)
+    await menuDao.deleteMenus(ids)
   } else {
-    await adminMenuDao.deleteMenu(Number(ids[0]))
+    await menuDao.deleteMenu(Number(ids[0]))
   }
 
   return { success: true }
@@ -476,7 +472,7 @@ export const deleteMenu = async (body) => {
  * 获取全部页面（含 component 的菜单）
  */
 export const getAllPages = async () => {
-  const menus = await adminMenuDao.listMenus()
+  const menus = await menuDao.listMenus()
   const pages = menus
     .filter((m) => m.component)
     .map((m) => ({
@@ -486,4 +482,14 @@ export const getAllPages = async () => {
       label: m.menu_name
     }))
   return { success: true, data: pages }
+}
+
+/**
+ * 按路由名称查询菜单
+ * 供其他模块经本模块公开 API 调用（如 route 模块的路由存在性判断）。
+ * @param {string} routeName
+ * @returns {Promise<any|null>}
+ */
+export const findMenuByName = async (routeName) => {
+  return menuDao.findMenuByName(routeName)
 }

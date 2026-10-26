@@ -5,7 +5,7 @@
 
 import notificationDao from './notificationDao.js'
 import { businessCode } from '../../config/businessCode.js'
-import { normalizePagination } from '../../schemas/common/paginationSchema.js'
+import { normalizePagination } from '../../shared/pagination.js'
 
 const toDbType = (value) => Number(value)
 
@@ -81,10 +81,13 @@ export const listNotifications = async (query) => {
   ])
 
   return {
-    records: notifications.map(formatNotificationRow),
-    current: actualPage,
-    size: actualPageSize,
-    total: Number(total)
+    success: true,
+    data: {
+      records: notifications.map(formatNotificationRow),
+      current: actualPage,
+      size: actualPageSize,
+      total: Number(total)
+    }
   }
 }
 
@@ -116,10 +119,13 @@ export const listUserNotifications = async (userId, query) => {
   ])
 
   return {
-    records: messages.map(formatMessageRow),
-    current: actualPage,
-    size: actualPageSize,
-    total: Number(total)
+    success: true,
+    data: {
+      records: messages.map(formatMessageRow),
+      current: actualPage,
+      size: actualPageSize,
+      total: Number(total)
+    }
   }
 }
 
@@ -128,7 +134,7 @@ export const listUserNotifications = async (userId, query) => {
  */
 export const getUnreadCount = async (userId) => {
   const total = await notificationDao.countUnread(userId)
-  return { unreadCount: Number(total) }
+  return { success: true, data: { unreadCount: Number(total) } }
 }
 
 /**
@@ -152,4 +158,14 @@ export const markAsRead = async (userId, idOrNotificationId) => {
 export const markAllAsRead = async (userId) => {
   await notificationDao.markAllAsRead(userId)
   return { success: true }
+}
+
+/**
+ * 清理已过期的公告
+ * 由定时任务（jobs/processors/notificationCleanup.js）调用。
+ * @returns {Promise<{success: true, data: {deleted: number}}>}
+ */
+export const deleteExpiredNotifications = async () => {
+  const result = await notificationDao.deleteExpiredNotifications(new Date())
+  return { success: true, data: { deleted: result?.affectedRows ?? 0 } }
 }

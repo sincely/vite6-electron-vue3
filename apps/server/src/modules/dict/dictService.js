@@ -5,7 +5,7 @@
 
 import dictDao from './dictDao.js'
 import { businessCode } from '../../config/businessCode.js'
-import { normalizePagination } from '../../schemas/common/paginationSchema.js'
+import { normalizePagination } from '../../shared/pagination.js'
 
 const toDbStatus = (status) => {
   if (status === '2' || Number(status) === 0) {
@@ -51,10 +51,13 @@ export const listDicts = async (query) => {
   ])
 
   return {
-    records: dicts.map(formatDictRow),
-    current: actualPage,
-    size: actualPageSize,
-    total: Number(total)
+    success: true,
+    data: {
+      records: dicts.map(formatDictRow),
+      current: actualPage,
+      size: actualPageSize,
+      total: Number(total)
+    }
   }
 }
 

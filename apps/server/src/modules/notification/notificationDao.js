@@ -1,4 +1,4 @@
-import { query, getConnection } from '../../db/connection.js'
+import { query, getConnection } from '../../infrastructure/database/connection.js'
 
 const NOTIFICATION_LIST_COLUMNS = `
   id,

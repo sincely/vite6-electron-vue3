@@ -3,23 +3,10 @@
  * @description 封装角色 CRUD、路由/按钮权限管理等业务逻辑
  */
 
-import adminRoleDao from './roleDao.js'
-import { getConnection } from '../../db/connection.js'
+import roleDao from './roleDao.js'
 import { businessCode } from '../../config/businessCode.js'
-import { normalizePagination } from '../../schemas/common/paginationSchema.js'
-
-// 前端状态 → DB char(1)：'0'/'2'/0/false → '0'，其余 → '1'
-const toDbStatus = (status) => {
-  if (status === '0' || status === '2' || Number(status) === 0 || status === false) {
-    return '0'
-  }
-  return '1'
-}
-
-// DB 状态 → 前端：统一 '1'/'0'
-const toFrontendStatus = (status) => {
-  return String(status) === '1' ? '1' : '0'
-}
+import { normalizePagination } from '../../shared/pagination.js'
+import { toDbStatus, toFrontendStatus } from '../../shared/status.js'
 
 const formatRoleRow = (role) => ({
   id: role.role_id,
@@ -54,13 +41,13 @@ export const listRoles = async (query) => {
   }
 
   const [roles, total] = await Promise.all([
-    adminRoleDao.listRoles({ page: actualPage, pageSize: actualPageSize, ...filterParams }),
-    adminRoleDao.countRoles(filterParams)
+    roleDao.listRoles({ page: actualPage, pageSize: actualPageSize, ...filterParams }),
+    roleDao.countRoles(filterParams)
   ])
 
   const roleList = await Promise.all(
     roles.map(async (role) => {
-      const routeIds = await adminRoleDao.getRouteIdsByRoleId(role.role_id)
+      const routeIds = await roleDao.getRouteIdsByRoleId(role.role_id)
       return {
         ...formatRoleRow(role),
         routeIds
@@ -69,13 +56,26 @@ export const listRoles = async (query) => {
   )
 
   return {
-    // records 为新契约；rows 兼容前端 AdvanceTable 读取约定
-    records: roleList,
-    rows: roleList,
-    current: actualPage,
-    size: actualPageSize,
-    total: Number(total)
+    success: true,
+    data: {
+      // records 为新契约；rows 兼容前端 AdvanceTable 读取约定
+      records: roleList,
+      rows: roleList,
+      current: actualPage,
+      size: actualPageSize,
+      total: Number(total)
+    }
   }
+}
+
+/**
+ * 按角色 ID 集合批量查询角色
+ * 供用户模块做「角色是否存在」校验时调用。
+ * @param {number[]} roleIds
+ * @returns {Promise<Array<any>>}
+ */
+export const findRolesByIds = async (roleIds) => {
+  return roleDao.findRolesByIds(roleIds)
 }
 
 /**
@@ -86,13 +86,13 @@ export const createRole = async (body) => {
   // 前端用 remark 承载描述；兼容 roleDesc / description
   const normalizedDescription = remark ?? roleDesc ?? description ?? ''
   const normalizedSort = Number(sort ?? roleSort ?? 0) || 0
-  const existedRole = await adminRoleDao.findRoleByName(roleName, roleCode)
+  const existedRole = await roleDao.findRoleByName(roleName, roleCode)
 
   if (existedRole) {
     return { success: false, code: businessCode.roleExist }
   }
 
-  const result = await adminRoleDao.createRole({
+  const result = await roleDao.createRole({
     role_name: roleName,
     role_code: roleCode,
     role_sort: normalizedSort,
@@ -111,13 +111,13 @@ export const updateRole = async (body) => {
   const roleId = Number(rawRoleId || id)
   const normalizedDescription = remark ?? roleDesc ?? description ?? ''
   const normalizedSort = sort ?? roleSort
-  const currentRole = await adminRoleDao.findRoleById(roleId)
+  const currentRole = await roleDao.findRoleById(roleId)
 
   if (!currentRole) {
     return { success: false, code: businessCode.roleNotFound }
   }
 
-  const existedRole = await adminRoleDao.findRoleByName(roleName, roleCode)
+  const existedRole = await roleDao.findRoleByName(roleName, roleCode)
   if (existedRole && Number(existedRole.role_id) !== roleId) {
     return { success: false, code: businessCode.roleExist }
   }
@@ -132,7 +132,7 @@ export const updateRole = async (body) => {
     payload.role_sort = Number(normalizedSort) || 0
   }
 
-  await adminRoleDao.updateRole(roleId, payload)
+  await roleDao.updateRole(roleId, payload)
 
   return { success: true }
 }
@@ -142,18 +142,18 @@ export const updateRole = async (body) => {
  */
 export const deleteRole = async (roleIdOrId) => {
   const roleId = Number(roleIdOrId)
-  const currentRole = await adminRoleDao.findRoleById(roleId)
+  const currentRole = await roleDao.findRoleById(roleId)
 
   if (!currentRole) {
     return { success: false, code: businessCode.roleNotFound }
   }
 
-  const userCount = await adminRoleDao.countUsersByRoleId(roleId)
+  const userCount = await roleDao.countUsersByRoleId(roleId)
   if (userCount > 0) {
     return { success: false, code: businessCode.roleInUse }
   }
 
-  await adminRoleDao.deleteRole(roleId)
+  await roleDao.deleteRole(roleId)
   return { success: true }
 }
 
@@ -161,7 +161,7 @@ export const deleteRole = async (roleIdOrId) => {
  * 获取全部角色（选项列表）
  */
 export const getAllRoles = async () => {
-  const roles = await adminRoleDao.listAllRoles()
+  const roles = await roleDao.listAllRoles()
   return {
     success: true,
     data: roles.map((role) => ({
@@ -177,7 +177,7 @@ export const getAllRoles = async () => {
  * 获取角色路由 ID 列表
  */
 export const getRoleRouteIds = async (roleId) => {
-  const routeIds = await adminRoleDao.getRouteIdsByRoleId(Number(roleId))
+  const routeIds = await roleDao.getRouteIdsByRoleId(Number(roleId))
   return { success: true, data: routeIds }
 }
 
@@ -185,27 +185,12 @@ export const getRoleRouteIds = async (roleId) => {
  * 更新角色路由绑定
  */
 export const updateRoleRouteIds = async ({ roleId, routeIds }) => {
-  const currentRole = await adminRoleDao.findRoleById(roleId)
+  const currentRole = await roleDao.findRoleById(roleId)
   if (!currentRole) {
     return { success: false, code: businessCode.roleNotFound }
   }
 
-  const connection = await getConnection()
-  try {
-    await connection.beginTransaction()
-    await connection.execute('delete from sys_role_menu where role_id = ?', [roleId])
-    if (routeIds && routeIds.length > 0) {
-      const valuesSql = routeIds.map(() => '(?, ?)').join(', ')
-      const values = routeIds.flatMap((id) => [roleId, id])
-      await connection.execute(`insert into sys_role_menu (role_id, route_id) values ${valuesSql}`, values)
-    }
-    await connection.commit()
+  await roleDao.replaceRoleRouteIds(roleId, routeIds)
 
-    return { success: true }
-  } catch (error) {
-    await connection.rollback()
-    throw error
-  } finally {
-    connection.release()
-  }
+  return { success: true }
 }

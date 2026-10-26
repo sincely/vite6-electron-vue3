@@ -5,7 +5,7 @@
 
 import * as notificationService from './notificationService.js'
 import { businessCode, businessMsg } from '../../config/businessCode.js'
-import { createSuccessResponse, createFailResponse } from '../../utils/createResponse.js'
+import { createSuccessResponse, createFailResponse } from '../../core/response.js'
 
 /**
  * 发送公告（管理端）
@@ -25,8 +25,8 @@ const sendNotification = async (ctx) => {
  * 获取公告列表（管理端）
  */
 const listNotifications = async (ctx) => {
-  const data = await notificationService.listNotifications(ctx.query)
-  ctx.body = createSuccessResponse(businessCode.success, '获取公告列表成功', data)
+  const result = await notificationService.listNotifications(ctx.query)
+  ctx.body = createSuccessResponse(businessCode.success, '获取公告列表成功', result.data)
 }
 
 /**
@@ -46,8 +46,8 @@ const deleteNotification = async (ctx) => {
  */
 const listUserNotifications = async (ctx) => {
   const userId = ctx.state.user?.userId
-  const data = await notificationService.listUserNotifications(userId, ctx.query)
-  ctx.body = createSuccessResponse(businessCode.success, '获取消息列表成功', data)
+  const result = await notificationService.listUserNotifications(userId, ctx.query)
+  ctx.body = createSuccessResponse(businessCode.success, '获取消息列表成功', result.data)
 }
 
 /**
@@ -55,8 +55,8 @@ const listUserNotifications = async (ctx) => {
  */
 const getUnreadCount = async (ctx) => {
   const userId = ctx.state.user?.userId
-  const data = await notificationService.getUnreadCount(userId)
-  ctx.body = createSuccessResponse(businessCode.success, '获取未读数成功', data)
+  const result = await notificationService.getUnreadCount(userId)
+  ctx.body = createSuccessResponse(businessCode.success, '获取未读数成功', result.data)
 }
 
 /**

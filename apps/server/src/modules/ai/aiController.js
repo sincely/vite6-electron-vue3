@@ -6,14 +6,15 @@
 import { PassThrough } from 'stream'
 import * as aiService from './aiService.js'
 import { businessCode } from '../../config/businessCode.js'
-import { createSuccessResponse } from '../../utils/createResponse.js'
+import { createSuccessResponse } from '../../core/response.js'
 import logger from '../../config/logger.js'
 
 /**
  * 获取网关状态
  */
 const status = async (ctx) => {
-  ctx.body = createSuccessResponse(businessCode.success, '获取 AI 网关状态成功', aiService.getGatewayStatus())
+  const result = aiService.getGatewayStatus()
+  ctx.body = createSuccessResponse(businessCode.success, '获取 AI 网关状态成功', result.data)
 }
 
 /**
@@ -50,7 +51,7 @@ const chat = async (ctx) => {
   const abortController = new AbortController()
   ctx.res.on('close', () => abortController.abort())
 
-  write({ type: 'meta', ...aiService.getGatewayStatus() })
+  write({ type: 'meta', ...aiService.getGatewayStatus().data })
 
   try {
     for await (const delta of aiService.streamChat({ messages, signal: abortController.signal })) {

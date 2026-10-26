@@ -1,104 +1,40 @@
+/**
+ * @module 认证路由
+ * @description 只负责「中间件链 → 控制器」的装配，不含任何业务逻辑
+ */
+
 import Router from '@koa/router'
-import { validateBody } from '../../middleware/validationMiddleware.js'
-import { errorControllerWrapper } from '../../utils/errorHandler.js'
-import { loginBodySchema } from '../../schemas/auth/authSchema.js'
-import { businessCode, businessMsg } from '../../config/businessCode.js'
-import { createSuccessResponse, createFailResponse } from '../../utils/createResponse.js'
+import { validateBody } from '../../middleware/validation.js'
+import { errorControllerWrapper } from '../../core/errors.js'
+import { loginBodyDto, RefreshTokenBodyDto } from './authDto.js'
 import authenticate from '../../middleware/authenticate.js'
-import * as authService from './authService.js'
+import authController from './authController.js'
 
 const authRouter = new Router()
 
 // 前端兼容接口 - 登录
-const frontendLogin = async (ctx) => {
-  const loginIp = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || ctx.ip || ctx.request.ip || 'unknown'
-  const userAgent = ctx.headers['user-agent'] || ''
-
-  const result = await authService.frontendLogin({
-    ...ctx.request.body,
-    loginIp,
-    userAgent
-  })
-
-  if (!result.success) {
-    return (ctx.body = createFailResponse(ctx, result.code, businessMsg[result.code], result.data))
-  }
-
-  // 写入 Session（Redis Store 会在响应结束时自动持久化）
-  ctx.session.user = {
-    userId: result.data.userId,
-    token: result.data.token,
-    refreshToken: result.data.refreshToken,
-    sessionId: result.data.sessionId
-  }
-
-  ctx.body = createSuccessResponse(businessCode.success, '登录成功', result.data)
-}
-
-authRouter.post('/user/auth/login', validateBody(loginBodySchema), errorControllerWrapper(frontendLogin))
-// 别名路由 - 对齐前端 axios 调用约定（POST /auth/login，由 routers/index.js 的 /api 前缀展开为 /api/auth/login）
-authRouter.post('/auth/login', validateBody(loginBodySchema), errorControllerWrapper(frontendLogin))
+authRouter.post('/user/auth/login', validateBody(loginBodyDto), errorControllerWrapper(authController.frontendLogin))
+// 别名路由 - 对齐前端 axios 调用约定（POST /auth/login，由 core/router.js 的 /api 前缀展开为 /api/auth/login）
+authRouter.post('/auth/login', validateBody(loginBodyDto), errorControllerWrapper(authController.frontendLogin))
 
 // 前端兼容接口 - 获取用户信息
-const frontendGetUserInfo = async (ctx) => {
-  const result = await authService.frontendGetUserInfo(ctx.state.user.userId)
-  if (!result.success) {
-    return (ctx.body = createFailResponse(ctx, result.code, businessMsg[result.code]))
-  }
-  ctx.body = createSuccessResponse(businessCode.success, '获取用户信息成功', result.data)
-}
-
-authRouter.get('/user/getUserInfo', authenticate, errorControllerWrapper(frontendGetUserInfo))
+authRouter.get('/user/getUserInfo', authenticate, errorControllerWrapper(authController.frontendGetUserInfo))
 // 别名路由 - 对齐前端 axios 调用约定（GET /user/info）
-authRouter.get('/user/info', authenticate, errorControllerWrapper(frontendGetUserInfo))
+authRouter.get('/user/info', authenticate, errorControllerWrapper(authController.frontendGetUserInfo))
 
 // 前端兼容接口 - 刷新 token
 authRouter.post(
   '/user/auth/refreshToken',
-  errorControllerWrapper(async (ctx) => {
-    const { refreshToken } = ctx.request.body
-    const result = await authService.frontendRefreshToken(refreshToken)
-    if (!result.success) {
-      return (ctx.body = createFailResponse(ctx, result.code, result.msg || businessMsg[result.code]))
-    }
-    ctx.body = createSuccessResponse(businessCode.success, '刷新成功', result.data)
-  })
+  validateBody(RefreshTokenBodyDto),
+  errorControllerWrapper(authController.frontendRefreshToken)
 )
 
 // 登出（清除用户 sessionId 和 currentRefreshToken）
-authRouter.post(
-  '/user/auth/logout',
-  authenticate,
-  errorControllerWrapper(async (ctx) => {
-    const userId = ctx.state.user?.userId
-    await authService.frontendLogout(userId)
-
-    // 清除 Session（Redis Store 会在响应结束时删除对应 key）
-    ctx.session = null
-
-    ctx.body = createSuccessResponse(businessCode.success, '退出成功')
-  })
-)
+authRouter.post('/user/auth/logout', authenticate, errorControllerWrapper(authController.frontendLogout))
 // 别名路由 - 对齐前端 axios 调用约定（POST /auth/logout）
-authRouter.post(
-  '/auth/logout',
-  authenticate,
-  errorControllerWrapper(async (ctx) => {
-    const userId = ctx.state.user?.userId
-    await authService.frontendLogout(userId)
-    ctx.session = null
-    ctx.body = createSuccessResponse(businessCode.success, '退出成功')
-  })
-)
+authRouter.post('/auth/logout', authenticate, errorControllerWrapper(authController.frontendLogout))
 
 // 前端兼容接口 - 自定义后端错误（调试用）
-authRouter.get(
-  '/user/auth/error',
-  errorControllerWrapper((ctx) => {
-    const code = Number(ctx.query.code) || businessCode.error
-    const msg = ctx.query.msg || '自定义后端错误'
-    ctx.body = createFailResponse(ctx, code, msg)
-  })
-)
+authRouter.get('/user/auth/error', errorControllerWrapper(authController.customError))
 
 export default authRouter

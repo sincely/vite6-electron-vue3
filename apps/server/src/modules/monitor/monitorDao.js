@@ -1,4 +1,4 @@
-import { query } from '../../db/connection.js'
+import { query } from '../../infrastructure/database/connection.js'
 
 /**
  * 系统监控 DAO

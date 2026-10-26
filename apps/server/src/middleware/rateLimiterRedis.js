@@ -11,7 +11,7 @@
  * Redis 不可用时自动降级（放行请求，不阻塞）
  */
 
-import { getRedisClient } from '../db/redis.js'
+import { getRedisClient } from '../infrastructure/redis/client.js'
 import logger from '../config/logger.js'
 
 const KEY_PREFIX = 'ratelimit:'

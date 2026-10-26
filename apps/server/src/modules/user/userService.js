@@ -1,13 +1,20 @@
 /**
  * @module 用户管理 Service
  * @description 封装用户 CRUD、批量操作、状态/密码管理等业务逻辑
+ *
+ * 返回契约统一为 `{ success, code?, msg?, data? }`：
+ *   - 成功：{ success: true, data }
+ *   - 失败：{ success: false, code, msg? }
+ *
+ * 跨模块协作经对方模块的公开 API（index.js）完成，不直接引用其 DAO。
  */
 
-import adminUserDao from './userDao.js'
-import adminRoleDao from '../role/roleDao.js'
+import userDao from './userDao.js'
+import { roleService } from '../role/index.js'
 import { businessCode } from '../../config/businessCode.js'
-import { hashPassword } from '../../utils/password.js'
-import { normalizePagination } from '../../schemas/common/paginationSchema.js'
+import { hashPassword } from '../../shared/password.js'
+import { normalizePagination } from '../../shared/pagination.js'
+import { toDbStatus, toFrontendStatus } from '../../shared/status.js'
 
 // 前端展示用性别：男/女（DB enum: male/female/other）
 const toFrontendGender = (gender) => {
@@ -29,19 +36,6 @@ const toDbGender = (gender) => {
     return 'female'
   }
   return 'other'
-}
-
-// 前端状态 → DB：'1'=启用 → '1'；'0'/'2'/0/false → '0'
-const toDbStatus = (status) => {
-  if (status === '0' || status === '2' || Number(status) === 0 || status === false) {
-    return '0'
-  }
-  return '1'
-}
-
-// DB 状态 → 前端：统一 '1'/'0'
-const toFrontendStatus = (status) => {
-  return String(status) === '1' ? '1' : '0'
 }
 
 const parseRoleIds = (value) => {
@@ -81,6 +75,7 @@ const formatUserRow = (row) => {
 
 /**
  * 获取用户列表
+ * @returns {Promise<{ success: true, data: object }>}
  */
 export const listUsers = async (query) => {
   const {
@@ -117,28 +112,34 @@ export const listUsers = async (query) => {
     keyword: normalizedKeyword,
     status: normalizedStatus,
     gender: hasGenderFilter ? normalizedGender : undefined,
+    // 已知问题：DAO 约定参数名为 role_id，此处沿用 roleId，
+    // 导致按角色过滤当前不生效。修复需同步改 DAO 参数名（会改变查询结果），故保持现状。
     roleId
   }
 
   const [list, total] = await Promise.all([
-    adminUserDao.listUsers({ page: actualPage, pageSize: actualPageSize, ...filterParams }),
-    adminUserDao.countUsers(filterParams)
+    userDao.listUsers({ page: actualPage, pageSize: actualPageSize, ...filterParams }),
+    userDao.countUsers(filterParams)
   ])
 
   const records = list.map(formatUserRow)
 
   return {
-    // records 为新契约；rows 兼容前端 AdvanceTable 读取约定
-    records,
-    rows: records,
-    current: actualPage,
-    size: actualPageSize,
-    total: Number(total)
+    success: true,
+    data: {
+      // records 为新契约；rows 兼容前端 AdvanceTable 读取约定
+      records,
+      rows: records,
+      current: actualPage,
+      size: actualPageSize,
+      total: Number(total)
+    }
   }
 }
 
 /**
  * 创建用户
+ * @returns {Promise<{ success: boolean, code?: number, data?: object }>}
  */
 export const createUser = async (body) => {
   const {
@@ -164,10 +165,10 @@ export const createUser = async (body) => {
   const finalPhone = mobile ?? phone
 
   const [existedUser, existedEmail, existedIdCard, roles] = await Promise.all([
-    adminUserDao.findUserByUsername(username),
-    adminUserDao.findUserByEmail(email),
-    idCard ? adminUserDao.findUserByIdCard(idCard) : Promise.resolve(null),
-    adminRoleDao.findRolesByIds(roleIds)
+    userDao.findUserByUsername(username),
+    userDao.findUserByEmail(email),
+    idCard ? userDao.findUserByIdCard(idCard) : Promise.resolve(null),
+    roleService.findRolesByIds(roleIds)
   ])
 
   if (existedUser) {
@@ -184,7 +185,7 @@ export const createUser = async (body) => {
   }
 
   const passwordHash = await hashPassword(password || '123456')
-  const result = await adminUserDao.createUser({
+  const result = await userDao.createUser({
     username,
     nickName: finalNickName,
     phone: finalPhone,
@@ -204,31 +205,32 @@ export const createUser = async (body) => {
 
 /**
  * 更新用户
+ * @returns {Promise<{ success: boolean, code?: number }>}
  */
 export const updateUser = async (body) => {
   const { id, password, email, idCard, roleIds, ...rest } = body
-  const currentUser = await adminUserDao.findUserById(id)
+  const currentUser = await userDao.findUserById(id)
 
   if (!currentUser) {
     return { success: false, code: businessCode.userNotFound }
   }
 
   if (email) {
-    const existedEmail = await adminUserDao.findUserByEmail(email)
+    const existedEmail = await userDao.findUserByEmail(email)
     if (existedEmail && existedEmail.id !== id) {
       return { success: false, code: businessCode.emailExist }
     }
   }
 
   if (idCard) {
-    const existedIdCard = await adminUserDao.findUserByIdCard(idCard)
+    const existedIdCard = await userDao.findUserByIdCard(idCard)
     if (existedIdCard && existedIdCard.id !== id) {
       return { success: false, code: businessCode.idCardExist }
     }
   }
 
   if (roleIds !== undefined) {
-    const roles = await adminRoleDao.findRolesByIds(roleIds)
+    const roles = await roleService.findRolesByIds(roleIds)
     if (roles.length !== roleIds.length) {
       return { success: false, code: businessCode.roleNotFound }
     }
@@ -272,9 +274,9 @@ export const updateUser = async (body) => {
     payload.password = await hashPassword(password)
   }
 
-  await adminUserDao.updateUser(id, payload)
+  await userDao.updateUser(id, payload)
   if (roleIds !== undefined) {
-    await adminUserDao.updateUserRoles(id, roleIds)
+    await userDao.updateUserRoles(id, roleIds)
   }
 
   return { success: true }
@@ -282,30 +284,32 @@ export const updateUser = async (body) => {
 
 /**
  * 删除用户
+ * @returns {Promise<{ success: boolean, code?: number }>}
  */
 export const deleteUser = async (id, currentUserId) => {
   if (currentUserId === id) {
     return { success: false, code: businessCode.userDeleteSelfDenied }
   }
 
-  const currentUser = await adminUserDao.findUserById(id)
+  const currentUser = await userDao.findUserById(id)
   if (!currentUser) {
     return { success: false, code: businessCode.userNotFound }
   }
 
-  await adminUserDao.deleteUser(id)
+  await userDao.deleteUser(id)
   return { success: true }
 }
 
 /**
  * 批量删除用户
+ * @returns {Promise<{ success: boolean, code?: number, msg?: string, data?: object }>}
  */
 export const batchDeleteUsers = async (ids, currentUserId) => {
   if (ids.includes(currentUserId)) {
     return { success: false, code: businessCode.userDeleteSelfDenied }
   }
 
-  const userPromises = ids.map((id) => adminUserDao.findUserById(id))
+  const userPromises = ids.map((id) => userDao.findUserById(id))
   const users = await Promise.all(userPromises)
   const notFoundIds = ids.filter((id, index) => !users[index])
 
@@ -317,38 +321,49 @@ export const batchDeleteUsers = async (ids, currentUserId) => {
     }
   }
 
-  const deletePromises = ids.map((id) => adminUserDao.deleteUser(id))
+  const deletePromises = ids.map((id) => userDao.deleteUser(id))
   await Promise.all(deletePromises)
   return { success: true, data: { count: ids.length } }
 }
 
 /**
  * 更新用户状态
+ * @returns {Promise<{ success: boolean, code?: number }>}
  */
 export const updateUserStatus = async (id, status, currentUserId) => {
   if (currentUserId === id && status === '2') {
     return { success: false, code: businessCode.userDisableSelfDenied }
   }
 
-  const currentUser = await adminUserDao.findUserById(id)
+  const currentUser = await userDao.findUserById(id)
   if (!currentUser) {
     return { success: false, code: businessCode.userNotFound }
   }
 
-  await adminUserDao.updateUser(id, { status: toDbStatus(status) })
+  await userDao.updateUser(id, { status: toDbStatus(status) })
   return { success: true }
 }
 
 /**
  * 重置用户密码
+ * @returns {Promise<{ success: boolean, code?: number }>}
  */
 export const resetUserPassword = async (id) => {
-  const currentUser = await adminUserDao.findUserById(id)
+  const currentUser = await userDao.findUserById(id)
   if (!currentUser) {
     return { success: false, code: businessCode.userNotFound }
   }
 
   const passwordHash = await hashPassword('123456')
-  await adminUserDao.updateUser(id, { password: passwordHash })
+  await userDao.updateUser(id, { password: passwordHash })
   return { success: true }
+}
+
+/**
+ * 查询用户的会话信息（单设备登录校验）
+ * @param {number} userId
+ * @returns {Promise<{session_id: string|null, session_expire: string|null}|null>}
+ */
+export const getSessionInfo = async (userId) => {
+  return userDao.findSessionInfoByUserId(userId)
 }

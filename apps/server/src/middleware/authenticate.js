@@ -1,10 +1,21 @@
-import { verifyToken } from '../utils/jwt.js'
+/**
+ * 认证中间件
+ *
+ * 职责：校验 Bearer Token，并把用户身份写入 `ctx.state.user`。
+ * 同时执行单设备登录校验（JWT 中的 sessionId 必须与数据库一致）。
+ *
+ * 数据访问统一经 `user` 模块的公开 API，中间件不直接写 SQL。
+ */
+import { verifyToken } from '../shared/jwt.js'
 import { businessCode, businessMsg } from '../config/businessCode.js'
-import { createFailResponse } from '../utils/createResponse.js'
-import { query } from '../db/connection.js'
+import { createFailResponse } from '../core/response.js'
 import logger from '../config/logger.js'
-import { touchSessionActivity } from '../utils/sessionActivity.js'
+import { touchSessionActivity } from '../shared/session-activity.js'
+import { userService } from '../modules/user/index.js'
 
+/**
+ * @type {import('koa').Middleware}
+ */
 async function authenticate(ctx, next) {
   // 从请求头获取 Token
   const authorization = ctx.headers.authorization
@@ -46,15 +57,9 @@ async function authenticate(ctx, next) {
   const jwtSessionId = decoded.sessionId
 
   if (userId && jwtSessionId) {
-    const sql = `
-      SELECT session_id, session_expire
-      FROM sys_user
-      WHERE id = ?
-      LIMIT 1
-    `
-    const rows = await query(sql, [userId])
-    const dbSessionId = rows[0]?.session_id
-    const sessionExpire = rows[0]?.session_expire
+    const sessionInfo = await userService.getSessionInfo(userId)
+    const dbSessionId = sessionInfo?.session_id
+    const sessionExpire = sessionInfo?.session_expire
 
     // 1. 检查会话是否过期
     if (sessionExpire) {

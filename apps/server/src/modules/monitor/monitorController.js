@@ -5,22 +5,22 @@
 
 import * as monitorService from './monitorService.js'
 import { businessCode, businessMsg } from '../../config/businessCode.js'
-import { createSuccessResponse, createFailResponse } from '../../utils/createResponse.js'
+import { createSuccessResponse, createFailResponse } from '../../core/response.js'
 
 /**
  * 监控总览
  */
 const getOverview = async (ctx) => {
-  const data = await monitorService.getOverview()
-  ctx.body = createSuccessResponse(businessCode.success, '获取监控总览成功', data)
+  const result = await monitorService.getOverview()
+  ctx.body = createSuccessResponse(businessCode.success, '获取监控总览成功', result.data)
 }
 
 /**
  * 在线用户列表
  */
 const listOnlineUsers = async (ctx) => {
-  const data = await monitorService.listOnlineUsers(ctx.query, ctx.state.user?.sessionId)
-  ctx.body = createSuccessResponse(businessCode.success, '获取在线用户成功', data)
+  const result = await monitorService.listOnlineUsers(ctx.query, ctx.state.user?.sessionId)
+  ctx.body = createSuccessResponse(businessCode.success, '获取在线用户成功', result.data)
 }
 
 /**

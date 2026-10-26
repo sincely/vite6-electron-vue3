@@ -24,10 +24,13 @@ const BUILTIN_CHUNK_SIZE = 6
 export function getGatewayStatus() {
   const configured = Boolean(provider.baseUrl && provider.apiKey)
   return {
-    ready: true,
-    streaming: true,
-    provider: configured ? 'openai-compatible' : 'builtin',
-    model: configured ? provider.model || 'default' : 'builtin'
+    success: true,
+    data: {
+      ready: true,
+      streaming: true,
+      provider: configured ? 'openai-compatible' : 'builtin',
+      model: configured ? provider.model || 'default' : 'builtin'
+    }
   }
 }
 
@@ -133,5 +136,3 @@ export function streamChat({ messages, signal }) {
   }
   return streamBuiltin(messages, signal)
 }
-
-export default { getGatewayStatus, streamChat }

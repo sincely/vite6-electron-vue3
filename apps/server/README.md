@@ -42,22 +42,24 @@
 ```
 server/
 ├── docs/                       # 文档目录
-│   ├── ARCHITECTURE.md         # 架构设计文档
-│   ├── DEPLOY_GUIDE.md         # 部署指南
-│   ├── SECURITY.md             # 安全说明
-│   └── RBAC_MODEL_DESIGN.md    # RBAC 权限模型设计
+│   └── deploy.md               # 部署指南（MySQL / Docker）
 │
 ├── scripts/                    # 脚本目录
 │   ├── build.js                # 构建脚本（复制 src → dist）
 │   ├── db-cli.js               # 数据库迁移/备份 CLI
 │   ├── generateApiDoc.js       # 生成 OpenAPI JSON
-│   └── release.js              # 版本发布脚本
+│   └── tools/                  # 架构守护工具
+│       ├── route-fingerprint.mjs   # 路由表面积快照
+│       ├── fingerprint-diff.mjs    # 快照对比
+│       ├── import-smoke.mjs        # 导入冒烟测试
+│       ├── layer-audit.mjs         # 分层规范审计
+│       └── compare-runtime.mjs     # 重构前后运行时响应对比
 │
 ├── src/
-│   ├── app.js                  # 应用入口（中间件注册、服务器启动）
-│   ├── worker.js               # 后台任务 Worker（Bull 队列）
+│   ├── app.js                  # HTTP 入口（Vercel 引用，勿移动）
+│   ├── worker.js               # 后台任务 Worker 入口（PM2 引用，勿移动）
 │   │
-│   ├── config/                 # 配置文件
+│   ├── config/                 # ① 配置层：环境与外部依赖参数
 │   │   ├── env.js              # 环境变量加载（dotenv）
 │   │   ├── database.js         # MySQL/Redis 连接配置
 │   │   ├── jwt.js              # JWT 密钥与过期时间
@@ -65,74 +67,79 @@ server/
 │   │   ├── server.js           # 服务器端口与静态资源目录
 │   │   ├── logger.js           # Pino 日志配置
 │   │   ├── businessCode.js     # 业务错误码定义
-│   │   └── httpError.js        # HTTP 状态码定义
+│   │   ├── httpError.js        # HTTP 状态码定义
+│   │   ├── koaBodyConfig.js    # 请求体解析配置
+│   │   └── admin.js            # 后台默认角色名
 │   │
-│   ├── db/                     # 数据库模块
-│   │   ├── connection.js       # MySQL 连接池封装
-│   │   ├── redis.js            # Redis 客户端单例
-│   │   ├── migrations/         # 数据库迁移脚本
-│   │   │   ├── MigrationRunner.js  # 迁移执行器
-│   │   │   └── index.js        # 迁移入口
-│   │   └── backups/            # 数据库备份模块
-│   │       ├── BackupManager.js    # 备份管理器
-│   │       ├── backupJob.js        # 定时备份任务
-│   │       └── index.js
+│   ├── core/                   # ② 内核层：框架装配，与业务无关
+│   │   ├── createApp.js        # Koa 应用工厂（中间件分层装配）
+│   │   ├── bootstrap.js        # 启动流程与优雅关闭
+│   │   ├── router.js           # 根路由装配（API 前缀 /api）
+│   │   ├── routers/
+│   │   │   └── systemManageRouter.js     # 后台管理路由组
+│   │   ├── response.js         # 统一响应契约 { code, msg, data }
+│   │   └── errors.js           # 错误处理与 errorControllerWrapper
 │   │
-│   ├── jobs/                   # 后台任务
-│   │   ├── queue.js            # Bull 队列实例
-│   │   ├── scheduler.js        # 定时任务注册
-│   │   └── processors/         # 任务处理器
-│   │       └── exampleTask.js
-│   │
-│   ├── middleware/             # 中间件
+│   ├── middleware/             # ③ 中间件层：横切关注点
 │   │   ├── errorCatch.js       # 全局错误捕获（洋葱模型最外层）
+│   │   ├── errorHandler.js     # 应用级 error 事件监听
 │   │   ├── requestId.js        # 请求 ID 生成与传递
-│   │   ├── logger.js           # HTTP 请求日志（pino-http）
+│   │   ├── accessLog.js        # HTTP 访问日志（pino-http）
 │   │   ├── securityHeaders.js  # 安全响应头
-│   │   ├── rateLimiter.js      # 速率限制
+│   │   ├── rateLimiter.js      # 速率限制（内存实现）
+│   │   ├── rateLimiterRedis.js # 速率限制（Redis 实现）
 │   │   ├── compress.js         # Gzip 压缩
 │   │   ├── rewriteUrl.js       # URL 重写
-│   │   ├── logMiddleware.js    # 操作日志记录
-│   │   ├── authenticate.js     # JWT 认证中间件
-│   │   ├── authorize.js        # RBAC 权限校验中间件
-│   │   └── validationMiddleware.js # Zod 参数校验中间件
+│   │   ├── operationLog.js     # 操作日志 / 登录日志记录
+│   │   ├── authenticate.js     # JWT 认证 + 单设备登录校验
+│   │   ├── authorize.js        # RBAC 路由级权限校验
+│   │   └── validation.js       # Zod 参数校验（body / query）
 │   │
-│   ├── modules/                # 业务模块（按功能划分）
-│   │   ├── auth/               # 认证模块
-│   │   │   ├── authRouter.js       # 路由定义
-│   │   │   ├── authController.js   # 控制器（请求处理）
-│   │   │   ├── authService.js      # 服务层（业务逻辑）
-│   │   │   ├── authDao.js          # 数据访问层（SQL 查询）
-│   │   │   └── index.js            # 模块导出
-│   │   ├── user/               # 用户管理模块
-│   │   ├── role/               # 角色管理模块
-│   │   ├── menu/               # 菜单管理模块
-│   │   ├── log/                # 日志模块（操作日志 + 登录日志）
-│   │   ├── permission/         # 权限模块（仅 DAO，供其他模块调用）
-│   │   └── route/              # 前端路由模块
+│   ├── modules/                # ④ 业务模块层：按领域垂直切分
+│   │   ├── auth/               # 认证：登录 / 登出 / 刷新 Token
+│   │   ├── user/               # 用户管理
+│   │   ├── role/               # 角色管理
+│   │   ├── menu/               # 菜单管理
+│   │   ├── permission/         # 权限查询（角色 → 菜单 / 按钮）
+│   │   ├── dict/               # 字典管理
+│   │   ├── notification/       # 站内消息与公告
+│   │   ├── monitor/            # 系统监控与强制下线
+│   │   ├── route/              # 前端动态路由
+│   │   ├── ai/                 # AI 网关（SSE 流式）
+│   │   └── log/                # 日志（两个子领域）
+│   │       ├── operationLog/    # 操作日志
+│   │       └── loginLog/        # 登录日志
 │   │
-│   ├── routers/                # 路由注册
-│   │   ├── index.js            # 主路由（聚合所有模块路由）
-│   │   └── modules/
-│   │       └── systemManageRouter.js  # 系统管理路由聚合
+│   ├── shared/                 # ⑤ 共享层：跨模块复用的纯工具
+│   │   ├── jwt.js              # JWT 签发/验证/刷新
+│   │   ├── password.js         # 密码加密/验证
+│   │   ├── status.js           # 状态位转换（'0'/'1'）
+│   │   ├── statusDto.js        # 状态与菜单类型的 Zod 归一化
+│   │   ├── pagination.js       # 通用分页 Dto 与归一化
+│   │   ├── paramsDto.js        # 通用参数 Dto
+│   │   ├── menu-tree.js        # 菜单树构建
+│   │   ├── user-agent.js       # User-Agent 解析
+│   │   ├── ip-location.js      # IP 归属地查询
+│   │   ├── redis-cache.js      # Redis 缓存封装
+│   │   ├── session-activity.js # 会话活跃度追踪
+│   │   ├── login-limiter.js    # 登录失败锁定
+│   │   └── captcha.js          # 验证码（已停用，保留兼容）
 │   │
-│   ├── schemas/                # Zod 参数校验 Schema
-│   │   ├── common/
-│   │   │   ├── paginationSchema.js   # 通用分页 Schema
-│   │   │   └── paramsSchema.js       # 通用参数 Schema
-│   │   ├── auth/authSchema.js        # 认证相关 Schema
-│   │   ├── user/userSchema.js        # 用户相关 Schema
-│   │   ├── role/roleSchema.js        # 角色相关 Schema
-│   │   ├── menu/menuSchema.js        # 菜单相关 Schema
-│   │   └── log/logSchema.js          # 日志相关 Schema
+│   ├── infrastructure/         # ⑥ 基础设施层：外部资源适配
+│   │   ├── database/
+│   │   │   ├── connection.js   # MySQL 连接池封装
+│   │   │   └── schema.sql      # 建表脚本
+│   │   ├── redis/
+│   │   │   └── client.js       # Redis 客户端单例
+│   │   └── session/
+│   │       └── redis-store.js  # Koa Session 的 Redis Store
 │   │
-│   └── utils/                  # 工具函数
-│       ├── jwt.js              # JWT 签发/验证/刷新
-│       ├── password.js         # 密码加密/验证
-│       ├── response.js         # 统一响应构造
-│       ├── errorHandler.js     # 控制器错误包装器
-│       ├── adminPermission.js  # 权限树构建
-│       └── captcha.js          # 验证码（可选）
+│   └── jobs/                   # ⑦ 后台任务（Worker 进程）
+│       ├── queue.js            # Bull 队列实例
+│       ├── scheduler.js        # 定时任务注册
+│       └── processors/         # 任务处理器
+│           ├── exampleTask.js
+│           └── notificationCleanup.js
 │
 ├── public/                     # 静态资源目录
 ├── logs/                       # 日志文件目录（按日期分文件）
@@ -146,6 +153,47 @@ server/
 ├── deploy.sh                   # 部署脚本（tar + scp + ssh）
 └── package.json                # 依赖与脚本定义
 ```
+
+### 分层与依赖方向
+
+分层思路参考 Java 企业的经典结构：**Controller（接口层）→ Service（业务逻辑层）→ Dao（数据访问层）**，并以 **Dto（数据传输对象）** 描述层间的数据契约。
+
+```
+core/router.js ──► modules/<domain>/<domain>Router.js
+                         │
+                         ▼
+                    <domain>Controller.js   ← 接口层：只做 HTTP 适配
+                         │  ▲
+                         │  └── <domain>Dto.js   ← 数据传输对象：Zod 校验与归一化
+                         ▼
+                    <domain>Service.js      ← 业务逻辑层：业务编排与返回契约
+                         │
+                         ▼
+                    <domain>Dao.js          ← 数据访问层：只写 SQL
+                         │
+                         ▼
+              infrastructure/database/connection.js
+```
+
+Dto 是横切契约而非调用层：Router 用它做入参校验，Controller 用它理解请求体，Service 依赖它归一化后的数据。Dto 不反向依赖 Service / Dao。
+
+各层职责如下，依赖方向单向向下，不允许反向或跨层：
+
+| 层 | 对应 Java | 职责 | 禁止 |
+| --- | --- | --- | --- |
+| Controller | `@RestController` | 取参 → 调 Service → 构造响应；决定 HTTP 状态码 | 写 SQL、直连 Dao、承载业务分支 |
+| Service | `@Service` | 业务逻辑与数据编排；返回统一契约 | 写 SQL、直连其他模块的 Dao |
+| Dao | `@Mapper` / DAO | 只写 SQL 与行映射 | 业务判断、状态转换、跨表业务编排 |
+| Dto | Dto（数据传输对象） | Zod 入参校验与归一化，描述接口的数据契约 | 业务逻辑、依赖 Service/Dao |
+
+| 约束 | 规则 |
+| --- | --- |
+| 跨模块协作 | 只允许经对方模块的 `index.js`（公开 API）访问其 service |
+| 中间件 | 不直接访问数据层，经模块公开 API 取数 |
+| 事务 | 跨表写操作下沉到 Dao 内部，事务边界由 Dao 方法持有 |
+
+各模块的 `index.js` 即该模块的**公开 API**，只导出领域 service。路由由组合根
+`core/router.js` 直接装配，不从 barrel 导出，以避免「barrel → router → 中间件 → barrel」的循环依赖。
 
 ## 架构设计
 
@@ -284,7 +332,7 @@ server/
 ┌─────────────────────────────────────────────────────────────────┐
 │                    validate 中间件                               │
 │                                                                  │
-│  1. 从 Zod Schema 校验 ctx.request.body 或 ctx.query            │
+│  1. 从 Zod Dto 校验 ctx.request.body 或 ctx.query              │
 │     ├─ 校验失败 → 400 参数错误（返回具体字段错误信息）            │
 │     └─ 校验成功 → 继续                                           │
 │                                                                  │
@@ -341,7 +389,7 @@ server/
 router.post('/systemManage/saveUser',
   authenticate,                    // JWT 认证
   authorizeRoute('/manage/user'),  // RBAC 授权
-  validateBody(UserCreateBodySchema), // Zod 校验
+  validateBody(UserCreateBodyDto), // Zod 校验
   errorControllerWrapper(userManageController.createUser) // 错误包装
 )
 
@@ -1112,66 +1160,177 @@ Worker 进程会在每天凌晨 2:00 自动执行备份任务，保留最近 10 
 
 **步骤 1：创建模块目录**
 
+模块文件统一采用驼峰命名，层名以大写字母开头标明职责层级：
+
 ```
 src/modules/your-module/
-├── index.js              # 模块导出
-├── yourRouter.js         # 路由定义
-├── yourController.js     # 控制器
-├── yourService.js        # 服务层
-└── yourDao.js            # 数据访问层
+├── index.js                    # 模块公开 API（只导出 service）
+├── yourModuleRouter.js         # 路由装配（无业务逻辑）
+├── yourModuleController.js     # HTTP 适配层
+├── yourModuleService.js        # 业务逻辑层
+├── yourModuleDao.js           # 数据访问层（只写 SQL）
+└── yourModuleDto.js           # Zod 参数校验（数据传输对象）
 ```
 
-**步骤 2：定义路由**
+**步骤 2：定义 Dto**
 
 ```javascript
-// yourRouter.js
-import Router from '@koa/router'
-import { authenticate } from '../../middleware/authenticate.js'
-import { authorizeRoute } from '../../middleware/authorize.js'
-import { validateBody } from '../../middleware/validationMiddleware.js'
-import { errorControllerWrapper } from '../../utils/errorHandler.js'
-import yourController from './yourController.js'
-import { YourCreateBodySchema } from '../../schemas/your-schema.js'
-
-const router = new Router()
-
-router.post('/your-module/create',
-  authenticate,
-  authorizeRoute('/your-module'),
-  validateBody(YourCreateBodySchema),
-  errorControllerWrapper(yourController.create)
-)
-
-export default router
-```
-
-**步骤 3：注册路由**
-
-```javascript
-// src/routers/index.js
-import yourRouter from '../modules/your-module/yourRouter.js'
-
-router.use(yourRouter.routes(), yourRouter.allowedMethods())
-```
-
-**步骤 4：定义 Schema**
-
-```javascript
-// src/schemas/your-module/yourSchema.js
+// src/modules/your-module/yourModuleDto.js
 import { z } from 'zod'
-import { createPaginatedQuerySchema } from '../common/paginationSchema.js'
+import { createPaginatedQueryDto } from '../../shared/pagination.js'
 
-export const YourCreateBodySchema = z.object({
-  name: z.string().min(1).max(50),
-  email: z.string().email(),
+export const YourCreateBodyDto = z.object({
+  name: z.string().min(1, '名称不能为空').max(50, '名称最长 50 位'),
+  email: z.email('邮箱格式不正确'),
   status: z.enum(['1', '2']).default('1')
 })
 
-export const YourListQuerySchema = createPaginatedQuerySchema({
+export const YourListQueryDto = createPaginatedQueryDto({
   keyword: z.string().optional(),
   status: z.enum(['1', '2']).optional()
 })
 ```
+
+**步骤 3：定义 Dao（只写 SQL）**
+
+```javascript
+// src/modules/your-module/yourModuleDao.js
+import { query } from '../../infrastructure/database/connection.js'
+
+const listYours = async ({ keyword = '', page = 1, pageSize = 10 } = {}) => {
+  const offset = (Number(page) - 1) * Number(pageSize)
+  const sql = `
+    select id, name, email, status, create_time
+    from sys_your
+    where name like ?
+    order by id desc
+    limit ? offset ?
+  `
+  return query(sql, [`%${keyword}%`, Number(pageSize), offset])
+}
+
+export default { listYours }
+```
+
+**步骤 4：定义 Service（业务逻辑 + 统一返回契约）**
+
+```javascript
+// src/modules/your-module/yourModuleService.js
+import yourModuleDao from './yourModuleDao.js'
+import { businessCode } from '../../config/businessCode.js'
+import { normalizePagination } from '../../shared/pagination.js'
+
+/**
+ * 获取列表
+ * @returns {Promise<{success: true, data: {records: Array, current: number, size: number, total: number}}>}
+ */
+export const listYours = async (query) => {
+  const { actualPage, actualPageSize } = normalizePagination(query)
+
+  const records = await yourModuleDao.listYours({
+    page: actualPage,
+    pageSize: actualPageSize,
+    keyword: query.keyword || ''
+  })
+
+  return {
+    success: true,
+    data: { records, current: actualPage, size: actualPageSize, total: records.length }
+  }
+}
+
+/**
+ * 创建
+ * @returns {Promise<{success: boolean, code?: number, data?: object}>}
+ */
+export const createYours = async (body) => {
+  const result = await yourModuleDao.createYours(body)
+  return { success: true, data: { id: result.insertId } }
+}
+```
+
+**步骤 5：定义 Controller（只做 HTTP 适配）**
+
+```javascript
+// src/modules/your-module/yourModuleController.js
+import * as yourModuleService from './yourModuleService.js'
+import { businessCode, businessMsg } from '../../config/businessCode.js'
+import { createSuccessResponse, createFailResponse } from '../../core/response.js'
+
+const listYours = async (ctx) => {
+  const result = await yourModuleService.listYours(ctx.query)
+  ctx.body = createSuccessResponse(businessCode.success, '获取列表成功', result.data)
+}
+
+const createYours = async (ctx) => {
+  const result = await yourModuleService.createYours(ctx.request.body)
+  if (!result.success) {
+    return (ctx.body = createFailResponse(result.code, businessMsg[result.code]))
+  }
+  ctx.body = createSuccessResponse(businessCode.success, '创建成功', result.data)
+}
+
+export default { listYours, createYours }
+```
+
+**步骤 6：定义路由（只做中间件装配）**
+
+```javascript
+// src/modules/your-module/yourModuleRouter.js
+import Router from '@koa/router'
+import authenticate from '../../middleware/authenticate.js'
+import authorizeRoute from '../../middleware/authorize.js'
+import { validateBody, validateQuery } from '../../middleware/validation.js'
+import { errorControllerWrapper } from '../../core/errors.js'
+import { YourCreateBodyDto, YourListQueryDto } from './yourModuleDto.js'
+import yourModuleController from './yourModuleController.js'
+
+const yourModuleRouter = new Router()
+
+yourModuleRouter.get(
+  '/your-module/list',
+  authenticate,
+  authorizeRoute('/your-module'),
+  validateQuery(YourListQueryDto),
+  errorControllerWrapper(yourModuleController.listYours)
+)
+
+yourModuleRouter.post(
+  '/your-module/create',
+  authenticate,
+  authorizeRoute('/your-module'),
+  validateBody(YourCreateBodyDto),
+  errorControllerWrapper(yourModuleController.createYours)
+)
+
+export default yourModuleRouter
+```
+
+**步骤 7：导出模块公开 API**
+
+```javascript
+// src/modules/your-module/index.js
+/**
+ * XXX 模块
+ *
+ * 本文件是该模块的公开 API（Public API）。
+ * 跨模块协作只允许经由此处暴露的领域服务。
+ */
+
+// 领域服务（对外唯一入口）
+export * as yourModuleService from './yourModuleService.js'
+```
+
+**步骤 8：注册路由**
+
+```javascript
+// src/core/router.js
+import yourModuleRouter from '../modules/your-module/yourModuleRouter.js'
+
+router.use(yourModuleRouter.routes(), yourModuleRouter.allowedMethods())
+```
+
+> 注意挂载顺序：位于 `operationLogMiddleware` 之前的路由不会被记录操作日志。
 
 ### 代码规范
 
@@ -1191,6 +1350,80 @@ npm run prettier:fix
 项目已配置 `husky` + `lint-staged`，每次 `git commit` 会自动执行：
 - ESLint 检查
 - Prettier 格式化
+
+**分层与命名约定：**
+
+| 约定 | 说明 |
+| --- | --- |
+| 文件命名 | 驼峰，`模块名 + 层名 + .js`，层名取值 `Router` / `Controller` / `Service` / `Dao` / `Dto`（如 `authRouter.js`） |
+| Dao 导入别名 | `<domain>Dao` |
+| Controller 导入别名 | `<domain>Controller`（统一小驼峰，不使用 `XxxManage` 前缀） |
+| Dto 导入别名 | `<domain>Dto` / `<domain>CreateBodyDto`（Dto 契约名统一以 `Dto` 结尾） |
+| 模块公开 API | `modules/<domain>/index.js` 只导出 service |
+| SQL 位置 | 只允许出现在 `*Dao.js` |
+| Dto 依赖 | 只允许依赖 `zod` 与 `shared/` 工具，不依赖 Service / Dao |
+
+**Service 返回契约：**
+
+Service 的「业务操作」与「列表查询」统一返回：
+
+```javascript
+// 成功
+{ success: true, data }
+
+// 失败
+{ success: false, code: businessCode.xxx, msg: '可选的错误补充说明' }
+```
+
+「取值辅助函数」（单条查询、存在性判断、集合查询）没有业务失败分支，直接返回数据本身：
+
+```javascript
+export const findRoleById = async (roleId) => roleDao.findRoleById(roleId)
+```
+
+**Controller 处理范式：**
+
+```javascript
+const result = await xxxService.doSomething(ctx.request.body)
+if (!result.success) {
+  return (ctx.body = createFailResponse(result.code, result.msg || businessMsg[result.code]))
+}
+ctx.body = createSuccessResponse(businessCode.success, '操作成功', result.data)
+```
+
+HTTP 状态码属于 HTTP 适配层职责，由 Controller 决定（如 `ctx.status = 404`）。
+
+**架构守护工具：**
+
+以下工具在 `scripts/tools/` 下，可在提交前自检：
+
+```bash
+# 1. 路由表面积快照与对比：验证重构未改变 API 契约
+node scripts/tools/route-fingerprint.mjs src/core/router.js .fingerprint/after.json
+node scripts/tools/fingerprint-diff.mjs .fingerprint/before.json .fingerprint/after.json
+
+# 2. 导入冒烟测试：捕获失效路径、缺失导出、循环依赖
+node scripts/tools/import-smoke.mjs
+
+# 3. 分层规范审计：检测 SQL 越层、跨模块引用、契约不统一
+node scripts/tools/layer-audit.mjs
+
+# 4. 运行时响应对比：同时启动重构前后的服务，对同一批请求逐条比对
+#    需要先准备重构前的代码副本，例如：git worktree add /tmp/server-baseline HEAD
+node scripts/tools/compare-runtime.mjs /tmp/server-baseline 5431 5430
+```
+
+### 已知问题
+
+以下是重构时发现、但**为保持现有业务逻辑不变而未修复**的存量缺陷，供后续排期处理：
+
+| # | 位置 | 问题 | 影响 |
+| --- | --- | --- | --- |
+| 1 | `modules/user/userService.js` → `userDao.js` | 服务层传 `roleId`，仓储层收 `role_id`，参数名不匹配 | 用户列表的「按角色过滤」静默失效 |
+| 2 | `shared/menu-tree.js` | `normalizeMenu` 读取 `route_path` / `order_num` / `hide_in_menu` 等旧字段名，而 DAO 实际返回 `path` / `sort` / `visible` | 菜单树节点的 `path`、`name` 为 `undefined`；按钮判定用数字 `3`，而库中存的是字符串 `'BUTTON'` |
+| 3 | `scripts/db-cli.js` | 引用不存在的 `src/db/migrations/`、`src/db/backups/` | `npm run db:migrate` / `db:backup` 等命令不可用 |
+| 4 | `scripts/migratePasswords.js` | 引用不存在的 `src/config/knex.js`（项目实际用 mysql2 连接池） | 该脚本不可用 |
+| 5 | `scripts/generateApiDoc.js` | 引用不存在的 `src/controllers/` 与 `src/plugins/openapi/parser.js` | API 文档生成不可用 |
 
 ### 版本发布
 

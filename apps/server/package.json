@@ -40,7 +40,12 @@
     "db:backup": "node scripts/db-cli.js backup",
     "db:restore": "node scripts/db-cli.js restore",
     "db:list": "node scripts/db-cli.js list",
-    "db:verify": "node scripts/db-cli.js verify"
+    "db:verify": "node scripts/db-cli.js verify",
+    "verify:fingerprint": "node scripts/tools/route-fingerprint.mjs src/core/router.js .fingerprint/after.json",
+    "verify:diff": "node scripts/tools/fingerprint-diff.mjs .fingerprint/before.json .fingerprint/after.json",
+    "verify:imports": "node scripts/tools/import-smoke.mjs",
+    "verify:layers": "node scripts/tools/layer-audit.mjs",
+    "verify": "npm run verify:imports && npm run verify:layers && npm run verify:fingerprint && npm run verify:diff"
   },
   "dependencies": {
     "@koa/bodyparser": "6.1.0",

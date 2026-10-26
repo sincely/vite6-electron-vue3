@@ -1,50 +1,45 @@
 import Router from '@koa/router'
-import DictController from './dictController.js'
+import dictController from './dictController.js'
 import authenticate from '../../middleware/authenticate.js'
 import authorizeRoute from '../../middleware/authorize.js'
-import { validateBody, validateQuery } from '../../middleware/validationMiddleware.js'
-import { errorControllerWrapper } from '../../utils/errorHandler.js'
-import {
-  DictCreateBodySchema,
-  DictDeleteBodySchema,
-  DictListQuerySchema,
-  DictUpdateBodySchema
-} from '../../schemas/dict/dictSchema.js'
+import { validateBody, validateQuery } from '../../middleware/validation.js'
+import { errorControllerWrapper } from '../../core/errors.js'
+import { DictCreateBodyDto, DictDeleteBodyDto, DictListQueryDto, DictUpdateBodyDto } from './dictDto.js'
 
-const dictManageRouter = new Router()
+const dictRouter = new Router()
 
 const useDictManagePermission = [authenticate, authorizeRoute('/manage/dict')]
 
 // 获取字典列表
-dictManageRouter.get(
+dictRouter.get(
   '/systemManage/getDictList',
   ...useDictManagePermission,
-  validateQuery(DictListQuerySchema),
-  errorControllerWrapper(DictController.listDicts)
+  validateQuery(DictListQueryDto),
+  errorControllerWrapper(dictController.listDicts)
 )
 
 // 新增字典
-dictManageRouter.post(
+dictRouter.post(
   '/systemManage/saveDict',
   ...useDictManagePermission,
-  validateBody(DictCreateBodySchema),
-  errorControllerWrapper(DictController.createDict)
+  validateBody(DictCreateBodyDto),
+  errorControllerWrapper(dictController.createDict)
 )
 
 // 更新字典
-dictManageRouter.post(
+dictRouter.post(
   '/systemManage/updateDict',
   ...useDictManagePermission,
-  validateBody(DictUpdateBodySchema),
-  errorControllerWrapper(DictController.updateDict)
+  validateBody(DictUpdateBodyDto),
+  errorControllerWrapper(dictController.updateDict)
 )
 
 // 删除字典
-dictManageRouter.post(
+dictRouter.post(
   '/systemManage/deleteDict',
   ...useDictManagePermission,
-  validateBody(DictDeleteBodySchema),
-  errorControllerWrapper(DictController.deleteDict)
+  validateBody(DictDeleteBodyDto),
+  errorControllerWrapper(dictController.deleteDict)
 )
 
-export default dictManageRouter
+export default dictRouter

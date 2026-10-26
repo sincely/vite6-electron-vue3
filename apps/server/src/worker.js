@@ -1,29 +1,25 @@
+/**
+ * 后台任务 Worker 入口
+ *
+ * 与 HTTP 服务分离的独立进程（pm2: koa-worker-test / koa-worker-prod）。
+ * 负责消费 `jobs/queue.js` 定义的队列任务，并按 `job.data.task` 分发到对应处理器。
+ *
+ * 注意：本文件路径被 `ecosystem.config.cjs` 引用，勿移动。
+ */
+import './config/env.js'
 import { cronQueue } from './jobs/queue.js'
 import exampleTaskProcessor from './jobs/processors/exampleTask.js'
 import notificationCleanupProcessor from './jobs/processors/notificationCleanup.js'
 import { initScheduler } from './jobs/scheduler.js'
-import path from 'path'
-import fs from 'fs'
-import dotenv from 'dotenv'
+import logger from './config/logger.js'
 
-// 确保环境变量被加载 (与 config/env.js 保持一致)
 const nodeEnv = process.env.NODE_ENV || 'development'
-const envFilePath = path.resolve(process.cwd(), `.env.${nodeEnv}`)
-const fallbackEnvPath = path.resolve(process.cwd(), '.env')
 
-if (fs.existsSync(envFilePath)) {
-  dotenv.config({ path: envFilePath })
-} else if (fs.existsSync(fallbackEnvPath)) {
-  dotenv.config({ path: fallbackEnvPath })
-} else {
-  dotenv.config()
-}
-
-console.log(`Starting worker in ${nodeEnv} mode...`)
+logger.info(`Worker 启动中（${nodeEnv} 模式）`)
 
 // 初始化定时任务
 initScheduler().catch((err) => {
-  console.error('Failed to initialize scheduler:', err)
+  logger.error({ err: { message: err.message } }, '初始化调度器失败')
 })
 
 // 处理任务：根据 job.data.task 分发到对应处理器
@@ -41,11 +37,11 @@ cronQueue.process(2, async (job) => {
 
 // 监听队列事件
 cronQueue.on('completed', (job, result) => {
-  console.log(`Job ${job.id} completed with result:`, result)
+  logger.info({ jobId: job.id, result }, '任务执行完成')
 })
 
 cronQueue.on('failed', (job, err) => {
-  console.error(`Job ${job.id} failed with error:`, err)
+  logger.error({ jobId: job.id, err: { message: err.message } }, '任务执行失败')
 })
 
-console.log('Worker is running and listening for jobs...')
+logger.info('Worker 已启动，正在监听任务队列')

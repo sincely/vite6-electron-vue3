@@ -1,4 +1,4 @@
-import { getConnection, query } from '../../db/connection.js'
+import { getConnection, query } from '../../infrastructure/database/connection.js'
 
 const buildRoleCode = (role_name) => {
   const normalized = String(role_name || '')
@@ -219,6 +219,33 @@ const countUsersByRoleId = async (role_id) => {
   return rows[0]?.total || 0
 }
 
+/**
+ * 全量替换角色绑定的路由（事务）。
+ * 先清空该角色原有的路由关系，再写入新的绑定。
+ * @param {number} role_id
+ * @param {number[]} routeIds
+ * @returns {Promise<void>}
+ */
+const replaceRoleRouteIds = async (role_id, routeIds) => {
+  const connection = await getConnection()
+  try {
+    await connection.beginTransaction()
+    // 按钮权限已折叠进 sys_menu（menu_type='BUTTON'），由 sys_role_menu 统一承载
+    await connection.execute('delete from sys_role_menu where role_id = ?', [role_id])
+    if (routeIds && routeIds.length > 0) {
+      const valuesSql = routeIds.map(() => '(?, ?)').join(', ')
+      const values = routeIds.flatMap((id) => [role_id, id])
+      await connection.execute(`insert into sys_role_menu (role_id, route_id) values ${valuesSql}`, values)
+    }
+    await connection.commit()
+  } catch (error) {
+    await connection.rollback()
+    throw error
+  } finally {
+    connection.release()
+  }
+}
+
 export default {
   listRoles,
   listAllRoles,
@@ -230,5 +257,6 @@ export default {
   createRole,
   updateRole,
   deleteRole,
+  replaceRoleRouteIds,
   countUsersByRoleId
 }

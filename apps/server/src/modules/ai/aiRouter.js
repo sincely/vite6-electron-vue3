@@ -6,9 +6,9 @@
 import Router from '@koa/router'
 import AiController from './aiController.js'
 import authenticate from '../../middleware/authenticate.js'
-import { validateBody } from '../../middleware/validationMiddleware.js'
-import { AiChatBodySchema } from '../../schemas/ai/aiSchema.js'
-import { errorControllerWrapper } from '../../utils/errorHandler.js'
+import { validateBody } from '../../middleware/validation.js'
+import { AiChatBodyDto } from './aiDto.js'
+import { errorControllerWrapper } from '../../core/errors.js'
 
 const aiRouter = new Router()
 
@@ -16,6 +16,6 @@ const aiRouter = new Router()
 aiRouter.get('/ai/status', authenticate, errorControllerWrapper(AiController.status))
 
 // 流式会话（SSE）：错误以 error 事件帧下发，不走统一错误包装
-aiRouter.post('/ai/chat', authenticate, validateBody(AiChatBodySchema), AiController.chat)
+aiRouter.post('/ai/chat', authenticate, validateBody(AiChatBodyDto), AiController.chat)
 
 export default aiRouter

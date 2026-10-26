@@ -9,12 +9,12 @@ import monitorDao from './monitorDao.js'
 import { businessCode } from '../../config/businessCode.js'
 import { redisEnabled } from '../../config/database.js'
 import logger from '../../config/logger.js'
-import { checkMySQL } from '../../db/connection.js'
-import { checkRedis, getRedisClient } from '../../db/redis.js'
-import { delAuthCache } from '../../utils/redisCache.js'
-import { MAX_ATTEMPTS } from '../../utils/loginLimiter.js'
-import { getSessionActivities, clearSessionActivity } from '../../utils/sessionActivity.js'
-import { normalizePagination } from '../../schemas/common/paginationSchema.js'
+import { checkMySQL } from '../../infrastructure/database/connection.js'
+import { checkRedis, getRedisClient } from '../../infrastructure/redis/client.js'
+import { delAuthCache } from '../../shared/redis-cache.js'
+import { MAX_ATTEMPTS } from '../../shared/login-limiter.js'
+import { getSessionActivities, clearSessionActivity } from '../../shared/session-activity.js'
+import { normalizePagination } from '../../shared/pagination.js'
 
 const SCAN_KEY_CAP = 5000
 
@@ -310,13 +310,16 @@ export const getOverview = async () => {
   ])
 
   return {
-    generatedAt: formatLocalDateTime(Date.now()),
-    health: evaluateHealth({ sessions, login, security, resources, cache }),
-    sessions,
-    login,
-    security,
-    resources,
-    cache
+    success: true,
+    data: {
+      generatedAt: formatLocalDateTime(Date.now()),
+      health: evaluateHealth({ sessions, login, security, resources, cache }),
+      sessions,
+      login,
+      security,
+      resources,
+      cache
+    }
   }
 }
 
@@ -361,12 +364,15 @@ export const listOnlineUsers = async (query, currentSessionId) => {
   const records = list.map((row) => formatOnlineRow(row, activities, currentSessionId))
 
   return {
-    records,
-    // rows 兼容前端 AdvanceTable 读取约定
-    rows: records,
-    current: actualPage,
-    size: actualPageSize,
-    total: Number(total)
+    success: true,
+    data: {
+      records,
+      // rows 兼容前端 AdvanceTable 读取约定
+      rows: records,
+      current: actualPage,
+      size: actualPageSize,
+      total: Number(total)
+    }
   }
 }
 

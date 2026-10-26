@@ -1,7 +1,7 @@
-import { getConnection, query } from '../../db/connection.js'
+import { getConnection, query } from '../../infrastructure/database/connection.js'
 
 /**
- * 菜单查询的公共字段（与新 sys_menu schema 对齐：path / sort / visible / is_cache 等）。
+ * 菜单查询的公共字段（与新 sys_menu 表结构对齐：path / sort / visible / is_cache 等）。
  */
 const MENU_COLUMNS = `
   ra.id, ra.parent_id, ra.menu_type, ra.menu_name, ra.route_name, ra.path,

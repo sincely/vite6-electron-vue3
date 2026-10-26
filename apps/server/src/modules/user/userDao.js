@@ -1,4 +1,4 @@
-import { getConnection, query } from '../../db/connection.js'
+import { getConnection, query } from '../../infrastructure/database/connection.js'
 
 /**
  * 用户查询公共字段（适配新表结构，多角色通过 sys_user_role 关联）。
@@ -284,6 +284,22 @@ const listRoleOptions = async () => {
   return query(sql)
 }
 
+/**
+ * 查询用户的会话信息（单设备登录校验用）。
+ * @param {number} id
+ * @returns {Promise<{session_id: string|null, session_expire: string|null}|null>}
+ */
+const findSessionInfoByUserId = async (id) => {
+  const sql = `
+    select session_id, session_expire
+    from sys_user
+    where id = ?
+    limit 1
+  `
+  const rows = await query(sql, [id])
+  return rows[0] || null
+}
+
 export default {
   listUsers,
   countUsers,
@@ -291,6 +307,7 @@ export default {
   findUserByUsername,
   findUserByEmail,
   findUserByIdCard,
+  findSessionInfoByUserId,
   createUser,
   updateUser,
   updateUserRoles,

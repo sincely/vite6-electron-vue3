@@ -1,21 +1,33 @@
 /**
  * @module 认证 Service
  * @description 封装登录、注册、权限快照等核心业务逻辑
+ *
+ * 返回契约统一为 `{ success, code?, msg?, data? }`：
+ *   - 成功：{ success: true, data }
+ *   - 失败：{ success: false, code, msg? }
+ *
+ * 数据访问统一经本模块的 DAO；跨模块协作经对方模块的公开 API。
  */
 
 import { randomUUID } from 'crypto'
-import adminAuthDao from './authDao.js'
-import adminPermissionDao from '../permission/permissionDao.js'
-import loginLogDao from '../log/loginLogDao.js'
+import authDao from './authDao.js'
+import { permissionService } from '../permission/index.js'
+import { loginLogService } from '../log/index.js'
 import { businessCode } from '../../config/businessCode.js'
 import { defaultAdminRoleName } from '../../config/admin.js'
-import { hashPassword, comparePassword } from '../../utils/password.js'
-import { generateToken, generateRefreshToken, verifyRefreshToken } from '../../utils/jwt.js'
-import { buildMenuTree, extractPermissionCodes } from '../../utils/adminPermission.js'
-import { checkLoginLock, recordLoginFailure, clearLoginLock } from '../../utils/loginLimiter.js'
-import { getIpLocation } from '../../utils/ipLocation.js'
-import { query } from '../../db/connection.js'
+import { hashPassword, comparePassword } from '../../shared/password.js'
+import { generateToken, generateRefreshToken, verifyRefreshToken } from '../../shared/jwt.js'
+import { buildMenuTree, extractPermissionCodes } from '../../shared/menu-tree.js'
+import { detectBrowser, detectOS } from '../../shared/user-agent.js'
+import { checkLoginLock, recordLoginFailure, clearLoginLock } from '../../shared/login-limiter.js'
+import { getIpLocation } from '../../shared/ip-location.js'
 
+/**
+ * 解析角色 ID 列表
+ * @param {string|number|undefined} value
+ * @param {number|string|undefined} fallbackRoleId
+ * @returns {number[]}
+ */
 const parseRoleIds = (value, fallbackRoleId) => {
   if (typeof value === 'string' && value.trim()) {
     return value
@@ -26,6 +38,12 @@ const parseRoleIds = (value, fallbackRoleId) => {
   return fallbackRoleId ? [Number(fallbackRoleId)] : []
 }
 
+/**
+ * 解析角色名称列表
+ * @param {string|undefined} value
+ * @param {string|undefined} fallbackRoleName
+ * @returns {string[]}
+ */
 const parseRoleNames = (value, fallbackRoleName) => {
   if (typeof value === 'string' && value.trim()) {
     return value
@@ -36,6 +54,12 @@ const parseRoleNames = (value, fallbackRoleName) => {
   return fallbackRoleName ? [fallbackRoleName] : []
 }
 
+/**
+ * 解析角色编码列表
+ * @param {string|undefined} value
+ * @param {string|undefined} fallbackRoleCode
+ * @returns {string[]}
+ */
 const parseRoleCodes = (value, fallbackRoleCode) => {
   if (typeof value === 'string' && value.trim()) {
     return value
@@ -61,8 +85,13 @@ const formatUserInfo = (user) => ({
   roleDescription: user.roleDescription
 })
 
+/**
+ * 构建权限快照（菜单树 + 按钮权限 + 权限码）
+ * @param {number[]} roleIds
+ * @returns {Promise<{menuTree: Array, buttons: Array, permissionCodes: string[]}>}
+ */
 const buildPermissionSnapshot = async (roleIds) => {
-  const allRows = await adminPermissionDao.findMenusByRoleId(roleIds)
+  const allRows = await permissionService.findMenusByRoleId(roleIds)
   // 分离菜单（目录/菜单）和按钮（menu_type='BUTTON'）
   const isButton = (row) => String(row.menu_type).toUpperCase() === 'BUTTON'
   const menus = allRows.filter((row) => !isButton(row))
@@ -73,33 +102,37 @@ const buildPermissionSnapshot = async (roleIds) => {
     route_name: row.route_name || ''
   }))
 
+  const permissionCodes = extractPermissionCodes(menus, buttons)
+
   return {
     menuTree: buildMenuTree(menus),
-    buttons
+    buttons,
+    permissionCodes: permissionCodes.buttons
   }
 }
 
 /**
  * 管理员注册
+ * @returns {Promise<{success: boolean, code?: number, msg?: string, data?: object}>}
  */
 export const register = async ({ username, password, email }) => {
-  const existedUser = await adminAuthDao.findAdminUserByUsername(username)
+  const existedUser = await authDao.findAdminUserByUsername(username)
   if (existedUser) {
     return { success: false, code: businessCode.userExist }
   }
 
-  const existedEmail = await adminAuthDao.findAdminUserByEmail(email)
+  const existedEmail = await authDao.findAdminUserByEmail(email)
   if (existedEmail) {
     return { success: false, code: businessCode.emailExist }
   }
 
-  const defaultRole = await adminAuthDao.findRoleByName(defaultAdminRoleName)
+  const defaultRole = await authDao.findRoleByName(defaultAdminRoleName)
   if (!defaultRole) {
     return { success: false, code: businessCode.roleNotFound }
   }
 
   const passwordHash = await hashPassword(password)
-  const registerResult = await adminAuthDao.createAdminUser({
+  const registerResult = await authDao.createAdminUser({
     username,
     email,
     passwordHash,
@@ -118,9 +151,10 @@ export const register = async ({ username, password, email }) => {
 
 /**
  * 管理员登录（后台管理端）
+ * @returns {Promise<{success: boolean, code?: number, data?: object}>}
  */
 export const login = async ({ username, password }) => {
-  const user = await adminAuthDao.findAdminUserByUsername(username)
+  const user = await authDao.findAdminUserByUsername(username)
   if (!user) {
     return { success: false, code: businessCode.userLoginFail }
   }
@@ -163,9 +197,11 @@ export const login = async ({ username, password }) => {
 
 /**
  * 获取当前用户信息
+ * @param {number} userId
+ * @returns {Promise<{success: boolean, code?: number, data?: object}>}
  */
 export const getProfile = async (userId) => {
-  const currentUser = await adminAuthDao.findAdminUserById(user_id)
+  const currentUser = await authDao.findAdminUserById(userId)
   if (!currentUser) {
     return { success: false, code: businessCode.userNotFound }
   }
@@ -174,18 +210,20 @@ export const getProfile = async (userId) => {
 
 /**
  * 获取当前用户菜单
+ * @returns {Promise<{success: true, data: Array}>}
  */
-export const getMenus = async (roleIds, role_id) => {
-  const ids = parseRoleIds(roleIds, role_id)
+export const getMenus = async (roleIds, roleId) => {
+  const ids = parseRoleIds(roleIds, roleId)
   const permissionSnapshot = await buildPermissionSnapshot(ids)
   return { success: true, data: permissionSnapshot.menuTree }
 }
 
 /**
  * 获取当前用户权限
+ * @returns {Promise<{success: true, data: object}>}
  */
-export const getPermissions = async (roleIds, role_id) => {
-  const ids = parseRoleIds(roleIds, role_id)
+export const getPermissions = async (roleIds, roleId) => {
+  const ids = parseRoleIds(roleIds, roleId)
   const permissionSnapshot = await buildPermissionSnapshot(ids)
   return {
     success: true,
@@ -199,57 +237,11 @@ export const getPermissions = async (roleIds, role_id) => {
 
 // ─── 前端兼容接口 ────────────────────────────────────────────
 
-const detectBrowser = (ua) => {
-  if (!ua) {
-    return 'Unknown'
-  }
-  if (ua.includes('Edg/')) {
-    return 'Microsoft Edge'
-  }
-  if (ua.includes('Chrome/')) {
-    return 'Google Chrome'
-  }
-  if (ua.includes('Firefox/')) {
-    return 'Mozilla Firefox'
-  }
-  if (ua.includes('Safari/') && !ua.includes('Chrome/')) {
-    return 'Safari'
-  }
-  if (ua.includes('MSIE') || ua.includes('Trident/')) {
-    return 'Internet Explorer'
-  }
-  return 'Unknown'
-}
-
-const detectOS = (ua) => {
-  if (!ua) {
-    return 'Unknown'
-  }
-  if (ua.includes('Windows NT')) {
-    const version = ua.match(/Windows NT (\d+\.\d+)/)?.[1]
-    const versionMap = {
-      '10.0': 'Windows 10/11',
-      6.3: 'Windows 8.1',
-      6.2: 'Windows 8',
-      6.1: 'Windows 7'
-    }
-    return versionMap[version] || 'Windows'
-  }
-  if (ua.includes('Macintosh') || ua.includes('Mac OS X')) {
-    return 'macOS'
-  }
-  if (ua.includes('Linux')) {
-    return 'Linux'
-  }
-  if (ua.includes('Android')) {
-    return 'Android'
-  }
-  if (ua.includes('iPhone') || ua.includes('iPad')) {
-    return 'iOS'
-  }
-  return 'Unknown'
-}
-
+/**
+ * 组装登录日志数据
+ * @param {object} params
+ * @returns {Promise<object>}
+ */
 const buildLoginLogData = async ({ userId, username, loginIp, userAgent, status, message, sessionId }) => ({
   user_id: userId,
   username,
@@ -267,6 +259,7 @@ const buildLoginLogData = async ({ userId, username, loginIp, userAgent, status,
 /**
  * 前端兼容登录
  * @param {object} params - { userName, password, loginIp, userAgent }
+ * @returns {Promise<{success: boolean, code?: number, data?: object}>}
  */
 export const frontendLogin = async ({ userName, password, loginIp, userAgent }) => {
   const username = userName
@@ -281,11 +274,11 @@ export const frontendLogin = async ({ userName, password, loginIp, userAgent }) 
     }
   }
 
-  const user = await adminAuthDao.findAdminUserByUsername(username)
+  const user = await authDao.findAdminUserByUsername(username)
   if (!user) {
     // ── 记录失败并获取剩余次数 ──
     const failResult = await recordLoginFailure(username)
-    await loginLogDao.createLoginLog(
+    await loginLogService.createLoginLog(
       await buildLoginLogData({
         userId: null,
         username,
@@ -303,7 +296,7 @@ export const frontendLogin = async ({ userName, password, loginIp, userAgent }) 
   }
 
   if (Number(user.status) !== 1) {
-    await loginLogDao.createLoginLog(
+    await loginLogService.createLoginLog(
       await buildLoginLogData({
         userId: user.id,
         username,
@@ -320,7 +313,7 @@ export const frontendLogin = async ({ userName, password, loginIp, userAgent }) 
   if (!passwordMatched) {
     // ── 密码错误：记录失败 ──
     const failResult = await recordLoginFailure(username)
-    await loginLogDao.createLoginLog(
+    await loginLogService.createLoginLog(
       await buildLoginLogData({
         userId: user.id,
         username,
@@ -358,19 +351,10 @@ export const frontendLogin = async ({ userName, password, loginIp, userAgent }) 
   const refreshToken = generateRefreshToken(payload)
 
   // 将 sessionId、登录信息写入用户表
-  const sql = `
-    UPDATE sys_user SET
-      session_id = ?,
-      current_refresh_token = ?,
-      last_login_ip = ?,
-      last_login_time = NOW(),
-      session_expire = ?
-    WHERE id = ?
-  `
-  await query(sql, [sessionId, refreshToken, loginIp, sessionExpire, user.id])
+  await authDao.updateUserSession(user.id, sessionId, refreshToken, loginIp, sessionExpire)
 
   // 记录登录成功日志
-  await loginLogDao.createLoginLog(
+  await loginLogService.createLoginLog(
     await buildLoginLogData({
       userId: user.id,
       username,
@@ -398,22 +382,23 @@ export const frontendLogin = async ({ userName, password, loginIp, userAgent }) 
 
 /**
  * 前端兼容 - 获取用户信息（含按钮权限）
- * @param {number} user_id
+ * @param {number} userId
+ * @returns {Promise<{success: boolean, code?: number, data?: object}>}
  */
 export const frontendGetUserInfo = async (userId) => {
-  const currentUser = await adminAuthDao.findAdminUserById(userId)
+  const currentUser = await authDao.findAdminUserById(userId)
   if (!currentUser) {
     return { success: false, code: businessCode.userNotFound }
   }
 
   const roleIds = parseRoleIds(currentUser.roleIds, currentUser.role_id)
   const roleCodes = parseRoleCodes(currentUser.roleCodes, currentUser.role_code)
-  const buttons = await adminPermissionDao.findButtonsByRoleId(roleIds)
+  const buttons = await permissionService.findButtonsByRoleId(roleIds)
   // 权限码存储在 sys_menu.permission（如 system:user:add），menu_name 只是展示名
   const buttonCodes = [...new Set(buttons.map((b) => b.permission).filter(Boolean))]
 
   // 仅返回角色已授权的菜单路径（不含按钮），前端据此展示侧边栏
-  const grantedRows = await adminPermissionDao.findMenusByRoleId(roleIds)
+  const grantedRows = await permissionService.findMenusByRoleId(roleIds)
   const menuPaths = [
     ...new Set(
       grantedRows.filter((row) => String(row.menu_type).toUpperCase() !== 'BUTTON' && row.path).map((row) => row.path)
@@ -435,6 +420,7 @@ export const frontendGetUserInfo = async (userId) => {
 /**
  * 前端兼容 - 刷新 Token
  * @param {string} refreshToken
+ * @returns {Promise<{success: boolean, code?: number, msg?: string, data?: object}>}
  */
 export const frontendRefreshToken = async (refreshToken) => {
   if (!refreshToken) {
@@ -445,7 +431,7 @@ export const frontendRefreshToken = async (refreshToken) => {
     const decoded = verifyRefreshToken(refreshToken)
 
     // 单设备登录控制：校验用户表中的 current_refresh_token 是否匹配
-    const currentRefreshToken = await adminAuthDao.getUserRefreshToken(decoded.userId)
+    const currentRefreshToken = await authDao.getUserRefreshToken(decoded.userId)
     if (currentRefreshToken !== refreshToken) {
       return { success: false, code: businessCode.accountKicked }
     }
@@ -464,7 +450,7 @@ export const frontendRefreshToken = async (refreshToken) => {
     const newToken = generateToken(payload)
     const newRefreshToken = generateRefreshToken(payload)
 
-    await adminAuthDao.updateUserRefreshToken(decoded.userId, newRefreshToken)
+    await authDao.updateUserRefreshToken(decoded.userId, newRefreshToken)
 
     return {
       success: true,
@@ -478,18 +464,10 @@ export const frontendRefreshToken = async (refreshToken) => {
 /**
  * 前端兼容 - 登出（清除 sessionId 和 current_refresh_token）
  * @param {number} userId
+ * @returns {Promise<void>}
  */
 export const frontendLogout = async (userId) => {
   if (userId) {
-    const sql = `
-      UPDATE sys_user SET
-        session_id = NULL,
-        current_refresh_token = NULL,
-        last_login_ip = NULL,
-        last_login_time = NULL,
-        session_expire = NULL
-      WHERE id = ?
-    `
-    await query(sql, [userId])
+    await authDao.clearUserSession(userId)
   }
 }
