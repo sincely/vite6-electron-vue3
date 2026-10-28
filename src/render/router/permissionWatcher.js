@@ -2,6 +2,10 @@ import { watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
 import { useTagsViewStore } from '@/store/modules/tagsView'
+import { registerDynamicRoutes, getFirstNavigablePath } from './dynamicRoutes'
+
+// 权限方案：dynamic=后端菜单树驱动（默认 static）
+const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
 
 /**
  * 权限变更监听器：解决"页面不刷新时，已被移除权限的页面仍可停留"的问题。
@@ -15,11 +19,42 @@ import { useTagsViewStore } from '@/store/modules/tagsView'
  * 菜单（config/menu.js visibleMenuItems）与按钮指令（v-permission / v-role）
  * 本身是响应式的，会随 store 刷新自动收敛，无需在此处理。
  *
+ * 动态模式（VITE_PERMISSION_MODE=dynamic）改监听后端授权菜单树 menus：
+ * 变化时幂等重注册动态路由，并校验当前页面是否仍在授权树内，失权踢回工作台。
+ *
  * @param {import('vue-router').Router} router 路由实例
  */
 export function setupPermissionWatcher(router) {
   const userStore = useUserStore()
 
+  // ── 动态模式：menus 变化（403 静默重拉 / 冷启动后台刷新）→ 幂等重注册路由，
+  // 并校验当前停留页面是否仍被授权，失权踢回工作台 ──
+  if (isDynamicMode) {
+    watch(
+      () => userStore.menus,
+      (menus) => {
+        // 退出登录流程中 resetUserState 会清空 menus：此时 token 已清除，
+        // 由路由守卫负责跳转登录页，这里不重复弹"权限已变更"的提示
+        if (!userStore.token || !Array.isArray(menus)) return
+
+        registerDynamicRoutes(router, menus)
+
+        const current = router.currentRoute.value
+        // 当前路由已不在新注册表内（name 被移除）→ 踢出。
+        // 落点取新授权树首个可导航页面：/desktop 目录可能整体被收回，
+        // 硬编码会在守卫 not-found 兜底处形成回环
+        if (current.name && !router.hasRoute(current.name)) {
+          ElMessage.warning('权限已变更，您已无法访问当前页面')
+          // 关闭失权页面的标签页（removeView 会同步清除 keep-alive 缓存）
+          useTagsViewStore().removeView({ path: current.path, name: current.name })
+          router.replace(getFirstNavigablePath(menus) || '/desktop')
+        }
+      }
+    )
+    return
+  }
+
+  // ── 静态模式：现有 roles/permissions 监听 ──
   watch(
     () => [userStore.roles, userStore.permissions],
     () => {

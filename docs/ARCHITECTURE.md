@@ -160,6 +160,21 @@
 - `components`：通用组件，如更新弹窗、通知面板、图表组件、SVG 图标等
 - `store/modules`：应用状态、用户状态、通知状态、版本状态
 
+#### 4.2.1 双权限方案（VITE_PERMISSION_MODE）
+
+权限与路由支持两套构建期可切换的方案（`.env.development / .env.production / .env.test`，
+默认 `static`）：
+
+| | static（默认） | dynamic |
+|---|---|---|
+| 路由注册 | 前端静态路由表（router/index.js asyncRouteTree）全量注册 | 后端 `/user/info` 菜单树经 router/dynamicRoutes.js 转换后 addRoute（幂等重注册） |
+| 菜单来源 | config/menu.js 静态菜单树 + 后端授权树层级对齐过滤 | config/menu.js 从后端菜单树直接生成（树即授权结果） |
+| 失权收敛 | request.js 403 静默重拉 → visibleMenuItems 响应式收敛 | 同左 + permissionWatcher 重注册路由并踢出失权页面 |
+
+dynamic 模式关键约束：路由守卫在导航放行前完成动态路由注册（冷启动用 persist
+恢复的 menus 同步注册，离线可用）；空授权账号清登录态退回登录页。设计全文见
+`docs/superpowers/specs/2026-10-28-dual-permission-mode-design.md`。
+
 ### 4.3 状态与主题体系
 
 以 Pinia 为核心，当前主要包含：

@@ -110,10 +110,14 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
+import { currentMenuItems } from '@/config/menu'
 import { asyncRouteTree } from '@/router'
 import { useSearchStore } from '@/store/modules/search'
 import { useUserStore } from '@/store/modules/user'
 import { isMac } from '@/utils/platform'
+
+// 权限方案：dynamic=搜索动态菜单树；static=搜索静态路由树（默认）
+const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
 
 const router = useRouter()
 const searchStore = useSearchStore()
@@ -136,9 +140,24 @@ const joinRoutePath = (parentPath, routePath) => {
   return `${parentPath}/${routePath}`.replace(/\/+/g, '/')
 }
 
-// 菜单数据源：递归路由树，收集可搜索菜单项及其面包屑链路
+// 菜单数据源：dynamic 递归动态菜单树；static 递归静态路由树，收集可搜索项及面包屑链路
 const menuList = computed(() => {
   const list = []
+
+  if (isDynamicMode) {
+    const walkMenu = (items, ancestors) => {
+      items.forEach((item) => {
+        const title = item.label
+        const chain = title ? [...ancestors, title] : ancestors
+        if (title && !list.some((entry) => entry.path === item.route)) {
+          list.push({ title, path: item.route, breadcrumb: chain })
+        }
+        if (item.children?.length) walkMenu(item.children, chain)
+      })
+    }
+    walkMenu(currentMenuItems(), [])
+    return list
+  }
 
   const walk = (routes, parentPath, ancestors) => {
     routes.forEach((route) => {

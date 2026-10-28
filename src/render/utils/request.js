@@ -32,7 +32,7 @@ let lastPermissionRefreshAt = 0
 let permissionRefreshInFlight = null
 
 /**
- * 静默重拉用户信息（roles / permissions / menuPaths），带并发去重 + 节流。
+ * 静默重拉用户信息（roles / permissions / menus），带并发去重 + 节流。
  * 拉取成功后 store 更新：菜单与按钮响应式收敛，失权的当前页面由
  * router/permissionWatcher.js 负责踢出。失败（网络抖动等）静默忽略，
  * 等下一个权限拒绝信号再试。

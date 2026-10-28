@@ -400,10 +400,6 @@ export const frontendGetUserInfo = async (userId) => {
   // 仅返回角色已授权的菜单（不含按钮），前端据此展示侧边栏
   const grantedRows = await permissionService.findMenusByRoleId(roleIds)
   const grantedMenus = grantedRows.filter((row) => String(row.menu_type).toUpperCase() !== 'BUTTON')
-
-  // 扁平路径集合：前端用它过滤自己那套带组件引用的静态菜单树
-  const menuPaths = [...new Set(grantedMenus.map((row) => row.path).filter(Boolean))]
-
   // 树形菜单：后端 RBAC 数据（sys_menu）的层级结构
   const menus = buildMenuTree(grantedMenus)
 
@@ -414,8 +410,8 @@ export const frontendGetUserInfo = async (userId) => {
       userName: currentUser.username,
       roles: roleCodes,
       buttons: buttonCodes,
-      menus,
-      menuPaths
+      // 后端授权菜单树（sys_menu 层级）：static 模式作授权过滤输入，dynamic 模式作路由与菜单唯一事实源
+      menus
     }
   }
 }

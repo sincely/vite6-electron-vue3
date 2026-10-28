@@ -36,7 +36,12 @@ const normalizeMenu = (menu) => {
     ...(menu.sort !== undefined && menu.sort !== null ? { order: Number(menu.sort) } : {}),
     // visible='1' 表示显示、'0' 表示隐藏；前端 hideInMenu 语义相反
     ...(menu.visible === '0' || menu.visible === 0 ? { hideInMenu: true } : {}),
-    ...(menu.permission ? { permission: menu.permission } : {})
+    ...(menu.permission ? { permission: menu.permission } : {}),
+    // 外链 / 内嵌页：link 为 URL；frame='1' 表示应用内 iframe 展示
+    ...(menu.link ? { link: menu.link } : {}),
+    ...(String(menu.frame) === '1' ? { iframe: true } : {}),
+    // is_cache='1' 表示缓存组件（前端 keepAlive）
+    ...(String(menu.is_cache) === '1' ? { keepAlive: true } : {})
   }
 
   return {

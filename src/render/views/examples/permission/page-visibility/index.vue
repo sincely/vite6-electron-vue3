@@ -66,7 +66,7 @@ const steps = [
   },
   {
     title: '2. 菜单按角色过滤',
-    desc: 'config/menu.js 的 visibleMenuItems 依据用户角色递归过滤菜单树，分组下子项全部隐藏时整个分组一并隐藏，全局搜索同步排除。'
+    desc: 'config/menu.js 的 visibleMenuItems 依据用户角色与后端授权菜单树（sys_menu 层级）逐层过滤：菜单项须在授权树对应层级命中才可见，分组下子项全部隐藏时整个分组一并隐藏，全局搜索同步排除。'
   },
   {
     title: '3. 路由守卫拦截直达访问',

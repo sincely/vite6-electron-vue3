@@ -553,15 +553,12 @@ const createUser = async (user) => {
         "meta": { "title": "仪表板", "menuType": "DIR", "icon": "home", "order": 1 },
         "children": [ /* 同构子节点 */ ]
       }
-    ],
-    "menuPaths": ["/desktop", "/manage/user"]  // 扁平路径集合，供前端过滤本地静态菜单树
+    ]
   }
 }
 ```
 
-- `menus`：后端 RBAC 数据（`sys_menu`）的**树形层级**，按 `parent_id` 归组、同级按 `sort` 排序。
-- `menuPaths`：同一批菜单的**扁平路径集合**。前端拥有带组件引用（`component: () => import(...)`）的静态路由树，
-  后端无法提供组件，因此后端只负责「哪些路径被授权」，前端用该集合过滤自己的树。两者同源，`menus` 是 `menuPaths` 的层级化表达。
+- `menus`：后端 RBAC 数据（`sys_menu`）的**树形层级**，按 `parent_id` 归组、同级按 `sort` 排序，是唯一的菜单授权契约：static 模式（默认）前端用它对本地静态菜单树做层级对齐过滤；dynamic 模式（`VITE_PERMISSION_MODE=dynamic`）前端直接由它生成路由与菜单。组件由前端按 `component` 路径（`@/views/...`）解析，后端不返回组件引用。
 
 ### 用户管理接口
 
