@@ -57,6 +57,18 @@ export function getFirstNavigablePath(nodes) {
   return ''
 }
 
+// 权限方案（构建期常量）：dynamic=后端菜单树驱动；static=前端路由表+授权过滤（默认）
+export const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
+
+/**
+ * 首页 / 失权踢出落点：dynamic 取授权树首个可导航页（账号可能未授权 /desktop，
+ * 硬编码会形成 not-found 回环）；static 固定 /desktop
+ * @param {Array<object>|null} menus 后端授权菜单树
+ */
+export function getHomePath(menus) {
+  return (isDynamicMode && getFirstNavigablePath(menus)) || '/desktop'
+}
+
 /**
  * 解析后端 component 字符串为前端路由组件
  * @param {object} node 后端菜单树节点

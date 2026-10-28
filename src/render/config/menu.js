@@ -1,9 +1,7 @@
 import { computed } from 'vue'
 import { asyncRoutes } from '@/router'
+import { isDynamicMode } from '@/router/dynamicRoutes'
 import { useUserStore } from '@/store/modules/user'
-
-// 权限方案：dynamic=后端菜单树直接生成菜单；static=静态菜单树+授权过滤（默认）
-const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
 
 /**
  * 从 asyncRoutes 构建侧边栏菜单树

@@ -112,12 +112,10 @@
 import { Icon } from '@iconify/vue'
 import { currentMenuItems } from '@/config/menu'
 import { asyncRouteTree } from '@/router'
+import { isDynamicMode } from '@/router/dynamicRoutes'
 import { useSearchStore } from '@/store/modules/search'
 import { useUserStore } from '@/store/modules/user'
 import { isMac } from '@/utils/platform'
-
-// 权限方案：dynamic=搜索动态菜单树；static=搜索静态路由树（默认）
-const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
 
 const router = useRouter()
 const searchStore = useSearchStore()

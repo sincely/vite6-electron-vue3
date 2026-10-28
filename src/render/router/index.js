@@ -2,7 +2,13 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from '@/config/nprogress'
 import { useAppStore } from '@/store/modules/app'
 import { useUserStore } from '@/store/modules/user'
-import { registerDynamicRoutes, isDynamicRoutesRegistered, getFirstNavigablePath } from './dynamicRoutes'
+import {
+  registerDynamicRoutes,
+  isDynamicRoutesRegistered,
+  getFirstNavigablePath,
+  getHomePath,
+  isDynamicMode
+} from './dynamicRoutes'
 // 登录页为应用首屏，静态导入随入口 chunk 一并加载，
 // 避免 mount 后再等懒加载 chunk 造成的短暂空白
 import Login from '@/views/login/index.vue'
@@ -940,30 +946,20 @@ function flattenRoutes(routes, parentPath = '') {
 // 供菜单配置使用的扁平路由数据（保持兼容）
 export const asyncRoutes = flattenRoutes(asyncRouteTree)
 
-// 权限方案：dynamic=后端菜单树动态注册路由；static=静态路由表全量注册（默认）
-const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
+// dynamic 模式不注册 asyncRouteTree（由守卫按后端菜单树 addRoute），它仍供 static 分支的 menu.js / global-search 引用。
+// dynamic 兜底必须是实体路由：record 级 redirect 在守卫前同步解析且无环路保护，路由未注册期会自环栈溢出
+const fallbackRoute = isDynamicMode
+  ? {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/exception/404/index.vue'),
+      meta: { title: '404', noLayout: true }
+    }
+  : { path: '/:pathMatch(.*)*', redirect: '/desktop' }
 
 const router = createRouter({
   history: createWebHashHistory(),
-  // dynamic 模式下 asyncRouteTree 不注册，由守卫按后端菜单树动态 addRoute；
-  // import 保留：static 分支的 menu.js / global-search 仍引用它
-  routes: [
-    ...constantRoutes,
-    ...(isDynamicMode ? [] : asyncRouteTree),
-    // dynamic 兕底必须是实体路由而非 record redirect：vue-router 在守卫执行前
-    // 同步解析记录级 redirect 且无环路保护，动态路由未注册期会自环栈溢出；
-    // 改由守卫在注册后对 not-found 终结兕底（回工作台）
-    ...(isDynamicMode
-      ? [
-          {
-            path: '/:pathMatch(.*)*',
-            name: 'not-found',
-            component: () => import('@/views/exception/404/index.vue'),
-            meta: { title: '404', noLayout: true }
-          }
-        ]
-      : [{ path: '/:pathMatch(.*)*', redirect: '/desktop' }])
-  ],
+  routes: [...constantRoutes, ...(isDynamicMode ? [] : asyncRouteTree), fallbackRoute],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -985,13 +981,35 @@ const whiteList = ['/login', '/forgot-password']
 // 页面失权，由 permissionWatcher 负责踢出，登录态失效由 request.js 兜底。
 let hasBootRefreshedUser = false
 
-// dynamic 模式「首页」：授权树内第一个可导航页面。账号可能未授权 /desktop
-// 目录（授权树按角色裁剪，目录的默认子页也可能被裁掉），守卫兜底若硬编码
-// /desktop 会形成「not-found -> /desktop -> not-found」的守卫级回环；
-// 树不可用（旧持久化缓存）时退 /desktop，由后续注册流程收敛
-function resolveHomePath() {
-  if (!isDynamicMode) return '/desktop'
-  return getFirstNavigablePath(useUserStore().menus) || '/desktop'
+// 清登录态并回登录页（可附提示）
+function rejectToLogin(userStore, to, message) {
+  if (message) ElMessage.warning(message)
+  userStore.resetUserState()
+  return message ? '/login' : `/login?redirect=${encodeURIComponent(to.fullPath)}`
+}
+
+// dynamic 模式：导航放行前确保动态路由已注册，并终结 not-found 兜底
+async function guardDynamicRoutes(to, userStore) {
+  // 旧持久化缓存无 menus（跨模式切换/旧版本）：同步补拉一次，动态路由不持久化故无缓存可退
+  if (!Array.isArray(userStore.menus)) {
+    try {
+      await userStore.getUserInfoAction()
+    } catch {
+      return rejectToLogin(userStore, to)
+    }
+  }
+  const { menus } = userStore
+  if (!Array.isArray(menus)) return rejectToLogin(userStore, to, '后端未返回菜单数据，请检查服务端版本')
+  // 空授权账号无处落地，退登录避免 not-found 兜底的守卫级回环
+  if (!getFirstNavigablePath(menus)) return rejectToLogin(userStore, to, '当前账号无可用菜单，请联系管理员')
+
+  // 冷启动用 persist 恢复的 menus 同步注册（离线可用），后续变化由 permissionWatcher 重注册
+  if (!isDynamicRoutesRegistered()) {
+    registerDynamicRoutes(router, menus)
+    // 按 path 重新解析：展开 to 会带 name:'not-found' 再绕一圈兜底
+    return { path: to.path, query: to.query, hash: to.hash, replace: true }
+  }
+  if (to.name === 'not-found') return { path: getHomePath(menus) }
 }
 
 router.beforeEach(async (to) => {
@@ -1006,7 +1024,7 @@ router.beforeEach(async (to) => {
   if (hasToken) {
     // 已登录访问登录页（如登录窗口残留导航），重定向到首页
     if (to.path === '/login') {
-      return { path: resolveHomePath() }
+      return { path: getHomePath(userStore.menus) }
     }
     // 有 token 但缺少用户信息（如持久化恢复后首次进入），拉取一次
     if (!userStore.userInfo) {
@@ -1014,63 +1032,22 @@ router.beforeEach(async (to) => {
         await userStore.getUserInfoAction()
         hasBootRefreshedUser = true
       } catch {
-        userStore.resetUserState()
-        return `/login?redirect=${encodeURIComponent(to.fullPath)}`
+        return rejectToLogin(userStore, to)
       }
     } else if (!hasBootRefreshedUser) {
-      // 冷启动：userInfo 来自 persist 缓存，后台静默刷新一次（不 await），
-      // 失败时保持缓存数据可用，不打断用户
+      // 冷启动：userInfo 来自 persist 缓存，后台静默刷新一次（不 await），失败时沿用缓存
       hasBootRefreshedUser = true
       userStore.getUserInfoAction().catch(() => {})
     }
-    // ── 动态模式：导航放行前确保动态路由已注册，并对兕底命中做终结 ──
     if (isDynamicMode) {
-      let menus = userStore.menus
-      // 旧持久化缓存无 menus 字段（跨模式切换/旧版本）：同步补拉一次，
-      // dynamic 模式路由不持久化，无缓存可退
-      if (!Array.isArray(menus)) {
-        try {
-          await userStore.getUserInfoAction()
-          menus = userStore.menus
-        } catch {
-          userStore.resetUserState()
-          return `/login?redirect=${encodeURIComponent(to.fullPath)}`
-        }
-        // 补拉后仍无 menus（旧后端未升级）：无法注册动态路由，
-        // 与空授权同口径清态退登录，避免 replace 重进后无限补拉
-        if (!Array.isArray(menus)) {
-          ElMessage.warning('后端未返回菜单数据，请检查服务端版本')
-          userStore.resetUserState()
-          return '/login'
-        }
-      }
-      // 空授权 / 树内无任何可导航页面（异常数据）的账号：无处可落地，
-      // 清登录态退回登录页（否则 not-found 兜底会形成守卫级回环）
-      if (Array.isArray(menus) && !getFirstNavigablePath(menus)) {
-        ElMessage.warning('当前账号无可用菜单，请联系管理员')
-        userStore.resetUserState()
-        return '/login'
-      }
-      // 冷启动 persist 恢复：用恢复的 menus 同步注册（离线可用）；
-      // 后台静默刷新后的权限变化由 permissionWatcher 重注册收敛
-      if (!isDynamicRoutesRegistered()) {
-        registerDynamicRoutes(router, menus)
-        // 不展开 to（RouteLocationNormalized 带 name:'not-found' 与 pathMatch
-        // 参数，按 name 重导航会再绕一圈兜底）；按 path 重新解析即可命中
-        // 刚注册的动态路由
-        return { path: to.path, query: to.query, hash: to.hash, replace: true }
-      }
-      // 注册后仍命中 not-found（真未知路径）→ 回首页；resolveHomePath 取自
-      // 注册成功的同一棵授权树，必然可解析，不会构成回环
-      if (to.name === 'not-found') {
-        return { path: resolveHomePath() }
-      }
+      const redirect = await guardDynamicRoutes(to, userStore)
+      if (redirect) return redirect
     }
     // 页面可见性：声明了 meta.roles 的路由仅允许对应角色访问
     const requiredRoles = to.meta?.roles
     if (requiredRoles?.length && !requiredRoles.some((role) => userStore.roles.includes(role))) {
       ElMessage.warning('当前角色无权访问该页面')
-      return { path: resolveHomePath() }
+      return { path: getHomePath(userStore.menus) }
     }
   } else if (!whiteList.includes(to.path)) {
     return `/login?redirect=${encodeURIComponent(to.fullPath)}`

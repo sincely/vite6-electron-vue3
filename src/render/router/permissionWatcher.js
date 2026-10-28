@@ -2,33 +2,27 @@ import { watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
 import { useTagsViewStore } from '@/store/modules/tagsView'
-import { registerDynamicRoutes, getFirstNavigablePath } from './dynamicRoutes'
-
-// 权限方案：dynamic=后端菜单树驱动（默认 static）
-const isDynamicMode = import.meta.env.VITE_PERMISSION_MODE === 'dynamic'
+import { isDynamicMode, registerDynamicRoutes, getHomePath } from './dynamicRoutes'
 
 /**
- * 权限变更监听器：解决"页面不刷新时，已被移除权限的页面仍可停留"的问题。
- *
- * router.beforeEach 只能拦截【新的导航】；当后端移除权限、前端通过
- * 403 信号（utils/request.js）或冷启动静默刷新（router/index.js 守卫）
- * 更新 store 后，用户当前已停留的页面不会再触发导航守卫。
- *
- * 这里监听 roles/permissions 的变化，按与守卫一致的口径重新校验当前路由的
- * meta.roles，不再满足时提示并退回工作台，同时关闭对应标签页。
- * 菜单（config/menu.js visibleMenuItems）与按钮指令（v-permission / v-role）
- * 本身是响应式的，会随 store 刷新自动收敛，无需在此处理。
- *
- * 动态模式（VITE_PERMISSION_MODE=dynamic）改监听后端授权菜单树 menus：
- * 变化时幂等重注册动态路由，并校验当前页面是否仍在授权树内，失权踢回工作台。
+ * 权限变更监听：解决"页面不刷新时，已被移除权限的页面仍可停留"的问题
+ * 在此校验并踢出；菜单与按钮指令本身响应式，无需处理。
+ *   static：roles 不再满足当前路由 meta.roles
+ *   dynamic：menus 变化 -> 幂等重注册路由，当前路由已不在授权树内
+ * 退出登录会清空 roles/menus，此时 token 已清除，由守卫跳登录页，不重复提示。
  *
  * @param {import('vue-router').Router} router 路由实例
  */
 export function setupPermissionWatcher(router) {
   const userStore = useUserStore()
 
-  // ── 动态模式：menus 变化（403 静默重拉 / 冷启动后台刷新）→ 幂等重注册路由，
-  // 并校验当前停留页面是否仍被授权，失权踢回工作台 ──
+  const kickOut = ({ path, name }) => {
+    ElMessage.warning('抱歉，您已无法访问当前页面')
+    // 关闭失权页面的标签页（removeView 会同步清除 keep-alive 缓存）
+    useTagsViewStore().removeView({ path, name })
+    router.replace(getHomePath(userStore.menus))
+  }
+
   if (isDynamicMode) {
     watch(
       () => userStore.menus,
@@ -36,42 +30,24 @@ export function setupPermissionWatcher(router) {
         // 退出登录流程中 resetUserState 会清空 menus：此时 token 已清除，
         // 由路由守卫负责跳转登录页，这里不重复弹"权限已变更"的提示
         if (!userStore.token || !Array.isArray(menus)) return
-
         registerDynamicRoutes(router, menus)
-
         const current = router.currentRoute.value
         // 当前路由已不在新注册表内（name 被移除）→ 踢出。
         // 落点取新授权树首个可导航页面：/desktop 目录可能整体被收回，
         // 硬编码会在守卫 not-found 兜底处形成回环
-        if (current.name && !router.hasRoute(current.name)) {
-          ElMessage.warning('权限已变更，您已无法访问当前页面')
-          // 关闭失权页面的标签页（removeView 会同步清除 keep-alive 缓存）
-          useTagsViewStore().removeView({ path: current.path, name: current.name })
-          router.replace(getFirstNavigablePath(menus) || '/desktop')
-        }
+        if (current.name && !router.hasRoute(current.name)) kickOut(current)
       }
     )
     return
   }
 
-  // ── 静态模式：现有 roles/permissions 监听 ──
   watch(
-    () => [userStore.roles, userStore.permissions],
-    () => {
-      // 退出登录流程中 resetUserState 会清空 roles：此时 token 已清除，
-      // 由路由守卫负责跳转登录页，这里不重复弹"权限已变更"的提示
+    () => userStore.roles,
+    (roles) => {
       if (!userStore.token) return
-
       const current = router.currentRoute.value
-      const requiredRoles = current?.meta?.roles
-      // 与 beforeEach 守卫同一校验口径：未声明 meta.roles 的路由不限制
-      if (!requiredRoles?.length) return
-      if (requiredRoles.some((role) => userStore.roles.includes(role))) return
-
-      ElMessage.warning('权限已变更，您已无法访问当前页面')
-      // 关闭失权页面的标签页（removeView 会同步清除 keep-alive 缓存）
-      useTagsViewStore().removeView({ path: current.path, name: current.name })
-      router.replace('/desktop')
+      const required = current.meta?.roles
+      if (required?.length && !required.some((role) => roles.includes(role))) kickOut(current)
     },
     { deep: true }
   )
