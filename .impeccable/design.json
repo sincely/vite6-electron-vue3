@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T21:44:38+08:00",
+  "title": "Design System: Lightning",
+  "extensions": {
+    "colorMeta": {
+      "sky-blue": {
+        "role": "primary",
+        "displayName": "晴空蓝 Sky Blue",
+        "canonical": "#2563eb",
+        "tonalRamp": ["#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"]
+      },
+      "sky-blue-bright": {
+        "role": "primary",
+        "displayName": "夜航蓝 Night-Sky Blue",
+        "canonical": "#3b82f6",
+        "tonalRamp": ["#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"]
+      },
+      "success": {
+        "role": "status",
+        "displayName": "翡翠绿 Emerald",
+        "canonical": "#10b981",
+        "tonalRamp": ["#064e3b", "#065f46", "#047857", "#059669", "#10b981", "#34d399", "#6ee7b7", "#a7f3d0"]
+      },
+      "warning": {
+        "role": "status",
+        "displayName": "琥珀橙 Amber",
+        "canonical": "#f59e0b",
+        "tonalRamp": ["#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fbbf24", "#fcd34d", "#fde68a"]
+      },
+      "danger": {
+        "role": "status",
+        "displayName": "警报红 Red",
+        "canonical": "#ef4444",
+        "tonalRamp": ["#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fecaca"]
+      },
+      "info": {
+        "role": "status",
+        "displayName": "天际青 Sky",
+        "canonical": "#0ea5e9",
+        "tonalRamp": ["#0c4a6e", "#075985", "#0369a1", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#bae6fd"]
+      },
+      "violet": {
+        "role": "vibrant",
+        "displayName": "紫罗兰 Violet",
+        "canonical": "#7c3aed",
+        "tonalRamp": ["#4c1d95", "#5b21b6", "#6d28d9", "#7c3aed", "#8b5cf6", "#a78bfa", "#c4b5fd", "#ddd6fe"]
+      },
+      "teal": {
+        "role": "vibrant",
+        "displayName": "青绿 Teal",
+        "canonical": "#0d9488",
+        "tonalRamp": ["#134e4a", "#115e59", "#0f766e", "#0d9488", "#14b8a6", "#2dd4bf", "#5eead4", "#99f6e4"]
+      },
+      "rose": {
+        "role": "vibrant",
+        "displayName": "玫瑰 Rose",
+        "canonical": "#e11d48",
+        "tonalRamp": ["#881337", "#9f1239", "#be123c", "#e11d48", "#f43f5e", "#fb7185", "#fda4af", "#fecdd3"]
+      },
+      "indigo": {
+        "role": "vibrant",
+        "displayName": "靛蓝 Indigo",
+        "canonical": "#4f46e5",
+        "tonalRamp": ["#312e81", "#3730a3", "#4338ca", "#4f46e5", "#6366f1", "#818cf8", "#a5b4fc", "#c7d2fe"]
+      },
+      "cyan": {
+        "role": "vibrant",
+        "displayName": "青 Cyan",
+        "canonical": "#06b6d4",
+        "tonalRamp": ["#164e63", "#155e75", "#0e7490", "#0891b2", "#06b6d4", "#22d3ee", "#67e8f9", "#a5f3fc"]
+      },
+      "pink": {
+        "role": "vibrant",
+        "displayName": "粉 Pink",
+        "canonical": "#ec4899",
+        "tonalRamp": ["#831843", "#9d174d", "#be185d", "#db2777", "#ec4899", "#f472b6", "#f9a8d4", "#fbcfe8"]
+      },
+      "ink-primary": {
+        "role": "neutral",
+        "displayName": "墨青 Ink (Slate)",
+        "canonical": "#0f172a",
+        "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0"]
+      },
+      "night-bg": {
+        "role": "neutral",
+        "displayName": "夜幕四阶 Night Ladder",
+        "canonical": "#0b0c0f",
+        "tonalRamp": ["#0b0c0f", "#111318", "#131313", "#16191f", "#1f2937", "#374151", "#6b7280", "#9ca3af"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display 数据大字", "purpose": "仪表盘统计大数字、锁屏时钟；必须 tabular-nums。" },
+      "headline": { "displayName": "Headline 页面标题", "purpose": "页面级标题（20px/600）。" },
+      "title": { "displayName": "Title 卡片/对话框标题", "purpose": "卡片头、对话框标题（18px/600-700，字距 -0.01em）。" },
+      "body": { "displayName": "Body 正文", "purpose": "正文、表格内容、表单说明（14px/1.6）。" },
+      "ui": { "displayName": "UI 控件文字", "purpose": "菜单项、标签页、按钮等控件文字（13px/500），桌面紧凑密度的主力字号。" },
+      "label": { "displayName": "Label 辅助", "purpose": "辅助说明、徽章、次级信息（12px/500-600）。" },
+      "mono": { "displayName": "Mono 代码", "purpose": "代码面板、请求响应、权限码。" }
+    },
+    "shadows": [
+      { "name": "shadow-sm", "value": "0 1px 2px 0 rgb(0 0 0 / 4%)", "purpose": "卡片静止的最低层级（亮色）。" },
+      { "name": "shadow-md", "value": "0 2px 4px -1px rgb(0 0 0 / 6%)", "purpose": "下拉、气泡。" },
+      { "name": "shadow-lg", "value": "0 4px 6px -1px rgb(0 0 0 / 8%)", "purpose": "对话框、全屏提示条；亮色主题阴影的天花板。" },
+      { "name": "glow-primary", "value": "0 4px 14px -3px rgb(37 99 235 / 35%)", "purpose": "主行动元素悬浮辉光，只作为状态响应。" },
+      { "name": "glow-success", "value": "0 4px 14px -3px rgb(16 185 129 / 35%)", "purpose": "成功语义元素的辉光。" },
+      { "name": "glow-violet", "value": "0 4px 14px -3px rgb(124 58 237 / 35%)", "purpose": "紫罗兰信号元素的辉光。" },
+      { "name": "glow-rose", "value": "0 4px 14px -3px rgb(225 29 72 / 35%)", "purpose": "玫瑰信号元素的辉光。" },
+      { "name": "glow-amber", "value": "0 4px 14px -3px rgb(217 119 6 / 35%)", "purpose": "琥珀信号元素的辉光。" },
+      { "name": "glass-shadow-soft", "value": "0 1px 3px rgb(0 0 0 / 5%)", "purpose": "玻璃浮层的轻投影。" },
+      { "name": "dark-shadow-lg", "value": "0 10px 15px -3px rgb(0 0 0 / 50%)", "purpose": "暗色主题对话框深影（暗色主要靠亮度分层，阴影为辅）。" }
+    ],
+    "motion": [
+      { "name": "page-ease", "value": "0.2s cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "路由页面过渡默认时长与缓动（page/fade/slide/scale/zoom/blur 十种预设共用）。" },
+      { "name": "layout-ease", "value": "0.36s cubic-bezier(0.22, 0.7, 0.2, 1)", "purpose": "布局级形变：侧栏收展、布局模式切换、内容全屏。" },
+      { "name": "bounce-ease", "value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "purpose": "hover/点击微交互的回弹曲线（0.2–0.25s，scale ≤ 1.12，位移 ≤ -3px）。" },
+      { "name": "theme-reveal", "value": "0.5s ease-in（View Transition 圆形 clip-path 扩散）", "purpose": "亮暗主题切换，以点击坐标为圆心展开/收缩。" },
+      { "name": "badge-breathe", "value": "1.5s ease-in-out infinite", "purpose": "菜单红点呼吸动画。" },
+      { "name": "splash-comet", "value": "1.4s cubic-bezier(0.37, 0, 0.2, 1) infinite", "purpose": "启动屏进度轨道的彗星滑块。" },
+      { "name": "pop-in", "value": "0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both", "purpose": "元素弹入（工具类 .pop-in）。" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Element Plus 主按钮，晴空蓝底白字；hover 提亮，强调场景可叠加晴空辉光。",
+      "html": "<button class=\"ds-btn-primary\">保存更改</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 8px 15px; font-size: 14px; font-weight: 500; color: #fff; cursor: pointer; background: var(--color-primary, #2563eb); border: 1px solid var(--color-primary, #2563eb); border-radius: 4px; transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease; } .ds-btn-primary:hover { background: color-mix(in srgb, var(--color-primary, #2563eb), #fff 20%); border-color: color-mix(in srgb, var(--color-primary, #2563eb), #fff 20%); } .ds-btn-primary:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-primary, #2563eb), transparent 60%); outline-offset: 2px; } .ds-btn-primary:active { background: color-mix(in srgb, var(--color-primary, #2563eb), #000 15%); }"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "标题栏图标按钮：30×30 透明底，hover 浮现浅雾蓝底，点击弹性收缩。",
+      "html": "<button class=\"ds-icon-btn\" aria-label=\"搜索\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m21 21-4.3-4.3\"/></svg></button>",
+      "css": ".ds-icon-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; padding: 0; color: var(--color-text-primary, #0f172a); cursor: pointer; background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm, 6px); transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } .ds-icon-btn:hover { background: var(--color-bg-hover, #eff6ff); } .ds-icon-btn:active { transform: scale(0.94); } .ds-icon-btn:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-primary, #2563eb), transparent 60%); outline-offset: 1px; }"
+    },
+    {
+      "name": "Standard Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "内容区标准容器：白底、1px 发丝边框、14px 圆角、12px 24px 内边距，卡头 18px/600。",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\">月度概览<span class=\"ds-card-sub\">最近 30 天</span></div><div class=\"ds-card-body\">卡片是内容区的标准容器，置于 #F8FAFC 晨雾灰蓝内容区之上，靠白底与发丝边框分层。</div></div>",
+      "css": ".ds-card { display: flex; flex-direction: column; padding: 12px 24px; background: var(--color-bg-card, #fff); border: 1px solid var(--color-border, #eff1f3); border-radius: var(--radius-lg, 14px); transition: all 0.3s ease; } .ds-card-header { display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px; font-size: 18px; font-weight: 600; line-height: 1.3; color: var(--color-text-primary, #0f172a); } .ds-card-sub { font-size: 12px; font-weight: 400; color: var(--color-text-muted, #64748b); } .ds-card-body { flex: 1; font-size: 14px; line-height: 1.6; color: var(--color-text-secondary, #475569); }"
+    },
+    {
+      "name": "Sidebar Menu Item",
+      "kind": "nav",
+      "refersTo": "menu-item",
+      "description": "侧边菜单项：42px 高、10px 圆角；激活态 = 主色文字 + 浅雾底 + 左缘 3px 蓝紫渐变指示条（签名细节）。",
+      "html": "<nav class=\"ds-menu\"><a class=\"ds-menu-item\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg>工作台</a><a class=\"ds-menu-item is-active\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M3 3v18h18\"/><path d=\"M7 16v-5\"/><path d=\"M12 16V8\"/><path d=\"M17 16v-3\"/></svg>数据分析</a></nav>",
+      "css": ".ds-menu { display: flex; flex-direction: column; gap: 4px; width: 236px; padding: 8px; background: var(--sidebar-surface-bg, #fff); } .ds-menu-item { position: relative; display: flex; gap: 10px; align-items: center; height: 42px; padding: 0 12px; font-size: 13px; font-weight: 500; color: var(--color-text-secondary, #475569); text-decoration: none; white-space: nowrap; cursor: pointer; background: transparent; border: 1px solid transparent; border-radius: var(--radius-md, 10px); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); } .ds-menu-item svg { flex-shrink: 0; color: var(--color-menu-icon, #64748b); transition: color 0.25s ease; } .ds-menu-item:hover { color: var(--color-text-primary, #0f172a); background: var(--color-bg-hover, #eff6ff); border-color: var(--color-border-light, #f1f5f9); } .ds-menu-item:hover svg { color: var(--brand-accent, #2563eb); } .ds-menu-item.is-active { font-weight: 600; color: var(--color-primary, #2563eb); background: var(--brand-accent-soft, #eff6ff); border-color: color-mix(in srgb, var(--color-primary, #2563eb), transparent 40%); } .ds-menu-item.is-active svg { color: var(--color-primary, #2563eb); } .ds-menu-item.is-active::before { position: absolute; top: 8px; bottom: 8px; left: 0; width: 3px; content: ''; background: linear-gradient(180deg, #2563eb, #7c3aed); border-radius: 4px; }"
+    },
+    {
+      "name": "Chrome Tab",
+      "kind": "nav",
+      "refersTo": "chrome-tab",
+      "description": "多标签栏的 Chrome 风格标签：32px 高、顶部圆角、相邻重叠；激活标签主色文字 + 主色 10% 混合底。",
+      "html": "<div class=\"ds-tabs\"><span class=\"ds-tab\">首页</span><span class=\"ds-tab is-active\">用户管理<svg class=\"ds-tab-close\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg></span><span class=\"ds-tab\">角色管理</span></div>",
+      "css": ".ds-tabs { display: flex; align-items: flex-end; height: 40px; padding: 0 8px; background: var(--color-bg-card, #fff); } .ds-tab { position: relative; z-index: 1; display: inline-flex; gap: 8px; align-items: center; height: 32px; padding: 0 18px; margin-right: -8px; font-size: 13px; font-weight: 500; color: var(--color-text-secondary, #475569); white-space: nowrap; cursor: pointer; border-radius: 8px 8px 0 0; transition: color 0.2s ease, background 0.2s ease; } .ds-tab:hover { z-index: 9; color: var(--color-text-primary, #0f172a); background: #dee1e6; } .ds-tab.is-active { z-index: 10; font-weight: 600; color: var(--color-primary, #2563eb); background: color-mix(in srgb, var(--color-primary, #2563eb), #fff 90%); } .ds-tab-close { padding: 2px; border-radius: 50%; transition: all 0.2s ease; } .ds-tab-close:hover { color: #fff; background: var(--color-primary, #2563eb); }"
+    },
+    {
+      "name": "Vibrant Badges",
+      "kind": "chip",
+      "refersTo": "badge-vibrant",
+      "description": "活力徽章：soft 色雾做底、base 信号色做字的胶囊；七色各一套，hover scale(1.05)。仅用于信息编码，不做交互。",
+      "html": "<span class=\"ds-badge ds-badge-violet\">新功能</span> <span class=\"ds-badge ds-badge-teal\">进行中</span> <span class=\"ds-badge ds-badge-rose\">高优先</span>",
+      "css": ".ds-badge { display: inline-flex; gap: 4px; align-items: center; padding: 2px 10px; font-size: 12px; font-weight: 600; border-radius: 20px; transition: transform 0.2s ease; } .ds-badge:hover { transform: scale(1.05); } .ds-badge-violet { color: var(--color-violet, #7c3aed); background: var(--color-violet-soft, #f5f3ff); } .ds-badge-teal { color: var(--color-teal, #0d9488); background: var(--color-teal-soft, #f0fdfa); } .ds-badge-rose { color: var(--color-rose, #e11d48); background: var(--color-rose-soft, #fff1f2); }"
+    },
+    {
+      "name": "Table Actions",
+      "kind": "custom",
+      "refersTo": "table-action-button",
+      "description": "表格操作列图标按钮：24×24 链接式，语义配色固定（查看 info / 编辑 primary / 删除 danger / 新增 success），hover 弹性放大 1.12。",
+      "html": "<div class=\"ds-table-action\"><button class=\"ds-ta ds-ta-view\" aria-label=\"查看\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/></svg></button><button class=\"ds-ta ds-ta-edit\" aria-label=\"编辑\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/></svg></button><button class=\"ds-ta ds-ta-delete\" aria-label=\"删除\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/></svg></button></div>",
+      "css": ".ds-table-action { display: flex; gap: 6px; align-items: center; justify-content: center; } .ds-ta { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; cursor: pointer; background: transparent; border: none; border-radius: var(--radius-sm, 6px); transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } .ds-ta:hover { transform: scale(1.12); } .ds-ta:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-primary, #2563eb), transparent 60%); outline-offset: 1px; } .ds-ta-view { color: var(--color-info, #0ea5e9); } .ds-ta-edit { color: var(--color-primary, #2563eb); } .ds-ta-delete { color: var(--color-danger, #ef4444); }"
+    },
+    {
+      "name": "Glass Dialog",
+      "kind": "custom",
+      "refersTo": "dialog",
+      "description": "MessageBox 签名皮肤：玻璃面 + blur(12px)、20px 圆角、右上角主色径向光晕；按钮最小宽 84px、圆角 10px。",
+      "html": "<div class=\"ds-dialog\"><div class=\"ds-dialog-title\">确认删除</div><div class=\"ds-dialog-body\">此操作将永久删除该记录，且不可恢复。是否继续？</div><div class=\"ds-dialog-btns\"><button class=\"ds-dlg-btn\">取消</button><button class=\"ds-dlg-btn ds-dlg-btn-primary\">确认删除</button></div></div>",
+      "css": ".ds-dialog { position: relative; width: 360px; padding: 16px; overflow: hidden; background: var(--glass-surface, #fff); backdrop-filter: blur(12px); border: 1px solid var(--glass-surface-border, #e2e8f0); border-radius: var(--radius-xl, 20px); box-shadow: var(--glass-shadow-soft, 0 1px 3px rgb(0 0 0 / 5%)), 0 0 0 1px color-mix(in srgb, var(--color-primary, #2563eb), transparent 80%); } .ds-dialog::before { position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; pointer-events: none; content: ''; background: radial-gradient(circle, color-mix(in srgb, var(--color-primary, #2563eb), transparent 70%) 0%, transparent 70%); border-radius: 999px; } .ds-dialog-title { font-size: 18px; font-weight: 700; line-height: 1.2; color: var(--color-text-primary, #0f172a); letter-spacing: -0.01em; } .ds-dialog-body { margin: 12px 0 16px; font-size: 14px; line-height: 1.6; color: var(--color-text-secondary, #475569); } .ds-dialog-btns { display: flex; gap: 8px; justify-content: flex-end; } .ds-dlg-btn { min-width: 84px; height: 32px; padding: 8px 15px; font-size: 14px; font-weight: 500; color: var(--color-text-primary, #0f172a); cursor: pointer; background: color-mix(in srgb, var(--glass-surface, #fff), transparent 8%); border: 1px solid var(--glass-surface-border, #e2e8f0); border-radius: 10px; transition: all 0.2s ease; } .ds-dlg-btn:hover { background: var(--color-bg-hover, #eff6ff); } .ds-dlg-btn-primary { color: #fff; background: var(--color-primary, #2563eb); border-color: var(--color-primary, #2563eb); } .ds-dlg-btn-primary:hover { background: color-mix(in srgb, var(--color-primary, #2563eb), #fff 20%); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "晴空工作台 Clear-Sky Workspace",
+    "overview": "Lightning 是一个 Electron 桌面管理端。它的视觉世界像一片晴朗的天空：大面积的白与极浅的灰蓝构成安静、通透的画布（Flat Design），内容像俯瞰视角下的工作台一样清晰铺开；晴空蓝是唯一贯穿全局的行动色，而七色的活力扩展色板如同天空中的信号色——只出现在徽章、图表、辉光和装饰光斑里，为信息编码，从不争夺操作焦点。\n\n系统的能量藏在细节里而不是表面上：静止时一切平面、极简、1px 发丝边框；一旦交互发生，弹性曲线、彩色辉光、渐变指示条才短暂浮现。暗色主题是同一片天空的夜航模式——深蓝黑底色（#0b0c0f）靠亮度而非阴影分层，蓝色被提亮一档以保证在暗底上的可读性。登录页的 WebGL 流体背景（Spectra）和启动屏的三蓝折叠环是这套系统最具表现力的两个签名时刻，但它们被限定在入口场景，不外溢到日常工作界面。\n\n信息密度偏紧凑（日常 UI 文字集中在 12–14px，图标按钮 24–30px，菜单项 42px），这是桌面工具的本分：可扫读性、一致性和效率优先于表达欲。",
+    "keyCharacteristics": [
+      "白蓝平面画布：白底 + Slate 灰蓝层次 + 晴空蓝 #2563EB 单一行动色",
+      "平面优先，辉光点睛：静止无投影，彩色 glow 只作为悬浮/强调的状态响应",
+      "弹性微交互：hover 统一使用回弹曲线 cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "七色信号板：violet/teal/rose/amber/indigo/cyan/pink 只做信息编码",
+      "亮暗双主题：亮色靠极轻阴影、暗色靠亮度台阶分层，切换带圆形扩散 View Transition",
+      "桌面级紧凑密度 + Element Plus 基座（主色已重定为晴空蓝）"
+    ],
+    "rules": [
+      { "name": "单一声音守则 The One Voice Rule", "body": "晴空蓝是唯一的行动色：按钮、链接、菜单激活、焦点环只允许出现蓝色。七个扩展色永远不做交互色——它们只为数据、状态标签和装饰编码信息。一屏之内，蓝色开口说话，彩色只做记号。", "section": "colors" },
+      { "name": "三件套守则 The Trio Rule", "body": "使用任何扩展色时必须走 base/light/soft 三件套变量（如 --color-violet / --color-violet-light / --color-violet-soft），soft 做底、base 做字，禁止手写十六进制散值。", "section": "colors" },
+      { "name": "变量唯一来源 Rule", "body": "所有颜色消费一律通过 CSS 变量（--color-* / --brand-*），禁止在组件里硬编码色值；亮暗主题因此免费获得。", "section": "colors" },
+      { "name": "正文三阶规则 The 12-13-14 Rule", "body": "日常 UI 文字只允许 12 / 13 / 14px 三阶：12 辅助、13 控件、14 正文。超过 18px 的字号属于\"展示时刻\"（页面标题、统计数字、对话框），不出现在表格与表单里。", "section": "typography" },
+      { "name": "数字等宽规则 The Tabular Rule", "body": "一切会变化的数字（百分比、倒计时、统计值）必须 font-variant-numeric: tabular-nums，宽度稳定优先于视觉惊喜。", "section": "typography" },
+      { "name": "三带工作台规则 The Three-Band Rule", "body": "新页面永远假设自己位于「64px 标题栏 + 38px 标签栏」之下的滚动内容区内，不自行绘制顶部导航或占用标签栏高度。", "section": "layout" },
+      { "name": "布局收展规则", "body": "所有布局级形变（侧栏收起、布局模式切换、全屏）统一 0.36s cubic-bezier(0.22, 0.7, 0.2, 1)；元素级微交互一律不超过 0.25s。", "section": "layout" },
+      { "name": "玻璃仅限浮层 The Glass Boundary", "body": "backdrop-filter 模糊只允许出现在浮层：MessageBox、全屏提示胶囊、.glass-card 工具类。侧边栏、标题栏、内容卡片一律实心平面——玻璃是天空中的云，不是地基。", "section": "elevation" },
+      { "name": "四级圆角规则 The Radius Ladder", "body": "圆角只从阶梯上取值（6/10/14/20，暗色 6/12/16/24），组件嵌套时内层圆角 ≤ 外层；禁止 2px、16px 这类阶梯外的散值。", "section": "shapes" },
+      { "name": "弹性反馈规则 The Bounce Rule", "body": "hover/点击的微交互（scale、translateY、图标旋转）统一使用回弹曲线 cubic-bezier(0.34, 1.56, 0.64, 1)，时长 0.2–0.25s；颜色与背景变化仍用标准 ease。弹性的幅度保持克制：scale 不超过 1.12，位移不超过 -3px。", "section": "components" }
+    ],
+    "dos": [
+      "Do 所有颜色走 CSS 变量（--color-* / --brand-*），新页面因此自动获得亮暗双主题。",
+      "Do 交互色只用晴空蓝；数据与状态标签才用七色信号板，并成对使用 soft 底 + base 字。",
+      "Do 新页面以白底卡片（1px 发丝边框、14px 圆角、12px 24px padding）组织内容，置于 #F8FAFC 内容区之上。",
+      "Do hover 微交互使用回弹曲线 cubic-bezier(0.34, 1.56, 0.64, 1)，页面级过渡使用 0.2s cubic-bezier(0.4, 0, 0.2, 1)。",
+      "Do 表格操作列遵循 .table-action 语义配色约定（查看 info / 编辑 primary / 删除 danger / 新增 success）。",
+      "Do 动态数字加 font-variant-numeric: tabular-nums。",
+      "Do 暗色主题下用亮度台阶（#0B0C0F→#111318→#131313→#1F2937）表达层级，而不是加深阴影。"
+    ],
+    "donts": [
+      "Don't 使用重阴影与拟物效果：亮色主题阴影不得超过 8% 透明度（shadow-lg 是天花板），禁止 Material 高层级投影、内阴影压凹、浮雕描边。",
+      "Don't 滥用辉光与渐变文字：.gradient-text、彩色 glow 只属于仪表盘亮点区块、营销性展示和登录/启动等入口场景；正文、表格、表单、设置页一律禁止。",
+      "Don't 让玻璃拟态蔓延：backdrop-filter 只用于浮层（MessageBox、提示胶囊、glass-card 工具类）；侧边栏、标题栏、内容卡片必须保持实心平面。",
+      "Don't 用扩展色做按钮、链接或导航激活色——违反单一声音守则。",
+      "Don't 在组件里硬编码色值、阶梯外圆角或超过 0.36s 的元素级动画时长。",
+      "Don't 把登录页的 WebGL 流体背景、装饰光斑搬进日常工作界面。"
+    ]
+  }
+}
