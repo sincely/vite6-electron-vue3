@@ -82,7 +82,7 @@ const copyrightYear = new Date().getFullYear()
 
     &--version {
       font-family: var(--font-mono, monospace);
-      color: var(--color-text-tertiary, var(--color-text-secondary));
+      color: var(--color-text-tertiary);
     }
 
     &--link {
@@ -90,7 +90,7 @@ const copyrightYear = new Date().getFullYear()
       cursor: pointer;
 
       &:hover {
-        color: var(--color-primary, #1890ff);
+        color: var(--color-primary);
       }
     }
 

@@ -31,17 +31,19 @@ const {
   getAxisTickStyle,
   getSplitLineStyle,
   getAnimationConfig,
+  getChartColors,
+  getThemeColors,
   getTooltipStyle,
   onThemeChange
 } = useChartTheme()
 
 // 涨/跌颜色
+// 默认取语义色：涨=主色、跌=危险色（运行时读取，跟随主题色切换）
 function getActualColors() {
-  const defaultUpColor = '#4C87F3'
-  const defaultDownColor = '#8BD8FC'
+  const themeColors = getThemeColors()
   return {
-    upColor: props.colors?.[0] || defaultUpColor,
-    downColor: props.colors?.[1] || defaultDownColor
+    upColor: props.colors?.[0] || themeColors.primary,
+    downColor: props.colors?.[1] || themeColors.danger
   }
 }
 
@@ -103,7 +105,7 @@ function buildOptions() {
           itemStyle: {
             borderWidth: 2,
             shadowBlur: 10,
-            shadowColor: 'rgba(0, 0, 0, 0.3)'
+            shadowColor: getChartColors().dashed
           }
         },
         ...getAnimationConfig()

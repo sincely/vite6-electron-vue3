@@ -57,7 +57,7 @@ const cardStyle = computed(() => {
 
 const iconBoxStyle = computed(() => {
   if (props.plainIcon) return { color: props.color }
-  return { background: props.color, color: '#fff' }
+  return { background: props.color, color: 'var(--color-text-on-brand)' }
 })
 </script>
 

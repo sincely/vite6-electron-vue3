@@ -543,7 +543,7 @@
                     </div>
                   </div>
                   <!-- Runtime Info -->
-                  <div class="setting-section">
+                  <!-- <div class="setting-section">
                     <h3 class="section-title">运行环境</h3>
                     <dl class="about-spec">
                       <div v-for="row in runtimeRows" :key="row.label" class="about-spec__row">
@@ -551,7 +551,7 @@
                         <dd>{{ row.value }}</dd>
                       </div>
                     </dl>
-                  </div>
+                  </div> -->
 
                   <div class="about-copyright">Copyright © 2024 Lightning Team. All rights reserved.</div>
                 </div>
@@ -882,7 +882,7 @@ const handleClose = () => {
   z-index: 2000;
   display: grid;
   place-items: center;
-  background-color: rgb(0 0 0 / 40%);
+  background-color: var(--color-scrim);
   backdrop-filter: blur(4px);
 }
 
@@ -917,7 +917,7 @@ const handleClose = () => {
   place-items: center;
   width: 32px;
   height: 32px;
-  color: #fff;
+  color: var(--color-text-on-brand);
   background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
   border-radius: 8px;
 }
@@ -1126,7 +1126,7 @@ const handleClose = () => {
 
   &__icon {
     font-size: 14px;
-    color: #fff;
+    color: var(--color-text-on-brand);
   }
 }
 
@@ -1567,7 +1567,7 @@ const handleClose = () => {
   }
 
   &--primary {
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
     border-color: transparent;
 
@@ -1771,7 +1771,7 @@ const handleClose = () => {
     justify-content: center;
     font-size: 28px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: linear-gradient(135deg, var(--color-primary), var(--brand-accent));
   }
 
@@ -1885,7 +1885,7 @@ const handleClose = () => {
   transition: all 0.2s;
 
   &:hover {
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: var(--color-danger);
     border-color: var(--color-danger);
     box-shadow: var(--shadow-glow-rose);

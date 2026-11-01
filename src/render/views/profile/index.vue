@@ -498,7 +498,7 @@ const handleLanguageChange = () => {
     overflow: hidden;
     font-size: 34px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: var(--color-primary);
     border: 4px solid var(--color-bg-card);
     border-radius: 50%;

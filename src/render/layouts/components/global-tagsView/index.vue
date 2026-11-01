@@ -536,7 +536,7 @@ watch(
       }
 
       .tag-close-icon:hover {
-        color: #fff;
+        color: var(--color-text-on-brand);
         background: #9ca3af;
       }
 

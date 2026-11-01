@@ -51,7 +51,7 @@ defineProps({
   place-items: center;
   width: 42px;
   height: 42px;
-  color: #fff;
+  color: var(--color-text-on-brand);
   background: var(--gradient-primary);
   border-radius: 12px;
   box-shadow: var(--shadow-glow-primary);

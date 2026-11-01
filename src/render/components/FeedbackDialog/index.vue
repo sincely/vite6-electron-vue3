@@ -209,13 +209,13 @@ defineExpose({ open })
   &__title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--color-text-primary, #303133);
+    color: var(--color-text-primary);
   }
 
   &__subtitle {
     margin-top: 6px;
     font-size: 13px;
-    color: var(--color-text-secondary, #909399);
+    color: var(--color-text-secondary);
   }
 }
 

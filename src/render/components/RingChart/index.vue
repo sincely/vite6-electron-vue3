@@ -33,7 +33,8 @@ const props = defineProps({
   legendPosition: { type: String, default: 'right' }
 })
 
-const { isDark, getDefaultColors, getAnimationConfig, getTooltipStyle, getLegendStyle, onThemeChange } = useChartTheme()
+const { isDark, getDefaultColors, getAnimationConfig, getChartColors, getTooltipStyle, getLegendStyle, onThemeChange } =
+  useChartTheme()
 
 const seriesColors = computed(() => props.colors || getDefaultColors())
 
@@ -56,6 +57,8 @@ function getCenterPosition() {
 }
 
 function buildOptions() {
+  // 中性色实时读取，跟随明暗主题
+  const chartColors = getChartColors()
   const options = {
     tooltip: props.showTooltip ? getTooltipStyle('item', { formatter: '{b}: {c} ({d}%)' }) : undefined,
     legend: props.showLegend ? getLegendStyle(props.legendPosition) : undefined,
@@ -68,14 +71,14 @@ function buildOptions() {
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: props.borderRadius,
-          borderColor: isDark.value ? '#2c2c2c' : '#fff',
+          borderColor: isDark.value ? chartColors.axis : chartColors.tooltipText,
           borderWidth: 0
         },
         label: {
           show: props.showLabel,
           formatter: '{b}\n{d}%',
           position: 'outside',
-          color: isDark.value ? '#ccc' : '#999',
+          color: chartColors.label,
           fontSize: 12
         },
         emphasis: {
@@ -111,7 +114,7 @@ function buildOptions() {
       textStyle: {
         fontSize: 18,
         fontWeight: 500,
-        color: isDark.value ? '#999' : '#ADB0BC'
+        color: chartColors.label
       }
     }
   }

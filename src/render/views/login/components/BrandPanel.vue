@@ -81,7 +81,7 @@ html[data-theme='dark'] .brand-streak {
   left: -10%;
   width: 320px;
   height: 320px;
-  background: color-mix(in srgb, var(--brand-accent-alt, #3b82f6), transparent 85%);
+  background: color-mix(in srgb, var(--brand-accent-alt), transparent 85%);
   animation: drift 17s ease-in-out infinite alternate-reverse;
 }
 

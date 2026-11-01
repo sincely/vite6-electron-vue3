@@ -193,7 +193,7 @@ onBeforeUnmount(() => {
     transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
-      color: #fff;
+      color: var(--color-text-on-brand);
       background: var(--color-primary);
       border-color: var(--color-primary);
     }
@@ -210,7 +210,7 @@ onBeforeUnmount(() => {
   height: 38px;
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-on-brand);
   letter-spacing: 1px;
   background: var(--color-primary);
   border: none;
@@ -219,7 +219,7 @@ onBeforeUnmount(() => {
 
   &:hover,
   &:focus {
-    background: var(--color-primary-dark, var(--color-primary));
+    background: var(--color-primary-dark);
     filter: brightness(1.05);
   }
 }

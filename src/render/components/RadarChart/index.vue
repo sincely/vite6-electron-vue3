@@ -23,11 +23,14 @@ const props = defineProps({
   showTooltip: { type: Boolean, default: true }
 })
 
-const { isDark, getDefaultColors, getAnimationConfig, getTooltipStyle, onThemeChange } = useChartTheme()
+const { getDefaultColors, getAnimationConfig, getChartColors, getTooltipStyle, hexToRgba, onThemeChange } =
+  useChartTheme()
 
 const seriesColors = computed(() => props.colors || getDefaultColors())
 
 function buildOptions() {
+  // 中性色实时读取，跟随明暗主题
+  const chartColors = getChartColors()
   return {
     tooltip: props.showTooltip ? getTooltipStyle('item') : undefined,
     radar: {
@@ -35,25 +38,24 @@ function buildOptions() {
       center: ['50%', '50%'],
       radius: '70%',
       axisName: {
-        color: isDark.value ? '#ccc' : '#666',
+        color: chartColors.label,
         fontSize: 12
       },
       splitLine: {
         lineStyle: {
-          color: isDark.value ? '#444' : '#e6e6e6'
+          color: chartColors.grid
         }
       },
       axisLine: {
         lineStyle: {
-          color: isDark.value ? '#444' : '#e6e6e6'
+          color: chartColors.grid
         }
       },
       splitArea: {
         show: true,
         areaStyle: {
-          color: isDark.value
-            ? ['rgba(255, 255, 255, 0.02)', 'rgba(255, 255, 255, 0.05)']
-            : ['rgba(0, 0, 0, 0.02)', 'rgba(0, 0, 0, 0.05)']
+          // 扇区分隔底色由网格色派生，避免明暗主题各写一套 rgba
+          color: [hexToRgba(chartColors.grid, 0.5).rgba, hexToRgba(chartColors.grid, 0.8).rgba]
         }
       }
     },

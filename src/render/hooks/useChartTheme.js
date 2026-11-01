@@ -2,6 +2,7 @@ import { watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'
 import { hexToRGB, rgbToHex } from '@/utils/color'
+import { chartPalette } from '@/utils/chartPalette'
 
 /**
  * 图表主题工具
@@ -29,6 +30,23 @@ export function useChartTheme() {
       textMuted: c('--color-text-muted', '#64748b'),
       border: c('--color-border', '#eff1f3'),
       bgCard: c('--color-bg-card', '#ffffff')
+    }
+  }
+
+  // ============================================================
+  // 图表中性色（轴线 / 网格 / 标签 / 参考线 / tooltip）
+  // 全部来自 themes.scss 的 --color-chart-* 变量，
+  // 避免每张图各自写死一套灰阶导致暗色模式下失配。
+  // ============================================================
+  function getChartColors() {
+    return {
+      axis: c('--color-chart-axis', '#e2e8f0'),
+      grid: c('--color-chart-grid', '#eff1f3'),
+      label: c('--color-chart-label', '#64748b'),
+      dashed: c('--color-chart-dashed', 'rgb(100 116 139 / 28%)'),
+      tooltipBg: c('--color-chart-tooltip-bg', 'rgb(255 255 255 / 96%)'),
+      tooltipBorder: c('--color-chart-tooltip-border', '#e2e8f0'),
+      tooltipText: c('--color-chart-tooltip-text', '#0f172a')
     }
   }
 
@@ -62,8 +80,8 @@ export function useChartTheme() {
 
   /** 默认图表高度 */
   const CHART_HEIGHT = '16rem'
-  /** 轴标签字体配置 */
-  const CHART_FONT = { size: 13, color: '#999' }
+  /** 轴标签字体配置（颜色随主题实时读取，见 getChartColors） */
+  const CHART_FONT = { size: 13, color: '#64748b' }
 
   /**
    * hex 颜色转 rgba（非法输入时原样返回）
@@ -110,14 +128,18 @@ export function useChartTheme() {
 
   /** 默认多系列色板（实时读取 CSS 变量，主题切换后可取到新值） */
   function getDefaultColors() {
-    return [
-      c('--color-primary', '#2563eb'),
-      c('--color-info', '#0ea5e9'),
-      c('--color-teal', '#14b8a6'),
-      c('--color-amber', '#f59e0b'),
-      c('--color-rose', '#f43f5e'),
-      c('--color-violet', '#7c3aed')
-    ]
+    return getChartPalette().slice(0, 6)
+  }
+
+  /**
+   * 图表系列色板（有序 10 槽，实时读取 CSS 变量）
+   *
+   * 槽位顺序即默认配色顺序：主色起、沿色相环展开，相邻槽位色相距离足够大，
+   * 保证同一张图里任意两条系列都可区分。
+   * 所有图表的多系列配色统一从这里取，不再各自写死十六进制。
+   */
+  function getChartPalette() {
+    return chartPalette()
   }
 
   /** 坐标轴线样式 */
@@ -125,7 +147,7 @@ export function useChartTheme() {
     return {
       show,
       lineStyle: {
-        color: isDark.value ? '#444' : '#EDEDED',
+        color: getChartColors().axis,
         width: 1
       }
     }
@@ -136,7 +158,7 @@ export function useChartTheme() {
     return {
       show,
       lineStyle: {
-        color: isDark.value ? '#444' : '#EDEDED',
+        color: getChartColors().grid,
         width: 1,
         type: 'dashed'
       }
@@ -147,7 +169,7 @@ export function useChartTheme() {
   function getAxisLabelStyle(show = true) {
     return {
       show,
-      color: CHART_FONT.color,
+      color: getChartColors().label,
       fontSize: CHART_FONT.size
     }
   }
@@ -168,13 +190,14 @@ export function useChartTheme() {
 
   /** 统一的 tooltip 配置 */
   function getTooltipStyle(trigger = 'axis', customOptions = {}) {
+    const chart = getChartColors()
     return {
       trigger,
-      backgroundColor: isDark.value ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-      borderColor: isDark.value ? '#333' : '#ddd',
+      backgroundColor: chart.tooltipBg,
+      borderColor: chart.tooltipBorder,
       borderWidth: 1,
       textStyle: {
-        color: isDark.value ? '#fff' : '#333'
+        color: chart.tooltipText
       },
       ...customOptions
     }
@@ -184,7 +207,7 @@ export function useChartTheme() {
   function getLegendStyle(position = 'bottom', customOptions = {}) {
     const baseConfig = {
       textStyle: {
-        color: isDark.value ? '#fff' : '#333'
+        color: getChartColors().label
       },
       itemWidth: 12,
       itemHeight: 12,
@@ -261,6 +284,8 @@ export function useChartTheme() {
     isDark,
     c,
     getThemeColors,
+    getChartColors,
+    getChartPalette,
     tooltipBase,
     onThemeChange,
     CHART_HEIGHT,

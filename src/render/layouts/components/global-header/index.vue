@@ -492,7 +492,7 @@ onBeforeUnmount(() => {
   font-size: 10px;
   font-weight: 700;
   line-height: 16px;
-  color: #fff;
+  color: var(--color-text-on-brand);
   text-align: center;
   pointer-events: none;
   background: linear-gradient(135deg, var(--color-rose), var(--color-danger));

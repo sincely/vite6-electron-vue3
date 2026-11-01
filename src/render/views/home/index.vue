@@ -13,7 +13,7 @@
         </div>
         <div class="stat-card-value">{{ stat.value }}</div>
         <div class="stat-card-sub">
-          <span :style="{ color: stat.trend > 0 ? '#10b981' : '#ef4444' }">
+          <span :style="{ color: stat.trend > 0 ? 'var(--color-success)' : 'var(--color-danger)' }">
             {{ stat.trend > 0 ? '↑' : '↓' }} {{ Math.abs(stat.trend) }}%
           </span>
           &nbsp;较上月

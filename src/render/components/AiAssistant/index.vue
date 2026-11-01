@@ -300,7 +300,7 @@ watch(
     }
 
     .ai-msg__bubble {
-      color: #fff;
+      color: var(--color-text-on-brand);
       background: var(--gradient-primary);
       border-color: transparent;
     }
@@ -332,7 +332,7 @@ watch(
   &__avatar-fallback {
     font-size: 14px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-text-on-brand);
   }
 
   &__body {

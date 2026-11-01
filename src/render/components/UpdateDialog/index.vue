@@ -673,7 +673,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(0 0 0 / 38%);
+  background: var(--color-scrim);
   backdrop-filter: blur(6px);
 }
 
@@ -1033,7 +1033,7 @@ onUnmounted(() => {
   }
 
   &--confirm {
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: linear-gradient(100deg, var(--color-primary) 0%, var(--brand-accent-alt) 100%);
 
     &:hover {

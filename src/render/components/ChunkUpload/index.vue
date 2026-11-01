@@ -761,8 +761,8 @@ onBeforeUnmount(() => {
   min-height: 116px;
   padding: 20px 24px;
   cursor: pointer;
-  background: var(--color-bg-card, #fff);
-  border: 1px dashed var(--color-border, #dbe3ef);
+  background: var(--color-bg-card);
+  border: 1px dashed var(--color-border);
   border-radius: 14px;
   transition:
     border-color 0.2s ease,
@@ -772,10 +772,10 @@ onBeforeUnmount(() => {
   &:hover,
   &:focus-visible,
   &.is-dragover {
-    background: var(--color-bg-hover, #f8fbff);
-    border-color: var(--color-primary, #3b82f6);
+    background: var(--color-bg-hover);
+    border-color: var(--color-primary);
     outline: none;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #3b82f6) 12%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
   }
 }
 
@@ -786,8 +786,8 @@ onBeforeUnmount(() => {
   width: 52px;
   height: 52px;
   margin-right: 16px;
-  color: var(--color-primary, #3b82f6);
-  background: var(--color-primary-soft, #eff6ff);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   border-radius: 15px;
 }
 
@@ -808,7 +808,7 @@ onBeforeUnmount(() => {
 .chunk-upload__browse {
   padding: 0;
   font: inherit;
-  color: var(--color-primary, #3b82f6);
+  color: var(--color-primary);
   cursor: pointer;
   background: none;
   border: 0;
@@ -818,7 +818,7 @@ onBeforeUnmount(() => {
   margin-top: 7px;
   overflow: hidden;
   font-size: 12px;
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -831,18 +831,18 @@ onBeforeUnmount(() => {
   font-size: 12px;
 
   &.is-error {
-    color: var(--color-danger, #ef4444);
+    color: var(--color-danger);
   }
 
   &.is-success {
-    color: var(--color-success, #10b981);
+    color: var(--color-success);
   }
 }
 
 .chunk-upload__list {
   overflow: hidden;
-  background: var(--color-bg-card, #fff);
-  border: 1px solid var(--color-border, #e2e8f0);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
 }
 
@@ -853,7 +853,7 @@ onBeforeUnmount(() => {
   padding: 13px 16px;
   font-size: 13px;
   font-weight: 600;
-  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .chunk-upload__active-count {
@@ -862,7 +862,7 @@ onBeforeUnmount(() => {
   align-items: center;
   font-size: 11px;
   font-weight: 400;
-  color: var(--color-primary, #3b82f6);
+  color: var(--color-primary);
 }
 
 .chunk-upload__pulse,
@@ -884,7 +884,7 @@ onBeforeUnmount(() => {
   align-items: center;
   min-height: 76px;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+  border-bottom: 1px solid var(--color-border-light);
 
   &:last-child {
     border-bottom: 0;
@@ -898,8 +898,8 @@ onBeforeUnmount(() => {
   width: 42px;
   height: 42px;
   overflow: hidden;
-  color: var(--color-primary, #3b82f6);
-  background: var(--color-primary-soft, #eff6ff);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   border-radius: 10px;
 
   &.is-image {
@@ -942,7 +942,7 @@ onBeforeUnmount(() => {
 .chunk-upload__chunks {
   flex: none;
   font-size: 11px;
-  color: var(--color-text-muted, #94a3b8);
+  color: var(--color-text-muted);
 }
 
 .chunk-upload__item-meta {
@@ -955,25 +955,25 @@ onBeforeUnmount(() => {
   display: inline-flex;
   gap: 5px;
   align-items: center;
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary);
 
   &.is-success {
-    color: var(--color-success, #10b981);
+    color: var(--color-success);
   }
 
   &.is-error {
-    color: var(--color-danger, #ef4444);
+    color: var(--color-danger);
   }
 
   &.is-paused {
-    color: var(--color-warning, #d97706);
+    color: var(--color-warning);
   }
 }
 
 .chunk-upload__method {
   padding: 2px 6px;
-  color: var(--color-primary, #3b82f6);
-  background: var(--color-primary-soft, #eff6ff);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   border-radius: 4px;
 }
 
@@ -986,26 +986,26 @@ onBeforeUnmount(() => {
   flex: 1;
   height: 5px;
   overflow: hidden;
-  background: var(--color-border-light, #f1f5f9);
+  background: var(--color-border-light);
   border-radius: 999px;
 }
 
 .chunk-upload__progress-bar {
   display: block;
   height: 100%;
-  background: var(--color-primary, #3b82f6);
+  background: var(--color-primary);
   border-radius: inherit;
   transition: width 0.2s ease;
 
   &.is-success {
-    background: var(--color-success, #10b981);
+    background: var(--color-success);
   }
 }
 
 .chunk-upload__percent {
   width: 34px;
   font-size: 11px;
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary);
   text-align: right;
 }
 
@@ -1013,7 +1013,7 @@ onBeforeUnmount(() => {
   margin: 5px 0 0;
   overflow: hidden;
   font-size: 11px;
-  color: var(--color-danger, #ef4444);
+  color: var(--color-danger);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1031,23 +1031,23 @@ onBeforeUnmount(() => {
   width: 30px;
   height: 30px;
   padding: 0;
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary);
   cursor: pointer;
   background: transparent;
   border: 0;
   border-radius: 7px;
 
   &:hover {
-    color: var(--color-text-primary, #0f172a);
-    background: var(--color-bg-hover, #f1f5f9);
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
   }
 
   &.is-primary {
-    color: var(--color-primary, #3b82f6);
+    color: var(--color-primary);
   }
 
   &.is-remove:hover {
-    color: var(--color-danger, #ef4444);
+    color: var(--color-danger);
     background: #fef2f2;
   }
 }

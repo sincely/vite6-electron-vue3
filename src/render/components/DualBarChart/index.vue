@@ -58,6 +58,7 @@ const {
   getAxisTickStyle,
   getSplitLineStyle,
   getAnimationConfig,
+  getChartColors,
   getTooltipStyle,
   getLegendStyle,
   getGridWithLegend,
@@ -84,7 +85,7 @@ function createSeriesConfig(config) {
       show: props.showDataLabel,
       position: config.labelPosition,
       formatter: config.formatter || ((params) => String(params.value)),
-      color: '#999',
+      color: getChartColors().label,
       fontSize: 12
     },
     ...getAnimationConfig()

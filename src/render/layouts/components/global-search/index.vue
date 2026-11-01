@@ -412,7 +412,7 @@ const clearHistory = () => {
 <style lang="scss">
 // 弹窗挂载到 body，使用全局样式覆盖
 .search-modal {
-  background: rgb(15 23 42 / 30%);
+  background: var(--color-scrim);
 
   .el-dialog {
     max-width: calc(100vw - 32px);
@@ -587,7 +587,7 @@ const clearHistory = () => {
       background: color-mix(in srgb, var(--color-primary), transparent 20%);
 
       .search-item__title {
-        color: #fff;
+        color: var(--color-text-on-brand);
       }
 
       .search-item__path,
@@ -644,9 +644,5 @@ const clearHistory = () => {
       }
     }
   }
-}
-
-html.dark .search-modal {
-  background: rgb(0 0 0 / 55%);
 }
 </style>

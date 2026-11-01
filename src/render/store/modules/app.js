@@ -219,7 +219,8 @@ export const useAppStore = defineStore(
       // 同步主题到主进程：驱动 nativeTheme.themeSource（影响原生窗口背景色与
       // prefers-color-scheme），并持久化到主进程文件供下次冷启动 createLoginWindow 前读取。
       // 渲染进程的 localStorage 主进程无法读取，故需经 IPC 同步。
-      window.ipcRenderer.send('set-app-theme', value)
+      // 非 Electron 环境（如浏览器预览）没有 ipcRenderer，跳过即可。
+      window.ipcRenderer?.send('set-app-theme', value)
     }
 
     // 初始化主题

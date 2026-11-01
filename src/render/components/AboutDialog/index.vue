@@ -125,7 +125,7 @@ defineExpose({ open })
     border-radius: 16px;
     box-shadow:
       0 6px 18px rgb(0 0 0 / 8%),
-      0 0 0 1px var(--color-border-lighter, #ebeef5);
+      0 0 0 1px var(--color-border-lighter);
   }
 }
 
@@ -143,13 +143,13 @@ defineExpose({ open })
   &__label {
     flex-shrink: 0;
     font-size: 14px;
-    color: var(--color-text-secondary, #606266);
+    color: var(--color-text-secondary);
   }
 
   &__value {
     font-size: 14px;
     font-weight: 500;
-    color: var(--color-text-primary, #303133);
+    color: var(--color-text-primary);
     text-align: right;
     word-break: break-all;
   }
@@ -158,7 +158,7 @@ defineExpose({ open })
 .about-subtitle {
   margin-top: 8px;
   font-size: 14px;
-  color: var(--color-text-secondary, #909399);
+  color: var(--color-text-secondary);
   text-align: center;
 }
 

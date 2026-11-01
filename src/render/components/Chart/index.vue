@@ -4,6 +4,8 @@
 
 <script setup>
 import echarts from '@/plugins/echarts'
+import { useChartTheme } from '@/hooks/useChartTheme'
+
 defineOptions({
   name: 'chart'
 })
@@ -33,6 +35,8 @@ const emit = defineEmits(['init'])
 
 const chart = ref(null)
 const chartRef = ref()
+
+const { getChartColors, onThemeChange } = useChartTheme()
 
 // 显式传入 width/height 时同步约束容器尺寸，
 // 避免 .chart 默认 100% 高度把后续兄弟元素挤出固定高度卡片
@@ -66,6 +70,8 @@ watch(
 // =============================================
 let resizeObserver = null
 let resizeRafId = null
+// 已应用到 echarts 主题里的颜色（用于判断主题色是否变化）
+let appliedThemeColor = ''
 
 onMounted(() => {
   init()
@@ -96,12 +102,12 @@ onBeforeUnmount(() => {
 })
 
 /**
- * 初始化（只在 onMounted 调用一次）
+ * 构造 echarts 主题
+ * 颜色全部来自图表 token，运行时读取，跟随明暗主题
  * @private
  */
-function init() {
-  // 注册主题
-  echarts.registerTheme('chart', {
+function buildChartTheme() {
+  return {
     legend: {
       itemWidth: 14,
       itemHeight: 14
@@ -109,11 +115,38 @@ function init() {
     bar: {
       barWidth: 30,
       backgroundStyle: {
-        color: 'rgba(180, 180, 180, 0.2)'
+        color: getChartColors().grid
       },
       showBackground: true
     }
-  })
+  }
+}
+
+/**
+ * 应用当前配置
+ * @private
+ */
+function applyOptions() {
+  if (!chart.value) return
+  // options 为空时不调用 setOption，避免报错
+  if (props.options && Object.keys(props.options).length) {
+    chart.value.setOption(props.options, true)
+  }
+  resizeChart()
+  emit('init', chart.value)
+}
+
+/**
+ * 初始化
+ * @param {number} delay 延迟应用配置的毫秒数（0 表示立即应用）
+ * @private
+ */
+function init(delay = 100) {
+  // 注册主题
+  const theme = buildChartTheme()
+  // 记录已应用的主题色，主题色没变时不必重建实例
+  appliedThemeColor = theme.bar.backgroundStyle.color
+  echarts.registerTheme('chart', theme)
 
   // 初始化图表实例
   // 只在有明确值时才传 width/height，否则让 ECharts 自动检测容器大小
@@ -122,16 +155,29 @@ function init() {
   if (props.height != null) initOpts.height = props.height
   chart.value = markRaw(echarts.init(chartRef.value, 'chart', initOpts))
 
-  setTimeout(() => {
-    if (!chart.value) return
-    // options 为空时不调用 setOption，避免报错
-    if (props.options && Object.keys(props.options).length) {
-      chart.value.setOption(props.options, true)
-    }
-    resizeChart()
-    emit('init', chart.value)
-  }, 100)
+  if (delay) {
+    setTimeout(applyOptions, delay)
+  } else {
+    applyOptions()
+  }
 }
+
+/**
+ * 主题切换后重建实例
+ * echarts 的主题在实例创建时就被快照，主题色变化后必须重建才能用上新的 token
+ * @private
+ */
+function rebuildForTheme() {
+  if (!chart.value) return
+  // 主题色没有变化（onThemeChange 首次立即触发时也会走到这里）就不重建
+  if (getChartColors().grid === appliedThemeColor) return
+  chart.value.dispose()
+  chart.value = null
+  init(0)
+}
+
+// 主题切换（明暗主题 / 主题色）后重建实例，让主题里的 token 颜色生效
+onThemeChange(rebuildForTheme)
 
 // 同一帧内多次触发（ResizeObserver + window resize）只执行一次 resize
 function scheduleResize() {

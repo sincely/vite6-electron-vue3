@@ -142,7 +142,7 @@ const reload = () => {
 }
 
 .is-spinning {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   animation: iframe-spin 1s linear infinite;
 }
 

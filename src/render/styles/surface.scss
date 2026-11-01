@@ -1,0 +1,67 @@
+// =============================================
+// 浏览器表面细节 Browser Surfaces
+// 焦点环、选中色、插入符、占位符、下划线偏移、表格数字。
+// 这些默认行为不属于任何设计系统，必须由调色板接管。
+// =============================================
+
+// ---------- 焦点环 ----------
+// 用 :where() 把适用范围的权重压到 0，让 Element Plus 自身的聚焦态优先，
+// 避免按钮 / 输入框出现双重焦点环。
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+// Element Plus 用边框 + 阴影表达聚焦，原生 outline 会叠加成双层
+.el-input__inner:focus-visible,
+.el-textarea__inner:focus-visible,
+.el-select__select:focus-visible,
+.el-radio__original:focus-visible,
+.el-checkbox__original:focus-visible,
+.el-switch:focus-visible,
+.el-slider__button:focus-visible,
+.el-color-picker__trigger:focus-visible {
+  outline: none;
+}
+
+// ---------- 选中色 ----------
+::selection {
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+html[data-theme='dark'] ::selection,
+html.dark ::selection {
+  color: #fff;
+  background: color-mix(in srgb, var(--color-primary) 42%, transparent);
+}
+
+// ---------- 插入符 ----------
+:where(input, textarea, [contenteditable='true']) {
+  caret-color: var(--color-primary);
+}
+
+// ---------- 占位符 ----------
+:where(input, textarea)::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1; // Firefox 默认会再压一层透明度
+}
+
+// ---------- 链接下划线偏移 ----------
+:where(a) {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+// ---------- 表格数字等宽 ----------
+// 会变化的数字必须等宽，否则每次刷新都在跳。
+:where(table, .el-table) {
+  font-variant-numeric: tabular-nums;
+}
+
+:where(.tabular-nums, .num-tabular) {
+  font-variant-numeric: tabular-nums;
+}
+
+// ---------- 滚动条 ----------
+// 见 ./scroll.scss（保持单一来源，不在此重复定义）。

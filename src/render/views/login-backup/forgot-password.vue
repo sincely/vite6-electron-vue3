@@ -446,7 +446,7 @@ const goLogin = () => {
 
     &.active {
       .step-circle {
-        color: #fff;
+        color: var(--color-text-on-brand);
         background: var(--color-primary);
         box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary), transparent 75%);
       }
@@ -459,7 +459,7 @@ const goLogin = () => {
 
     &.done {
       .step-circle {
-        color: #fff;
+        color: var(--color-text-on-brand);
         background: var(--color-primary);
       }
 
@@ -555,7 +555,7 @@ const goLogin = () => {
     transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
-      color: #fff;
+      color: var(--color-text-on-brand);
       background: var(--color-primary);
       border-color: var(--color-primary);
     }
@@ -636,11 +636,17 @@ const goLogin = () => {
   height: 40px;
   font-size: 15px;
   font-weight: 600;
-  color: aliceblue;
+  color: var(--color-text-on-brand);
   letter-spacing: 1px;
-  background: #007bff;
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
+
+  &:hover,
+  &:focus {
+    background: var(--color-primary-dark);
+    filter: brightness(1.05);
+  }
 }
 
 // ─── 成功页 ─────────────────────────────────────────
@@ -659,7 +665,7 @@ const goLogin = () => {
     width: 64px;
     height: 64px;
     margin-bottom: 16px;
-    color: #fff;
+    color: var(--color-text-on-brand);
 
     //  background: var(--color-success);
     border-radius: 50%;

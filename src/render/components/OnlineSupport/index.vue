@@ -799,7 +799,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 52px;
     height: 52px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     cursor: pointer;
     background: var(--color-primary);
     border: none;
@@ -831,7 +831,7 @@ onBeforeUnmount(() => {
     font-size: 11px;
     font-weight: 600;
     line-height: 18px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     text-align: center;
     background: var(--color-danger);
     border-radius: 999px;
@@ -857,7 +857,7 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: space-between;
     padding: 14px 16px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary), #000 18%));
   }
 
@@ -910,7 +910,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 26px;
     height: 26px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     cursor: pointer;
     background: transparent;
     border: none;
@@ -982,7 +982,7 @@ onBeforeUnmount(() => {
       flex-direction: row-reverse;
 
       .online-support__bubble {
-        color: #fff;
+        color: var(--color-text-on-brand);
         background: var(--color-primary);
         border-radius: 12px 4px 12px 12px;
       }
@@ -1013,7 +1013,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 26px;
     height: 26px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: color-mix(in srgb, var(--color-primary), #fff 18%);
     border-radius: 50%;
   }
@@ -1021,7 +1021,7 @@ onBeforeUnmount(() => {
   &__avatar-fallback {
     font-size: 11px;
     font-weight: 600;
-    color: #fff;
+    color: var(--color-text-on-brand);
   }
 
   &__bubble-stack {
@@ -1095,7 +1095,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 32px;
     height: 32px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: var(--color-primary);
     border-radius: 6px;
   }
@@ -1154,7 +1154,7 @@ onBeforeUnmount(() => {
     transition: all 0.2s ease;
 
     &:hover {
-      color: #fff;
+      color: var(--color-text-on-brand);
       background: var(--color-primary);
     }
   }
@@ -1212,9 +1212,9 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 16px;
     height: 16px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     cursor: pointer;
-    background: rgb(0 0 0 / 50%);
+    background: var(--color-scrim-strong);
     border: none;
     border-radius: 50%;
 
@@ -1315,7 +1315,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 30px;
     height: 30px;
-    color: #fff;
+    color: var(--color-text-on-brand);
     cursor: pointer;
     background: var(--color-primary);
     border: none;

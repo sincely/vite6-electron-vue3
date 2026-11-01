@@ -198,7 +198,7 @@ const handleSubmit = async () => {
   height: 38px;
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-on-brand);
   letter-spacing: 1px;
   background: var(--color-primary);
   border: none;
@@ -207,7 +207,7 @@ const handleSubmit = async () => {
 
   &:hover,
   &:focus {
-    background: var(--color-primary-dark, var(--color-primary));
+    background: var(--color-primary-dark);
     filter: brightness(1.05);
   }
 }

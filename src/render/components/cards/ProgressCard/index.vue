@@ -38,7 +38,7 @@ const props = defineProps({
   /** 标题 */
   title: { type: String, required: true },
   /** 进度条颜色 */
-  color: { type: String, default: '#67C23A' },
+  color: { type: String, default: 'var(--color-success)' },
   /** Element Plus 图标名（全局注册） */
   icon: { type: String, default: '' },
   /** 进度条宽度 */

@@ -414,7 +414,7 @@ const handleOpen = () => {
       height: 32px;
       font-size: 13px;
       font-weight: 600;
-      color: #fff;
+      color: var(--color-text-on-brand);
       background: var(--color-primary);
       border-radius: 50%;
     }

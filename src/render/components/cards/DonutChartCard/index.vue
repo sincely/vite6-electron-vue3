@@ -57,16 +57,17 @@ const props = defineProps({
   data: { type: Array, default: () => [0, 0] }
 })
 
-const { isDark, getThemeColor, onThemeChange } = useChartTheme()
+const { getThemeColor, getChartColors, onThemeChange } = useChartTheme()
 
 const formatNumber = (num) => num.toLocaleString()
 
 // 当前切片颜色
 const sliceColor = computed(() => props.color || getThemeColor())
-// 对比切片颜色（暗色适配）
-const prevSliceColor = computed(() => (isDark.value ? '#3f3f46' : '#e6e8f7'))
 
 function buildOptions() {
+  // 对比切片颜色：在构建 options 时实时读取网格色变量，
+  // 这样主题切换触发 rebuild 后能拿到新值
+  const prevSliceColor = getChartColors().grid
   return {
     series: [
       {
@@ -83,7 +84,7 @@ function buildOptions() {
           {
             value: props.data[1],
             name: props.previousValue,
-            itemStyle: { color: prevSliceColor.value }
+            itemStyle: { color: prevSliceColor }
           }
         ]
       }

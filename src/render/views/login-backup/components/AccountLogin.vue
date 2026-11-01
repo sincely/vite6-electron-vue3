@@ -228,11 +228,17 @@ const goForgotPassword = () => {
   height: 40px;
   font-size: 15px;
   font-weight: 600;
-  color: aliceblue;
+  color: var(--color-text-on-brand);
   letter-spacing: 1px;
-  background: #007bff;
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
+
+  &:hover,
+  &:focus {
+    background: var(--color-primary-dark);
+    filter: brightness(1.05);
+  }
 }
 
 @keyframes fade-up {

@@ -30,7 +30,6 @@ const props = defineProps({
 })
 
 const {
-  isDark,
   getThemeColor,
   getDefaultColors,
   getAxisLineStyle,
@@ -38,7 +37,9 @@ const {
   getAxisTickStyle,
   getSplitLineStyle,
   getAnimationConfig,
+  getChartColors,
   getTooltipStyle,
+  hexToRgba,
   onThemeChange
 } = useChartTheme()
 
@@ -46,6 +47,8 @@ const seriesColors = computed(() => props.colors || getDefaultColors())
 
 function buildOptions() {
   const computedColor = seriesColors.value[0] || getThemeColor()
+  // 投影色由中性色派生，跟随明暗主题
+  const labelColor = getChartColors().label
 
   return {
     grid: {
@@ -85,13 +88,13 @@ function buildOptions() {
         itemStyle: {
           color: computedColor,
           shadowBlur: 6,
-          shadowColor: isDark.value ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+          shadowColor: hexToRgba(labelColor, 0.1).rgba,
           shadowOffsetY: 2
         },
         emphasis: {
           itemStyle: {
             shadowBlur: 12,
-            shadowColor: isDark.value ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+            shadowColor: hexToRgba(labelColor, 0.2).rgba
           },
           scale: true
         },

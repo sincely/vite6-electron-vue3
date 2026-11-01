@@ -195,7 +195,7 @@ const handleUserAction = async (action) => {
     overflow: hidden;
     font-size: 14px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: var(--color-primary);
     border: 2px solid var(--color-border);
     border-radius: 50%;
@@ -257,7 +257,7 @@ const handleUserAction = async (action) => {
     overflow: hidden;
     font-size: 18px;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-text-on-brand);
     background: var(--color-primary);
     border: 2px solid var(--color-border);
     border-radius: 50%;

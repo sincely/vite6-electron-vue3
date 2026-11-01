@@ -46,7 +46,7 @@ const installUpdate = () => {
   justify-content: center;
   width: 100vw;
   height: 100vh;
-  background-color: rgb(0 0 0 / 50%);
+  background-color: var(--color-scrim-strong);
 }
 
 .update-progress-card {

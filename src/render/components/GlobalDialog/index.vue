@@ -94,7 +94,7 @@ const handleOverlayClick = () => {
   z-index: 2000;
   display: grid;
   place-items: center;
-  background-color: rgb(0 0 0 / 40%);
+  background-color: var(--color-scrim);
   backdrop-filter: blur(8px);
 }
 

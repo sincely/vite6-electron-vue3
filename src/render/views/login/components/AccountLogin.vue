@@ -290,7 +290,7 @@ const goForgotPassword = () => {
 
   &:hover,
   &:focus {
-    background: var(--color-primary-dark, var(--color-primary));
+    background: var(--color-primary-dark);
     filter: brightness(1.05);
   }
 }

@@ -132,15 +132,15 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 </script>
 
 <style lang="scss" scoped>
-// 类型 → 主题色映射（celebrate/announce/exception 主题变量未定义时使用回退色）
+// 类型 → 主题色映射
 $notif-types: (
   info: var(--color-info),
   success: var(--color-success),
   warning: var(--color-warning),
   error: var(--color-danger),
-  celebrate: var(--color-celebrate, #fd9816),
-  announce: var(--color-announce, #ff506d),
-  exception: var(--color-exception, #ff725a)
+  celebrate: var(--color-celebrate),
+  announce: var(--color-announce),
+  exception: var(--color-exception)
 );
 
 .notif-panel {
