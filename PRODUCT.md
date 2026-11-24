@@ -31,10 +31,10 @@ Lightning 是一个通用 Electron 桌面管理端模板（Vite6 + Vue3 + Elemen
 
 ## Operating Context
 
-- **开发**：`pnpm dev`（Vite 渲染端 + Electron）；`pnpm dev:all` 同时拉起 apps/server 的 Koa2 联调后端。支持 `VITE_USE_MOCK` 纯前端 mock 模式，无后端也能完整体验。
+- **开发**：在仓库根目录执行 `pnpm dev`（Turbo 启动 `apps/desktop`：Vite 渲染端 + Electron）；`pnpm dev:all` 同时拉起桌面端和 `apps/server` 的 Koa2 联调后端。支持 `VITE_USE_MOCK` 纯前端 mock 模式，无后端也能完整体验。
 - **后端关系**：apps/server（koa2-app-template）是开发联调脚手架，**不是产品承诺的一部分**；衍生项目可替换为任意后端，渲染端通过 HTTP/IPC 通道对接（`VITE_SERVER_URL`）。
 - **分发**：electron-builder 打包 win/mac/linux 三平台；自动更新指向自建更新服务器（`VITE_UPDATE_URL`，多平台更新清单，apps/update 相关工具）。
-- **仓库结构**：pnpm workspace monorepo——根应用（Electron 桌面端）、apps/server（联调后端）、apps/update（更新服务）、apps/website（配套网站）。
+- **仓库结构**：pnpm workspace + Turborepo。根目录只做工作区编排；`apps/desktop`（Electron 桌面端）、`apps/server`（联调后端）、`apps/update`（更新服务）、`apps/website`（配套网站）。
 - **合规**：licenses/ 目录含中英双语《桌面端软件许可协议》与隐私说明。
 
 ## Capabilities and Constraints

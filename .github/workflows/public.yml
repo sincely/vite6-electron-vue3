@@ -15,8 +15,7 @@ on:
 
 env:
   NODE_VERSION: '24.18.0'
-  # 必须用 pnpm 10：仓库的 pnpm-workspace.yaml 只有 allowBuilds（pnpm 10 特性），
-  # pnpm 9 会因缺少 packages 字段报 "packages field missing or empty"（setup-node 缓存步骤的 pnpm store path 即触发）
+  # pnpm-workspace.yaml 使用 packages + allowBuilds，需要 pnpm 10
   PNPM_VERSION: '10.28.0'
 
 jobs:
@@ -45,13 +44,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       - name: Bump version and create tag
+        working-directory: apps/desktop
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: pnpm exec release-it ${{ github.event.inputs.version-type }} --ci --no-github.release --no-git.requireCommits
       - name: Export release metadata
         id: release_meta
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(node -p "require('./apps/desktop/package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}
-          path: release/
+          path: apps/desktop/release/
           retention-days: 1
 
   release:
@@ -112,7 +112,7 @@ jobs:
           cache: 'pnpm'
       - name: Generate release notes
         run: |
-          node scripts/release-notes.js
+          node apps/desktop/scripts/release-notes.js
           [ -f RELEASE_NOTES.md ] || echo "详见 CHANGELOG.md" > RELEASE_NOTES.md
       - name: Download all artifacts
         uses: actions/download-artifact@v4

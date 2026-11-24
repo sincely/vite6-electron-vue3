@@ -1,0 +1,23 @@
+{
+  "name": "@lightning/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and constants for the monorepo",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "clean": "rimraf dist .turbo"
+  },
+  "devDependencies": {
+    "vite": "^5.4.21",
+    "rimraf": "^6.0.1"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "koa2-app-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Koa2快速启动基础框架",
   "type": "module",
   "main": "src/app.js",
@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",
+    "@lightning/prettier-config": "workspace:*",
     "@release-it/conventional-changelog": "10.0.4",
     "conventional-changelog-angular": "8.1.0",
     "conventional-changelog-conventionalcommits": "9.1.0",

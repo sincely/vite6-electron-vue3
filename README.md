@@ -25,76 +25,82 @@
 
 ### 安装依赖
 
+在仓库根目录执行。根目录是 pnpm workspace，Turbo 负责调度 `apps/desktop`、`apps/server`、`apps/website`、`apps/update`。
+
 ```bash
-npm install
+pnpm install
 ```
 
 ### 开发模式（Vite HMR + Electron）
 
 ```bash
-# Windows
-npm run dev:win
-
-# macOS / Linux
-npm run dev:mac
+pnpm dev              # 只启动桌面端 apps/desktop
+pnpm dev:all          # 桌面端 + apps/server
+pnpm dev:server       # 只启动联调后端
+pnpm dev:website      # 只启动配套网站（端口 5200）
+pnpm build            # 构建所有带 build 脚本的应用
 ```
 
-### 仅启动 Electron（使用已构建的产物）
+### 打包桌面端
 
-> 需先执行构建命令生成 `dist/` 和 `dist-electron/`
+产物在 `apps/desktop/release/{version}/`。
 
 ```bash
-npm run electron:win
+pnpm build-mac:prod
+pnpm build-win:prod
+pnpm build-linux:prod
 ```
 
 ---
 
 ## 脚本说明
 
-### 仅构建渲染进程
+### 仅构建桌面端
+
+在仓库根目录执行，Turbo 会进入 `apps/desktop`：
 
 ```bash
-npm run build:dev    # 开发环境 (.env.development)
-npm run build:test   # 测试环境 (.env.test)
-npm run build:prod   # 生产环境 (.env.production)
+pnpm --filter lightning run build:dev    # 开发环境 (.env.development)
+pnpm --filter lightning run build:test   # 测试环境 (.env.test)
+pnpm build:desktop                       # 生产环境，等价于 build:prod
 ```
 
 ### 完整打包（渲染进程 + 主进程 + 安装包）
 
 ```bash
-# Windows
-npm run build-win          # 生产环境
-npm run build-win:test     # 测试环境
-npm run build-win:dev      # 开发环境
-
-# macOS
-npm run build-mac          # 生产环境
-npm run build-mac:test     # 测试环境
-npm run build-mac:dev      # 开发环境
+pnpm build-win:prod
+pnpm build-win:test
+pnpm build-win:dev
+pnpm build-mac:prod
+pnpm build-mac:test
+pnpm build-mac:dev
+pnpm build-linux:prod
+pnpm build-linux:test
+pnpm build-linux:dev
 ```
 
-> 打包产物输出至 `release/{version}/`
+> 打包产物输出至 `apps/desktop/release/{version}/`
 
 ### 其他工具脚本
 
 ```bash
-npm run clean              # 清空 dist / dist-electron / release
-npm run lint               # ESLint + Prettier + Stylelint 一键修复
-npm run build:icons        # 生成应用图标资源
-npm run dir-tree           # 输出项目目录树
+pnpm clean                                    # 清空桌面端 dist / dist-electron
+pnpm lint                                     # 各应用 lint（桌面端会自动修复）
+pnpm --filter lightning run build:icons       # 生成应用图标资源
+pnpm --filter lightning run dir-tree          # 输出桌面端目录树
 ```
 
 ---
 
 ## 环境变量
 
-项目支持三套环境配置，通过 Vite `--mode` 切换：
+桌面端环境文件在 `apps/desktop/`，通过 Vite `--mode` 切换：
 
 | 文件 | 环境 | 说明 |
 |------|------|------|
-| `.env.development` | `development` | 本地开发，可开启 Mock |
-| `.env.test` | `test` | 测试环境 |
-| `.env.production` | `production` | 正式生产环境 |
+| `apps/desktop/.env.development` | `development` | 本地开发，可开启 Mock |
+| `apps/desktop/.env.test` | `test` | 测试环境 |
+| `apps/desktop/.env.production` | `production` | 正式生产环境 |
 
 各文件可配置的变量示例：
 
@@ -112,6 +118,19 @@ VITE_UPDATE_URL= 'http://10.10.24.52:8089/electron-update'
 ---
 
 ## 项目结构
+
+```text
+├── apps/
+│   ├── desktop/          # Electron + Vue 桌面端（lightning）
+│   ├── server/           # Koa 联调后端
+│   ├── website/          # 配套网站
+│   └── update/           # 本地更新服务器
+├── package.json          # 工作区脚本（pnpm / turbo）
+├── pnpm-workspace.yaml
+└── turbo.json
+```
+
+下面保留原先的目录说明。其中 `build/`、`src/`、`resources/`、`scripts/`、`public/` 和 `index.html` 现在位于 `apps/desktop/`。
 
 ```text
 ├── .github/

@@ -69,6 +69,8 @@
 
 ## 3. 目录结构
 
+仓库是 pnpm workspace + Turborepo。根目录负责编排；桌面端在 `apps/desktop/`（下面树里的 `build`、`src`、`resources`、`scripts` 都相对该目录）。另外还有 `apps/server`、`apps/website`、`apps/update`。
+
 ```text
 ├── .agent/                        # AI 代理技能配置
 ├── .github/                       # GitHub 配置

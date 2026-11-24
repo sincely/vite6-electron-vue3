@@ -1,0 +1,25 @@
+{
+  "name": "@lightning/stylelint-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Stylelint config for the Lightning monorepo",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "dependencies": {
+    "postcss": "8.5.31",
+    "postcss-html": "1.5.0",
+    "postcss-scss": "4.0.9",
+    "stylelint-config-html": "1.1.0",
+    "stylelint-config-recess-order": "4.6.0",
+    "stylelint-config-standard": "36.0.1",
+    "stylelint-config-standard-scss": "13.1.0",
+    "stylelint-order": "6.0.4",
+    "stylelint-scss": "6.11.0"
+  },
+  "peerDependencies": {
+    "stylelint": ">=16.0.0"
+  }
+}

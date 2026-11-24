@@ -1,0 +1,23 @@
+{
+  "name": "@lightning/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Lightning ESLint config. The desktop app rules are the default export.",
+  "exports": {
+    ".": "./src/index.js",
+    "./vue": "./src/vue.js"
+  },
+  "dependencies": {
+    "@eslint/js": "9.39.4",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "5.5.6",
+    "eslint-plugin-vue": "9.33.0",
+    "globals": "15.1.0",
+    "vue-eslint-parser": "9.4.2"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0",
+    "prettier": ">=3.0.0"
+  }
+}

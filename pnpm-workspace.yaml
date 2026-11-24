@@ -1,6 +1,12 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
 allowBuilds:
-  '@parcel/watcher': true
+  "@parcel/watcher": true
+  bcrypt: true
   core-js: true
   electron: true
   es5-ext: true
   esbuild: true
+  sharp: true

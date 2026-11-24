@@ -1,0 +1,14 @@
+{
+  "name": "@lightning/prettier-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Prettier config for the Lightning monorepo",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "peerDependencies": {
+    "prettier": "3.6.2"
+  }
+}

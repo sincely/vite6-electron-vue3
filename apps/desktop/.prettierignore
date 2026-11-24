@@ -1,0 +1,42 @@
+## OS
+.DS_Store
+.idea
+.editorconfig
+pnpm-lock.yaml
+.npmrc
+
+# Ignored suffix
+*.log
+*.md
+*.svg
+*.png
+*.ico
+*ignore
+**/*.sh
+*.nsh
+*.json5
+
+# Built-files
+.cache
+.turbo
+dist
+
+node_modules
+/public/*
+components.d.ts
+prettier.config.js
+
+dist-electron
+release/**/*
+artifacts/*
+
+.nvmrc
+
+
+# Editor directories and files
+.vscode
+.trae
+.zcode
+.qoder
+
+electron-builder.json

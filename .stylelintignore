@@ -30,6 +30,12 @@ public/*
 nginx/*
 src/assets/*
 src/icons/*
+apps/desktop/src/assets/*
+apps/desktop/src/icons/*
+apps/desktop/public/*
+apps/desktop/dist/*
+apps/desktop/dist-electron/*
+apps/desktop/release/**/*
 .husky
 .env
 release/**/*
