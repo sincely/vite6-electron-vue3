@@ -1,7 +1,6 @@
 {
-  "name": "lightning-monorepo",
-  "private": true,
-  "version": "0.0.0",
+  "name": "lightning",
+  "version": "2.0.14",
   "type": "module",
   "description": "Lightning monorepo: Electron desktop, Koa server, website, and update server",
   "author": "chengzhou",

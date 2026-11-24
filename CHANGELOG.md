@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2.0.14](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.13...v2.0.14) (2026-11-24)
+
+### ✨ Features
+
+* 实现双权限方案支持 dynamic 模式 ([5d5e730](https://github.com/sincely/vite6-electron-vue3/commit/5d5e730b0f22d645775bbbc8eea981f478121230))
+* 提交上传文件功能 ([af4bec9](https://github.com/sincely/vite6-electron-vue3/commit/af4bec90ae9dcf7ee2e0e485a2d804742d87661a))
+* 更新权限方案为动态模式，重构相关权限指令和路由逻辑 ([ba10a7a](https://github.com/sincely/vite6-electron-vue3/commit/ba10a7a46600636ded5c87a8ece95213948d20ac))
+* 添加 PlanetHorizon 组件并优化 BrandPanel 结构 ([a0b6a79](https://github.com/sincely/vite6-electron-vue3/commit/a0b6a79443fcefbcd6f148b44dbd09f11fb5c76a))
+* 添加技能 skills ([57f1ff6](https://github.com/sincely/vite6-electron-vue3/commit/57f1ff6f73f8ebafa87d653aad005f7058f61b39))
+* 添加用户信息接口响应结构和菜单树构建逻辑，优化权限管理 ([4c98679](https://github.com/sincely/vite6-electron-vue3/commit/4c98679f11730a04b660b8c745dd492f87f5682e))
+* 添加设计文档 ([345391f](https://github.com/sincely/vite6-electron-vue3/commit/345391fa60e76857fbe85d980632345889e587bf))
+
+### 🔧 Chores
+
+* 删除过时的优化文档和总结文件 ([93807c2](https://github.com/sincely/vite6-electron-vue3/commit/93807c242850eff51063665cbdf93d7a1f4515b4))
+* 清除无用的代码 ([3dbd59a](https://github.com/sincely/vite6-electron-vue3/commit/3dbd59a9e10f6644256a8cff70bf700756c32153))
+
+### ♻️ Code Refactoring
+
+* update color variables ([64be615](https://github.com/sincely/vite6-electron-vue3/commit/64be615769590a7c90b76c5123121a6c34f6a044))
+* 移除已弃用的系统管理路由和 README；添加新的共享工具，包括验证码、IP 定位、JWT、登录限制器、菜单树、分页、参数 DTO、密码处理、Redis 缓存、会话活动跟踪、状态管理、状态 DTO 以及用户代理解析 ([46dc212](https://github.com/sincely/vite6-electron-vue3/commit/46dc212b62f38a8e3aa2f07a9ddcb68a16b29868))
+
 ## [2.0.13](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.12...v2.0.13) (2026-10-23)
 
 ## [2.0.12](https://github.com/sincely/vite6-electron-vue3/compare/v2.0.5...v2.0.12) (2026-10-22)
