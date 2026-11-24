@@ -10,6 +10,7 @@ import './config/env.js'
 import { cronQueue } from './jobs/queue.js'
 import exampleTaskProcessor from './jobs/processors/exampleTask.js'
 import notificationCleanupProcessor from './jobs/processors/notificationCleanup.js'
+import uploadChunkCleanupProcessor from './jobs/processors/uploadChunkCleanup.js'
 import { initScheduler } from './jobs/scheduler.js'
 import logger from './config/logger.js'
 
@@ -29,6 +30,10 @@ cronQueue.process(2, async (job) => {
 
   if (task === 'notification-cleanup') {
     return notificationCleanupProcessor(job)
+  }
+
+  if (task === 'upload-chunk-cleanup') {
+    return uploadChunkCleanupProcessor(job)
   }
 
   // 默认示例任务

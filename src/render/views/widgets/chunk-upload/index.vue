@@ -7,14 +7,15 @@
         <div class="chunk-upload-page__card-heading">
           <div>
             <h3>多文件上传</h3>
-            <p>拖拽或选择文件，演示分片并发上传和图片预览。</p>
+            <p>对接服务端分片接口：秒传、断点续传、暂停 / 继续、失败自动重试。</p>
           </div>
-          <span class="chunk-upload-page__tag">Demo API</span>
+          <span class="chunk-upload-page__tag">Server API</span>
         </div>
 
         <ChunkUpload
           v-model="files"
-          :api="demoApi"
+          :action="uploadAction"
+          :headers="uploadHeaders"
           accept="image/*,.pdf,.zip,.mp4"
           :multiple="true"
           :concurrency="3"
@@ -79,14 +80,14 @@
           <Icon icon="lucide:repeat-2" :width="18" :height="18" />
           <div>
             <b>断点续传</b>
-            <span>服务端分片索引 + localStorage 双重恢复</span>
+            <span>以服务端已落盘分片为准，暂停 / 重试只补传缺失分片</span>
           </div>
         </div>
         <div class="chunk-upload-page__config-item">
           <Icon icon="lucide:gauge" :width="18" :height="18" />
           <div>
             <b>并发控制</b>
-            <span>全组件请求池，默认最多 3 个分片同时上传</span>
+            <span>单文件默认 3 个分片并行，多文件排队上传</span>
           </div>
         </div>
       </div>
@@ -98,7 +99,15 @@
 import { Icon } from '@iconify/vue'
 import { ElMessage } from 'element-plus'
 
+import { useUserStore } from '@/store/modules/user'
+
 defineOptions({ name: 'WidgetsChunkUpload' })
+
+const userStore = useUserStore()
+
+// 默认协议直连服务端（CSP 已放行）：/upload/verify | chunk | merge | cancel
+const uploadAction = `${import.meta.env.VITE_SERVER_URL}/upload`
+const uploadHeaders = computed(() => ({ Authorization: `Bearer ${userStore.token}` }))
 
 const files = ref([])
 const formFiles = ref([
@@ -130,11 +139,11 @@ const demoApi = {
       totalChunks
     }
   },
-  uploadChunk: async ({ fileHash, index, chunk, onProgress, task }) => {
+  uploadChunk: async ({ fileHash, index, chunk, onProgress, signal }) => {
     const session = new Set(demoSessions.get(fileHash) || [])
     const steps = 5
     for (let step = 1; step <= steps; step += 1) {
-      if (task.cancelled) throw new Error('上传已取消')
+      signal.throwIfAborted()
       await wait(70)
       onProgress(Math.round((chunk.size * step) / steps), chunk.size)
     }

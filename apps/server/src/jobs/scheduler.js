@@ -17,6 +17,12 @@ export const CRON_JOBS = [
     // 每天 03:10 清理一次过期公告
     cron: '10 3 * * *',
     description: '清理已过期的站内公告'
+  },
+  {
+    task: 'upload-chunk-cleanup',
+    // 每天 03:30 清理超过保留时长仍未合并的上传分片
+    cron: '30 3 * * *',
+    description: '清理过期的大文件上传分片'
   }
 ]
 

@@ -36,3 +36,7 @@ lerna-debug.log*
 
 # 架构守护工具的本地快照
 .fingerprint/
+
+# 大文件上传：成品文件与分片临时目录（运行时数据）
+/public/uploads
+/storage

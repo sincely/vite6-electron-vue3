@@ -47,16 +47,28 @@
       {{ feedback.message }}
     </p>
 
-    <div v-if="fileList.length" class="chunk-upload__list">
+    <div v-if="items.length" class="chunk-upload__list">
       <div class="chunk-upload__list-header">
-        <span>文件列表（{{ fileList.length }}）</span>
-        <span v-if="activeCount" class="chunk-upload__active-count">
-          <i class="chunk-upload__pulse"></i>
-          {{ activeCount }} 个任务处理中
-        </span>
+        <span>文件列表（{{ items.length }}）</span>
+        <div class="chunk-upload__bulk">
+          <span v-if="stats.working" class="chunk-upload__active-count">
+            <i class="chunk-upload__pulse"></i>
+            {{ stats.working }} 个任务处理中
+          </span>
+          <button v-if="stats.ready" type="button" class="chunk-upload__bulk-action" @click="submit">全部开始</button>
+          <button v-if="stats.pausable" type="button" class="chunk-upload__bulk-action" @click="pauseAll">
+            全部暂停
+          </button>
+          <button v-if="stats.paused" type="button" class="chunk-upload__bulk-action" @click="resumeAll">
+            全部继续
+          </button>
+          <button v-if="stats.unfinished" type="button" class="chunk-upload__bulk-action is-danger" @click="cancelAll">
+            全部取消
+          </button>
+        </div>
       </div>
 
-      <div v-for="item in fileList" :key="item.uid" class="chunk-upload__item">
+      <div v-for="item in items" :key="item.uid" class="chunk-upload__item">
         <div class="chunk-upload__preview" :class="{ 'is-image': item.isImage }">
           <img v-if="item.isImage && item.previewUrl" :src="item.previewUrl" :alt="item.name" />
           <Icon v-else :icon="fileIcon(item)" :width="22" :height="22" />
@@ -112,24 +124,38 @@
             <Icon icon="lucide:eye" :width="16" :height="16" />
           </button>
           <button
-            v-if="isWorking(item)"
+            v-if="canPause(item)"
             type="button"
             class="chunk-upload__action"
-            :title="item.status === 'paused' ? '继续上传' : '暂停上传'"
-            @click.stop="togglePause(item)"
+            title="暂停上传"
+            @click.stop="pause(item)"
           >
-            <Icon :icon="item.status === 'paused' ? 'lucide:play' : 'lucide:pause'" :width="16" :height="16" />
+            <Icon icon="lucide:pause" :width="16" :height="16" />
           </button>
           <button
-            v-if="item.status === 'error'"
+            v-else-if="item.status === 'ready' || item.status === 'paused'"
+            type="button"
+            class="chunk-upload__action"
+            :title="item.status === 'paused' ? '继续上传' : '开始上传'"
+            @click.stop="start(item)"
+          >
+            <Icon icon="lucide:play" :width="16" :height="16" />
+          </button>
+          <button
+            v-else-if="item.status === 'error'"
             type="button"
             class="chunk-upload__action is-primary"
             title="重试上传"
-            @click.stop="startUpload(item)"
+            @click.stop="start(item)"
           >
             <Icon icon="lucide:refresh-cw" :width="16" :height="16" />
           </button>
-          <button type="button" class="chunk-upload__action is-remove" title="移除文件" @click.stop="removeFile(item)">
+          <button
+            type="button"
+            class="chunk-upload__action is-remove"
+            :title="isWorking(item) ? '取消上传' : '移除文件'"
+            @click.stop="remove(item)"
+          >
             <Icon icon="lucide:x" :width="16" :height="16" />
           </button>
         </div>
@@ -145,30 +171,11 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
-import {
-  acceptFile,
-  chunkLength,
-  createUid,
-  fileIcon,
-  fileKey,
-  formatSize,
-  getRemoteName,
-  isImageFile,
-  isWorking,
-  normalizeChunkList,
-  publicModel,
-  showProgress,
-  statusText,
-  unwrap
-} from './helpers'
-import { calculateHash } from './chunk-hash'
-import { clearStoredChunks, readStoredChunks, storeChunks } from './chunk-store'
-import { acquireSlot, flushSlotWaiters, releaseSlot } from './chunk-slots'
-import { callMerge, callUploadChunk, callVerify } from './chunk-api'
-import { cancelTask, createTask, deleteTask, getTask, pauseTask, resumeTask, waitUntilResumed } from './chunk-task'
+import { canPause, fileIcon, formatSize, isWorking, publicModel, showProgress, statusText } from './helpers'
+import { useChunkUpload } from './useChunkUpload'
 
 defineOptions({ name: 'ChunkUpload' })
 
@@ -178,7 +185,7 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  /** 默认协议：POST `${action}/verify`、`${action}`、`${action}/merge` */
+  /** 默认协议：POST `${action}/verify`、`${action}/chunk`、`${action}/merge`、`${action}/cancel` */
   action: {
     type: String,
     default: ''
@@ -195,7 +202,11 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  /** 可注入 verify / uploadChunk / merge，便于接入任意后端或云存储 */
+  cancelUrl: {
+    type: String,
+    default: ''
+  },
+  /** 可注入 verify / uploadChunk / merge / cancel，便于接入任意后端或云存储 */
   api: {
     type: Object,
     default: () => ({})
@@ -204,6 +215,7 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
+  /** 附加到每个请求的额外参数（对象或返回对象的函数）；分片请求中会拼进 query */
   data: {
     type: [Object, Function],
     default: () => ({})
@@ -217,10 +229,25 @@ const props = defineProps({
     type: Number,
     default: 5 * 1024 * 1024
   },
-  /** 全组件同时进行的分片请求数 */
+  /** 单个文件同时上传的分片数 */
   concurrency: {
     type: Number,
     default: 3
+  },
+  /** 同时上传的文件数，其余文件排队等待 */
+  fileConcurrency: {
+    type: Number,
+    default: 2
+  },
+  /** 单个分片失败后的自动重试次数 */
+  maxRetry: {
+    type: Number,
+    default: 3
+  },
+  /** 分片失败后重试前的等待毫秒数 */
+  retryDelay: {
+    type: Number,
+    default: 1000
   },
   /** 计算文件哈希时读取的块大小 */
   hashChunkSize: {
@@ -254,6 +281,7 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  /** 选择文件后自动开始；关闭时通过「开始」按钮或 submit() 触发 */
   autoUpload: {
     type: Boolean,
     default: true
@@ -266,14 +294,6 @@ const props = defineProps({
   beforeUpload: {
     type: Function,
     default: null
-  },
-  fileField: {
-    type: String,
-    default: 'file'
-  },
-  chunkField: {
-    type: String,
-    default: 'chunk'
   }
 })
 
@@ -288,17 +308,14 @@ const emit = defineEmits([
   'preview'
 ])
 
-// 组件实例内部状态：UI 展示 + 与 props 双向同步
+// 文件列表、上传队列与全部上传逻辑都在 useChunkUpload 里；这里只负责选择 / 拖拽 / 预览等视图交互
+const { items, feedback, stats, addFiles, start, pause, remove, submit, pauseAll, resumeAll, cancelAll } =
+  useChunkUpload(props, emit)
+
 const inputRef = ref()
-const fileList = ref([])
 const isDragover = ref(false)
-const feedback = ref(null)
 const previewVisible = ref(false)
 const previewUrl = ref('')
-// 仅组件实例级别的预览对象 URL 注册表；任务注册表由 chunk-task 模块统一管理
-const objectUrls = new Map()
-
-const activeCount = computed(() => fileList.value.filter((item) => isWorking(item)).length)
 
 const typeText = computed(() => {
   if (!props.accept) return '支持所有文件类型'
@@ -306,82 +323,6 @@ const typeText = computed(() => {
 })
 
 const chunkSizeLabel = computed(() => formatSize(props.chunkSize))
-
-// 透传给 chunk-api 的运行期配置
-const apiOptions = computed(() => ({
-  action: props.action,
-  verifyUrl: props.verifyUrl,
-  chunkUrl: props.chunkUrl,
-  mergeUrl: props.mergeUrl,
-  api: props.api,
-  headers: props.headers,
-  data: props.data,
-  withCredentials: props.withCredentials,
-  chunkField: props.chunkField
-}))
-
-const findCurrentItem = (uid) => fileList.value.find((item) => item.uid === uid)
-
-const updateItem = (item, patch) => {
-  const current = findCurrentItem(item.uid)
-  if (!current) return
-  Object.assign(current, patch)
-  emitModel()
-}
-
-const emitModel = () => {
-  // 即使外部误传了非数组，组件发出的值始终是数组。
-  emit('update:modelValue', fileList.value.map(publicModel))
-  emit('change', fileList.value.map(publicModel))
-}
-
-const normalizeItem = (value, existing) => {
-  const source =
-    typeof value === 'string'
-      ? { url: value, name: getRemoteName(value) }
-      : value instanceof File
-        ? { raw: value, name: value.name }
-        : value || {}
-  const raw = source.raw instanceof File ? source.raw : existing?.raw
-  const isRemote = !raw && Boolean(source.url || source.previewUrl)
-  const item = {
-    ...source,
-    uid: source.uid || existing?.uid || createUid(),
-    raw,
-    name: source.name || raw?.name || '未命名文件',
-    size: source.size ?? raw?.size ?? 0,
-    type: source.type || raw?.type || '',
-    status: source.status || (isRemote ? 'success' : 'ready'),
-    percent: typeof source.percent === 'number' ? source.percent : isRemote ? 100 : 0,
-    isImage: source.isImage ?? isImageFile(raw || source),
-    previewUrl: source.previewUrl || source.url || '',
-    uploadedChunks: source.uploadedChunks || 0,
-    totalChunks: source.totalChunks || 0,
-    error: source.error || '',
-    method: source.method || (isRemote ? '已回显' : ''),
-    fileKey: source.fileKey || (raw ? fileKey(raw) : `${source.name || ''}_${source.size || 0}`)
-  }
-  return item
-}
-
-const syncModelValue = (value) => {
-  const incoming = Array.isArray(value) ? value : []
-  if (incoming.length === fileList.value.length && incoming.every((item, index) => item === fileList.value[index])) {
-    return
-  }
-  const oldItems = new Map(fileList.value.map((item) => [item.uid, item]))
-  fileList.value = incoming.map((item) => normalizeItem(item, oldItems.get(item?.uid)))
-}
-
-watch(() => props.modelValue, syncModelValue, { immediate: true })
-
-const setFeedback = (message, type = 'error') => {
-  feedback.value = { message, type }
-  window.clearTimeout(setFeedback.timer)
-  setFeedback.timer = window.setTimeout(() => {
-    feedback.value = null
-  }, 4200)
-}
 
 const openPicker = () => {
   if (!props.disabled) inputRef.value?.click()
@@ -397,327 +338,12 @@ const handleDragLeave = (event) => {
 
 const handleDrop = (event) => {
   isDragover.value = false
-  if (!props.disabled && props.drag) processFiles(Array.from(event.dataTransfer?.files || []))
+  if (!props.disabled && props.drag) addFiles(Array.from(event.dataTransfer?.files || []))
 }
 
 const handleInputChange = (event) => {
-  processFiles(Array.from(event.target.files || []))
+  addFiles(Array.from(event.target.files || []))
   event.target.value = ''
-}
-
-const validateFile = (file) => {
-  if (!acceptFile(file, props.accept)) return `「${file.name}」不是允许的文件类型`
-  if (props.maxSize > 0 && file.size > props.maxSize * 1024 * 1024) {
-    return `「${file.name}」超过 ${props.maxSize} MB 大小限制`
-  }
-  if (fileList.value.some((item) => item.fileKey === fileKey(file))) {
-    return `「${file.name}」已经在列表中`
-  }
-  return ''
-}
-
-const createItem = (file) => {
-  const item = normalizeItem(
-    {
-      uid: createUid(),
-      raw: file,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      fileKey: fileKey(file),
-      status: 'ready',
-      isImage: isImageFile(file)
-    },
-    null
-  )
-  if (item.isImage) {
-    const url = URL.createObjectURL(file)
-    objectUrls.set(item.uid, url)
-    item.previewUrl = url
-  }
-  return item
-}
-
-const processFiles = async (files) => {
-  if (!files.length || props.disabled) return
-  const candidates = props.multiple ? files : files.slice(0, 1)
-  const accepted = []
-
-  for (const sourceFile of candidates) {
-    if (props.limit > 0 && fileList.value.length + accepted.length >= props.limit) {
-      setFeedback(`最多只能添加 ${props.limit} 个文件`)
-      break
-    }
-    let file = sourceFile
-    const validationMessage = validateFile(file)
-    if (validationMessage) {
-      setFeedback(validationMessage)
-      emit('error', { file, phase: 'validate', message: validationMessage })
-      continue
-    }
-    try {
-      emit('before-upload', file)
-      if (props.beforeUpload) {
-        const result = await props.beforeUpload(file, candidates)
-        if (result === false) continue
-        if (result instanceof File) file = result
-      }
-    } catch (error) {
-      const message = error?.message || '上传前校验未通过'
-      setFeedback(message)
-      emit('error', { file, phase: 'before-upload', message, error })
-      continue
-    }
-    const replacedValidation = validateFile(file)
-    if (replacedValidation) {
-      setFeedback(replacedValidation)
-      emit('error', { file, phase: 'validate', message: replacedValidation })
-      continue
-    }
-    accepted.push(file)
-  }
-
-  if (!props.multiple && accepted.length) {
-    fileList.value.forEach((item) => cancelTask(item))
-    fileList.value.forEach(revokePreview)
-    fileList.value = []
-  }
-
-  const addedItems = accepted.map(createItem)
-  fileList.value.push(...addedItems)
-  emitModel()
-  if (props.autoUpload) {
-    await Promise.all(addedItems.map((item) => startUpload(item)))
-  }
-}
-
-// 聚合「已完成的分片字节数 + 进行中分片的部分字节数」得到整体进度
-const updateProgress = (item, task, uploaded) => {
-  const uploadedBytes = [...uploaded].reduce((sum, index) => sum + chunkLength(item.raw, index, props.chunkSize), 0)
-  const partialBytes = [...task.chunkProgress.entries()].reduce((sum, [index, loaded]) => {
-    return uploaded.has(index) ? sum : sum + Math.min(loaded, chunkLength(item.raw, index, props.chunkSize))
-  }, 0)
-  const percent = item.raw.size ? ((uploadedBytes + partialBytes) / item.raw.size) * 100 : 100
-  updateItem(item, {
-    percent: Math.min(100, percent),
-    uploadedChunks: uploaded.size
-  })
-  emit('progress', {
-    item: publicModel(item),
-    percent: item.percent,
-    uploadedChunks: uploaded.size
-  })
-}
-
-const startUpload = async (item) => {
-  if (!item?.raw || props.disabled) return
-  const existingTask = getTask(item.uid)
-  if (existingTask && item.status === 'paused') {
-    resumeTask(existingTask)
-    updateItem(item, { status: 'uploading', error: '' })
-    return
-  }
-  if (existingTask) return
-
-  const task = createTask(item.uid)
-
-  try {
-    updateItem(item, {
-      status: 'hashing',
-      percent: 0,
-      error: '',
-      method: '分片上传'
-    })
-    const fileHash = await calculateHash(
-      item.raw,
-      task,
-      props.hashChunkSize,
-      (percent) => {
-        updateItem(item, { percent })
-        emit('progress', { item: publicModel(item), percent, phase: 'hashing' })
-      },
-      props.hashAlgorithm
-    )
-    if (task.cancelled) return
-    item.hash = fileHash
-    item.totalChunks = Math.max(1, Math.ceil(item.raw.size / props.chunkSize))
-
-    updateItem(item, { status: 'verifying', percent: 0 })
-    const verifyResult = unwrap(
-      await callVerify(
-        {
-          file: item.raw,
-          item: publicModel(item),
-          fileHash,
-          totalChunks: item.totalChunks,
-          chunkSize: props.chunkSize,
-          task
-        },
-        apiOptions.value
-      )
-    )
-    if (task.cancelled) return
-
-    const directUrl = verifyResult.url || verifyResult.fileUrl || verifyResult.downloadUrl
-    if (verifyResult.exists || verifyResult.uploaded === true || verifyResult.fastUpload) {
-      clearStoredChunks(fileHash, props.chunkSize)
-      updateItem(item, {
-        status: 'success',
-        percent: 100,
-        uploadedChunks: item.totalChunks,
-        url: directUrl || item.url || '',
-        previewUrl: directUrl || item.previewUrl,
-        method: '秒传成功',
-        response: verifyResult
-      })
-      emit('success', {
-        item: publicModel(item),
-        response: verifyResult,
-        method: 'fast'
-      })
-      return
-    }
-
-    item.uploadId = verifyResult.uploadId || verifyResult.taskId || item.uploadId
-    const uploaded = new Set([
-      ...readStoredChunks(fileHash, props.chunkSize),
-      ...normalizeChunkList(verifyResult.uploadedChunks ?? verifyResult.chunks, item.totalChunks)
-    ])
-    item.uploadedChunks = uploaded.size
-    updateProgress(item, task, uploaded)
-    await waitUntilResumed(task)
-
-    const pending = Array.from({ length: item.totalChunks }, (_, index) => index).filter(
-      (index) => !uploaded.has(index)
-    )
-    let cursor = 0
-    const worker = async () => {
-      while (cursor < pending.length && !task.cancelled && !task.failed) {
-        await waitUntilResumed(task)
-        if (task.cancelled || task.failed) return
-        const index = pending[cursor++]
-        const acquired = await acquireSlot(task, props.concurrency)
-        if (!acquired) return
-        try {
-          const start = index * props.chunkSize
-          const chunk = item.raw.slice(start, start + props.chunkSize)
-          task.chunkProgress.set(index, 0)
-          await callUploadChunk(
-            {
-              file: item.raw,
-              item: publicModel(item),
-              chunk,
-              index,
-              totalChunks: item.totalChunks,
-              chunkSize: props.chunkSize,
-              fileHash,
-              uploadId: item.uploadId,
-              task,
-              onProgress: (loaded, total) => {
-                task.chunkProgress.set(index, total ? loaded : chunk.size)
-                updateProgress(item, task, uploaded)
-              }
-            },
-            apiOptions.value
-          )
-          uploaded.add(index)
-          task.chunkProgress.delete(index)
-          storeChunks(fileHash, props.chunkSize, uploaded)
-          updateProgress(item, task, uploaded)
-        } finally {
-          releaseSlot(props.concurrency)
-        }
-      }
-    }
-
-    updateItem(item, { status: 'uploading' })
-    await Promise.all(
-      Array.from(
-        {
-          length: Math.min(Math.max(1, props.concurrency), pending.length || 1)
-        },
-        worker
-      )
-    )
-    if (task.cancelled) return
-    if (task.paused) return
-    if (uploaded.size !== item.totalChunks) throw new Error('分片上传未完成')
-
-    updateItem(item, {
-      status: 'merging',
-      percent: 99,
-      uploadedChunks: item.totalChunks
-    })
-    const mergeResult = unwrap(
-      await callMerge(
-        {
-          file: item.raw,
-          item: publicModel(item),
-          fileHash,
-          uploadId: item.uploadId,
-          totalChunks: item.totalChunks,
-          chunkSize: props.chunkSize,
-          task
-        },
-        apiOptions.value
-      )
-    )
-    if (task.cancelled) return
-    const url = mergeResult.url || mergeResult.fileUrl || mergeResult.downloadUrl || item.url || ''
-    clearStoredChunks(fileHash, props.chunkSize)
-    updateItem(item, {
-      status: 'success',
-      percent: 100,
-      uploadedChunks: item.totalChunks,
-      url,
-      previewUrl: item.isImage && url ? url : item.previewUrl,
-      response: mergeResult
-    })
-    emit('success', {
-      item: publicModel(item),
-      response: mergeResult,
-      method: 'chunk'
-    })
-  } catch (error) {
-    if (task.cancelled) return
-    task.failed = true
-    task.activeXhrs.forEach((xhr) => xhr.abort())
-    const message = error?.message || '上传失败，请重试'
-    updateItem(item, { status: 'error', error: message })
-    emit('error', { item: publicModel(item), error, phase: 'upload', message })
-  } finally {
-    // 始终清理任务注册表：成功 / 失败 / 取消 / 暂停都会让出槽位；
-    // 用户点击「继续上传」或「重试」时，startUpload 会基于 paused/error 状态判断是否新建任务。
-    deleteTask(item.uid)
-  }
-}
-
-const togglePause = (item) => {
-  const task = getTask(item.uid)
-  if (!task) return startUpload(item)
-  if (task.paused) {
-    resumeTask(task)
-    updateItem(item, { status: 'uploading' })
-  } else {
-    pauseTask(task)
-    updateItem(item, { status: 'paused' })
-  }
-}
-
-const revokePreview = (item) => {
-  const url = objectUrls.get(item.uid)
-  if (url) {
-    URL.revokeObjectURL(url)
-    objectUrls.delete(item.uid)
-  }
-}
-
-const removeFile = (item) => {
-  cancelTask(item)
-  revokePreview(item)
-  fileList.value = fileList.value.filter((current) => current.uid !== item.uid)
-  emitModel()
-  emit('remove', publicModel(item))
 }
 
 const previewItem = (item) => {
@@ -727,13 +353,8 @@ const previewItem = (item) => {
   emit('preview', publicModel(item))
 }
 
-onBeforeUnmount(() => {
-  fileList.value.forEach((item) => {
-    cancelTask(item)
-    revokePreview(item)
-  })
-  flushSlotWaiters()
-})
+// 供宿主在 autoUpload 关闭时手动触发，或统一控制所有任务
+defineExpose({ submit, pauseAll, resumeAll, cancelAll })
 </script>
 
 <style lang="scss" scoped>
@@ -854,6 +475,33 @@ onBeforeUnmount(() => {
   font-size: 13px;
   font-weight: 600;
   border-bottom: 1px solid var(--color-border-light);
+}
+
+.chunk-upload__bulk {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.chunk-upload__bulk-action {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg-hover);
+  }
+
+  &.is-danger:hover {
+    color: var(--color-danger);
+    background: color-mix(in srgb, var(--color-danger) 8%, transparent);
+  }
 }
 
 .chunk-upload__active-count {

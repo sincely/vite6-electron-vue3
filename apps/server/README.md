@@ -69,6 +69,7 @@ server/
 │   │   ├── businessCode.js     # 业务错误码定义
 │   │   ├── httpError.js        # HTTP 状态码定义
 │   │   ├── koaBodyConfig.js    # 请求体解析配置
+│   │   ├── upload.js           # 大文件上传配置（目录 / 大小上限 / 分片保留时长）
 │   │   └── admin.js            # 后台默认角色名
 │   │
 │   ├── core/                   # ② 内核层：框架装配，与业务无关
@@ -106,6 +107,7 @@ server/
 │   │   ├── monitor/            # 系统监控与强制下线
 │   │   ├── route/              # 前端动态路由
 │   │   ├── ai/                 # AI 网关（SSE 流式）
+│   │   ├── upload/             # 大文件分片上传（秒传 / 断点续传 / 合并校验）
 │   │   └── log/                # 日志（两个子领域）
 │   │       ├── operationLog/    # 操作日志
 │   │       └── loginLog/        # 登录日志
@@ -139,9 +141,11 @@ server/
 │       ├── scheduler.js        # 定时任务注册
 │       └── processors/         # 任务处理器
 │           ├── exampleTask.js
-│           └── notificationCleanup.js
+│           ├── notificationCleanup.js
+│           └── uploadChunkCleanup.js
 │
-├── public/                     # 静态资源目录
+├── public/                     # 静态资源目录（uploads/ 为上传成品，运行时生成）
+├── storage/                    # 运行时数据（chunks/ 为未合并的上传分片，不对外暴露）
 ├── logs/                       # 日志文件目录（按日期分文件）
 │
 ├── .env.development            # 开发环境变量
@@ -618,6 +622,34 @@ const createUser = async (user) => {
 | GET | `/api/route/getUserRoutes` | 获取用户动态路由 | ✅ |
 | GET | `/api/route/isRouteExist` | 检查路由是否存在 | ✅ |
 
+### 文件上传接口
+
+大文件分片上传，仅需登录、无需菜单权限，不记录操作日志，也不受通用限流约束。服务端不保存会话状态：每个请求自带完整元信息，分片是否已上传以磁盘实际内容为准。
+
+| 方法 | 路径 | 说明 | 请求 |
+|------|------|------|------|
+| POST | `/api/upload/verify` | 秒传 / 断点续传校验 | JSON：`fileHash` `fileName` `fileSize` `chunkSize` `totalChunks` |
+| POST | `/api/upload/chunk` | 上传一个分片（幂等） | query：`fileHash` `fileSize` `chunkSize` `totalChunks` `chunkIndex`；**请求体是分片二进制流**（`application/octet-stream`） |
+| POST | `/api/upload/merge` | 合并分片并校验哈希（幂等） | JSON：同 `verify` |
+| POST | `/api/upload/cancel` | 取消上传，清理临时分片 | JSON：`fileHash` |
+
+- `verify` 返回 `{ exists, url?, uploadedChunks }`：成品已存在时 `exists: true` 并返回地址（秒传），否则返回已完整落盘的分片下标（断点续传）。
+- `merge` 返回 `{ url, size }`。合并时按下标流式拼接并同步计算文件哈希，与 `fileHash` 不一致则丢弃分片并报 `40032`，避免内容寻址存储被错误内容污染。
+- `fileHash` 为 32 / 40 / 64 位十六进制，分别对应 MD5 / SHA-1 / SHA-256（由长度区分算法），与前端 `hashAlgorithm` 一致。
+- 分片按用户隔离、并带上 `chunkSize`（分片大小不同则下标含义不同）：`storage/chunks/<userId>/<fileHash>_<chunkSize>/<index>`；成品按内容寻址存放为 `public/uploads/<fileHash><ext>`，可通过 `/uploads/<name>` 直接访问。
+- 安全：成品与 API 同源直出，`.html` / `.svg` / `.xml` / `.js` 等浏览器可执行类型一律落为 `.bin`（按下载处理），防止存储型 XSS。
+- 过期清理：Worker 每天 03:30 执行 `upload-chunk-cleanup`，删除超过保留时长仍未合并的分片目录。
+
+可通过环境变量调整（见 `src/config/upload.js`）：
+
+| 环境变量 | 默认 | 说明 |
+|----------|------|------|
+| `UPLOAD_MAX_FILE_SIZE_MB` | `10240` | 单文件大小上限 |
+| `UPLOAD_MAX_CHUNK_SIZE_MB` | `10` | 单分片大小上限（需不大于 nginx `client_max_body_size`） |
+| `UPLOAD_CHUNK_TTL_HOURS` | `24` | 未合并分片的保留时长 |
+
+> 生产部署时请把 `public/uploads` 与 `storage` 挂载为持久化数据卷；走 nginx 时，需额外把 `/uploads/` 反向代理到本服务。
+
 ### 统一响应格式
 
 **成功响应：**
@@ -679,6 +711,10 @@ const createUser = async (user) => {
 | 40019 | 不能删除自己 |
 | 40020 | 身份证号已存在 |
 | 40021 | 不能禁用自己 |
+| 40029 | 文件超过大小限制 |
+| 40030 | 分片大小与声明不符 |
+| 40031 | 分片未上传完整，无法合并 |
+| 40032 | 合并结果与文件哈希不一致 |
 
 ## 快速开始
 

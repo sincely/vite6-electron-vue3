@@ -30,3 +30,7 @@ deploy.sh
 *.log
 *.tar.gz
 backups
+
+# 上传的运行时数据（通过数据卷挂载，不入镜像）
+public/uploads
+storage

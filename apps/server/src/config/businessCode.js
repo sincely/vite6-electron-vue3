@@ -40,7 +40,12 @@ export const businessCode = {
   notificationNotFound: 40025, // 公告不存在
   notificationTargetEmpty: 40026, // 定向发送目标用户为空
   sessionNotFound: 40027, // 会话不存在或已失效
-  sessionKickSelfDenied: 40028 // 不能强制下线当前会话
+  sessionKickSelfDenied: 40028, // 不能强制下线当前会话
+  // 文件上传模块
+  uploadFileTooLarge: 40029, // 文件超过大小限制
+  uploadChunkInvalid: 40030, // 分片大小与声明不符
+  uploadChunkMissing: 40031, // 分片未传完整，无法合并
+  uploadHashMismatch: 40032 // 合并结果与文件哈希不一致
 }
 
 export const businessMsg = {
@@ -74,5 +79,9 @@ export const businessMsg = {
   [businessCode.notificationNotFound]: '公告不存在',
   [businessCode.notificationTargetEmpty]: '定向发送时至少选择一个目标用户',
   [businessCode.sessionNotFound]: '会话不存在或已失效',
-  [businessCode.sessionKickSelfDenied]: '不能强制下线当前登录会话'
+  [businessCode.sessionKickSelfDenied]: '不能强制下线当前登录会话',
+  [businessCode.uploadFileTooLarge]: '文件超过大小限制',
+  [businessCode.uploadChunkInvalid]: '分片大小与声明不符',
+  [businessCode.uploadChunkMissing]: '分片未上传完整，无法合并',
+  [businessCode.uploadHashMismatch]: '文件校验失败，内容与文件哈希不一致，请重新上传'
 }

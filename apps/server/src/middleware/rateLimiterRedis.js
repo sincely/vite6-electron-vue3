@@ -110,10 +110,12 @@ export const createRedisRateLimiter = (options = {}) => {
  * 默认 Redis 速率限制器
  * - 普通接口：15 分钟内最多 100 次
  * - 登录接口：1 分钟内最多 20 次
+ * - 文件上传接口：大文件会产生数百个分片请求，不限流（仍需登录、且有文件 / 分片大小上限）
  */
 export const redisRateLimiter = createRedisRateLimiter({
   window: 15 * 60 * 1000,
   maxRequests: 100,
+  whitelist: ['/api/health', '/api/upload'],
   blacklist: ['/api/user/auth/login'],
   blacklistMaxRequests: 20,
   blacklistWindow: 60 * 1000
